@@ -11,7 +11,7 @@ class DisplayWin32
 {
 public:
 	DisplayWin32() {};
-	DisplayWin32(EngineCore* _engineCore, LPCWSTR applicationName, HINSTANCE hInstance,
+	DisplayWin32( LPCWSTR applicationName, HINSTANCE hInstance,
 		const int& screenHeight = 800, const int& screenWidth = 800);
 
 	~DisplayWin32();
@@ -25,7 +25,6 @@ private:
 	HINSTANCE hInstance;
 	HWND hWnd;
 	WNDCLASSEX wc;
-	EngineCore* engineCore;
 
 };
 

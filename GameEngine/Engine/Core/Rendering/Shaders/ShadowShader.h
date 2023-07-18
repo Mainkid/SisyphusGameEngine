@@ -6,7 +6,7 @@ class ShadowShader : public Shader
 {
 public:
 
-    ShadowShader(EngineCore* _engine);
+    ShadowShader();
     void Initialize(LPCWSTR shaderPath) override;
 
 };

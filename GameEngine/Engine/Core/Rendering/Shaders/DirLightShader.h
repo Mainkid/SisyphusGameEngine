@@ -6,7 +6,7 @@ class Game;
 class DirLightShader : public Shader
 {
 public:
-    DirLightShader(EngineCore* _engine);
+    DirLightShader();
     void Initialize(LPCWSTR shaderPath) override;
     
     

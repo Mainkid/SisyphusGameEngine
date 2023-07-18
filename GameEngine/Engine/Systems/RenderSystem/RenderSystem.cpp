@@ -1,14 +1,14 @@
 #include "RenderSystem.h"
 #include "../../Core/EngineCore.h"
 
-RenderSystem::RenderSystem(EngineCore* _engine)
+RenderSystem::RenderSystem()
 {
-	this->engine = _engine;
+
 }
     
 void RenderSystem::Update(float deltaSec)
 {
-	engine->renderPipeline->Render();
+	EngineCore::instance()->renderPipeline->Render();
 }
 
 //TODO: Перенести renderPipeline в рендерсистему

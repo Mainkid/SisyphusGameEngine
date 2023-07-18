@@ -1,8 +1,8 @@
 #include "Scene.h"
 
-Scene::Scene(EngineCore* engine)
+Scene::Scene()
 {
-	this->engine = engine;
+
 }
 
 void Scene::Initialize()
@@ -24,10 +24,10 @@ void Scene::Update(float deltaSec)
 
 GameObject* Scene::AddGameObject()
 {
-	std::unique_ptr<GameObject> m_gameObject = std::make_unique<GameObject>(engine);
+	std::unique_ptr<GameObject> m_gameObject = std::make_unique<GameObject>();
 	auto id = registry.create();
 	registry.emplace<TransformComponent>(id);
-	registry.emplace<MeshComponent>(id,engine);
+	registry.emplace<MeshComponent>(id);
 	m_gameObject->id = id;
 	gameObjects[id] = std::move(m_gameObject);
 	return gameObjects[id].get();
@@ -35,9 +35,9 @@ GameObject* Scene::AddGameObject()
 
 GameObject* Scene::AddLight(LightType _lightType)
 {
-	std::unique_ptr<GameObject> m_gameObject = std::make_unique<GameObject>(engine);
+	std::unique_ptr<GameObject> m_gameObject = std::make_unique<GameObject>();
 	auto id = registry.create();
-	registry.emplace<LightComponent>(id,engine,_lightType);
+	registry.emplace<LightComponent>(id,_lightType);
 	registry.emplace<TransformComponent>(id);
 	m_gameObject->id = id;
 	gameObjects[id] = std::move(m_gameObject);

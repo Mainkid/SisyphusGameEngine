@@ -8,6 +8,11 @@
 #include "Buffer.h"
 #include "../Components/GameComponent.h"
 
+#define COMPILE_PIXEL 1
+#define COMPILE_VERTEX 2
+#define COMPILE_GEOM 4
+#define COMPILE_COMPUTE 8
+
 class EngineCore;
 
 class Shader 
@@ -18,9 +23,9 @@ public:
     
 
 	
-    std::shared_ptr<Buffer> constantBuffer;
-    std::shared_ptr<Buffer> indexBuffer;
-    std::shared_ptr<Buffer> vertexBuffer;
+    std::unique_ptr<Buffer> constantBuffer;
+    std::unique_ptr<Buffer> indexBuffer;
+    std::unique_ptr<Buffer> vertexBuffer;
 
     Microsoft::WRL::ComPtr<ID3D11InputLayout> layout;
     Microsoft::WRL::ComPtr<ID3DBlob> vertexBC; 
@@ -40,7 +45,6 @@ protected:
 
     Microsoft::WRL::ComPtr<ID3DBlob> errorPixelCode = nullptr;
     Microsoft::WRL::ComPtr<ID3DBlob> errorVertexCode = nullptr;
-    EngineCore* engine;
     
 };
 

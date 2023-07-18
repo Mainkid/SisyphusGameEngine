@@ -6,7 +6,7 @@ class Game;
 class OpaqueShader : public Shader
 {
 public:
-    OpaqueShader(EngineCore* _engine);
+    OpaqueShader();
     void Initialize(LPCWSTR shaderPath) override;
 
 };

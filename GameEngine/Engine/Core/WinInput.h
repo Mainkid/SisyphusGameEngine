@@ -9,7 +9,7 @@ class EngineCore;
 class WinInput
 {
 public:
-    WinInput(EngineCore* _engineCore);
+    WinInput();
     ~WinInput();
 
 
@@ -33,8 +33,6 @@ public:
     MulticastDelegate<POINT> RawOffsetEvent;
 
 private:
-
-    EngineCore* engineCore;
     HWND windowHWND;
     std::unordered_set<Keys>* keys;
     POINT mousePos;

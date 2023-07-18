@@ -15,7 +15,7 @@ class Buffer
 public:
 
     
-    Buffer(EngineCore* _engineCore);
+    Buffer();
     Buffer(ID3D11Device* device);
 
 
@@ -45,10 +45,7 @@ public:
 
 
     Microsoft::WRL::ComPtr<ID3D11Buffer> buffer;
-    size_t size;
-   
-
-private:
-    ID3D11Device* device;
+    size_t size=0;
+  
     
 };

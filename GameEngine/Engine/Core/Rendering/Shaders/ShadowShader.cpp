@@ -3,9 +3,9 @@
 #include "../../EngineCore.h"
 
 
-ShadowShader::ShadowShader(EngineCore* _engine)
+ShadowShader::ShadowShader()
 {
-    this->engine=_engine;
+
 }
 
 void ShadowShader::Initialize(LPCWSTR shaderPath)
@@ -32,7 +32,7 @@ void ShadowShader::Initialize(LPCWSTR shaderPath)
         // If there was  nothing in the error message then it simply could not find the shader file itself.
         else
         {
-            MessageBox(engine->window->GetHWND(), L"./Shaders/Racket.hlsl", L"Missing Shader File", MB_OK);
+            MessageBox(EngineCore::instance()->window->GetHWND(), L"./Shaders/Racket.hlsl", L"Missing Shader File", MB_OK);
         }
 
     }
@@ -46,7 +46,7 @@ void ShadowShader::Initialize(LPCWSTR shaderPath)
         0, geomBC.GetAddressOf(), errorPixelCode.GetAddressOf());
 
 
-    res = engine->device->CreateVertexShader(
+    res = EngineCore::instance()->device->CreateVertexShader(
         this->vertexBC->GetBufferPointer(),
         this->vertexBC->GetBufferSize(),
         nullptr, this->vertexShader.GetAddressOf());
@@ -56,7 +56,7 @@ void ShadowShader::Initialize(LPCWSTR shaderPath)
         this->pixelBC->GetBufferSize(),
         nullptr, this->pixelShader.GetAddressOf());*/
 
-    res = engine->device->CreateGeometryShader(
+    res = EngineCore::instance()->device->CreateGeometryShader(
        this->geomBC->GetBufferPointer(),
        this->geomBC->GetBufferSize(),
        nullptr, this->geomShader.GetAddressOf());
@@ -88,7 +88,7 @@ void ShadowShader::Initialize(LPCWSTR shaderPath)
             0}
     };
 
-    res = engine->device->CreateInputLayout(
+    res = EngineCore::instance()->device->CreateInputLayout(
         inputElements,
         3,
         vertexBC->GetBufferPointer(),

@@ -1,17 +1,16 @@
 #include "Mesh.h"
 #include "../Core/EngineCore.h"
 
-Mesh::Mesh(EngineCore* _engine, std::vector<DirectX::SimpleMath::Vector4> _vertices, std::vector<int> _indices)
+Mesh::Mesh( std::vector<DirectX::SimpleMath::Vector4> _vertices, std::vector<int> _indices)
 {
 
-    this->engine = _engine;
     this->vertices = _vertices;
     this->indices = _indices;
 
-    indexBuffer = std::make_shared<Buffer>(engine->device.Get());
+    indexBuffer = std::make_shared<Buffer>();
     indexBuffer->Initialize(indices);
 
-    vertexBuffer = std::make_shared<Buffer>(engine->device.Get());
+    vertexBuffer = std::make_shared<Buffer>();
     vertexBuffer->Initialize(vertices);
 }
 
@@ -21,5 +20,4 @@ Mesh::Mesh(const Mesh& mesh)
     this->indices = mesh.indices;
     this->vertexBuffer = mesh.vertexBuffer;
     this->indexBuffer = mesh.indexBuffer;
-    this->engine = mesh.engine;
 }

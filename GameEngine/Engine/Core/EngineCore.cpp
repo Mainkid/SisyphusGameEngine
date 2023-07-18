@@ -2,8 +2,8 @@
 
 EngineCore::EngineCore(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height)
 {
-	window = std::make_unique<DisplayWin32>(this, appName, hInstance, width, height);
-	wInput = std::make_unique<WinInput>(this);
+	window = std::make_unique<DisplayWin32>(appName, hInstance, width, height);
+	wInput = std::make_unique<WinInput>();
 }
 
 HWND EngineCore::GetWindowHWND()
@@ -82,12 +82,12 @@ void EngineCore::CreateDeviceAndSwapChain()
 
 void EngineCore::InitializeDirectX()
 {
-	window = std::make_unique<DisplayWin32>(this, L"Untitled", GetModuleHandle(nullptr), 800, 800);
-	wInput = std::make_unique<WinInput>(this);
-	cameraController = std::make_unique<CameraController>(this);
+	window = std::make_unique<DisplayWin32>( L"Untitled", GetModuleHandle(nullptr), 800, 800);
+	wInput = std::make_unique<WinInput>();
+	cameraController = std::make_unique<CameraController>();
 	CreateDeviceAndSwapChain();
 
-	scene = std::make_unique<Scene>(this);
+	scene = std::make_unique<Scene>();
 
 	D3D11_VIEWPORT viewport = {};
 	viewport.Width = static_cast<float>(800);

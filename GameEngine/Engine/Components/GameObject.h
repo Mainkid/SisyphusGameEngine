@@ -16,10 +16,8 @@ class GameObject
 
 public:
 	entt::entity id=entt::entity(1);
-	EngineCore* engine;
 
-	GameObject() = default;
-	GameObject(EngineCore* engine);
+	GameObject();
 	virtual void Initialize();
 	
 	entt::registry& GetRegistry();

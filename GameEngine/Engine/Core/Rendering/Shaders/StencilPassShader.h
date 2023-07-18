@@ -7,7 +7,7 @@ class EngineCore;
 class StencilPassShader : public Shader
 {
 public:
-    StencilPassShader(EngineCore* _engine);
+    StencilPassShader();
     void Initialize(LPCWSTR shaderPath) override;
 
     UINT strides[1]={48};

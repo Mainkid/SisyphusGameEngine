@@ -6,7 +6,7 @@ class EngineCore;
 class PointLightShader : public Shader
 {
 public:
-    PointLightShader(EngineCore* _engine);
+    PointLightShader();
     void Initialize(LPCWSTR shaderPath) override;
 
     UINT strides[1]={32};

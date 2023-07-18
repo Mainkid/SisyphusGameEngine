@@ -10,7 +10,7 @@ using namespace DirectX::SimpleMath;
 class Mesh
 {
 public:
-	Mesh(EngineCore* _engine, std::vector<DirectX::SimpleMath::Vector4> _vertices, std::vector<int> _indices);
+	Mesh(std::vector<DirectX::SimpleMath::Vector4> _vertices, std::vector<int> _indices);
 	Mesh(const Mesh& mesh);
 
 	~Mesh()
@@ -22,9 +22,6 @@ public:
 	std::vector<int> indices;
 	std::shared_ptr<Buffer> indexBuffer;
 	std::shared_ptr<Buffer> vertexBuffer;
-
-private:
-	EngineCore* engine;
 };
 
 

@@ -5,7 +5,7 @@
 class SpotLightShader : public Shader
 {
 public:
-    SpotLightShader(EngineCore* _engine);
+    SpotLightShader();
     void Initialize(LPCWSTR shaderPath) override;
 
     UINT strides[1]={32};

@@ -2,9 +2,9 @@
 #include "../../EngineCore.h"
 
 
-DirLightShader::DirLightShader(EngineCore* _engine)
+DirLightShader::DirLightShader()
 {
-    this->engine=_engine;
+
 }
 
 void DirLightShader::Initialize(LPCWSTR shaderPath)
@@ -31,7 +31,7 @@ void DirLightShader::Initialize(LPCWSTR shaderPath)
         // If there was  nothing in the error message then it simply could not find the shader file itself.
         else
         {
-            MessageBox(engine->window->GetHWND(), L"./Shaders/Racket.hlsl", L"Missing Shader File", MB_OK);
+            MessageBox(EngineCore::instance()->window->GetHWND(), L"./Shaders/Racket.hlsl", L"Missing Shader File", MB_OK);
         }
 
     } 
@@ -42,12 +42,12 @@ void DirLightShader::Initialize(LPCWSTR shaderPath)
     
 
 
-    res = engine->device->CreateVertexShader(
+    res = EngineCore::instance()->device->CreateVertexShader(
         this->vertexBC->GetBufferPointer(),
         this->vertexBC->GetBufferSize(),
         nullptr, this->vertexShader.GetAddressOf());
 
-    res = engine->device->CreatePixelShader(
+    res = EngineCore::instance()->device->CreatePixelShader(
         this->pixelBC->GetBufferPointer(),
         this->pixelBC->GetBufferSize(),
         nullptr, this->pixelShader.GetAddressOf());
@@ -72,7 +72,7 @@ void DirLightShader::Initialize(LPCWSTR shaderPath)
             0}
     };
 
-    res = engine->device->CreateInputLayout(
+    res = EngineCore::instance()->device->CreateInputLayout(
         inputElements,
         2,
         vertexBC->GetBufferPointer(),

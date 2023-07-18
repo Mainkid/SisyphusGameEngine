@@ -12,7 +12,7 @@ using namespace DirectX::SimpleMath;
 class LightComponent
 {
 public:
-    LightComponent(EngineCore* _engine, LightType _type);
+    LightComponent(LightType _type);
     void Initialize();
 
     std::vector<Vector4> GetFrustumCorners(const Matrix& view, const Matrix proj);
@@ -34,7 +34,6 @@ public:
     Matrix orthoMatrix;
 
     //std::shared_ptr<Model3D> aabb;
-    EngineCore* engine;
 
 
 };

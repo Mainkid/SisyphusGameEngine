@@ -56,6 +56,12 @@ public:
     unsigned int frameCount = 0;
     float deltaTime = 0;
 
+    static EngineCore* instance()
+    {
+        static EngineCore inst;
+        return &inst;
+    }
+
     EngineCore() = default;
     EngineCore(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height);
     ~EngineCore() {};

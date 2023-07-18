@@ -317,25 +317,25 @@ void RenderPipeline::Initialize()
 
 void RenderPipeline::CompileShaders()
 {
-    opaqueShader = std::make_shared<OpaqueShader>(this->engine);
+    opaqueShader = std::make_shared<OpaqueShader>();
     opaqueShader->Initialize(L"./Engine/Core/Rendering/Shaders/OpaqueShader.hlsl");
 
-    dirLightShader = std::make_shared<DirLightShader>(this->engine);
+    dirLightShader = std::make_shared<DirLightShader>();
     dirLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/LightShader.hlsl");
 
-    ambientLightShader = std::make_shared<AmbientLightShader>(this->engine);
+    ambientLightShader = std::make_shared<AmbientLightShader>();
     ambientLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/LightShader.hlsl");
 
-    pointLightShader = std::make_shared<PointLightShader>(this->engine);
+    pointLightShader = std::make_shared<PointLightShader>();
     pointLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/PointLightShader.hlsl");
 
-    spotLightShader = std::make_shared<SpotLightShader>(this->engine);
+    spotLightShader = std::make_shared<SpotLightShader>();
     spotLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/SpotLightShader.hlsl");
 
-    stencilPassShader = std::make_shared<StencilPassShader>(this->engine);
+    stencilPassShader = std::make_shared<StencilPassShader>();
     stencilPassShader->Initialize(L"./Engine/Core/Rendering/Shaders/StencilPassShader.hlsl");
 
-    shadowShader = std::make_shared<ShadowShader>(this->engine);
+    shadowShader = std::make_shared<ShadowShader>();
     shadowShader->Initialize(L"./Engine/Core/Rendering/Shaders/ShadowShader.hlsl");
 }
 

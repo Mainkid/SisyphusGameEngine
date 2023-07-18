@@ -2,12 +2,10 @@
 #include "../Core/EngineCore.h"
 
 
-LightComponent::LightComponent(EngineCore* _engine, LightType _type)
+LightComponent::LightComponent( LightType _type)
 {
     this->lightType = _type;
-    this->engine = _engine;
 }
-
 
 void LightComponent::Initialize()
 {
@@ -130,7 +128,7 @@ void LightComponent::GenerateOrthoMatrix(float width, float depthPlane, float ne
 void LightComponent::GenerateViewMatrix(Vector3 pos)
 {
     //Vector4 lookAt=Vector4(0,0,0,1.0f);
-    Vector3 tmp = Vector3(engine->cameraController->camera->GetForwardVector());
+    Vector3 tmp = Vector3(EngineCore::instance()->cameraController->camera->GetForwardVector());
     Vector4 lookAt = pos + Vector4(tmp.x, tmp.y, tmp.z, 1.0f);
     Vector4 up = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
     viewMatrix = DirectX::XMMatrixLookAtLH(pos, lookAt, up);

@@ -2,9 +2,9 @@
 #include "GameObject.h"
 
 
-GameObject::GameObject(EngineCore* _engine)
+GameObject::GameObject()
 {
-	this->engine = _engine;
+
 }
 
 void GameObject::Initialize()
@@ -15,7 +15,7 @@ void GameObject::Initialize()
 
 entt::registry& GameObject::GetRegistry()
 {
-	return engine->scene->registry;
+	return EngineCore::instance()->scene->registry;
 }
 
 

@@ -2,10 +2,10 @@
 #include "WinInput.h"
 #include "EngineCore.h"
 
-WinInput::WinInput(EngineCore* _engine)
+WinInput::WinInput()
 {
-	engineCore = _engine;
-	windowHWND = engineCore->window->GetHWND();
+
+	windowHWND = EngineCore::instance()->window->GetHWND();
 	//inputDevice = new InputDevice(_game);
 
 	keys = new std::unordered_set<Keys>();
@@ -65,7 +65,7 @@ bool WinInput::ProcessMessages()
 
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
-	while (PeekMessage(&msg, engineCore->window->GetHWND(), 0, 0, PM_REMOVE))
+	while (PeekMessage(&msg, EngineCore::instance()->window->GetHWND(), 0, 0, PM_REMOVE))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);

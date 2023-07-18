@@ -10,8 +10,8 @@ class EngineCore;
 class CameraController
 {
 public:
-    CameraController(EngineCore* _engine);
-    CameraController(std::unique_ptr<Camera>& cam, EngineCore* _engine);
+    CameraController();
+    CameraController(std::unique_ptr<Camera>& cam);
 
     DirectX::SimpleMath::Matrix GetViewMatrix();
 
@@ -22,8 +22,7 @@ public:
     void CameraMovement (float deltaSec);
     
 
-    EngineCore* engine;
-    std::unique_ptr<Camera> camera;
+    std::unique_ptr<Camera> camera; 
     float cameraSpeed = 2.0f;
     float arm=2.0f;
     float targetArm=2.0f;

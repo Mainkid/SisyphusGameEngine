@@ -13,11 +13,8 @@ class Scene
 public:
 	std::map<entt::entity,std::unique_ptr<GameObject>> gameObjects;
 	entt::registry registry;
-	EngineCore* engine;
-	
 
-	Scene() = default;
-	Scene(EngineCore* engine);
+	Scene();
 	~Scene() = default;
 	void Initialize();
 	void Update(float deltaSec);

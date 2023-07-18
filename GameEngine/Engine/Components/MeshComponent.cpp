@@ -1,19 +1,17 @@
 #include "MeshComponent.h"
 #include "../Core/EngineCore.h"
 
-MeshComponent::MeshComponent(EngineCore* _engine)
+MeshComponent::MeshComponent()
 {
     this->texturePath = L"Engine/Assets/DefaultTexture.png";
     this->modelPath = "Engine/Assets/trash2.obj";
-    this->engine = _engine;
     Initialize();
 }
 
-MeshComponent::MeshComponent(EngineCore* _engine,std::string& modelPath, LPCWSTR& texturePath)
+MeshComponent::MeshComponent(std::string& modelPath, LPCWSTR& texturePath)
 {
 	this->texturePath = texturePath;
 	this->modelPath = modelPath;
-    this->engine = _engine;
     Initialize();
 }
 
@@ -44,7 +42,7 @@ void MeshComponent::LoadTexture()
     sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
     sampDesc.MinLOD = 0;
     sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-    HRESULT hr = engine->device->CreateSamplerState(&sampDesc, this->samplerState.GetAddressOf()); //Create sampler state
+    HRESULT hr = EngineCore::instance()->device->CreateSamplerState(&sampDesc, this->samplerState.GetAddressOf()); //Create sampler state
     if (FAILED(hr))
     {
         std::cout << "Texture Loading Failed!" << std::endl;
@@ -53,7 +51,7 @@ void MeshComponent::LoadTexture()
     //D3D11_TEXTURE2D
     //hr=DirectX::CreateWICTextureFromFileEx(game->device.Get(),texturePath,2000000,D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE,0,0,DirectX::WIC_LOADER_FORCE_SRGB,nullptr,texture.GetAddressOf());
 
-    hr = DirectX::CreateWICTextureFromFile(engine->device.Get(), texturePath, nullptr, texture.GetAddressOf());
+    hr = DirectX::CreateWICTextureFromFile(EngineCore::instance()->device.Get(), texturePath, nullptr, texture.GetAddressOf());
     int q = 0;
 }
 
@@ -112,7 +110,7 @@ std::shared_ptr<Mesh> MeshComponent::ProcessMesh(aiMesh* mesh, const aiScene* sc
             indices.push_back(face.mIndices[j]);
     }
 
-    return  std::make_shared<Mesh>(engine,vertices,indices);
+    return  std::make_shared<Mesh>(vertices,indices);
 }
 
 void MeshComponent::Initialize()
@@ -122,6 +120,3 @@ void MeshComponent::Initialize()
 }
 
 //TODO: Убрать sampDesc в отдельный файл, чтобы можно было создавать текстурки быстрее и проще.
-//TODO: Добавить умный указатель в вектор Meshes (СДЕЛАТЬ УНИК ПТР ПОСТАРАТЬСЯ)
-//TODO: !!! Раскоментировать вектор мешей и вызов функций!!!!
-//TODO: !!! Обязательно нужно убать методы, сделать онли данные???

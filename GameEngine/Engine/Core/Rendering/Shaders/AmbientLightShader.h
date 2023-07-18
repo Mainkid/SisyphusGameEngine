@@ -4,7 +4,7 @@
 class AmbientLightShader :public Shader
 {
 public:
-    AmbientLightShader(EngineCore* _game);
+    AmbientLightShader();
     void Initialize(LPCWSTR shaderPath) override;
     
 };

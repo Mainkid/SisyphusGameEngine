@@ -22,9 +22,8 @@ class EngineCore;
 class MeshComponent
 {
 public:
-	MeshComponent() = default;
-	MeshComponent(EngineCore* _engine);
-	MeshComponent(EngineCore* _engine, std::string& modelPath, LPCWSTR& texturePath);
+	MeshComponent();
+	MeshComponent(std::string& modelPath, LPCWSTR& texturePath);
 	~MeshComponent() = default;
 	bool LoadModel();
 	void LoadTexture();
@@ -44,7 +43,6 @@ private:
 	
 	LPCWSTR texturePath;
 	std::string modelPath;
-	EngineCore* engine;
 	
 
 

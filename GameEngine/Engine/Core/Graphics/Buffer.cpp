@@ -3,15 +3,13 @@
 #include "../EngineCore.h"
 
 
-Buffer::Buffer(EngineCore* _engineCore)
+Buffer::Buffer()
 {
        
-    this->device=_engineCore->device.Get();
 }
 
 Buffer::Buffer(ID3D11Device* _device)
 {
-    this->device=_device;
 }
 
 
@@ -38,7 +36,7 @@ void Buffer::Initialize(std::vector<DirectX::SimpleMath::Vector4> points,D3D11_U
     size=sizeof(DirectX::XMFLOAT4) * points.size();
     //this->stride=stride;
     //this->offset=offset;
-    HRESULT res = device->CreateBuffer(&indexBufDesc, &indexData, buffer.GetAddressOf());
+    HRESULT res = EngineCore::instance()->device->CreateBuffer(&indexBufDesc, &indexData, buffer.GetAddressOf());
 }
 
 
@@ -62,7 +60,7 @@ void Buffer::Initialize(std::vector<int> points,D3D11_USAGE usage,
 
     size= points.size();
    
-    HRESULT res = device->CreateBuffer(&indexBufDesc, &indexData, buffer.GetAddressOf());
+    HRESULT res = EngineCore::instance()->device->CreateBuffer(&indexBufDesc, &indexData, buffer.GetAddressOf());
 }
 
 void  Buffer::Initialize(size_t structSize,D3D11_USAGE usage,
@@ -81,7 +79,7 @@ void  Buffer::Initialize(size_t structSize,D3D11_USAGE usage,
     size=structSize + (16 - structSize) % 16;
     //this->stride=stride;
     //this->offset=offset;
-    HRESULT res=device->CreateBuffer(&constantBufDesc, 0, buffer.GetAddressOf());
+    HRESULT res= EngineCore::instance()->device->CreateBuffer(&constantBufDesc, 0, buffer.GetAddressOf());
 }
 
 
@@ -103,9 +101,9 @@ void Buffer::Initialize(void* data, int _size,int dataStructureSize,bool isUAV)
     HRESULT res=0;
     size = _size;
     if (data!=nullptr)
-        res=device->CreateBuffer(&structuredBufDesc,&indexData, buffer.GetAddressOf());
+        res= EngineCore::instance()->device->CreateBuffer(&structuredBufDesc,&indexData, buffer.GetAddressOf());
     else
-        res=device->CreateBuffer(&structuredBufDesc,nullptr, buffer.GetAddressOf());
+        res= EngineCore::instance()->device->CreateBuffer(&structuredBufDesc,nullptr, buffer.GetAddressOf());
     int test=0;
     
 }
@@ -141,7 +139,7 @@ void Buffer::InitializeIndirect(int capacity)
     
     HRESULT res=0;
     size = sizeof(DrawArgs);
-     res=device->CreateBuffer(&structuredBufDesc,&indexData, buffer.GetAddressOf());
+     res= EngineCore::instance()->device->CreateBuffer(&structuredBufDesc,&indexData, buffer.GetAddressOf());
 
     int test=0;
     
@@ -161,7 +159,7 @@ void Buffer::InitializeCounterBuffer()
     
     HRESULT res=0;
     size = 1;
-    res=device->CreateBuffer(&structuredBufDesc,nullptr, buffer.GetAddressOf());
+    res= EngineCore::instance()->device->CreateBuffer(&structuredBufDesc,nullptr, buffer.GetAddressOf());
 
     int test=0;
 }
