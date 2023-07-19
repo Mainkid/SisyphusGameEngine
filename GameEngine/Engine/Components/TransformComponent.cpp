@@ -5,9 +5,12 @@ TransformComponent::TransformComponent(Vector3 pos, Vector3 rot, Vector3 scale)
     this->rotation = rot;
     this->scale = scale;
     this->position = pos;
+    UpdateScaleMatrix();
+    UpdateTranslationMatrix();
+    UpdateRotationMatrix();
 }
 
-Matrix& TransformComponent::ConstructTransformMatrix()
+Matrix TransformComponent::ConstructTransformMatrix()
 {
     Matrix result = scaleMatrix * rotationMatrix * translationMatrix;
     return result;
@@ -54,6 +57,7 @@ void TransformComponent::UpdateRotationMatrix()
 void TransformComponent::UpdateTranslationMatrix()
 {
     translationMatrix = DirectX::SimpleMath::Matrix::CreateTranslation(position);
+    
 }
 
 void TransformComponent::UpdateScaleMatrix()

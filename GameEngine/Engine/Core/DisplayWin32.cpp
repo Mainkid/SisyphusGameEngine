@@ -22,7 +22,7 @@ LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT umessage, WPARAM wparam, LPA
 	}
 }
 
-DisplayWin32::DisplayWin32(LPCWSTR applicationName, HINSTANCE hInstance,const int& screenHeight,const int& screenWidth)
+DisplayWin32::DisplayWin32(LPCWSTR applicationName, HINSTANCE hInstance,const int& screenWidth,const int& screenHeight)
 {
 
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
@@ -75,12 +75,12 @@ HWND DisplayWin32::GetHWND()
 	return hWnd;
 }
 
-int DisplayWin32::GetHeight()
+float DisplayWin32::GetHeight()
 {
 	return clientHeight;
 }
 
-int DisplayWin32::GetWidth()
+float DisplayWin32::GetWidth()
 {
 	return clientWidth;
 }

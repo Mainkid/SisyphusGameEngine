@@ -27,6 +27,7 @@ public:
 	~MeshComponent() = default;
 	bool LoadModel();
 	void LoadTexture();
+	void UpdateMesh(std::string modelPath= "Engine/Assets/trash2.obj", LPCWSTR texturePath= L"Engine/Assets/DefaultTexture.png");
 	void ProcessNode(aiNode* node, const aiScene* scene);
 	std::shared_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
 
@@ -44,7 +45,5 @@ private:
 	LPCWSTR texturePath;
 	std::string modelPath;
 	
-
-
 };
 

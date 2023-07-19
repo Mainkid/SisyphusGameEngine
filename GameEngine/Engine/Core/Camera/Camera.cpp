@@ -19,7 +19,7 @@ Camera::Camera()
 void Camera::SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ)
 {
     this->farZ=farZ;
-    float fovRadians = (fovDegrees / 360.0f) * DirectX::XM_2PI;
+        float fovRadians = (fovDegrees / 360.0f) * DirectX::XM_2PI;
     this->projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fovRadians,aspectRatio,nearZ,farZ);
 }
 

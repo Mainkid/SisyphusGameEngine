@@ -7,7 +7,7 @@
 CameraController::CameraController()
 {
     this->camera=std::make_unique<Camera>();
-    this->camera->SetProjectionValues(90, EngineCore::instance()->window->GetHeight() / EngineCore::instance()->window->GetWidth(), 0.1f, 100.0f);
+    this->camera->SetProjectionValues(90, EngineCore::instance()->window->GetWidth() / EngineCore::instance()->window->GetHeight(), 0.1f, 40.0f);
     EngineCore::instance()->wInput->RawOffsetEvent.AddRaw(this, &CameraController::RawInput);
 }
 
@@ -62,6 +62,16 @@ void CameraController::CameraMovement(float deltaSec)
     if (EngineCore::instance()->wInput->IsKeyDown(Keys::LeftShift))
     {
         this->camera->AdjustPosition(0.0f,-cameraSpeed*deltaSec,0.0f);
+    }
+    if (EngineCore::instance()->wInput->IsKeyDown(Keys::E))
+    {
+        for (auto& entity : EngineCore::instance()->scene->registry.view<LightComponent>())
+        {
+            if (EngineCore::instance()->scene->registry.get<LightComponent>(entity).lightType == Directional)
+            {
+                EngineCore::instance()->scene->registry.get<LightComponent>(entity).direction = camera->GetForwardVector();
+            }
+        }
     }
 }
 

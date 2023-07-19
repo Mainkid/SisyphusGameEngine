@@ -16,12 +16,12 @@ public:
 
 	~DisplayWin32();
 	HWND GetHWND();
-	int GetHeight();
-	int GetWidth();
+	float GetHeight();
+	float GetWidth();
 
 private:
-	int clientHeight;
-	int clientWidth;
+	float clientHeight;
+	float clientWidth;
 	HINSTANCE hInstance;
 	HWND hWnd;
 	WNDCLASSEX wc;

@@ -1,14 +1,7 @@
 #pragma once
 #include <vector>
 
-#include "Shaders/AmbientLightShader.h"
-#include "Shaders/DirLightShader.h"
-#include "Shaders/OpaqueShader.h"
-#include "Shaders/PointLightShader.h"
-#include "Shaders/SpotLightShader.h"
-#include "Shaders/StencilPassShader.h"
-#include "Shaders/PointLightShader.h"
-#include "Shaders/ShadowShader.h"
+#include "../Graphics/Shader.h"
 
 #include "../../Components/LightComponent.h"
 #include "../Graphics/ConstantBuffer.h"
@@ -36,16 +29,16 @@ public:
 
     ID3D11RenderTargetView* rtvs[5];
 
-    std::shared_ptr<OpaqueShader> opaqueShader;
-    std::shared_ptr<DirLightShader> dirLightShader;
-    std::shared_ptr<AmbientLightShader> ambientLightShader;
-    std::shared_ptr<PointLightShader> pointLightShader;
-    std::shared_ptr<StencilPassShader> stencilPassShader;
-    std::shared_ptr<SpotLightShader> spotLightShader;
-    std::shared_ptr<ShadowShader> shadowShader;
+    std::unique_ptr<Shader> opaqueShader;
+    std::unique_ptr<Shader> dirLightShader;
+    std::unique_ptr<Shader> ambientLightShader;
+    std::unique_ptr<Shader> pointLightShader;
+    std::unique_ptr<Shader> stencilPassShader;
+    std::unique_ptr<Shader> spotLightShader;
+    std::unique_ptr<Shader> shadowShader;
 
 
-    std::shared_ptr<GBuffer> gBuffer;
+    std::unique_ptr<GBuffer> gBuffer;
     Microsoft::WRL::ComPtr<ID3D11BlendState> lightBlendState;
     Microsoft::WRL::ComPtr<ID3D11BlendState> particlesBlendState;
     Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
@@ -70,10 +63,10 @@ public:
      */
 
 
-    std::shared_ptr<Buffer> indexQuadBuffer;
-    std::shared_ptr<Buffer> vertexQuadBuffer;
-    std::shared_ptr<Buffer> opaqueConstBuffer;
-    std::shared_ptr<Buffer> lightConstBuffer;
+    std::unique_ptr<Buffer> indexQuadBuffer;
+    std::unique_ptr<Buffer> vertexQuadBuffer;
+    std::unique_ptr<Buffer> opaqueConstBuffer;
+    std::unique_ptr<Buffer> lightConstBuffer;
 
     /*
      * Light AABB
@@ -97,7 +90,7 @@ public:
     ID3D11RenderTargetView* m_renderTargetView;
     ID3D11ShaderResourceView* m_shaderResourceView;
 
-    std::shared_ptr<Buffer> shadowConstBuffer;
+    std::unique_ptr<Buffer> shadowConstBuffer;
 
     //DebugWindow* debugWindow;
     //TextureShaderClass* textureShader;

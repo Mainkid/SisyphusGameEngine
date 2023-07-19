@@ -45,27 +45,6 @@
     <ClCompile Include="Engine\Core\Rendering\RenderPipeline.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Rendering\Shaders\AmbientLightShader.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Rendering\Shaders\DirLightShader.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Rendering\Shaders\OpaqueShader.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Rendering\Shaders\PointLightShader.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Rendering\Shaders\ShadowShader.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Rendering\Shaders\SpotLightShader.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Rendering\Shaders\StencilPassShader.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Core\Graphics\Buffer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -123,27 +102,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\Rendering\RenderPipeline.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Rendering\Shaders\AmbientLightShader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Rendering\Shaders\DirLightShader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Rendering\Shaders\OpaqueShader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Rendering\Shaders\PointLightShader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Rendering\Shaders\ShadowShader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Rendering\Shaders\SpotLightShader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Rendering\Shaders\StencilPassShader.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\Graphics\Buffer.h">

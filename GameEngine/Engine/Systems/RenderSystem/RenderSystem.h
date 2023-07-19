@@ -6,7 +6,14 @@ class RenderSystem
 {
 public:
 	RenderSystem();
-	void Initialize() {};
+	static RenderSystem* instance()
+	{
+		static RenderSystem inst;
+		return &inst;
+	}
+
+	void StartUp() {};
+	void ShutDown() {};
 	void Update(float deltaSec);
 	~RenderSystem()=default;
 

@@ -17,6 +17,7 @@
 #include "../Core/WinInput.h"
 #include "../Core/Rendering/RenderPipeline.h"
 #include "../Core/Camera/CameraController.h"
+#include "../Systems/RenderSystem/RenderSystem.h"
 #include "Scene/Scene.h"
 //#include "../"
 
@@ -71,6 +72,10 @@ public:
     void CreateDeviceAndSwapChain();
 
     void InitializeDirectX();
+
+    void StartUp();
+
+    void ShutDown();
 
     void StartUpdateLoop();
 

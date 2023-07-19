@@ -82,7 +82,7 @@ void EngineCore::CreateDeviceAndSwapChain()
 
 void EngineCore::InitializeDirectX()
 {
-	window = std::make_unique<DisplayWin32>( L"Untitled", GetModuleHandle(nullptr), 800, 800);
+	window = std::make_unique<DisplayWin32>( L"Untitled", GetModuleHandle(nullptr), 1280, 720);
 	wInput = std::make_unique<WinInput>();
 	cameraController = std::make_unique<CameraController>();
 	CreateDeviceAndSwapChain();
@@ -90,8 +90,8 @@ void EngineCore::InitializeDirectX()
 	scene = std::make_unique<Scene>();
 
 	D3D11_VIEWPORT viewport = {};
-	viewport.Width = static_cast<float>(800);
-	viewport.Height = static_cast<float>(800);
+	viewport.Width = static_cast<float>(1280);
+	viewport.Height = static_cast<float>(720);
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
 	viewport.MinDepth = 0;
@@ -151,6 +151,17 @@ void EngineCore::Update()
 
 	scene->Update(deltaTime);
 	cameraController->CameraMovement(deltaTime);
+}
+
+void EngineCore::StartUp()
+{
+	InitializeDirectX();
+	RenderSystem::instance()->StartUp();
+}
+
+void EngineCore::ShutDown()
+{
+	RenderSystem::instance()->ShutDown();
 }
 
 //TODO: ћб все-таки shared ptr у камера контроллера?

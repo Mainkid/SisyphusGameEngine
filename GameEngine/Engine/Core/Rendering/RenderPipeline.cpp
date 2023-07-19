@@ -29,24 +29,24 @@ void RenderPipeline::Initialize()
         Vector4(-1.0f,  1.0f, 0.0f, 1.0f), Vector4(0.0f, 0.0f,0.0f,1.0f)
         };
 
-        this->indexQuadBuffer = std::make_shared<Buffer>(engine->device.Get());
+        this->indexQuadBuffer = std::make_unique<Buffer>(engine->device.Get());
         indexQuadBuffer->Initialize(quadIndex);
 
-        this->vertexQuadBuffer = std::make_shared<Buffer>(engine->device.Get());
+        this->vertexQuadBuffer = std::make_unique<Buffer>(engine->device.Get());
         vertexQuadBuffer->Initialize(quadCoords);
     }
 
 
-    opaqueConstBuffer = std::make_shared<Buffer>(engine->device.Get());
+    opaqueConstBuffer = std::make_unique<Buffer>(engine->device.Get());
     opaqueConstBuffer->Initialize(sizeof(CB_BaseBuffer));
 
-    lightConstBuffer = std::make_shared<Buffer>(engine->device.Get());
+    lightConstBuffer = std::make_unique<Buffer>(engine->device.Get());
     lightConstBuffer->Initialize(sizeof(CB_LightBuffer));
 
-    shadowConstBuffer = std::make_shared<Buffer>(engine->device.Get());
+    shadowConstBuffer = std::make_unique<Buffer>(engine->device.Get());
     shadowConstBuffer->Initialize(sizeof(CB_ShadowBuffer));
 
-    gBuffer = std::make_shared<GBuffer>(engine->device);
+    gBuffer = std::make_unique<GBuffer>(engine->device);
     gBuffer->Initialize(engine->window->GetWidth(), engine->window->GetHeight());
 
     rtvs[0] = gBuffer->normalRTV.Get();
@@ -317,26 +317,33 @@ void RenderPipeline::Initialize()
 
 void RenderPipeline::CompileShaders()
 {
-    opaqueShader = std::make_shared<OpaqueShader>();
-    opaqueShader->Initialize(L"./Engine/Core/Rendering/Shaders/OpaqueShader.hlsl");
+    opaqueShader = std::make_unique<Shader>();
+    opaqueShader->Initialize(L"./Engine/Core/Rendering/Shaders/OpaqueShader.hlsl",
+        COMPILE_VERTEX|COMPILE_PIXEL,USE_POSITION|USE_NORMAL|USE_COLOR);
 
-    dirLightShader = std::make_shared<DirLightShader>();
-    dirLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/LightShader.hlsl");
+    dirLightShader = std::make_unique<Shader>();
+    dirLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/LightShader.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL,USE_POSITION|USE_COLOR,"VSMain","PS_Directional");
 
-    ambientLightShader = std::make_shared<AmbientLightShader>();
-    ambientLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/LightShader.hlsl");
+    ambientLightShader = std::make_unique<Shader>();
+    ambientLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/LightShader.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VSMain", "PS_Ambient");
 
-    pointLightShader = std::make_shared<PointLightShader>();
-    pointLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/PointLightShader.hlsl");
+    pointLightShader = std::make_unique<Shader>();
+    pointLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/PointLightShader.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VSMain", "PS_PointLight");
 
-    spotLightShader = std::make_shared<SpotLightShader>();
-    spotLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/SpotLightShader.hlsl");
+    spotLightShader = std::make_unique<Shader>();
+    spotLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/SpotLightShader.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VSMain", "PS_SpotLight");
 
-    stencilPassShader = std::make_shared<StencilPassShader>();
-    stencilPassShader->Initialize(L"./Engine/Core/Rendering/Shaders/StencilPassShader.hlsl");
+    stencilPassShader = std::make_unique<Shader>();
+    stencilPassShader->Initialize(L"./Engine/Core/Rendering/Shaders/StencilPassShader.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR|USE_NORMAL);
 
-    shadowShader = std::make_shared<ShadowShader>();
-    shadowShader->Initialize(L"./Engine/Core/Rendering/Shaders/ShadowShader.hlsl");
+    shadowShader = std::make_unique<Shader>();
+    shadowShader->Initialize(L"./Engine/Core/Rendering/Shaders/ShadowShader.hlsl",
+        COMPILE_VERTEX | COMPILE_GEOM, USE_POSITION | USE_COLOR | USE_NORMAL,"DepthVertexShader");
 }
 
 void RenderPipeline::Render()

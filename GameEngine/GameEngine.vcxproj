@@ -148,13 +148,6 @@
     <ClCompile Include="Engine\Core\Graphics\Buffer.cpp" />
     <ClCompile Include="Engine\Core\Graphics\Shader.cpp" />
     <ClCompile Include="Engine\Core\Rendering\GBuffer.cpp" />
-    <ClCompile Include="Engine\Core\Rendering\Shaders\AmbientLightShader.cpp" />
-    <ClCompile Include="Engine\Core\Rendering\Shaders\DirLightShader.cpp" />
-    <ClCompile Include="Engine\Core\Rendering\Shaders\OpaqueShader.cpp" />
-    <ClCompile Include="Engine\Core\Rendering\Shaders\PointLightShader.cpp" />
-    <ClCompile Include="Engine\Core\Rendering\Shaders\ShadowShader.cpp" />
-    <ClCompile Include="Engine\Core\Rendering\Shaders\SpotLightShader.cpp" />
-    <ClCompile Include="Engine\Core\Rendering\Shaders\StencilPassShader.cpp" />
     <ClCompile Include="Engine\Core\WinInput.cpp" />
     <ClCompile Include="Engine\GameEngine.cpp" />
     <ClCompile Include="Engine\Components\GameObject.cpp" />
@@ -184,13 +177,6 @@
     <ClInclude Include="Engine\Core\Rendering\GBuffer.h" />
     <ClInclude Include="Engine\Core\Rendering\Lights\LightData.h" />
     <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h" />
-    <ClInclude Include="Engine\Core\Rendering\Shaders\AmbientLightShader.h" />
-    <ClInclude Include="Engine\Core\Rendering\Shaders\DirLightShader.h" />
-    <ClInclude Include="Engine\Core\Rendering\Shaders\OpaqueShader.h" />
-    <ClInclude Include="Engine\Core\Rendering\Shaders\PointLightShader.h" />
-    <ClInclude Include="Engine\Core\Rendering\Shaders\ShadowShader.h" />
-    <ClInclude Include="Engine\Core\Rendering\Shaders\SpotLightShader.h" />
-    <ClInclude Include="Engine\Core\Rendering\Shaders\StencilPassShader.h" />
     <ClInclude Include="Engine\Core\WinInput.h" />
     <ClInclude Include="Engine\Core\Rendering\RenderPipeline.h" />
     <ClInclude Include="Engine\DirectXSDK\entt\entt.hpp" />

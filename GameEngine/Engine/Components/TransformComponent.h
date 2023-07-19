@@ -12,7 +12,7 @@ public:
 	TransformComponent() = default;
 	TransformComponent(Vector3 pos, Vector3 rot, Vector3 scale);
 	TransformComponent(const TransformComponent& component) = default;
-	Matrix& ConstructTransformMatrix();
+	Matrix ConstructTransformMatrix();
 	void Initialize() {};
 
 	Vector3 GetPosition();

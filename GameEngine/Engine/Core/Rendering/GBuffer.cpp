@@ -6,7 +6,7 @@ GBuffer::GBuffer(Microsoft::WRL::ComPtr<ID3D11Device> _device)
     this->device = _device;
 }
 
-void GBuffer::Initialize(int height, int width)
+void GBuffer::Initialize(int width, int height)
 {
     D3D11_TEXTURE2D_DESC textureDesc;
     ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE2D_DESC));

@@ -13,13 +13,19 @@
 #define COMPILE_GEOM 4
 #define COMPILE_COMPUTE 8
 
+#define USE_POSITION 1
+#define USE_COLOR 2
+#define USE_NORMAL 4
+
 class EngineCore;
 
 class Shader 
 {
 public:
     
-    virtual void Initialize(LPCWSTR shaderPath){};
+    void Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned int uniform_flags,
+        LPCSTR v_entryPoint="VSMain",LPCSTR p_entryPoint="PSMain",LPCSTR g_entryPoint="GSMain",
+        LPCSTR c_entryPoint="CSMain");
     
 
 	

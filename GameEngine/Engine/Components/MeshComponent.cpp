@@ -55,6 +55,15 @@ void MeshComponent::LoadTexture()
     int q = 0;
 }
 
+void MeshComponent::UpdateMesh(std::string _modelPath, LPCWSTR _texturePath)
+{
+    meshes.clear();
+    this->texturePath = _texturePath;
+    this->modelPath = _modelPath;
+    LoadModel();
+    LoadTexture();
+}
+
 void MeshComponent::ProcessNode(aiNode* node, const aiScene* scene)
 {
     for (UINT i = 0; i < node->mNumMeshes; i++)
