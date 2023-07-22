@@ -17,6 +17,7 @@
 #include "../Core/WinInput.h"
 #include "../Core/Rendering/RenderPipeline.h"
 #include "../Core/Camera/CameraController.h"
+#include "../Core/HUD/Hud.h"
 #include "../Systems/RenderSystem/RenderSystem.h"
 #include "Scene/Scene.h"
 //#include "../"
@@ -42,16 +43,14 @@ public:
     ComPtr<ID3D11DeviceContext> context;
     ComPtr <IDXGISwapChain> swapChain;
     ComPtr<ID3D11RenderTargetView> rtv;
-    ComPtr < ID3D11Texture2D> backTex;
-    ComPtr < ID3D11RasterizerState> rastState;
+    ComPtr <ID3D11Texture2D> backTex;
+    ComPtr <ID3D11RasterizerState> rastState;
     ComPtr <ID3D11Texture2D> depthStencilBuffer;
     ComPtr <ID3D11DepthStencilView> depthStencilView;
     ComPtr <ID3D11DepthStencilState> depthStencilState;
-
     std::unique_ptr<Scene> scene;
+    std::unique_ptr<Hud> hud;
     
-
-    //std::map<
 
     float totalTime = 0;
     unsigned int frameCount = 0;

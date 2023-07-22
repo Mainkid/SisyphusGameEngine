@@ -169,6 +169,13 @@ bool WinInput::ProcessMessages()
 
 void WinInput::GetInput()
 {
+	//Input of ImGUI
+	MSG msg;
+	while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE))
+	{
+		::TranslateMessage(&msg);
+		::DispatchMessage(&msg);
+	}
 	rawOffset.x = 0;
 	rawOffset.y = 0;
 }

@@ -2,8 +2,13 @@
 #include "Components/GameObject.h"
 #include "Core/EngineCore.h"
 
+
 int main()
 {
+    
+
+
+
     //EngineCore* engine = new EngineCore();
     EngineCore::instance()->StartUp();
     GameObject* _go = EngineCore::instance()->scene->AddGameObject();
@@ -23,6 +28,7 @@ int main()
     auto res= EngineCore::instance()->scene->DestroyGameObject(_go2);
     _go2 = EngineCore::instance()->scene->AddGameObject();
     //engine->scene->Initialize();
+
     
     EngineCore::instance()->StartUpdateLoop();
 

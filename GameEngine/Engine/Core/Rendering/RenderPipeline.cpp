@@ -364,7 +364,7 @@ void RenderPipeline::Render()
     LightPass();
     ParticlePass();
 
-    engine->swapChain->Present(1, 0);
+    
     engine->context->ClearState();
 }
 

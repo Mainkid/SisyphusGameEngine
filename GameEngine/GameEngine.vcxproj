@@ -149,6 +149,13 @@
     <ClCompile Include="Engine\Core\Graphics\Shader.cpp" />
     <ClCompile Include="Engine\Core\Rendering\GBuffer.cpp" />
     <ClCompile Include="Engine\Core\WinInput.cpp" />
+    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui.cpp" />
+    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Engine\GameEngine.cpp" />
     <ClCompile Include="Engine\Components\GameObject.cpp" />
     <ClCompile Include="Engine\Components\TransformComponent.cpp" />
@@ -158,6 +165,9 @@
     <ClCompile Include="Engine\Core\Scene\Scene.cpp" />
     <ClCompile Include="Engine\Systems\RenderSystem\RenderSystem.cpp" />
     <ClCompile Include="Engine\Components\LightComponent.cpp" />
+    <ClCompile Include="Engine\Core\HUD\Hud.cpp" />
+    <ClCompile Include="Engine\Core\HUD\Widget.cpp" />
+    <ClCompile Include="Engine\Core\HUD\Widgets\ViewportWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Core\Camera\Camera.h" />
@@ -180,10 +190,21 @@
     <ClInclude Include="Engine\Core\WinInput.h" />
     <ClInclude Include="Engine\Core\Rendering\RenderPipeline.h" />
     <ClInclude Include="Engine\DirectXSDK\entt\entt.hpp" />
+    <ClInclude Include="Engine\DirectXSDK\ImGui\imconfig.h" />
+    <ClInclude Include="Engine\DirectXSDK\ImGui\imgui.h" />
+    <ClInclude Include="Engine\DirectXSDK\ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="Engine\DirectXSDK\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="Engine\DirectXSDK\ImGui\imgui_internal.h" />
+    <ClInclude Include="Engine\DirectXSDK\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="Engine\DirectXSDK\ImGui\imstb_textedit.h" />
+    <ClInclude Include="Engine\DirectXSDK\ImGui\imstb_truetype.h" />
     <ClInclude Include="Engine\Systems\SystemsEnum.h" />
     <ClInclude Include="Engine\Core\Scene\Scene.h" />
     <ClInclude Include="Engine\Systems\RenderSystem\RenderSystem.h" />
     <ClInclude Include="Engine\Components\LightComponent.h" />
+    <ClInclude Include="Engine\Core\HUD\Hud.h" />
+    <ClInclude Include="Engine\Core\HUD\Widget.h" />
+    <ClInclude Include="Engine\Core\HUD\Widgets\ViewportWidget.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Core\Rendering\Shaders\LightShader.hlsl">
@@ -225,6 +246,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <None Include="Engine\DirectXSDK\ImGui\.editorconfig" />
+    <None Include="Engine\DirectXSDK\ImGui\.gitattributes" />
+    <None Include="Engine\DirectXSDK\ImGui\.gitignore" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -100,7 +100,8 @@ void EngineCore::InitializeDirectX()
 	context->RSSetViewports(1, &viewport);
 
 	renderPipeline = std::make_unique<RenderPipeline>(this);
-	renderPipeline->Initialize();
+	hud = std::make_unique<Hud>();
+	
 
 }
 
@@ -126,6 +127,9 @@ void EngineCore::GetInput()
 void EngineCore::Render()
 {
 	renderPipeline->Render();
+	hud->Render();
+	swapChain->Present(1, 0);
+	
 }
 
 void EngineCore::Update()
@@ -157,6 +161,9 @@ void EngineCore::StartUp()
 {
 	InitializeDirectX();
 	RenderSystem::instance()->StartUp();
+	renderPipeline->Initialize();
+	hud->Initialize();
+
 }
 
 void EngineCore::ShutDown()
