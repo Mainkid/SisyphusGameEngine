@@ -31,6 +31,11 @@ void EngineCore::CreateDeviceAndSwapChain()
 	swapDesc.SampleDesc.Count = 1;
 	swapDesc.SampleDesc.Quality = 0;
 
+	
+
+
+	D3D11_TEXTURE2D_DESC textureDesc;
+	ZeroMemory(&textureDesc, sizeof(textureDesc));
 
 
 	D3D_FEATURE_LEVEL featureLevel[] = { D3D_FEATURE_LEVEL_11_1 };
@@ -98,7 +103,7 @@ void EngineCore::InitializeDirectX()
 	viewport.MaxDepth = 1.0f;
 
 	context->RSSetViewports(1, &viewport);
-
+	renderTarget = std::make_unique<RenderTarget>();
 	renderPipeline = std::make_unique<RenderPipeline>(this);
 	hud = std::make_unique<Hud>();
 	
@@ -110,7 +115,6 @@ void EngineCore::StartUpdateLoop()
 	PrevTime = std::chrono::steady_clock::now();
 
 	while (wInput->ProcessMessages()) {
-
 
 		Update();
 		GetInput();
@@ -161,8 +165,10 @@ void EngineCore::StartUp()
 {
 	InitializeDirectX();
 	RenderSystem::instance()->StartUp();
+	renderTarget->Initialize(window->GetWidth(),window->GetHeight());
 	renderPipeline->Initialize();
 	hud->Initialize();
+	cameraController->Initialize();
 
 }
 

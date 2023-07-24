@@ -96,10 +96,19 @@
     <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_widgets.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Core\HUD\Widgets\ViewportWidget.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Core\Rendering\RenderTarget.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
     <ClCompile Include="Engine\Core\HUD\Widget.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\HUD\Widgets\ViewportWidget.cpp">
+    <ClCompile Include="Engine\Core\HUD\Widgets\HierarchyWidget.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Core\HUD\Widgets\ContentBrowser.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -207,6 +216,18 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\HUD\Widgets\ViewportWidget.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\Rendering\RenderTarget.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Downloads\stb_image.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\HUD\Widgets\HierarchyWidget.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\HUD\Widgets\ContentBrowser.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

@@ -19,6 +19,7 @@
 #include "../Core/Camera/CameraController.h"
 #include "../Core/HUD/Hud.h"
 #include "../Systems/RenderSystem/RenderSystem.h"
+#include "../Core/Rendering/RenderTarget.h"
 #include "Scene/Scene.h"
 //#include "../"
 
@@ -38,6 +39,7 @@ public:
     std::unique_ptr<DisplayWin32> window;
     std::unique_ptr<RenderPipeline> renderPipeline;
     std::unique_ptr<CameraController> cameraController;
+    std::unique_ptr<RenderTarget> renderTarget;
     std::chrono::time_point<std::chrono::steady_clock> PrevTime;
     ComPtr<ID3D11Device> device;
     ComPtr<ID3D11DeviceContext> context;

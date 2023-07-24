@@ -3,6 +3,9 @@
 #include <WinUser.h>
 #include <iostream>
 #include "../DirectXSDK/ImGui/imgui_impl_win32.h"
+#include "../DirectXSDK/ImGui/imgui.h"
+#include "../DirectXSDK/ImGui/imgui_impl_dx11.h"
+
 
 
 
@@ -19,8 +22,10 @@ public:
 	HWND GetHWND();
 	float GetHeight();
 	float GetWidth();
+	void HandleResize(int width, int height);
 
 private:
+	
 	float clientHeight;
 	float clientWidth;
 	HINSTANCE hInstance;

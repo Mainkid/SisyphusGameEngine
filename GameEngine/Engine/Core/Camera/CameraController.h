@@ -13,13 +13,16 @@ public:
     CameraController();
     CameraController(std::unique_ptr<Camera>& cam);
 
-    DirectX::SimpleMath::Matrix GetViewMatrix();
 
+    DirectX::SimpleMath::Matrix GetViewMatrix();
     DirectX::SimpleMath::Matrix GetProjectionMatrix();
 
+    void Initialize();
     void RawInput(POINT p);
 
     void CameraMovement (float deltaSec);
+
+    void UpdateAspectRatio(float aspectRatio);
     
 
     std::unique_ptr<Camera> camera; 

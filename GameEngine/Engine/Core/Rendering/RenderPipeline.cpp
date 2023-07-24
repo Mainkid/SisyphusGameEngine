@@ -143,7 +143,8 @@ void RenderPipeline::Initialize()
     rtbd.DestBlend = D3D11_BLEND_ONE;
     rtbd.BlendOp = D3D11_BLEND_OP_ADD;
     rtbd.SrcBlendAlpha = D3D11_BLEND_ZERO;
-    rtbd.DestBlendAlpha = D3D11_BLEND_ZERO;
+    //!!!! ???
+    rtbd.DestBlendAlpha = D3D11_BLEND_ONE;
     rtbd.BlendOpAlpha = D3D11_BLEND_OP_ADD;
     rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
@@ -365,7 +366,9 @@ void RenderPipeline::Render()
     ParticlePass();
 
     
+    
     engine->context->ClearState();
+    engine->context->OMSetRenderTargets(1, engine->rtv.GetAddressOf(), engine->depthStencilView.Get());
 }
 
 void RenderPipeline::ShadowPass()
@@ -547,7 +550,8 @@ void RenderPipeline::LightPass()
     float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
     ID3D11ShaderResourceView* resources[] = { gBuffer->diffuseSRV.Get(),gBuffer->normalSRV.Get(),gBuffer->positionSRV.Get(),gBuffer->depthSRV.Get(),gBuffer->specularSRV.Get() };
-    engine->context->ClearRenderTargetView(engine->rtv.Get(), bgColor);
+    //engine->context->ClearRenderTargetView(engine->rtv.Get(), bgColor);
+    engine->renderTarget->ClearRenderTarget(engine->depthStencilView.Get());
     UINT strides[1] = { 32 };
     UINT offsets[1] = { 0 };
 
@@ -632,7 +636,8 @@ void RenderPipeline::LightPass()
         engine->context->PSSetSamplers(0, 1, samplerState.GetAddressOf());
         engine->context->PSSetSamplers(1, 1, samplerDepthState.GetAddressOf());
 
-        engine->context->OMSetRenderTargets(1, engine->rtv.GetAddressOf(), engine->depthStencilView.Get());
+        //engine->context->OMSetRenderTargets(1, engine->rtv.GetAddressOf(), engine->depthStencilView.Get());
+        engine->renderTarget->SetRenderTarget(engine->depthStencilView.Get());
         engine->context->PSSetShaderResources(0, 5, resources);
 
         if (light.lightType == LightType::Ambient || light.lightType == LightType::Directional)

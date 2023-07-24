@@ -1,20 +1,31 @@
 #include "DisplayWin32.h"
-
 #include "EngineCore.h"
+
+static bool isInitialized = false;
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lparam);
 LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam))
 		return true;
-
+	UINT g_ResizeWidth;
+	UINT g_ResizeHeight;
 	switch (umessage)
 	{
 	case WM_SIZE:
 		if (wparam == SIZE_MINIMIZED)
 			return 0;
-		//g_ResizeWidth = (UINT)LOWORD(lParam); // Queue resize
-		//g_ResizeHeight = (UINT)HIWORD(lParam);
+		//g_ResizeWidth = (UINT)LOWORD(lparam); // Queue resize
+		//g_ResizeHeight = (UINT)HIWORD(lparam);
+		//if (isInitialized)
+		//{
+		//	EngineCore::instance()->window->HandleResize(g_ResizeWidth, g_ResizeHeight);
+		//	ImGui::GetIO().DisplaySize = ImVec2(g_ResizeWidth, g_ResizeHeight);
+		//}
+		//else
+		//	isInitialized = true;
+		
+		
 		return 0;
 	case WM_SYSCOMMAND:
 		if ((wparam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
@@ -107,4 +118,10 @@ float DisplayWin32::GetHeight()
 float DisplayWin32::GetWidth()
 {
 	return clientWidth;
+}
+
+void DisplayWin32::HandleResize(int width, int height)
+{
+	this->clientHeight = height;
+	this->clientWidth = width;
 }

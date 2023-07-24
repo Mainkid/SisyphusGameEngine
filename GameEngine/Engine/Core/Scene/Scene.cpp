@@ -46,6 +46,16 @@ GameObject* Scene::AddLight(LightType _lightType)
 
 bool Scene::DestroyGameObject(entt::entity _id)
 {
+	if (gameObjects[_id]->childrenObjects.size() > 0)
+	{
+		for (auto childID : gameObjects[_id]->childrenObjects)
+			DestroyGameObject(childID);
+	}
+
+	if (gameObjects[_id]->hasParent)
+	{
+		RemoveChild(gameObjects[_id]->parentObject, _id);
+	}
 	
 	if (gameObjects.count(_id))
 	{
@@ -59,4 +69,66 @@ bool Scene::DestroyGameObject(entt::entity _id)
 bool Scene::DestroyGameObject(GameObject* _gameObject)
 {
 	return DestroyGameObject(_gameObject->id);
+}
+
+void Scene::SetParent(GameObject* sourceGameObject, GameObject* parentGameObject)
+{
+	if (sourceGameObject->hasParent)
+		gameObjects[sourceGameObject->parentObject]->RemoveChild(sourceGameObject->id);
+
+	if (parentGameObject)
+	{
+		sourceGameObject->hasParent = true;
+		sourceGameObject->parentObject = parentGameObject->id;
+
+		parentGameObject->AddChild(sourceGameObject->id);
+	}
+	else
+	{
+		sourceGameObject->hasParent = false;
+	}
+}
+
+void Scene::SetParent(entt::entity sourceGameObject, entt::entity parentGameObject)
+{
+	if (parentGameObject == entt::null)
+		SetParent(gameObjects[sourceGameObject].get(), nullptr);
+	else if (!HasHierarchyCycles(sourceGameObject,parentGameObject))
+		SetParent(gameObjects[sourceGameObject].get(), gameObjects[parentGameObject].get());
+}
+
+
+
+void Scene::AddChild(GameObject* parentGameObject, GameObject* childGameObject)
+{
+	SetParent(childGameObject, parentGameObject);
+}
+
+void Scene::AddChild(entt::entity parentGameObject, entt::entity childGameObject)
+{
+	SetParent(gameObjects[childGameObject].get(), gameObjects[parentGameObject].get());
+}
+
+void Scene::RemoveChild(GameObject* parentGameObject, GameObject* childGameObject)
+{
+	childGameObject->hasParent = false;
+	parentGameObject->RemoveChild(childGameObject->id);
+}
+
+void Scene::RemoveChild(entt::entity parentGameObject, entt::entity childGameObject)
+{
+	RemoveChild(gameObjects[parentGameObject].get(), gameObjects[childGameObject].get());
+}
+
+bool Scene::HasHierarchyCycles(entt::entity sourceGameObject, entt::entity parentGameObject)
+{
+	if (parentGameObject == sourceGameObject)
+		return true;
+
+	bool res = false;
+	for (auto& gameObject : gameObjects[sourceGameObject]->childrenObjects)
+	{
+		res = res || HasHierarchyCycles(gameObject, parentGameObject);
+	}
+	return res;
 }
