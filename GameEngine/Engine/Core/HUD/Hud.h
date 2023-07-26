@@ -17,6 +17,7 @@ class ViewportWidget;
 class Hud
 {
 	friend class ViewportWidget;
+	friend class HierarchyWidget;
 
 public:
 	Hud() = default;
@@ -26,10 +27,13 @@ public:
 
 	std::string GetFocusedWindowName();
 	void SetFocusedWindowName(std::string _str); //TODO: Инкапсулировать!
+	void UpdateSelectedEntity(entt::entity);
 
 	MulticastDelegate<float> ViewportResizedEvent;
+	MulticastDelegate<entt::entity> UpdateSelectedEntityEvent;
 private:
 	std::set<std::unique_ptr<Widget>> widgets;
 	std::string focusedWindowName="NONE";
+	entt::entity selectedEntityID = entt::null;
 };
 

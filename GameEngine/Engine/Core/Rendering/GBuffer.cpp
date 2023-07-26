@@ -8,6 +8,8 @@ GBuffer::GBuffer(Microsoft::WRL::ComPtr<ID3D11Device> _device)
 
 void GBuffer::Initialize(int width, int height)
 {
+    this->t_height = height;
+    this->t_width = width;
     D3D11_TEXTURE2D_DESC textureDesc;
     ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE2D_DESC));
     textureDesc.Width = width;
@@ -28,6 +30,12 @@ void GBuffer::Initialize(int width, int height)
     res = device->CreateTexture2D(&textureDesc, nullptr, depthTexture.GetAddressOf());
     res = device->CreateTexture2D(&textureDesc, nullptr, specularTexture.GetAddressOf());
 
+    textureDesc.BindFlags = 0;
+    textureDesc.Usage = D3D11_USAGE_STAGING;
+    textureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+    res = device->CreateTexture2D(&textureDesc, nullptr, depthCpuTexture.GetAddressOf());
+
     
     res = device->CreateRenderTargetView(diffuseTexture.Get(), nullptr, diffuseRTV.GetAddressOf());
     res = device->CreateRenderTargetView(normalTexture.Get(),nullptr,normalRTV.GetAddressOf());
@@ -47,6 +55,9 @@ void GBuffer::Initialize(int width, int height)
     res = device->CreateShaderResourceView(positionTexture.Get(), &shaderResourceViewDesc1, positionSRV.GetAddressOf());
     res = device->CreateShaderResourceView(depthTexture.Get(), &shaderResourceViewDesc1, depthSRV.GetAddressOf());
     res = device->CreateShaderResourceView(specularTexture.Get(), &shaderResourceViewDesc1, specularSRV.GetAddressOf());
+
+    //res = device->CreateShaderResourceView(depthCpuTexture.Get(), &shaderResourceViewDesc1, depthCpuSRV.GetAddressOf());
+    res = 0;
 }
 
 

@@ -11,6 +11,13 @@ public:
     DirectX::SimpleMath::Matrix worldViewInverseTranspose;
 };
 
+class CB_BaseEditorBuffer
+{
+public:
+    CB_BaseBuffer baseData;
+    uint32_t instanseID;
+};
+
 class CB_LightBuffer
 {
 public:

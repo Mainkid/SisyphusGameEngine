@@ -5,11 +5,12 @@ cbuffer mycBuffer : register(b0)
     row_major float4x4 worldView;
     row_major float4x4 worldViewProj;
     row_major float4x4 worldViewInverseT;
-    
+    uint instanceID;
 
 };
 
 Texture2D objTexture : TEXTURE : register(t0);
+Texture2D objTexture2 : TEXTURE: register(t1);
 SamplerState objSamplerState : SAMPLER : register(s0);
 
 struct VS_IN
@@ -33,7 +34,7 @@ struct GBuffer
     float4 Normals : SV_Target0;
     float4 DiffuseSpec : SV_Target1;
     float4 WorldPos : SV_Target2;
-    float4 Depth : SV_Target3;
+    float4 InstanceIDs : SV_Target3;
     float4 Specular : SV_Target3;
 };
 
@@ -64,8 +65,8 @@ GBuffer PSMain(PS_IN input) : SV_Target
     output.Normals = float4(input.normals.xyz/2 + float3(0.5f, 0.5f, 0.5f),1.0f);
     output.WorldPos = float4(input.posW.xyz, 1.0f);
     output.DiffuseSpec = float4(pixelColor, 1.0f);
-    //output.Depth = float4(input.posH.z / input.posH.w, input.posH.z / input.posH.w, input.posH.z / input.posH.w,1.0f);
-    output.Depth = float4(input.posH.z / input.posH.w, input.posH.z / input.posH.w, input.posH.z / input.posH.w, 1.0f);
+    output.InstanceIDs = float4(instanceID, 4,5,1.0f);
+    //output.Depth = float4(input.posH.z / input.posH.w, input.posH.z / input.posH.w, input.posH.z / input.posH.w, 1.0f);
     output.Specular = float4(0.5f, 0.5f, 0.5f, 50.0f);
     
     

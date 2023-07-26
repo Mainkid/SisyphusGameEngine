@@ -2,7 +2,6 @@
 #include <vector>
 
 #include "../Graphics/Shader.h"
-
 #include "../../Components/LightComponent.h"
 #include "../Graphics/ConstantBuffer.h"
 #include "GBuffer.h"
@@ -22,7 +21,8 @@ public:
     void LightPass();
     void ParticlePass();
     //void GetBoundingBoxForLight(BaseLight* light);
-
+    float GetPixelValue(int clickX, int clickY);
+    DirectX::SimpleMath::Vector2 GetRtvResolution();
 
 
     //std::vector<BaseLight*> baseLights;
@@ -49,6 +49,9 @@ public:
     Microsoft::WRL::ComPtr<ID3D11DepthStencilState> finalPassStencilState;
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> cullFrontRS;
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> cullBackRS;
+
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> entityIdTexture;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> entityIdSRV;
 
 
     EngineCore* engine;
@@ -89,6 +92,8 @@ public:
     ID3D11Texture2D* m_renderTargetTexture;
     ID3D11RenderTargetView* m_renderTargetView;
     ID3D11ShaderResourceView* m_shaderResourceView;
+
+    
 
     std::unique_ptr<Buffer> shadowConstBuffer;
 

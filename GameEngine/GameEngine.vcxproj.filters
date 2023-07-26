@@ -230,6 +230,9 @@
     <ClInclude Include="Engine\Core\HUD\Widgets\ContentBrowser.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Core\HUD\Widgets\ContentBrowserTypes.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Core\Rendering\Shaders\OpaqueShader.hlsl" />

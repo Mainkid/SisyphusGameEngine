@@ -188,6 +188,7 @@
     <ClInclude Include="Engine\Core\Graphics\ConstantBuffer.h" />
     <ClInclude Include="Engine\Core\Graphics\Material.h" />
     <ClInclude Include="Engine\Core\Graphics\Shader.h" />
+    <ClInclude Include="Engine\Core\HUD\Widgets\ContentBrowserTypes.h" />
     <ClInclude Include="Engine\Core\Keys.h" />
     <ClInclude Include="Engine\Core\Rendering\GBuffer.h" />
     <ClInclude Include="Engine\Core\Rendering\Lights\LightData.h" />

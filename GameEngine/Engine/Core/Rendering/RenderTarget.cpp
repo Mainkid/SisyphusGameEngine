@@ -7,6 +7,7 @@ RenderTarget::RenderTarget()
 	renderTargetTexture = nullptr;
 	renderTargetView = nullptr;
 	shaderResourceView = nullptr;
+	
 }
 
 bool RenderTarget::Initialize(int textureWidth, int textureHeight)

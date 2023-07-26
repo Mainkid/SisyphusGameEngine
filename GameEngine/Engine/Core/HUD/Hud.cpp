@@ -30,6 +30,8 @@ void Hud::Initialize()
     widgets.insert(std::make_unique<ViewportWidget>(this));
     widgets.insert(std::make_unique<HierarchyWidget>(this));
     widgets.insert(std::make_unique<ContentBrowser>(this));
+
+    UpdateSelectedEntityEvent.AddRaw(this, &Hud::UpdateSelectedEntity);
     
 }
 
@@ -78,4 +80,8 @@ void Hud::SetFocusedWindowName(std::string _str)
     this->focusedWindowName = _str;
 }
 
+void Hud::UpdateSelectedEntity(entt::entity _id)
+{
+    this->selectedEntityID = _id;
+}
 

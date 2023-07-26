@@ -1,6 +1,4 @@
 #include "RenderPipeline.h"
-
-
 #include "../EngineCore.h"
 
 
@@ -38,7 +36,7 @@ void RenderPipeline::Initialize()
 
 
     opaqueConstBuffer = std::make_unique<Buffer>(engine->device.Get());
-    opaqueConstBuffer->Initialize(sizeof(CB_BaseBuffer));
+    opaqueConstBuffer->Initialize(sizeof(CB_BaseEditorBuffer));
 
     lightConstBuffer = std::make_unique<Buffer>(engine->device.Get());
     lightConstBuffer->Initialize(sizeof(CB_LightBuffer));
@@ -251,9 +249,6 @@ void RenderPipeline::Initialize()
     engine->context->RSSetViewports(1, &viewport);
 
 
-
-
-
     D3D11_TEXTURE2D_DESC textureDesc;
     HRESULT result;
     D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
@@ -300,6 +295,32 @@ void RenderPipeline::Initialize()
 
     // Create the shader resource view.
     result = engine->device->CreateShaderResourceView(m_renderTargetTexture, &shaderResourceViewDesc2, &m_shaderResourceView);
+
+
+    //Creating instance ID Texture
+
+    D3D11_TEXTURE2D_DESC desc2;
+    ZeroMemory(&desc2, sizeof(desc2));
+    desc2.Width = engine->window->GetWidth();
+    desc2.Height = engine->window->GetHeight();
+    desc2.MipLevels = 1;
+    desc2.ArraySize = 1;
+    desc2.Format = DXGI_FORMAT_R32_FLOAT;
+    desc2.SampleDesc.Count = 1;
+    desc2.Usage = D3D11_USAGE_DEFAULT;
+    desc2.BindFlags = D3D11_BIND_SHADER_RESOURCE| D3D11_BIND_RENDER_TARGET;
+    desc2.CPUAccessFlags = 0;
+
+    result = engine->device->CreateTexture2D(&desc2, NULL, entityIdTexture.GetAddressOf());
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+    ZeroMemory(&srvDesc, sizeof(srvDesc));
+    srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = 1;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+
+    result = engine->device->CreateShaderResourceView(entityIdTexture.Get(), &srvDesc, entityIdSRV.GetAddressOf());
 
 
     D3D11_SAMPLER_DESC samplerDesc;
@@ -350,11 +371,12 @@ void RenderPipeline::CompileShaders()
 void RenderPipeline::Render()
 {
     float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float bgEntitiesColor[] = { -1,-1,-1,1 };
     engine->context->ClearRenderTargetView(engine->rtv.Get(), bgColor);
     engine->context->ClearRenderTargetView(rtvs[0], bgColor);
     engine->context->ClearRenderTargetView(rtvs[1], bgColor);
     engine->context->ClearRenderTargetView(rtvs[2], bgColor);
-    engine->context->ClearRenderTargetView(rtvs[3], bgColor);
+    engine->context->ClearRenderTargetView(rtvs[3], bgEntitiesColor);
     engine->context->ClearRenderTargetView(rtvs[4], bgColor);
     engine->context->ClearDepthStencilView(engine->depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -486,24 +508,24 @@ void RenderPipeline::OpaquePass()
 
     for (auto& entity : engine->scene->registry.view<MeshComponent>())
     {
-        CB_BaseBuffer dataOpaque;
+        CB_BaseEditorBuffer dataOpaque;
         TransformComponent& transformComp= engine->scene->registry.get<TransformComponent>(entity);
         MeshComponent& meshComp = engine->scene->registry.get<MeshComponent>(entity);
         //dataOpaque.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
-        dataOpaque.world = transformComp.ConstructTransformMatrix();
+        dataOpaque.baseData.world = transformComp.ConstructTransformMatrix();
 
         //dataOpaque.worldViewProj =
         //    engineActor->transform->world * engineActor->transform->GetViewMatrix() *
         //    engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
 
-        dataOpaque.worldViewProj =
+        dataOpaque.baseData.worldViewProj =
             transformComp.ConstructTransformMatrix() *
             engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
 
         //dataOpaque.worldView = engineActor->transform->world * engineActor->transform->GetViewMatrix() *
         //    engine->cameraController->GetViewMatrix();
 
-        dataOpaque.worldView = transformComp.ConstructTransformMatrix() *
+        dataOpaque.baseData.worldView = transformComp.ConstructTransformMatrix() *
             engine->cameraController->GetViewMatrix();
 
         //dataOpaque.worldViewInverseTranspose =
@@ -511,14 +533,16 @@ void RenderPipeline::OpaquePass()
         //        DirectX::XMMatrixInverse(nullptr,
         //            engineActor->transform->world * engineActor->transform->GetViewMatrix()));
 
-        dataOpaque.worldViewInverseTranspose =
+        dataOpaque.baseData.worldViewInverseTranspose =
             DirectX::XMMatrixTranspose(
                 DirectX::XMMatrixInverse(nullptr,
                     transformComp.ConstructTransformMatrix()));
 
+        dataOpaque.instanseID =(uint32_t)entity;
+
         D3D11_MAPPED_SUBRESOURCE mappedResource;
         HRESULT res = engine->context->Map(opaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-        CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_BaseBuffer));
+        CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_BaseEditorBuffer));
         engine->context->Unmap(opaqueConstBuffer->buffer.Get(), 0);
         engine->context->VSSetConstantBuffers(0, 1, opaqueConstBuffer->buffer.GetAddressOf());
         engine->context->PSSetConstantBuffers(0, 1, opaqueConstBuffer->buffer.GetAddressOf());
@@ -537,10 +561,14 @@ void RenderPipeline::OpaquePass()
             engine->context->VSSetShader(opaqueShader->vertexShader.Get(), nullptr, 0);
             engine->context->PSSetShader(opaqueShader->pixelShader.Get(), nullptr, 0);
             engine->context->PSSetShaderResources(0, 1, meshComp.texture.GetAddressOf());
+            //engine->context->PSSetShaderResources(1, 1, gBuffer->positionSRV.GetAddressOf());
 
             engine->context->DrawIndexed(meshComp.meshes[i]->indexBuffer->size, 0, 0);
         }
     }
+
+    //engine->context->CopySubresourceRegion(entityIdTexture.Get(), 0, 0, 0, 3, gBuffer->depthTexture.Get(), 0, NULL);
+
 }
 
 void RenderPipeline::LightPass()
@@ -932,4 +960,27 @@ void RenderPipeline::ParticlePass()
     //}
 }
 
+float RenderPipeline::GetPixelValue(int clickX, int clickY)
+{
+    //engine->context->CopySubresourceRegion(gBuffer->depthTexture.Get(), 0, 0, 0, 0,  gBuffer->depthCpuTexture.Get(), 0, 0);
+    engine->context->CopyResource(gBuffer->depthCpuTexture.Get(), gBuffer->depthTexture.Get());
+
+    D3D11_MAPPED_SUBRESOURCE ResourceDesc = {};
+    engine->context->Map(gBuffer->depthCpuTexture.Get(), 0, D3D11_MAP_READ, 0, &ResourceDesc);
+    int const BytesPerPixel = sizeof(FLOAT);
+
+    if (ResourceDesc.pData)
+    {
+
+            auto res = *((float*)ResourceDesc.pData + (clickX+clickY*(gBuffer->t_width))*4);
+            return res;
+    }
+    return -1;
+}
+
+DirectX::SimpleMath::Vector2 RenderPipeline::GetRtvResolution()
+{
+    return DirectX::SimpleMath::Vector2(gBuffer->t_width, gBuffer->t_height);
+}
+//TODO: ~Переписать GetEntityId, добавить уровень абстракции
 //TODO: пофиксить pointlight и spotlight

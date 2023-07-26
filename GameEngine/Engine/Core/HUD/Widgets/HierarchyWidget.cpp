@@ -5,6 +5,7 @@ HierarchyWidget::HierarchyWidget(Hud* _hud)
 
 	this->hud = _hud;
 	this->windowID = "Hierarchy";
+	hud->UpdateSelectedEntityEvent.AddRaw(this, &HierarchyWidget::UpdateSelectedEntity);
 }
 
 void HierarchyWidget::Render()
@@ -42,12 +43,16 @@ void HierarchyWidget::Render()
 	ImGui::End();
 }
 
+void HierarchyWidget::UpdateSelectedEntity(entt::entity)
+{
+}
+
 void HierarchyWidget::RenderTree(std::set<entt::entity>& gameObjectsVector)
 {
 
 	for (auto& gameObjectID : gameObjectsVector)
 	{
-		ImGuiTreeNodeFlags treeFlags = ((gameObjectID == selectedEntity) ? ImGuiTreeNodeFlags_Selected : 0);
+		ImGuiTreeNodeFlags treeFlags = ((gameObjectID == hud->selectedEntityID) ? ImGuiTreeNodeFlags_Selected : 0);
 		treeFlags |= (EngineCore::instance()->scene->gameObjects[gameObjectID]->GetChildrenObjects().size() == 0) ?
 			ImGuiTreeNodeFlags_Leaf : ImGuiTreeNodeFlags_None;
 		treeFlags |= baseFlags;
@@ -55,7 +60,8 @@ void HierarchyWidget::RenderTree(std::set<entt::entity>& gameObjectsVector)
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)gameObjectID, treeFlags,
 			EngineCore::instance()->scene->gameObjects[gameObjectID]->name.c_str());
 		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
-			selectedEntity = gameObjectID;
+			//selectedEntity = gameObjectID;
+			hud->UpdateSelectedEntityEvent.Broadcast(gameObjectID);
 
 		if (ImGui::BeginDragDropSource())
 		{
