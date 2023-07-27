@@ -101,3 +101,6 @@ DirectX::SimpleMath::Matrix CameraController::GetViewMatrix()
 {
     return camera->GetViewMatrix();
 }
+
+//TODO: передача по ссылке view и proj для быстродействия!!!
+//TODO: переписать класс камеры через SimpleMath

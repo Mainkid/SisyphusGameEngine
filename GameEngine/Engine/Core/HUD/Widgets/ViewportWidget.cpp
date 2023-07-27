@@ -14,6 +14,7 @@ ViewportWidget::ViewportWidget(Hud* _hud)
 	hud->UpdateSelectedEntityEvent.AddRaw(this, &ViewportWidget::UpdateSelectedEntity);
 }
 
+using namespace DirectX::SimpleMath;
 void ViewportWidget::Render()
 {
 	ImGui::Begin(windowID.c_str());
@@ -24,12 +25,12 @@ void ViewportWidget::Render()
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0,0));
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-	ImGui::ImageButton((void*)EngineCore::instance()->renderTarget->GetImageSRV(), ImGui::GetContentRegionAvail());
+	ImGui::Image((void*)EngineCore::instance()->renderTarget->GetImageSRV(), ImGui::GetContentRegionAvail());
 	ImVec2 r = ImGui::GetItemRectSize();
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();
 	
-	if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+	if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)&& !ImGuizmo::IsOver())
 	{
 		
 		ImVec2 pos2 = ImGui::GetMousePos();
@@ -49,6 +50,48 @@ void ViewportWidget::Render()
 		}
 
 	}
+
+	//Gizmos
+	if (hud->selectedEntityID!=entt::null)
+	{
+		ImGuizmo::SetOrthographic(false);
+		ImGuizmo::SetDrawlist();
+
+		float windowWidth = (float)ImGui::GetWindowWidth();
+		float windowHeight = (float)ImGui::GetWindowHeight();
+		ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+		
+
+		auto viewMat = EngineCore::instance()->cameraController->GetViewMatrix();
+		auto projMat = EngineCore::instance()->cameraController->GetProjectionMatrix();
+		auto& tc = EngineCore::instance()->scene->registry.get<TransformComponent>(hud->selectedEntityID);
+		auto transformMat = tc.ConstructTransformMatrix();
+
+		auto res=ImGuizmo::Manipulate(&viewMat._11, &projMat._11, guizmoType, ImGuizmo::LOCAL, &transformMat._11);
+
+
+		
+		if (ImGuizmo::IsUsing())	
+		{
+			Vector3 translation, scale;
+			Quaternion rotation;
+			transformMat.Decompose(scale, rotation,translation);
+			Vector3 deltaRotation = rotation.ToEuler() - tc.GetRotation();
+
+			tc.SetRotation(tc.GetRotation() + deltaRotation);
+			tc.SetPosition(translation);
+			tc.SetScale(scale);
+		}
+	}
+
+	
+	if (ImGui::IsKeyDown(ImGuiKey_R))
+		guizmoType = ImGuizmo::OPERATION::ROTATE;
+	if (ImGui::IsKeyDown(ImGuiKey_T))
+		guizmoType = ImGuizmo::OPERATION::TRANSLATE;
+	if (ImGui::IsKeyDown(ImGuiKey_E))
+		guizmoType = ImGuizmo::OPERATION::SCALE;
 
 	HandleResize();
 	ImGui::End();

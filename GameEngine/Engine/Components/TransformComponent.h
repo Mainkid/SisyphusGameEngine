@@ -7,7 +7,6 @@ using namespace DirectX::SimpleMath;
 class TransformComponent
 {
 public:
-	
 
 	TransformComponent() = default;
 	TransformComponent(Vector3 pos, Vector3 rot, Vector3 scale);

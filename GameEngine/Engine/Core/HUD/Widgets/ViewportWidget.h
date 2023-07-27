@@ -20,6 +20,8 @@ public:
 	void UpdateSelectedEntity(entt::entity);
 
 private:
+	ImGuizmo::OPERATION guizmoType= ImGuizmo::OPERATION::TRANSLATE;
+	ImGuizmo::MODE guizmoMode = ImGuizmo::MODE::WORLD;
 	ImVec2 widgetSize;
 	int x;
 	int y;

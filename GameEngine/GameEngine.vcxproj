@@ -151,6 +151,11 @@
     <ClCompile Include="Engine\Core\HUD\Widget.cpp" />
     <ClCompile Include="Engine\Core\Rendering\GBuffer.cpp" />
     <ClCompile Include="Engine\Core\WinInput.cpp" />
+    <ClCompile Include="Engine\DirectXSDK\ImGuizmo\GraphEditor.cpp" />
+    <ClCompile Include="Engine\DirectXSDK\ImGuizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="Engine\DirectXSDK\ImGuizmo\ImGradient.cpp" />
+    <ClCompile Include="Engine\DirectXSDK\ImGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="Engine\DirectXSDK\ImGuizmo\ImSequencer.cpp" />
     <ClCompile Include="Engine\DirectXSDK\ImGui\imgui.cpp" />
     <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_draw.cpp" />
@@ -171,6 +176,7 @@
     <ClCompile Include="Engine\Core\HUD\Widgets\ViewportWidget.cpp" />
     <ClCompile Include="Engine\Core\Rendering\RenderTarget.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widgets\HierarchyWidget.cpp" />
+    <ClCompile Include="Engine\Core\HUD\Widgets\PropertiesWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -196,6 +202,12 @@
     <ClInclude Include="Engine\Core\WinInput.h" />
     <ClInclude Include="Engine\Core\Rendering\RenderPipeline.h" />
     <ClInclude Include="Engine\DirectXSDK\entt\entt.hpp" />
+    <ClInclude Include="Engine\DirectXSDK\ImGuizmo\GraphEditor.h" />
+    <ClInclude Include="Engine\DirectXSDK\ImGuizmo\ImCurveEdit.h" />
+    <ClInclude Include="Engine\DirectXSDK\ImGuizmo\ImGradient.h" />
+    <ClInclude Include="Engine\DirectXSDK\ImGuizmo\ImGuizmo.h" />
+    <ClInclude Include="Engine\DirectXSDK\ImGuizmo\ImSequencer.h" />
+    <ClInclude Include="Engine\DirectXSDK\ImGuizmo\ImZoomSlider.h" />
     <ClInclude Include="Engine\DirectXSDK\ImGui\imconfig.h" />
     <ClInclude Include="Engine\DirectXSDK\ImGui\imgui.h" />
     <ClInclude Include="Engine\DirectXSDK\ImGui\imgui_impl_dx11.h" />
@@ -213,6 +225,7 @@
     <ClInclude Include="Engine\Core\HUD\Widgets\ViewportWidget.h" />
     <ClInclude Include="Engine\Core\Rendering\RenderTarget.h" />
     <ClInclude Include="Engine\Core\HUD\Widgets\HierarchyWidget.h" />
+    <ClInclude Include="Engine\Core\HUD\Widgets\PropertiesWidget.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Core\Rendering\Shaders\LightShader.hlsl">

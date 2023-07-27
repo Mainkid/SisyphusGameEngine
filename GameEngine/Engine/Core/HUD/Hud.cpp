@@ -30,6 +30,7 @@ void Hud::Initialize()
     widgets.insert(std::make_unique<ViewportWidget>(this));
     widgets.insert(std::make_unique<HierarchyWidget>(this));
     widgets.insert(std::make_unique<ContentBrowser>(this));
+    widgets.insert(std::make_unique<PropertiesWidget>(this));
 
     UpdateSelectedEntityEvent.AddRaw(this, &Hud::UpdateSelectedEntity);
     
@@ -45,6 +46,8 @@ void Hud::Render()
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+    ImGuizmo::BeginFrame();
+
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
     for (auto& widget : widgets)
