@@ -1,17 +1,31 @@
+#pragma once
 #include "../../EngineCore.h"
 #include "../../../Core/Rendering/RenderTarget.h"
 
 #include "../Hud.h"
 
 #include "ViewportWidget.h"
-//#define STB_IMAGE_IMPLEMENTATION
-//#include "../../../DirectXSDK/stb_image.h"
+
 
 ViewportWidget::ViewportWidget(Hud* _hud)
 {
 	this->hud = _hud;
 	this->windowID = "Viewport";
 	hud->UpdateSelectedEntityEvent.AddRaw(this, &ViewportWidget::UpdateSelectedEntity);
+	InitSRV();
+}
+
+void ViewportWidget::InitSRV()
+{
+	int width, height;
+	ImageLoader::LoadTextureFromFile(translateIconPath.string().c_str(),translateSRV.GetAddressOf(), &width, &height);
+	guizmoIconSRV[ImGuizmo::OPERATION::TRANSLATE] = translateSRV.Get();
+
+	ImageLoader::LoadTextureFromFile(rotateIconPath.string().c_str(), rotateSRV.GetAddressOf(), &width, &height);
+	guizmoIconSRV[ImGuizmo::OPERATION::ROTATE] = rotateSRV.Get();
+
+	ImageLoader::LoadTextureFromFile(scaleIconPath.string().c_str(), scaleSRV.GetAddressOf(), &width, &height);
+	guizmoIconSRV[ImGuizmo::OPERATION::SCALE] =scaleSRV.Get();
 }
 
 using namespace DirectX::SimpleMath;
@@ -20,8 +34,12 @@ void ViewportWidget::Render()
 	ImGui::Begin(windowID.c_str());
 
 	Widget::Render();
-	
+
 	ImVec2 imgSize = ImGui::GetContentRegionAvail();
+	ImVec2 startCursorPos = ImGui::GetCursorScreenPos();
+	//ImGui::SameLine();
+	//ImGui::ImageButton((void*)EngineCore::instance()->renderTarget->GetImageSRV(), { 20,20 });
+	//ImGui::ImageButton((void*)EngineCore::instance()->renderTarget->GetImageSRV(), { 20,20 });
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0,0));
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
@@ -30,7 +48,7 @@ void ViewportWidget::Render()
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();
 	
-	if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)&& !ImGuizmo::IsOver())
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)&& !ImGuizmo::IsOver()&& hoverState==EHoveringState::Viewport)
 	{
 		
 		ImVec2 pos2 = ImGui::GetMousePos();
@@ -85,13 +103,59 @@ void ViewportWidget::Render()
 		}
 	}
 
-	
 	if (ImGui::IsKeyDown(ImGuiKey_R))
 		guizmoType = ImGuizmo::OPERATION::ROTATE;
 	if (ImGui::IsKeyDown(ImGuiKey_T))
 		guizmoType = ImGuizmo::OPERATION::TRANSLATE;
 	if (ImGui::IsKeyDown(ImGuiKey_E))
 		guizmoType = ImGuizmo::OPERATION::SCALE;
+
+
+	hoverState = EHoveringState::Viewport;
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+	ImGui::SetNextItemAllowOverlap();
+	ImGui::SetCursorScreenPos(startCursorPos);
+	ImGui::ImageButton((void*)guizmoIconSRV[ImGuizmo::OPERATION::TRANSLATE], { 20,20 });
+	if (ImGui::IsItemHovered())
+	{
+		hoverState = EHoveringState::TransformGizmo;
+		
+	}
+	if (ImGui::IsItemClicked())
+	{
+		guizmoType = ImGuizmo::OPERATION::TRANSLATE;
+	}
+
+	ImGui::SameLine();
+	ImGui::SetNextItemAllowOverlap();
+	ImGui::ImageButton((void*)guizmoIconSRV[ImGuizmo::OPERATION::ROTATE], { 20,20 });
+	if (ImGui::IsItemHovered())
+	{
+		hoverState = EHoveringState::RotateGizmo;
+
+	}
+	if (ImGui::IsItemClicked())
+	{
+		guizmoType = ImGuizmo::OPERATION::ROTATE;
+	}
+
+	ImGui::SameLine();
+	ImGui::SetNextItemAllowOverlap();
+	ImGui::ImageButton((void*)guizmoIconSRV[ImGuizmo::OPERATION::SCALE], { 20,20 });
+	if (ImGui::IsItemHovered())
+	{
+		hoverState = EHoveringState::ScaleGizmo;
+
+	}
+	if (ImGui::IsItemClicked())
+	{
+		guizmoType = ImGuizmo::OPERATION::SCALE;
+	}
+
+	ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
+	std::cout <<(int) hoverState << std::endl;
 
 	HandleResize();
 	ImGui::End();

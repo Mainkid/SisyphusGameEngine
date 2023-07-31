@@ -28,6 +28,8 @@ int main()
     light->GetComponent<LightComponent>().color = Vector4(0.15f, 0.15f, 0.15f, 0.15f);
     _go3->AddChild(light);
     _go3->SetParent(_go);
+
+   
     //light->GetComponent<LightComponent>().params = Vector4::Zero;
     //auto res= EngineCore::instance()->scene->DestroyGameObject(_go2);
     //_go2 = EngineCore::instance()->scene->AddGameObject();

@@ -2,6 +2,7 @@
 #include "../Widget.h"
 #include "ContentBrowserTypes.h"
 #include "../../EngineCore.h"
+
 #include <filesystem>
 
 
@@ -15,7 +16,7 @@ public:
 	void Render() override;
 	void GetInput() override {};
 	//TODO: Убрать в отдельный сервис-класс
-	bool LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height);
+	
 	void InitImagesSRV();
 	~ContentBrowser() override;
 

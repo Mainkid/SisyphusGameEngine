@@ -26,6 +26,13 @@ Vector3 TransformComponent::GetRotation()
     return rotation;
 }
 
+Vector3 TransformComponent::GetRotationDegrees()
+{
+    Vector3 rot = GetRotation();
+    RadToDegrees(rot);
+    return rot;
+}
+
 Vector3 TransformComponent::GetScale()
 {
     return scale;
@@ -43,6 +50,12 @@ void  TransformComponent::SetRotation(Vector3 _rotation)
     UpdateRotationMatrix();
 }
 
+void TransformComponent::SetRotationDegrees(Vector3 _rot)
+{
+    DegreesToRad(_rot);
+    SetRotation(_rot);
+}
+
 void TransformComponent::SetScale(Vector3 _scale)
 {
     this->scale = _scale;
@@ -52,6 +65,20 @@ void TransformComponent::SetScale(Vector3 _scale)
 void TransformComponent::UpdateRotationMatrix()
 {
     rotationMatrix = DirectX::SimpleMath::Matrix::CreateFromYawPitchRoll(rotation);
+}
+
+void TransformComponent::RadToDegrees(Vector3& vec)
+{
+    vec.x *= 180.0f / M_PI;
+    vec.y *= 180.0f / M_PI;
+    vec.z *= 180.0f / M_PI;
+}
+
+void TransformComponent::DegreesToRad(Vector3& vec)
+{
+    vec.x *= M_PI / 180.0f;
+    vec.y *= M_PI / 180.0f;
+    vec.z *= M_PI / 180.0f;
 }
 
 void TransformComponent::UpdateTranslationMatrix()
@@ -64,3 +91,4 @@ void TransformComponent::UpdateScaleMatrix()
 {
     scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(scale);
 }
+

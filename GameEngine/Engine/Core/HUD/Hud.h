@@ -21,6 +21,7 @@ class Hud
 {
 	friend class ViewportWidget;
 	friend class HierarchyWidget;
+	friend class PropertiesWidget;
 
 public:
 	Hud() = default;

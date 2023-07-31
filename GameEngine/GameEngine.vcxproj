@@ -177,6 +177,7 @@
     <ClCompile Include="Engine\Core\Rendering\RenderTarget.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widgets\HierarchyWidget.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widgets\PropertiesWidget.cpp" />
+    <ClCompile Include="Engine\Tools\ImageLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -226,6 +227,7 @@
     <ClInclude Include="Engine\Core\Rendering\RenderTarget.h" />
     <ClInclude Include="Engine\Core\HUD\Widgets\HierarchyWidget.h" />
     <ClInclude Include="Engine\Core\HUD\Widgets\PropertiesWidget.h" />
+    <ClInclude Include="Engine\Tools\ImageLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Core\Rendering\Shaders\LightShader.hlsl">

@@ -13,7 +13,7 @@ void Hud::Initialize()
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     
     io.WantCaptureKeyboard = false;
-    io.WantCaptureMouse = false;
+    io.WantCaptureMouse = true;
     
     
     ImGuiStyle& style = ImGui::GetStyle();

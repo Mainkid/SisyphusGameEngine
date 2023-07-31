@@ -15,6 +15,7 @@ class EngineCore;
 class GameObject
 {
 	friend class Scene;
+	
 
 public:
 	entt::entity id=entt::entity(1);
@@ -45,8 +46,8 @@ public:
 	void AddChild(GameObject* child);
 	void RemoveChild(GameObject* child);
 	void SetParent(GameObject* parent);
-	
-private:
+
+protected:
 	bool hasParent = false;
 	entt::entity parentObject=(entt::entity)-1;
 	std::set<entt::entity> childrenObjects;
@@ -60,6 +61,8 @@ private:
 	{
 		childrenObjects.insert(childID);
 	}
+
+	
 };
 
 //TODO: ѕеренести повтор€ющийс€ код в отдельный класс.

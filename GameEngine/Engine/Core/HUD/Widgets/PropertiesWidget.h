@@ -2,6 +2,8 @@
 #include "../Widget.h"
 #include "../Hud.h"
 
+#include <map>
+
 
 class PropertiesWidget : public Widget
 {
@@ -11,3 +13,4 @@ public:
 	
 };
 
+//const std::map<Com

@@ -2,6 +2,7 @@
 #include "../../DirectXSDK/ImGui/imgui.h"
 #include "../../DirectXSDK/ImGui/imgui_impl_dx11.h"
 #include "../../DirectXSDK/ImGui/imgui_impl_win32.h"
+
 #include <string>
 
 class Hud;

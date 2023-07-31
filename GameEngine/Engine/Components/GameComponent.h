@@ -3,14 +3,13 @@
 
 class GameComponent
 {
+    friend class PropertiesWidget;
 public:
-    GameComponent() {};
-    virtual void Render() = 0;
-    virtual void Update(float deltaSec) = 0;
-    virtual void Initialize() = 0;
+    GameComponent() = default;
+    
 
 protected:
-    //std::shared_ptr<Game> game;
+    virtual void Render() = 0;
 
 };
 

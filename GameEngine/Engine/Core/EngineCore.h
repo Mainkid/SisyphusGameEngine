@@ -31,6 +31,9 @@
 
 using namespace Microsoft::WRL;
 
+
+
+
 class EngineCore
 {
 public:
@@ -91,5 +94,10 @@ protected:
 
     
 };
+
+static Scene* GetScene()
+{
+    return EngineCore::instance()->scene.get();
+}
 
 //TODO: освободить все ресурсы при завершении.
