@@ -5,6 +5,7 @@
 LightComponent::LightComponent( LightType _type)
 {
     this->lightType = _type;
+    Initialize();
 }
 
 void LightComponent::Initialize()
@@ -12,14 +13,14 @@ void LightComponent::Initialize()
     //TODO: ƒоделать дл€ поинтлайтов и спотлайтов
     if (lightType == LightType::PointLight)
     {
-        std::string filePath = "Engine/Graphics/Model/Primitives/Sphere.fbx";
-        //aabb=std::make_shared<Model3D>(engine,filePath,L"Engine\\Graphics\\Textures\\placeholder.png");
+        std::string path = "Engine/Assets/Cube.fbx";
+        aabb=std::make_unique<MeshComponent>();
         //aabb->Initialize();
     }
     else if (lightType == LightType::SpotLight)
     {
-        std::string filePath = "Engine/Graphics/Model/Primitives/Cube.fbx";
-        //aabb=std::make_shared<Model3D>(engine,filePath,L"Engine\\Graphics\\Textures\\placeholder.png");
+        std::string filePath = "Engine/Assets/Cube.fbx";
+        aabb=std::make_unique<MeshComponent>();
         //aabb->Initialize();
     }
 

@@ -567,8 +567,6 @@ void RenderPipeline::OpaquePass()
         }
     }
 
-    //engine->context->CopySubresourceRegion(entityIdTexture.Get(), 0, 0, 0, 3, gBuffer->depthTexture.Get(), 0, NULL);
-
 }
 
 void RenderPipeline::LightPass()
@@ -579,7 +577,7 @@ void RenderPipeline::LightPass()
 
     ID3D11ShaderResourceView* resources[] = { gBuffer->diffuseSRV.Get(),gBuffer->normalSRV.Get(),gBuffer->positionSRV.Get(),gBuffer->depthSRV.Get(),gBuffer->specularSRV.Get() };
     //engine->context->ClearRenderTargetView(engine->rtv.Get(), bgColor);
-    engine->renderTarget->ClearRenderTarget(engine->depthStencilView.Get());
+    engine->renderTarget->ClearRenderTarget(engine->depthStencilView.Get(),D3D11_CLEAR_STENCIL);
     UINT strides[1] = { 32 };
     UINT offsets[1] = { 0 };
 
@@ -689,109 +687,107 @@ void RenderPipeline::LightPass()
 
             engine->context->DrawIndexed(6, 0, 0);
         }
-        //else if (light.lightType == LightType::PointLight)
-        //{
+        else if (light.lightType == LightType::PointLight)
+        {
 
-        //    //Back Face Pass
+            //Back Face Pass
+            
 
-        //    engine->context->RSSetState(cullFrontRS.Get());
-        //    engine->context->OMSetDepthStencilState(backFaceStencilState.Get(), 0);
-        //    engine->context->PSSetShader(stencilPassShader->pixelShader.Get(), nullptr, 0);
-        //    engine->context->VSSetShader(stencilPassShader->vertexShader.Get(), nullptr, 0);
-        //    engine->context->IASetInputLayout(stencilPassShader->layout.Get());
-        //    engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
-        //    engine->context->IASetIndexBuffer(light->aabb->meshes[0]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-        //    engine->context->IASetVertexBuffers(0, 1, light->aabb->meshes[0]->vertexBuffer->buffer.GetAddressOf(),
-        //        stencilPassShader->strides, stencilPassShader->offsets);
+            engine->context->RSSetState(cullFrontRS.Get());
+            engine->context->OMSetDepthStencilState(backFaceStencilState.Get(), 0);
+            engine->context->PSSetShader(stencilPassShader->pixelShader.Get(), nullptr, 0);
+            engine->context->VSSetShader(stencilPassShader->vertexShader.Get(), nullptr, 0);
+            engine->context->IASetInputLayout(stencilPassShader->layout.Get());
+            engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
+            engine->context->IASetIndexBuffer(light.aabb->meshes[0]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+            engine->context->IASetVertexBuffers(0, 1, light.aabb->meshes[0]->vertexBuffer->buffer.GetAddressOf(),
+                light.aabb->strides, light.aabb->offsets);
 
-        //    engine->context->DrawIndexed(light->aabb->meshes[0]->indexBuffer->size, 0, 0);
-
-
-        //    //Front Face Pass
-
-        //    engine->context->RSSetState(cullBackRS.Get());
-        //    engine->context->OMSetDepthStencilState(frontFaceStencilState.Get(), 1);
-        //    engine->context->VSSetShader(stencilPassShader->vertexShader.Get(), nullptr, 0);
-        //    engine->context->PSSetShader(stencilPassShader->pixelShader.Get(), nullptr, 0);
-        //    engine->context->VSSetConstantBuffers(0, 1, lightConstBuffer->buffer.GetAddressOf());
-        //    engine->context->IASetInputLayout(stencilPassShader->layout.Get());
-        //    engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
-        //    engine->context->IASetIndexBuffer(light->aabb->meshes[0]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-        //    engine->context->IASetVertexBuffers(0, 1, light->aabb->meshes[0]->vertexBuffer->buffer.GetAddressOf(),
-        //        stencilPassShader->strides, stencilPassShader->offsets);
-
-        //    engine->context->DrawIndexed(light->aabb->meshes[0]->indexBuffer->size, 0, 0);
+            engine->context->DrawIndexed(light.aabb->meshes[0]->indexBuffer->size, 0, 0);
 
 
-        //    //Final Pass
+            //Front Face Pass
 
-        //    engine->context->RSSetState(cullBackRS.Get());
-        //    engine->context->OMSetDepthStencilState(finalPassStencilState.Get(), 0);
-        //    engine->context->VSSetShader(dirLightShader->vertexShader.Get(), nullptr, 0);
+            engine->context->RSSetState(cullBackRS.Get());
+            engine->context->OMSetDepthStencilState(frontFaceStencilState.Get(), 1);
+            engine->context->VSSetShader(stencilPassShader->vertexShader.Get(), nullptr, 0);
+            engine->context->PSSetShader(stencilPassShader->pixelShader.Get(), nullptr, 0);
+            engine->context->VSSetConstantBuffers(0, 1, lightConstBuffer->buffer.GetAddressOf());
+            engine->context->IASetInputLayout(stencilPassShader->layout.Get());
+            engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
+            engine->context->IASetIndexBuffer(light.aabb->meshes[0]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+            engine->context->IASetVertexBuffers(0, 1, light.aabb->meshes[0]->vertexBuffer->buffer.GetAddressOf(),
+                light.aabb->strides, light.aabb->offsets);
 
-        //    engine->context->PSSetShader(pointLightShader->pixelShader.Get(), nullptr, 0);
-        //    engine->context->IASetInputLayout(dirLightShader->layout.Get());
-        //    engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
-        //    engine->context->IASetIndexBuffer(indexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-        //    engine->context->IASetVertexBuffers(0, 1, vertexQuadBuffer->buffer.GetAddressOf(),
-        //        strides, offsets);
-
-        //    engine->context->DrawIndexed(6, 0, 0);
-
-
-        //}
-
-        //else if (light->lightType == LightType::SpotLight)
-        //{
-        //    //Back Face Pass
-
-        //    engine->context->RSSetState(cullFrontRS.Get());
-        //    engine->context->OMSetDepthStencilState(backFaceStencilState.Get(), 0);
-        //    engine->context->PSSetShader(stencilPassShader->pixelShader.Get(), nullptr, 0);
-        //    engine->context->VSSetShader(stencilPassShader->vertexShader.Get(), nullptr, 0);
-        //    engine->context->IASetInputLayout(stencilPassShader->layout.Get());
-        //    engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
-        //    engine->context->IASetIndexBuffer(light->aabb->meshes[0]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-        //    engine->context->IASetVertexBuffers(0, 1, light->aabb->meshes[0]->vertexBuffer->buffer.GetAddressOf(),
-        //        stencilPassShader->strides, stencilPassShader->offsets);
-
-        //    engine->context->DrawIndexed(light->aabb->meshes[0]->indexBuffer->size, 0, 0);
+            engine->context->DrawIndexed(light.aabb->meshes[0]->indexBuffer->size, 0, 0);
 
 
-        //    //Front Face Pass
+            //Final Pass
 
-        //    engine->context->RSSetState(cullBackRS.Get());
-        //    engine->context->OMSetDepthStencilState(frontFaceStencilState.Get(), 1); //change???
-        //    engine->context->VSSetShader(stencilPassShader->vertexShader.Get(), nullptr, 0);
-        //    engine->context->PSSetShader(stencilPassShader->pixelShader.Get(), nullptr, 0);
-        //    //engine->context->PSSetShader(spotLightShader->pixelShader.Get(),nullptr,0);
-        //    engine->context->VSSetConstantBuffers(0, 1, lightConstBuffer->buffer.GetAddressOf());
-        //    engine->context->IASetInputLayout(stencilPassShader->layout.Get());
-        //    engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
-        //    engine->context->IASetIndexBuffer(light->aabb->meshes[0]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-        //    engine->context->IASetVertexBuffers(0, 1, light->aabb->meshes[0]->vertexBuffer->buffer.GetAddressOf(),
-        //        stencilPassShader->strides, stencilPassShader->offsets);
+            engine->context->RSSetState(cullBackRS.Get());
+            engine->context->OMSetDepthStencilState(finalPassStencilState.Get(), 0);
+            engine->context->VSSetShader(dirLightShader->vertexShader.Get(), nullptr, 0);
 
-        //    engine->context->DrawIndexed(light->aabb->meshes[0]->indexBuffer->size, 0, 0);
+            engine->context->PSSetShader(pointLightShader->pixelShader.Get(), nullptr, 0);
+            engine->context->IASetInputLayout(dirLightShader->layout.Get());
+            engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
+            engine->context->IASetIndexBuffer(indexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+            engine->context->IASetVertexBuffers(0, 1, vertexQuadBuffer->buffer.GetAddressOf(),
+                strides, offsets);
 
-
-        //    //Final Pass
-
-        //    engine->context->RSSetState(cullBackRS.Get());
-        //    engine->context->OMSetDepthStencilState(finalPassStencilState.Get(), 0);
-        //    engine->context->VSSetShader(dirLightShader->vertexShader.Get(), nullptr, 0);
-        //    engine->context->PSSetShader(spotLightShader->pixelShader.Get(), nullptr, 0);
-        //    engine->context->IASetInputLayout(dirLightShader->layout.Get());
-        //    engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
-        //    engine->context->IASetIndexBuffer(indexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-        //    engine->context->IASetVertexBuffers(0, 1, vertexQuadBuffer->buffer.GetAddressOf(),
-        //        strides, offsets);
-
-        //    engine->context->DrawIndexed(6, 0, 0);
+            engine->context->DrawIndexed(6, 0, 0);
 
 
+        }
 
-        //}
+        else if (light.lightType == LightType::SpotLight)
+        {
+            //Back Face Pass
+
+            engine->context->RSSetState(cullFrontRS.Get());
+            engine->context->OMSetDepthStencilState(backFaceStencilState.Get(), 0);
+            engine->context->PSSetShader(stencilPassShader->pixelShader.Get(), nullptr, 0);
+            engine->context->VSSetShader(stencilPassShader->vertexShader.Get(), nullptr, 0);
+            engine->context->IASetInputLayout(stencilPassShader->layout.Get());
+            engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
+            engine->context->IASetIndexBuffer(light.aabb->meshes[0]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+            engine->context->IASetVertexBuffers(0, 1, light.aabb->meshes[0]->vertexBuffer->buffer.GetAddressOf(),
+                light.aabb->strides, light.aabb->offsets);
+
+            engine->context->DrawIndexed(light.aabb->meshes[0]->indexBuffer->size, 0, 0);
+
+
+            //Front Face Pass
+
+            engine->context->RSSetState(cullBackRS.Get());
+            engine->context->OMSetDepthStencilState(frontFaceStencilState.Get(), 1); //change???
+            engine->context->VSSetShader(stencilPassShader->vertexShader.Get(), nullptr, 0);
+            engine->context->PSSetShader(stencilPassShader->pixelShader.Get(), nullptr, 0);
+            //engine->context->PSSetShader(spotLightShader->pixelShader.Get(),nullptr,0);
+            engine->context->VSSetConstantBuffers(0, 1, lightConstBuffer->buffer.GetAddressOf());
+            engine->context->IASetInputLayout(stencilPassShader->layout.Get());
+            engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
+            engine->context->IASetIndexBuffer(light.aabb->meshes[0]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+            engine->context->IASetVertexBuffers(0, 1, light.aabb->meshes[0]->vertexBuffer->buffer.GetAddressOf(),
+                light.aabb->strides, light.aabb->offsets);
+
+            engine->context->DrawIndexed(light.aabb->meshes[0]->indexBuffer->size, 0, 0);
+
+            //Final Pass
+
+            engine->context->RSSetState(cullBackRS.Get());
+            engine->context->OMSetDepthStencilState(finalPassStencilState.Get(), 0);
+            engine->context->VSSetShader(dirLightShader->vertexShader.Get(), nullptr, 0);
+            engine->context->PSSetShader(spotLightShader->pixelShader.Get(), nullptr, 0);
+            engine->context->IASetInputLayout(dirLightShader->layout.Get());
+            engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
+            engine->context->IASetIndexBuffer(indexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+            engine->context->IASetVertexBuffers(0, 1, vertexQuadBuffer->buffer.GetAddressOf(),
+                strides, offsets);
+
+            engine->context->DrawIndexed(6, 0, 0);
+
+        }
 
     }
 }

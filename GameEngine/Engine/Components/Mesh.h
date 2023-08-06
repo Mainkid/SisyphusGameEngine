@@ -6,6 +6,13 @@
 
 class EngineCore;
 
+//Simple Meshes
+//Cube:
+static struct CubeMesh {
+	static const std::vector<DirectX::SimpleMath::Vector4> verts;
+	static const std::vector<int> indices;
+};
+
 using namespace DirectX::SimpleMath;
 class Mesh
 {

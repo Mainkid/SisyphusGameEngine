@@ -78,12 +78,12 @@ void RenderTarget::SetRenderTarget(ID3D11DepthStencilView* depthStencilView)
 	EngineCore::instance()->context->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView);
 }
 
-void RenderTarget::ClearRenderTarget( ID3D11DepthStencilView* depthStencilView)
+void RenderTarget::ClearRenderTarget( ID3D11DepthStencilView* depthStencilView, D3D11_CLEAR_FLAG flags)
 {
 	float color[4] = { 0, 0,0, 1 };
 
 	EngineCore::instance()->context->ClearRenderTargetView(renderTargetView.Get(), color);
-	EngineCore::instance()->context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	EngineCore::instance()->context->ClearDepthStencilView(depthStencilView, flags, 1.0f, 0);
 }
 
 ID3D11ShaderResourceView* RenderTarget::GetSRV()

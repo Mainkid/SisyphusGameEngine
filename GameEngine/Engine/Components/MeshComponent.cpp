@@ -4,7 +4,7 @@
 MeshComponent::MeshComponent()
 {
     this->texturePath = L"Engine/Assets/DefaultTexture.png";
-    this->modelPath = "Engine/Assets/trash2.obj";
+    this->modelPath = "Engine/Assets/Cube.fbx";
     Initialize();
 }
 

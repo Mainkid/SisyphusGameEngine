@@ -8,6 +8,8 @@
 #include <d3dcompiler.h>
 #include <directxmath.h>
 
+
+
 class EngineCore;
 
 using namespace Microsoft::WRL;
@@ -18,7 +20,7 @@ public:
 	bool Initialize(int width = 1280, int height = 720);
 	void Close();
 	void SetRenderTarget(ID3D11DepthStencilView* depthStencilView);
-	void ClearRenderTarget(ID3D11DepthStencilView* depthStencilView);
+	void ClearRenderTarget(ID3D11DepthStencilView* depthStencilView, D3D11_CLEAR_FLAG flags);
 
 	ID3D11ShaderResourceView* GetSRV();
 	ID3D11ShaderResourceView* GetImageSRV();

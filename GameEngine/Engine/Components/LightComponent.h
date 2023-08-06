@@ -1,11 +1,13 @@
 #pragma once
 #include "DirectXHelpers.h"
 #include "SimpleMath.h"
+
 #include "../Core/Rendering/Lights/LightType.h"
+#include <memory>
 #include <vector>
 
 class EngineCore;
-
+class MeshComponent;
 
 
 using namespace DirectX::SimpleMath;
@@ -24,6 +26,7 @@ public:
     std::vector<Matrix> orthoMatrices;
     std::vector<Vector4> distances;
 
+    std::unique_ptr<MeshComponent> aabb;
     LightType lightType = LightType::Ambient;
     Vector4 position = { 0,0,0,1 };
     Vector4 direction = { 1,0,0,0 };
@@ -33,7 +36,7 @@ public:
     Matrix viewMatrix;
     Matrix orthoMatrix;
 
-    //std::shared_ptr<Model3D> aabb;
+    
 
 
 };
