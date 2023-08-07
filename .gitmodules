@@ -1,0 +1,3 @@
+[submodule "GameEngine/vendor/DirectXTK"]
+	path = GameEngine/vendor/DirectXTK
+	url = https://github.com/microsoft/DirectXTK.git
