@@ -1,6 +1,11 @@
 #pragma once
 #include "ContentBrowser.h"
+#include "../../../../vendor/ImGui/imgui.h"
+#include "../../../../vendor/ImGui/imgui_impl_dx11.h"
+#include "../../../../vendor/ImGui/imgui_impl_win32.h"
+#include "../../../../vendor/ImGuizmo/ImGuizmo.h"
 #include "../../../Tools/ImageLoader.h"
+
 
 
 ContentBrowser::ContentBrowser(Hud* _hud)

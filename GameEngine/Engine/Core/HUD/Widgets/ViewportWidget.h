@@ -5,7 +5,12 @@
 #include <windows.h>
 #include <WinUser.h>
 #include <wrl.h>
-#include "../../../DirectXSDK/entt/entt.hpp"
+#include "../../../../vendor/entt/entt.hpp"
+//#include "../../../DirectXSDK/entt/entt.hpp"
+#include "../../../../vendor/ImGui/imgui.h"
+#include "../../../../vendor/ImGui/imgui_impl_dx11.h"
+#include "../../../../vendor/ImGui/imgui_impl_win32.h"
+#include "../../../../vendor/ImGuizmo/ImGuizmo.h"
 #include "../../../Tools/ImageLoader.h"
 #include <string>
 #include <map>

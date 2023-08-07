@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../DirectXSDK/SimpleMath.h"
+#include "../../vendor/SimpleMath.h"
 
 class Material
 {

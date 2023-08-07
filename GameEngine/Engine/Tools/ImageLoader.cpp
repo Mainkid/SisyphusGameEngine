@@ -1,7 +1,7 @@
 #include "ImageLoader.h"
 #include "../Core/EngineCore.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "../DirectXSDK/stb_image.h"
+#include "../../vendor/stb_image.h"
 
 bool ImageLoader::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
 {

@@ -1,9 +1,6 @@
 #pragma once
-#include "../../DirectXSDK/ImGui/imgui.h"
-#include "../../DirectXSDK/ImGui/imgui_impl_dx11.h"
-#include "../../DirectXSDK/ImGui/imgui_impl_win32.h"
-#include "../../DirectXSDK/ImGuizmo/ImGuizmo.h"
-#include "../../DirectXSDK/Delegates.h"
+
+#include "../../../vendor/Delegates.h"
 #include "Widgets/ViewportWidget.h"
 #include "Widgets/HierarchyWidget.h"
 #include "Widgets/ContentBrowser.h"

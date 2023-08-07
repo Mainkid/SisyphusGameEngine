@@ -1,6 +1,6 @@
 #pragma once
-#include "DirectXHelpers.h"
-#include "SimpleMath.h"
+#include "../../vendor/DirectXHelpers.h"
+#include "../../vendor/SimpleMath.h"
 
 #include "../Core/Rendering/Lights/LightType.h"
 #include <memory>

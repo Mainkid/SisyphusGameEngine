@@ -340,31 +340,31 @@ void RenderPipeline::Initialize()
 void RenderPipeline::CompileShaders()
 {
     opaqueShader = std::make_unique<Shader>();
-    opaqueShader->Initialize(L"./Engine/Core/Rendering/Shaders/OpaqueShader.hlsl",
+    opaqueShader->Initialize(L"./Engine/Assets/Shaders/OpaqueShader.hlsl",
         COMPILE_VERTEX|COMPILE_PIXEL,USE_POSITION|USE_NORMAL|USE_COLOR);
 
     dirLightShader = std::make_unique<Shader>();
-    dirLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/LightShader.hlsl",
+    dirLightShader->Initialize(L"./Engine/Assets/Shaders/LightShader.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL,USE_POSITION|USE_COLOR,"VSMain","PS_Directional");
 
     ambientLightShader = std::make_unique<Shader>();
-    ambientLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/LightShader.hlsl",
+    ambientLightShader->Initialize(L"./Engine/Assets/Shaders/LightShader.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VSMain", "PS_Ambient");
 
     pointLightShader = std::make_unique<Shader>();
-    pointLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/PointLightShader.hlsl",
+    pointLightShader->Initialize(L"./Engine/Assets/Shaders/PointLightShader.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VSMain", "PS_PointLight");
 
     spotLightShader = std::make_unique<Shader>();
-    spotLightShader->Initialize(L"./Engine/Core/Rendering/Shaders/SpotLightShader.hlsl",
+    spotLightShader->Initialize(L"./Engine/Assets/Shaders/SpotLightShader.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VSMain", "PS_SpotLight");
 
     stencilPassShader = std::make_unique<Shader>();
-    stencilPassShader->Initialize(L"./Engine/Core/Rendering/Shaders/StencilPassShader.hlsl",
+    stencilPassShader->Initialize(L"./Engine/Assets/Shaders/StencilPassShader.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR|USE_NORMAL);
 
     shadowShader = std::make_unique<Shader>();
-    shadowShader->Initialize(L"./Engine/Core/Rendering/Shaders/ShadowShader.hlsl",
+    shadowShader->Initialize(L"./Engine/Assets/Shaders/ShadowShader.hlsl",
         COMPILE_VERTEX | COMPILE_GEOM, USE_POSITION | USE_COLOR | USE_NORMAL,"DepthVertexShader");
 }
 
