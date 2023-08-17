@@ -26,6 +26,7 @@ cmake ../GameEngine
 - PCF
 ### Rendering:
 - Skybox
+- Materials
 - PBR
 - Transparency support
 - Global illumination
