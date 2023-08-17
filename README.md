@@ -19,6 +19,9 @@ mkdir GameEngine/bin
 cd GameEngine/bin
 cmake ../GameEngine
 ```
+## Screenshots
+![alt text](GameEngine/info/engineGUI.png)
+![alt text](GameEngine/info/particles.gif)
 
 ## Upcoming features
 ### Shadows:
