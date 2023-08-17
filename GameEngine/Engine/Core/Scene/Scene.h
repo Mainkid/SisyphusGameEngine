@@ -5,6 +5,7 @@
 
 #include "../../Components/GameObject.h"
 #include "../../Components/LightComponent.h"
+#include "../../Components/ParticleComponent.h"
 
 
 class Scene
@@ -24,6 +25,7 @@ public:
 
 	GameObject* AddGameObject();
 	GameObject* AddLight(LightType _lightType);
+	GameObject* AddParticleSystem();
 	bool DestroyGameObject(entt::entity);
 	bool DestroyGameObject(GameObject* _gameObject);
 

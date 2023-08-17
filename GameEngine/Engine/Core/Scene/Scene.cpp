@@ -44,6 +44,17 @@ GameObject* Scene::AddLight(LightType _lightType)
 	return gameObjects[id].get();
 }
 
+GameObject* Scene::AddParticleSystem()
+{
+	std::unique_ptr<GameObject> m_gameObject = std::make_unique<GameObject>();
+	auto id = registry.create();
+	registry.emplace<ParticleComponent>(id);
+	registry.emplace<TransformComponent>(id);
+	m_gameObject->id = id;
+	gameObjects[id] = std::move(m_gameObject);
+	return gameObjects[id].get();
+}
+
 bool Scene::DestroyGameObject(entt::entity _id)
 {
 	if (gameObjects[_id]->childrenObjects.size() > 0)
