@@ -6,7 +6,7 @@
 #include <d3dcompiler.h>
 
 #include "Buffer.h"
-#include "../Components/GameComponent.h"
+#include "../../Components/GameComponent.h"
 
 #define COMPILE_PIXEL 1
 #define COMPILE_VERTEX 2

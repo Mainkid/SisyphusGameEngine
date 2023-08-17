@@ -1,6 +1,6 @@
 #pragma once
-#include "DirectXHelpers.h"
-#include "SimpleMath.h"
+#include "../../../../vendor/DirectXHelpers.h"
+#include "../../../../vendor/SimpleMath.h"
 
 using namespace DirectX::SimpleMath;
 struct LightData

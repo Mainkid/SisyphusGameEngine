@@ -3,8 +3,8 @@
 
 #include "Camera.h"
 //#include "../Components/Player.h"
-#include "../DirectXSDK/SimpleMath.h"
-#include "../DirectXSDK/Delegates.h"
+#include "../../../vendor/SimpleMath.h"
+#include "../../../vendor/Delegates.h"
 
 class EngineCore;
 class CameraController

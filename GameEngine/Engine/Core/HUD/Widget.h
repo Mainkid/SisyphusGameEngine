@@ -1,7 +1,7 @@
 #pragma once
-#include "../../DirectXSDK/ImGui/imgui.h"
-#include "../../DirectXSDK/ImGui/imgui_impl_dx11.h"
-#include "../../DirectXSDK/ImGui/imgui_impl_win32.h"
+#include "../../../vendor/ImGui/imgui.h"
+#include "../../../vendor/ImGui/imgui_impl_dx11.h"
+#include "../../../vendor/ImGui/imgui_impl_win32.h"
 
 #include <string>
 

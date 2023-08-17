@@ -2,7 +2,7 @@
 #include "GameComponent.h"
 #include "TransformComponent.h"
 #include "MeshComponent.h"
-#include "../DirectXSDK/entt/entt.hpp"
+#include "../../vendor/entt/entt.hpp"
 #include "../Core/Scene/Scene.h"
 #include <set>
 #include <vector>

@@ -150,9 +150,9 @@ void EngineCore::Update()
 
 		totalTime -= 1.0f;
 
-		WCHAR text[256];
-		swprintf_s(text, TEXT("FPS: %f"), fps);
-		SetWindowText(GetWindowHWND(), text);
+		//WCHAR text[256];
+		//swprintf_s(text, TEXT("FPS: %f"), fps);
+		//SetWindowText(GetWindowHWND(), text);
 
 		frameCount = 0;
 	}

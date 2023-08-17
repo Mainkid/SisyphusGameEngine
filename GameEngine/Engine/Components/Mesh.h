@@ -1,14 +1,14 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "../DirectXSDK/SimpleMath.h"
+#include "../../vendor/SimpleMath.h"
 #include "../Core/Graphics/Buffer.h"
 
 class EngineCore;
 
 //Simple Meshes
 //Cube:
-static struct CubeMesh {
+struct CubeMesh {
 	static const std::vector<DirectX::SimpleMath::Vector4> verts;
 	static const std::vector<int> indices;
 };

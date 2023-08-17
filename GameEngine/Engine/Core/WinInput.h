@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <unordered_set>
 #include "Keys.h"
-#include "../DirectXSDK/Delegates.h"
+#include "../../vendor/Delegates.h"
 
 class EngineCore;
 

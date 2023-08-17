@@ -1,0 +1,6 @@
+[submodule "GameEngine/vendor/DirectXTK"]
+	path = GameEngine/vendor/DirectXTK
+	url = https://github.com/microsoft/DirectXTK.git
+[submodule "GameEngine/vendor/assimp"]
+	path = GameEngine/vendor/assimp
+	url = https://github.com/assimp/assimp.git

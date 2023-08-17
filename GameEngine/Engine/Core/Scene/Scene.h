@@ -1,5 +1,5 @@
 #pragma once
-#include "../../DirectXSDK/entt/entt.hpp"
+#include "../../../vendor/entt/entt.hpp"
 #include <vector>
 #include <memory>
 

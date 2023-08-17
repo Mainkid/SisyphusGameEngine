@@ -2,7 +2,7 @@
 #include "GameComponent.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include "../DirectXSDK/SimpleMath.h"
+#include "../../vendor/SimpleMath.h"
 
 using namespace DirectX::SimpleMath;
 

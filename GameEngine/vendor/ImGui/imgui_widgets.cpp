@@ -1,4 +1,4 @@
-// dear imgui, v1.89.8 WIP
+// dear imgui, v1.89.8
 // (widgets code)
 
 /*
@@ -41,11 +41,7 @@ Index of this file:
 #include "imgui_internal.h"
 
 // System includes
-#if defined(_MSC_VER) && _MSC_VER <= 1500 // MSVC 2008 or earlier
-#include <stddef.h>     // intptr_t
-#else
 #include <stdint.h>     // intptr_t
-#endif
 
 //-------------------------------------------------------------------------
 // Warnings
@@ -3822,6 +3818,7 @@ static bool STB_TEXTEDIT_INSERTCHARS(ImGuiInputTextState* obj, int pos, const Im
 #define STB_TEXTEDIT_K_SHIFT        0x400000
 
 #define STB_TEXTEDIT_IMPLEMENTATION
+#define STB_TEXTEDIT_memmove memmove
 #include "imstb_textedit.h"
 
 // stb_textedit internally allows for a single undo record to do addition and deletion, but somehow, calling

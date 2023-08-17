@@ -2,13 +2,13 @@
 #include "GameComponent.h"
 
 #include "Mesh.h"
-#include "../DirectXSDK/SimpleMath.h"
-#include <assimp/postprocess.h>
-#include "../DirectXSDK/assimp/scene.h"
-#include "../DirectXSDK/assimp/Importer.hpp"
-#include "../DirectXSDK/assimp/cimport.h"
-#include "../DirectXSDK/SpriteBatch.h"
-#include "../DirectXSDK/WICTextureLoader.h"
+#include "../../vendor/SimpleMath.h"
+#include "../../vendor/assimp/postprocess.h"
+#include "../../vendor/assimp/scene.h"
+#include "../../vendor/assimp/Importer.hpp"
+#include "../../vendor/assimp/cimport.h"
+#include "../../vendor/SpriteBatch.h"
+#include "../../vendor/WICTextureLoader.h"
 #include <iostream>
 #include <wrl.h>
 #include <vector>

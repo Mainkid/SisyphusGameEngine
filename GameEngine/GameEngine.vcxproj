@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\Engine\DirectXSDK;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\Engine\DirectXSDK;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
   </PropertyGroup>
@@ -142,7 +142,6 @@
     <ClCompile Include="Engine\Core\HUD\Widgets\ContentBrowser.cpp" />
     <ClCompile Include="Engine\Core\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Core\Camera\CameraController.cpp" />
-    <ClCompile Include="Engine\Core\Delegates.cpp" />
     <ClCompile Include="Engine\Core\DisplayWin32.cpp" />
     <ClCompile Include="Engine\Core\EngineCore.cpp" />
     <ClCompile Include="Engine\Components\GameComponent.cpp" />
@@ -151,18 +150,6 @@
     <ClCompile Include="Engine\Core\HUD\Widget.cpp" />
     <ClCompile Include="Engine\Core\Rendering\GBuffer.cpp" />
     <ClCompile Include="Engine\Core\WinInput.cpp" />
-    <ClCompile Include="Engine\DirectXSDK\ImGuizmo\GraphEditor.cpp" />
-    <ClCompile Include="Engine\DirectXSDK\ImGuizmo\ImCurveEdit.cpp" />
-    <ClCompile Include="Engine\DirectXSDK\ImGuizmo\ImGradient.cpp" />
-    <ClCompile Include="Engine\DirectXSDK\ImGuizmo\ImGuizmo.cpp" />
-    <ClCompile Include="Engine\DirectXSDK\ImGuizmo\ImSequencer.cpp" />
-    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui.cpp" />
-    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_demo.cpp" />
-    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_draw.cpp" />
-    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_impl_win32.cpp" />
-    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_tables.cpp" />
-    <ClCompile Include="Engine\DirectXSDK\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Engine\GameEngine.cpp" />
     <ClCompile Include="Engine\Components\GameObject.cpp" />
     <ClCompile Include="Engine\Components\TransformComponent.cpp" />
@@ -178,6 +165,19 @@
     <ClCompile Include="Engine\Core\HUD\Widgets\HierarchyWidget.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widgets\PropertiesWidget.cpp" />
     <ClCompile Include="Engine\Tools\ImageLoader.cpp" />
+    <ClCompile Include="vendor\Delegates.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\ImGradient.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\ImSequencer.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -202,21 +202,6 @@
     <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h" />
     <ClInclude Include="Engine\Core\WinInput.h" />
     <ClInclude Include="Engine\Core\Rendering\RenderPipeline.h" />
-    <ClInclude Include="Engine\DirectXSDK\entt\entt.hpp" />
-    <ClInclude Include="Engine\DirectXSDK\ImGuizmo\GraphEditor.h" />
-    <ClInclude Include="Engine\DirectXSDK\ImGuizmo\ImCurveEdit.h" />
-    <ClInclude Include="Engine\DirectXSDK\ImGuizmo\ImGradient.h" />
-    <ClInclude Include="Engine\DirectXSDK\ImGuizmo\ImGuizmo.h" />
-    <ClInclude Include="Engine\DirectXSDK\ImGuizmo\ImSequencer.h" />
-    <ClInclude Include="Engine\DirectXSDK\ImGuizmo\ImZoomSlider.h" />
-    <ClInclude Include="Engine\DirectXSDK\ImGui\imconfig.h" />
-    <ClInclude Include="Engine\DirectXSDK\ImGui\imgui.h" />
-    <ClInclude Include="Engine\DirectXSDK\ImGui\imgui_impl_dx11.h" />
-    <ClInclude Include="Engine\DirectXSDK\ImGui\imgui_impl_win32.h" />
-    <ClInclude Include="Engine\DirectXSDK\ImGui\imgui_internal.h" />
-    <ClInclude Include="Engine\DirectXSDK\ImGui\imstb_rectpack.h" />
-    <ClInclude Include="Engine\DirectXSDK\ImGui\imstb_textedit.h" />
-    <ClInclude Include="Engine\DirectXSDK\ImGui\imstb_truetype.h" />
     <ClInclude Include="Engine\Systems\SystemsEnum.h" />
     <ClInclude Include="Engine\Core\Scene\Scene.h" />
     <ClInclude Include="Engine\Systems\RenderSystem\RenderSystem.h" />
@@ -228,50 +213,86 @@
     <ClInclude Include="Engine\Core\HUD\Widgets\HierarchyWidget.h" />
     <ClInclude Include="Engine\Core\HUD\Widgets\PropertiesWidget.h" />
     <ClInclude Include="Engine\Tools\ImageLoader.h" />
+    <ClInclude Include="vendor\Audio.h" />
+    <ClInclude Include="vendor\BufferHelpers.h" />
+    <ClInclude Include="vendor\CommonStates.h" />
+    <ClInclude Include="vendor\DDSTextureLoader.h" />
+    <ClInclude Include="vendor\Delegates.h" />
+    <ClInclude Include="vendor\DirectXHelpers.h" />
+    <ClInclude Include="vendor\Effects.h" />
+    <ClInclude Include="vendor\entt\entt.hpp" />
+    <ClInclude Include="vendor\GamePad.h" />
+    <ClInclude Include="vendor\GeometricPrimitive.h" />
+    <ClInclude Include="vendor\GraphicsMemory.h" />
+    <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImCurveEdit.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImGradient.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImSequencer.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImZoomSlider.h" />
+    <ClInclude Include="vendor\ImGui\imconfig.h" />
+    <ClInclude Include="vendor\ImGui\imgui.h" />
+    <ClInclude Include="vendor\ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="vendor\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="vendor\ImGui\imgui_internal.h" />
+    <ClInclude Include="vendor\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="vendor\ImGui\imstb_textedit.h" />
+    <ClInclude Include="vendor\ImGui\imstb_truetype.h" />
+    <ClInclude Include="vendor\Keyboard.h" />
+    <ClInclude Include="vendor\Model.h" />
+    <ClInclude Include="vendor\Mouse.h" />
+    <ClInclude Include="vendor\PostProcess.h" />
+    <ClInclude Include="vendor\PrimitiveBatch.h" />
+    <ClInclude Include="vendor\ScreenGrab.h" />
+    <ClInclude Include="vendor\SimpleMath.h" />
+    <ClInclude Include="vendor\SpriteBatch.h" />
+    <ClInclude Include="vendor\SpriteFont.h" />
+    <ClInclude Include="vendor\stb_image.h" />
+    <ClInclude Include="vendor\VertexTypes.h" />
+    <ClInclude Include="vendor\WICTextureLoader.h" />
+    <ClInclude Include="vendor\XboxDDSTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Core\Rendering\Shaders\LightShader.hlsl">
+    <None Include="Engine\Assets\Shaders\LightShader.hlsl">
       <FileType>Document</FileType>
     </None>
-    <FxCompile Include="Engine\Core\Rendering\Shaders\OpaqueShader.hlsl">
+    <FxCompile Include="Engine\Assets\Shaders\OpaqueShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Core\Rendering\Shaders\PointLightShader.hlsl">
+    <FxCompile Include="Engine\Assets\Shaders\PointLightShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Core\Rendering\Shaders\ShadowShader.hlsl">
+    <FxCompile Include="Engine\Assets\Shaders\ShadowShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Core\Rendering\Shaders\SpotLightShader.hlsl">
+    <FxCompile Include="Engine\Assets\Shaders\SpotLightShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Core\Rendering\Shaders\StencilPassShader.hlsl">
+    <FxCompile Include="Engine\Assets\Shaders\StencilPassShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Core\Rendering\Shaders\TextureShader.hlsl">
+    <FxCompile Include="Engine\Assets\Shaders\TextureShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <None Include="Engine\DirectXSDK\ImGui\.editorconfig" />
-    <None Include="Engine\DirectXSDK\ImGui\.gitattributes" />
-    <None Include="Engine\DirectXSDK\ImGui\.gitignore" />
+    <None Include="vendor\SimpleMath.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
