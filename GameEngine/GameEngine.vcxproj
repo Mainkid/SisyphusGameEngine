@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\Engine\DirectXSDK;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\Engine\DirectXSDK;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
   </PropertyGroup>
@@ -165,6 +165,8 @@
     <ClCompile Include="Engine\Core\HUD\Widgets\HierarchyWidget.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widgets\PropertiesWidget.cpp" />
     <ClCompile Include="Engine\Tools\ImageLoader.cpp" />
+    <ClCompile Include="Engine\Components\ParticleComponent.cpp" />
+    <ClCompile Include="Engine\Components\Particle.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -213,6 +215,8 @@
     <ClInclude Include="Engine\Core\HUD\Widgets\HierarchyWidget.h" />
     <ClInclude Include="Engine\Core\HUD\Widgets\PropertiesWidget.h" />
     <ClInclude Include="Engine\Tools\ImageLoader.h" />
+    <ClInclude Include="Engine\Components\ParticleComponent.h" />
+    <ClInclude Include="Engine\Components\Particle.h" />
     <ClInclude Include="vendor\Audio.h" />
     <ClInclude Include="vendor\BufferHelpers.h" />
     <ClInclude Include="vendor\CommonStates.h" />

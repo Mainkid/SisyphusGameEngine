@@ -13,9 +13,10 @@
 #define COMPILE_GEOM 4
 #define COMPILE_COMPUTE 8
 
-#define USE_POSITION 1
-#define USE_COLOR 2
-#define USE_NORMAL 4
+#define USE_NONE 1
+#define USE_POSITION 2
+#define USE_COLOR 4
+#define USE_NORMAL 8
 
 class EngineCore;
 

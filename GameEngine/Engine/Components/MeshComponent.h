@@ -3,10 +3,10 @@
 
 #include "Mesh.h"
 #include "../../vendor/SimpleMath.h"
-#include "../../vendor/assimp/postprocess.h"
-#include "../../vendor/assimp/scene.h"
-#include "../../vendor/assimp/Importer.hpp"
-#include "../../vendor/assimp/cimport.h"
+#include "assimp/postprocess.h"
+#include "assimp/scene.h"
+#include "assimp/Importer.hpp"
+#include "assimp/cimport.h"
 #include "../../vendor/SpriteBatch.h"
 #include "../../vendor/WICTextureLoader.h"
 #include <iostream>

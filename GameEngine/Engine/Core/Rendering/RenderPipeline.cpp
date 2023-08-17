@@ -794,166 +794,170 @@ void RenderPipeline::LightPass()
 
 void RenderPipeline::ParticlePass()
 {
-    //engine->context->OMSetDepthStencilState(offStencilState.Get(), 0);
-    ////engine->context->ClearDepthStencilView(engine->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1.0f, 0);
-    //for (auto particleSystem : engine->particleSystems)
-    //{
-    //    CB_ComputeShader dataGroup;
-    //    particleSystem->NullSortList();
-    //    dataGroup.GroupCount = Vector4(particleSystem->groupSizeX, particleSystem->groupSizeY, 0, 1);
-    //    dataGroup.viewProjBuff.projection = engine->cameraController->GetProjectionMatrix();
-    //    dataGroup.viewProjBuff.view = engine->cameraController->GetViewMatrix();
-    //    dataGroup.eyePos = Vector4(engine->cameraController->camera->pos.x, engine->cameraController->camera->pos.y, engine->cameraController->camera->pos.z, 1);
+    engine->context->OMSetDepthStencilState(offStencilState.Get(), 0);
+    //engine->context->ClearDepthStencilView(engine->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1.0f, 0);
+    for (auto& entity : engine->scene->registry.view<ParticleComponent>())
+    {
+        ParticleComponent& particleSystem = engine->scene->registry.get<ParticleComponent>(entity);
+        CB_ComputeShader dataGroup;
+        particleSystem.NullSortList();
+        dataGroup.GroupCount = Vector4(particleSystem.groupSizeX, particleSystem.groupSizeY, 0, 1);
+        dataGroup.viewProjBuff.projection = engine->cameraController->GetProjectionMatrix();
+        dataGroup.viewProjBuff.view = engine->cameraController->GetViewMatrix();
+        dataGroup.eyePos = Vector4(engine->cameraController->camera->pos.x, engine->cameraController->camera->pos.y, engine->cameraController->camera->pos.z, 1);
 
-    //    D3D11_MAPPED_SUBRESOURCE mappedResource;
-    //    HRESULT res = engine->context->Map(particleSystem->groupCountConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-    //    CopyMemory(mappedResource.pData, &dataGroup, sizeof(CB_ComputeShader));
-    //    engine->context->Unmap(particleSystem->groupCountConstBuffer->buffer.Get(), 0);
+        D3D11_MAPPED_SUBRESOURCE mappedResource;
+        HRESULT res = engine->context->Map(particleSystem.groupCountConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+        CopyMemory(mappedResource.pData, &dataGroup, sizeof(CB_ComputeShader));
+        engine->context->Unmap(particleSystem.groupCountConstBuffer->buffer.Get(), 0);
 
-    //    engine->context->OMSetBlendState(lightBlendState.Get(), nullptr, 0xffffffff);
-
-
-
-    //    engine->context->CSSetShader(particleSystem->particleEmitterShader->computeShader.Get(), nullptr, 0);
-    //    const unsigned int end[1] = { particleSystem->maxParticles - 1 };
-    //    const unsigned int start[1] = { 0 };
-    //    engine->context->CSSetUnorderedAccessViews(1, 1, particleSystem->poolBufferUAV.GetAddressOf(), nullptr);
-    //    if (!helper)
-    //    {
-    //        engine->context->CSSetUnorderedAccessViews(2, 1, particleSystem->deadListUAV.GetAddressOf(), end);
-    //        helper = true;
-    //    }
-    //    else
-    //    {
-    //        engine->context->CSSetUnorderedAccessViews(2, 1, particleSystem->deadListUAV.GetAddressOf(), nullptr);
-    //    }
-    //    engine->context->Dispatch(1, 1, 1);
-
-    //    ID3D11UnorderedAccessView* nullViews[] = { nullptr,nullptr,nullptr };
-    //    engine->context->CSSetUnorderedAccessViews(1, 3, nullViews, 0);
-    //    engine->context->CSSetShader(nullptr, 0, 0);
+        engine->context->OMSetBlendState(lightBlendState.Get(), nullptr, 0xffffffff);
 
 
 
-    //    engine->context->CSSetShader(particleSystem->particleUpdateShader->computeShader.Get(), nullptr, 0);
-    //    engine->context->CSSetUnorderedAccessViews(1, 1, particleSystem->poolBufferUAV.GetAddressOf(), nullptr);
-    //    engine->context->CSSetUnorderedAccessViews(2, 1, particleSystem->deadListUAV.GetAddressOf(), nullptr);
-    //    engine->context->CSSetUnorderedAccessViews(3, 1, particleSystem->sortBufferUAV.GetAddressOf(), start);
-    //    engine->context->CSSetConstantBuffers(0, 1, particleSystem->groupCountConstBuffer->buffer.GetAddressOf());
+        engine->context->CSSetShader(particleSystem.particleEmitterShader->computeShader.Get(), nullptr, 0);
+        const unsigned int end[1] = { particleSystem.maxParticles - 1 };
+        const unsigned int start[1] = { 0 };
+        engine->context->CSSetUnorderedAccessViews(1, 1, particleSystem.poolBufferUAV.GetAddressOf(), nullptr);
+        if (!helper)
+        {
+            engine->context->CSSetUnorderedAccessViews(2, 1, particleSystem.deadListUAV.GetAddressOf(), end);
+            helper = true;
+        }
+        else
+        {
+            engine->context->CSSetUnorderedAccessViews(2, 1, particleSystem.deadListUAV.GetAddressOf(), nullptr);
+        }
+        engine->context->Dispatch(1, 1, 1);
 
-    //    engine->context->Dispatch(particleSystem->groupSizeX, particleSystem->groupSizeY, 1);
-
-
-    //    engine->context->CSSetUnorderedAccessViews(1, 3, nullViews, 0);
-    //    engine->context->CSSetShader(nullptr, 0, 0);
-
-    //    //=============== //
-    //    // Sorting        //
-    //    //=============== //
-
-    //    particleSystem->SortGPU();
-    //    engine->context->CSSetUnorderedAccessViews(0, 1, nullViews, 0);
-    //    engine->context->CSSetShader(nullptr, 0, 0);
-
-    //    //=============== //
-    //    // Multiply by 6  //
-    //    //=============== //
-    //    engine->context->CopyStructureCount(particleSystem->counterBuffer->buffer.Get(), 0, particleSystem->sortBufferUAV.Get());
-
-    //    engine->context->CSSetShader(particleSystem->multiply6Shader->computeShader.Get(), nullptr, 0);
-    //    engine->context->CSSetUnorderedAccessViews(1, 1, particleSystem->counterUAV.GetAddressOf(), nullptr);
-    //    engine->context->Dispatch(1, 1, 1);
-    //    engine->context->CSSetUnorderedAccessViews(1, 1, nullViews, 0);
-    //    engine->context->CSSetShader(nullptr, 0, 0);
-
-    //    //=============== //
-    //    // Visualisation  //
-    //    //=============== //
-
-
-    //    CB_ParticleVisualisation dataParticle;
-    //    dataParticle.viewProj.projection = engine->cameraController->GetProjectionMatrix();
-    //    dataParticle.viewProj.view = engine->cameraController->GetViewMatrix();
-    //    dataParticle.eyePos = DirectX::SimpleMath::Vector4(engine->cameraController->camera->pos.x,
-    //        engine->cameraController->camera->pos.y,
-    //        engine->cameraController->camera->pos.z,
-    //        1.0f);
-    //    dataParticle.lightCount = engine->lights.size();
-    //    Vector3 vec = engine->cameraController->camera->GetForwardVector();
-    //    dataParticle.viewDirection = vec;
-    //    dataParticle.cameraRot = engine->cameraController->GetViewMatrix().Invert();
-    //    for (int i = 0; i < dataParticle.lightCount; i++)
-    //    {
-    //        dataParticle.lightData[i].Pos = engine->lights[i]->position;
-    //        dataParticle.lightData[i].Color = engine->lights[i]->color;
-    //        dataParticle.lightData[i].Dir = engine->lights[i]->direction;
-    //        dataParticle.lightData[i].additiveParams = engine->lights[i]->params;
-
-    //        if (engine->lights[i]->lightType == LightType::Directional)
-    //        {
-    //            for (int j = 0; j < 4; j++)
-    //            {
-    //                dataParticle.distances[j] = engine->lights[i]->distances[j];
-    //                dataParticle.viewProjs[j] = engine->lights[i]->viewMatrices[j] * engine->lights[i]->orthoMatrices[j];
-    //            }
-    //        }
-    //    }
+        ID3D11UnorderedAccessView* nullViews[] = { nullptr,nullptr,nullptr };
+        engine->context->CSSetUnorderedAccessViews(1, 3, nullViews, 0);
+        engine->context->CSSetShader(nullptr, 0, 0);
 
 
 
+        engine->context->CSSetShader(particleSystem.particleUpdateShader->computeShader.Get(), nullptr, 0);
+        engine->context->CSSetUnorderedAccessViews(1, 1, particleSystem.poolBufferUAV.GetAddressOf(), nullptr);
+        engine->context->CSSetUnorderedAccessViews(2, 1, particleSystem.deadListUAV.GetAddressOf(), nullptr);
+        engine->context->CSSetUnorderedAccessViews(3, 1, particleSystem.sortBufferUAV.GetAddressOf(), start);
+        engine->context->CSSetConstantBuffers(0, 1, particleSystem.groupCountConstBuffer->buffer.GetAddressOf());
 
-    //    D3D11_MAPPED_SUBRESOURCE mappedResource2;
-    //    res = engine->context->Map(particleSystem->constBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource2);
-    //    CopyMemory(mappedResource2.pData, &dataParticle, sizeof(CB_ParticleVisualisation));
-    //    engine->context->Unmap(particleSystem->constBuffer->buffer.Get(), 0);
-
-
-    //    engine->context->VSSetConstantBuffers(0, 1, particleSystem->constBuffer->buffer.GetAddressOf());
-    //    engine->context->PSSetConstantBuffers(0, 1, particleSystem->constBuffer->buffer.GetAddressOf());
-
-    //    engine->context->VSSetShader(particleSystem->simpleParticleShader->vertexShader.Get(), nullptr, 0);
-    //    engine->context->PSSetShader(particleSystem->simpleParticleShader->pixelShader.Get(), nullptr, 0);
-    //    engine->context->VSSetShaderResources(0, 1, &shadowResourceView);
-    //    engine->context->VSSetShaderResources(1, 1, particleSystem->poolBufferSRV.GetAddressOf());
-    //    engine->context->VSSetShaderResources(2, 1, particleSystem->sortBufferSRV.GetAddressOf());
-    //    engine->context->VSSetShaderResources(3, 1, particleSystem->textureSRV.GetAddressOf());
-    //    engine->context->PSSetShaderResources(0, 1, &shadowResourceView);
-    //    engine->context->PSSetShaderResources(1, 1, particleSystem->poolBufferSRV.GetAddressOf());
-    //    engine->context->PSSetShaderResources(2, 1, particleSystem->sortBufferSRV.GetAddressOf());
-    //    engine->context->PSSetShaderResources(3, 1, particleSystem->textureSRV.GetAddressOf());
-
-    //    engine->context->PSSetSamplers(0, 1, samplerState.GetAddressOf());
-    //    engine->context->PSSetSamplers(1, 1, samplerDepthState.GetAddressOf());
-    //    engine->context->VSSetSamplers(0, 1, samplerState.GetAddressOf());
-    //    engine->context->VSSetSamplers(1, 1, samplerDepthState.GetAddressOf());
-
-    //    engine->context->CopySubresourceRegion(particleSystem->indirectDrawBuffer->buffer.Get(), 0, 0, NULL, NULL, particleSystem->counterBuffer->buffer.Get(), 0, NULL);
-
-    //    ID3D11UnorderedAccessView* UAVs[2] = { particleSystem->poolBufferUAV.Get(),particleSystem->sortBufferUAV.Get() };
-    //    //engine->context->VSSetShaderResources(1,2,UAVs);
-    //    //engine->context->OMSetRenderTargetsAndUnorderedAccessViews(1, engine->rtv.GetAddressOf(), engine->depthStencilView.Get(), 1, 2, UAVs, nullptr);
+        engine->context->Dispatch(particleSystem.groupSizeX, particleSystem.groupSizeY, 1);
 
 
-    //    engine->context->OMSetRenderTargets(1, engine->rtv.GetAddressOf(), engine->depthStencilView.Get());
-    //    //engine->context->OMSetBlendState(particlesBlendState.Get(),nullptr,0xffffffff);
+        engine->context->CSSetUnorderedAccessViews(1, 3, nullViews, 0);
+        engine->context->CSSetShader(nullptr, 0, 0);
 
-    //    engine->context->IASetIndexBuffer(particleSystem->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-    //    engine->context->IASetInputLayout(nullptr);
-    //    engine->context->IASetInputLayout(particleSystem->simpleParticleShader->layout.Get());
-    //    engine->context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    //    //engine->context->DrawInstancedIndirect(particleSystem->indirectDrawBuffer->buffer.Get(),0);
-    //    engine->context->DrawIndexedInstancedIndirect(particleSystem->indirectDrawBuffer->buffer.Get(), 0);
+        //=============== //
+        // Sorting        //
+        //=============== //
 
-    //    ID3D11ShaderResourceView* nullSRV[4] = { nullptr,nullptr,nullptr,nullptr };
-    //    engine->context->PSSetShaderResources(0, 4, nullSRV);
-    //    engine->context->VSSetShaderResources(0, 4, nullSRV);
-    //    //=============== //
-    //    // Shadow rec.    //
-    //    //=============== //
+        particleSystem.SortGPU();
+        engine->context->CSSetUnorderedAccessViews(0, 1, nullViews, 0);
+        engine->context->CSSetShader(nullptr, 0, 0);
+
+        //=============== //
+        // Multiply by 6  //
+        //=============== //
+        engine->context->CopyStructureCount(particleSystem.counterBuffer->buffer.Get(), 0, particleSystem.sortBufferUAV.Get());
+
+        engine->context->CSSetShader(particleSystem.multiply6Shader->computeShader.Get(), nullptr, 0);
+        engine->context->CSSetUnorderedAccessViews(1, 1, particleSystem.counterUAV.GetAddressOf(), nullptr);
+        engine->context->Dispatch(1, 1, 1);
+        engine->context->CSSetUnorderedAccessViews(1, 1, nullViews, 0);
+        engine->context->CSSetShader(nullptr, 0, 0);
+
+        //=============== //
+        // Visualisation  //
+        //=============== //
+
+
+        CB_ParticleVisualisation dataParticle;
+        dataParticle.viewProj.projection = engine->cameraController->GetProjectionMatrix();
+        dataParticle.viewProj.view = engine->cameraController->GetViewMatrix();
+        dataParticle.eyePos = DirectX::SimpleMath::Vector4(engine->cameraController->camera->pos.x,
+            engine->cameraController->camera->pos.y,
+            engine->cameraController->camera->pos.z,
+            1.0f);
+        dataParticle.lightCount = engine->scene->registry.view<LightComponent>().size();
+        Vector3 vec = engine->cameraController->camera->GetForwardVector();
+        dataParticle.viewDirection = vec;
+        dataParticle.cameraRot = engine->cameraController->GetViewMatrix().Invert();
+        int i = 0;
+        for (auto& entity : engine->scene->registry.view<LightComponent>())
+        {
+            LightComponent& light = engine->scene->registry.get<LightComponent>(entity);
+            dataParticle.lightData[i].Pos = light.position;
+            dataParticle.lightData[i].Color = light.color;
+            dataParticle.lightData[i].Dir = light.direction;
+            dataParticle.lightData[i].additiveParams = light.params;
+
+            if (light.lightType == LightType::Directional)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    dataParticle.distances[j] = light.distances[j];
+                    dataParticle.viewProjs[j] = light.viewMatrices[j] * light.orthoMatrices[j];
+                }
+            }
+            i++;
+        }
 
 
 
-    //}
+
+        D3D11_MAPPED_SUBRESOURCE mappedResource2;
+        res = engine->context->Map(particleSystem.constBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource2);
+        CopyMemory(mappedResource2.pData, &dataParticle, sizeof(CB_ParticleVisualisation));
+        engine->context->Unmap(particleSystem.constBuffer->buffer.Get(), 0);
+
+
+        engine->context->VSSetConstantBuffers(0, 1, particleSystem.constBuffer->buffer.GetAddressOf());
+        engine->context->PSSetConstantBuffers(0, 1, particleSystem.constBuffer->buffer.GetAddressOf());
+
+        engine->context->VSSetShader(particleSystem.simpleParticleShader->vertexShader.Get(), nullptr, 0);
+        engine->context->PSSetShader(particleSystem.simpleParticleShader->pixelShader.Get(), nullptr, 0);
+        engine->context->VSSetShaderResources(0, 1, &shadowResourceView);
+        engine->context->VSSetShaderResources(1, 1, particleSystem.poolBufferSRV.GetAddressOf());
+        engine->context->VSSetShaderResources(2, 1, particleSystem.sortBufferSRV.GetAddressOf());
+        engine->context->VSSetShaderResources(3, 1, particleSystem.textureSRV.GetAddressOf());
+        engine->context->PSSetShaderResources(0, 1, &shadowResourceView);
+        engine->context->PSSetShaderResources(1, 1, particleSystem.poolBufferSRV.GetAddressOf());
+        engine->context->PSSetShaderResources(2, 1, particleSystem.sortBufferSRV.GetAddressOf());
+        engine->context->PSSetShaderResources(3, 1, particleSystem.textureSRV.GetAddressOf());
+
+        engine->context->PSSetSamplers(0, 1, samplerState.GetAddressOf());
+        engine->context->PSSetSamplers(1, 1, samplerDepthState.GetAddressOf());
+        engine->context->VSSetSamplers(0, 1, samplerState.GetAddressOf());
+        engine->context->VSSetSamplers(1, 1, samplerDepthState.GetAddressOf());
+
+        engine->context->CopySubresourceRegion(particleSystem.indirectDrawBuffer->buffer.Get(), 0, 0, NULL, NULL, particleSystem.counterBuffer->buffer.Get(), 0, NULL);
+
+        ID3D11UnorderedAccessView* UAVs[2] = { particleSystem.poolBufferUAV.Get(),particleSystem.sortBufferUAV.Get() };
+        //engine->context->VSSetShaderResources(1,2,UAVs);
+        //engine->context->OMSetRenderTargetsAndUnorderedAccessViews(1, engine->rtv.GetAddressOf(), engine->depthStencilView.Get(), 1, 2, UAVs, nullptr);
+
+
+        engine->renderTarget->SetRenderTarget(engine->depthStencilView.Get());
+        //engine->context->OMSetBlendState(particlesBlendState.Get(),nullptr,0xffffffff);
+
+        engine->context->IASetIndexBuffer(particleSystem.indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+        engine->context->IASetInputLayout(nullptr);
+        engine->context->IASetInputLayout(particleSystem.simpleParticleShader->layout.Get());
+        engine->context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        //engine->context->DrawInstancedIndirect(particleSystem->indirectDrawBuffer->buffer.Get(),0);
+        engine->context->DrawIndexedInstancedIndirect(particleSystem.indirectDrawBuffer->buffer.Get(), 0);
+
+        ID3D11ShaderResourceView* nullSRV[4] = { nullptr,nullptr,nullptr,nullptr };
+        engine->context->PSSetShaderResources(0, 4, nullSRV);
+        engine->context->VSSetShaderResources(0, 4, nullSRV);
+        //=============== //
+        // Shadow rec.    //
+        //=============== //
+
+
+
+    }
 }
 
 float RenderPipeline::GetPixelValue(int clickX, int clickY)

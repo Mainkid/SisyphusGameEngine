@@ -31,7 +31,7 @@ public:
     Vector4 position = { 0,0,0,1 };
     Vector4 direction = { 1,0,0,0 };
     Vector4 color = { 1,1,1,1 };
-    Vector4 params = { 1,1,1,1 };
+    Vector4 params = {0,1,1,1 };
 
     Matrix viewMatrix;
     Matrix orthoMatrix;

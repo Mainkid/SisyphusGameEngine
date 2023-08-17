@@ -3,6 +3,7 @@
 
 #include "../Graphics/Shader.h"
 #include "../../Components/LightComponent.h"
+#include "../../Components/ParticleComponent.h"
 #include "../Graphics/ConstantBuffer.h"
 #include "GBuffer.h"
 

@@ -98,12 +98,15 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
         ctr++;
     }
 
-    res = EngineCore::instance()->device->CreateInputLayout(
-        inputElements,
-        ctr,
-        vertexBC->GetBufferPointer(),
-        vertexBC->GetBufferSize(),
-        layout.GetAddressOf());
+    if ((uniform_flags & USE_NONE) != USE_NONE)
+    {
+        res = EngineCore::instance()->device->CreateInputLayout(
+            inputElements,
+            ctr,
+            vertexBC->GetBufferPointer(),
+            vertexBC->GetBufferSize(),
+            layout.GetAddressOf());
+    }
 
 }
 
