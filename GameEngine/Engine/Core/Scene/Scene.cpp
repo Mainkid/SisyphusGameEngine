@@ -8,12 +8,7 @@ Scene::Scene()
 void Scene::Initialize()
 {   
 	
-	auto view= registry.view<TransformComponent>();
-	for (auto entity : view)
-	{
-		TransformComponent& transform = registry.get<TransformComponent>(entity);
-		transform.Initialize();
-	}
+
 }
 
 void Scene::Update(float deltaSec)

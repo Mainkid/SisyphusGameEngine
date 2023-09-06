@@ -1,6 +1,6 @@
 #include "TransformComponent.h"
 
-TransformComponent::TransformComponent(Vector3 pos, Vector3 rot, Vector3 scale)
+/*TransformComponent::TransformComponent(Vector3 pos, Vector3 rot, Vector3 scale)
 {
     this->rotation = rot;
     this->scale = scale;
@@ -90,5 +90,5 @@ void TransformComponent::UpdateTranslationMatrix()
 void TransformComponent::UpdateScaleMatrix()
 {
     scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(scale);
-}
+}*/
 

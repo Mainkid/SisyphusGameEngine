@@ -2,7 +2,7 @@
 #include <memory>
 #include <wrl/client.h>
 
-#include "../../../vendor/DDSTextureLoader.h"
+#include "DDSTextureLoader.h"
 
 class Game;
 

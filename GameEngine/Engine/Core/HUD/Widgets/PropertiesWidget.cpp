@@ -21,25 +21,27 @@ void PropertiesWidget::Render()
 	{
 		auto degToRadians = [](float angle) {return angle * M_PI / 180.0f; };
 		ImGui::Text("Transform");
-		Vector3 vec3Dx = tc->GetPosition();
+		Vector3 vec3Dx = tc->position;
 		float vec3[3]{ vec3Dx.x,vec3Dx.y,vec3Dx.z };
 		ImGui::DragFloat3("Translation", vec3,0.1f);
-		tc->SetPosition(Vector3(vec3[0], vec3[1], vec3[2]));
+		tc->position=(Vector3(vec3[0], vec3[1], vec3[2]));
 
-		vec3Dx = tc->GetRotationDegrees();
+		vec3Dx =TransformHelper::GetRotationDegrees(*tc);
 		vec3[0] = vec3Dx.x;
 		vec3[1] = vec3Dx.y;
 		vec3[2] = vec3Dx.z;
 
 		ImGui::DragFloat3("Rotation", vec3, 1.0f);
-		tc->SetRotationDegrees(Vector3(vec3[0],vec3[1],vec3[2]));
+		auto vec = Vector3(vec3[0], vec3[1], vec3[2]);
+		TransformHelper::DegreesToRad(vec);
+		tc->rotation = vec;
 
-		vec3Dx = tc->GetScale();
+		vec3Dx = tc->scale;
 		vec3[0] = vec3Dx.x;
 		vec3[1] = vec3Dx.y;
 		vec3[2] = vec3Dx.z;
 		ImGui::DragFloat3("Scale", vec3, 0.1f);
-		tc->SetScale(Vector3(vec3[0],vec3[1], vec3[2]));
+		tc->scale=(Vector3(vec3[0],vec3[1], vec3[2]));
 	}
 
    

@@ -422,23 +422,23 @@ void RenderPipeline::ShadowPass()
                 MeshComponent& meshComponent = engine->scene->registry.get<MeshComponent>(go_entity);
                 CB_ShadowBuffer dataShadow;
                 //dataShadow.baseData.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
-                dataShadow.baseData.world = transform.ConstructTransformMatrix();
-
+                dataShadow.baseData.world = TransformHelper::ConstructTransformMatrix(transform);
+                
                 //!dataShadow.baseData.worldViewProj =
                 //    engineActor->transform->world * engineActor->transform->GetViewMatrix() *
                 //    engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
 
                 dataShadow.baseData.worldViewProj =
-                    transform.ConstructTransformMatrix() *
+                    TransformHelper::ConstructTransformMatrix(transform) *
                     engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
 
-                dataShadow.baseData.worldView = transform.ConstructTransformMatrix() *
+                dataShadow.baseData.worldView = TransformHelper::ConstructTransformMatrix(transform) *
                     engine->cameraController->GetViewMatrix();
 
                 dataShadow.baseData.worldViewInverseTranspose =
                     DirectX::XMMatrixTranspose(
                         DirectX::XMMatrixInverse(nullptr,
-                            transform.ConstructTransformMatrix()*engine->cameraController->GetViewMatrix()));
+                            TransformHelper::ConstructTransformMatrix(transform)*engine->cameraController->GetViewMatrix()));
 
                 for (int i = 0; i < 4; i++)
                     dataShadow.viewProjs[i] = light.viewMatrices[i] * light.orthoMatrices[i];
@@ -451,7 +451,7 @@ void RenderPipeline::ShadowPass()
                 engine->context->PSSetConstantBuffers(0, 1, shadowConstBuffer->buffer.GetAddressOf());
                 engine->context->GSSetConstantBuffers(0, 1, shadowConstBuffer->buffer.GetAddressOf());
 
-                for (auto mesh : meshComponent.meshes)
+                for (auto& mesh : meshComponent.meshes)
                 {
                     UINT offset[1] = { 0 };
                     UINT stride[1] = { 48 };
@@ -512,20 +512,20 @@ void RenderPipeline::OpaquePass()
         TransformComponent& transformComp= engine->scene->registry.get<TransformComponent>(entity);
         MeshComponent& meshComp = engine->scene->registry.get<MeshComponent>(entity);
         //dataOpaque.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
-        dataOpaque.baseData.world = transformComp.ConstructTransformMatrix();
+        dataOpaque.baseData.world = TransformHelper::ConstructTransformMatrix(transformComp);
 
         //dataOpaque.worldViewProj =
         //    engineActor->transform->world * engineActor->transform->GetViewMatrix() *
         //    engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
 
         dataOpaque.baseData.worldViewProj =
-            transformComp.ConstructTransformMatrix() *
+            TransformHelper::ConstructTransformMatrix(transformComp) *
             engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
 
         //dataOpaque.worldView = engineActor->transform->world * engineActor->transform->GetViewMatrix() *
         //    engine->cameraController->GetViewMatrix();
 
-        dataOpaque.baseData.worldView = transformComp.ConstructTransformMatrix() *
+        dataOpaque.baseData.worldView = TransformHelper::ConstructTransformMatrix(transformComp) *
             engine->cameraController->GetViewMatrix();
 
         //dataOpaque.worldViewInverseTranspose =
@@ -536,7 +536,7 @@ void RenderPipeline::OpaquePass()
         dataOpaque.baseData.worldViewInverseTranspose =
             DirectX::XMMatrixTranspose(
                 DirectX::XMMatrixInverse(nullptr,
-                    transformComp.ConstructTransformMatrix()));
+                    TransformHelper::ConstructTransformMatrix(transformComp)));
 
         dataOpaque.instanseID =(uint32_t)entity;
 
@@ -968,7 +968,7 @@ float RenderPipeline::GetPixelValue(int clickX, int clickY)
     D3D11_MAPPED_SUBRESOURCE ResourceDesc = {};
     engine->context->Map(gBuffer->depthCpuTexture.Get(), 0, D3D11_MAP_READ, 0, &ResourceDesc);
     int const BytesPerPixel = sizeof(FLOAT);
-
+    engine->context->Unmap(gBuffer->depthCpuTexture.Get(), 0);
     if (ResourceDesc.pData)
     {
 

@@ -1,48 +1,26 @@
 #pragma once
-#include "GameComponent.h"
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include "../../vendor/SimpleMath.h"
+#include "SimpleMath.h"
+
 
 using namespace DirectX::SimpleMath;
-
-class TransformComponent : public GameComponent
+struct TransformComponent
 {
-public:
-
 	TransformComponent() = default;
-	TransformComponent(Vector3 pos, Vector3 rot, Vector3 scale);
-	TransformComponent(const TransformComponent& component) = default;
-	Matrix ConstructTransformMatrix();
-	void Initialize() {};
-
-	Vector3 GetPosition();
-	void SetPosition(Vector3 _pos);
-	Vector3 GetRotation();
-	Vector3 GetRotationDegrees();
-	void SetRotation(Vector3 _rot);
-	void SetRotationDegrees(Vector3 _rot);
-	Vector3 GetScale();
-	void SetScale(Vector3 _scale);
-
-	
-
-private:
+	TransformComponent(Vector3 _pos, Vector3 _rot, Vector3 _scale)
+	{
+		this->position = _pos;
+		this->rotation = _rot;
+		this->scale = _scale;
+	}
 	Vector3 position = Vector3(0, 0, 0);
+	Vector3 prevPos = Vector3(0, 0, 0);
 	Vector3 rotation = Vector3(0, 0, 0);
+	Vector3 prevRot = Vector3(0, 0, 0);
 	Vector3 scale = Vector3(1, 1, 1);
+	Vector3 prevScale = Vector3(1, 1, 1);
 	Matrix translationMatrix=Matrix::Identity;
 	Matrix rotationMatrix=Matrix::Identity;
 	Matrix scaleMatrix=Matrix::Identity;
-
-	void UpdateTranslationMatrix();
-	void UpdateScaleMatrix();
-	void UpdateRotationMatrix();
-	void Render() {};
-
-	void RadToDegrees(Vector3& vec);
-	void DegreesToRad(Vector3& vec);
-
 	
 };
 

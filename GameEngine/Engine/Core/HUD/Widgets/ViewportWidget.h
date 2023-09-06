@@ -12,6 +12,7 @@
 #include "../../../../vendor/ImGui/imgui_impl_win32.h"
 #include "../../../../vendor/ImGuizmo/ImGuizmo.h"
 #include "../../../Tools/ImageLoader.h"
+#include "../../../Systems/TransformHelper.h"
 #include <string>
 #include <map>
 #include <filesystem>

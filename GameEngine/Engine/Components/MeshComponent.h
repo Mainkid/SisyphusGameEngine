@@ -2,12 +2,12 @@
 #include "GameComponent.h"
 
 #include "Mesh.h"
-#include "../../vendor/SimpleMath.h"
+#include "SimpleMath.h"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 #include "assimp/Importer.hpp"
 #include "assimp/cimport.h"
-#include "../../vendor/SpriteBatch.h"
+#include "SpriteBatch.h"
 #include "../../vendor/WICTextureLoader.h"
 #include <iostream>
 #include <wrl.h>

@@ -1,5 +1,4 @@
 ﻿#include "Camera.h"
-
 #include "SimpleMath.h"
 
 
@@ -13,7 +12,6 @@ Camera::Camera()
     SetLookAtPos(DirectX::XMFLOAT3(-1.0f, 0.0f, 0.0f));
     UpdateViewMatrix();
     //SetProjectionValues(90, 1, 0.01f, 1000.0f);
-    
 }
 
 void Camera::SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ)

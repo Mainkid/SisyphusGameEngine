@@ -3,7 +3,7 @@
 
 #include "Camera.h"
 //#include "../Components/Player.h"
-#include "../../../vendor/SimpleMath.h"
+#include "SimpleMath.h"
 #include "../../../vendor/Delegates.h"
 
 class EngineCore;

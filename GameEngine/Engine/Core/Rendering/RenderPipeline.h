@@ -4,6 +4,7 @@
 #include "../Graphics/Shader.h"
 #include "../../Components/LightComponent.h"
 #include "../../Components/ParticleComponent.h"
+#include "../../Systems/TransformHelper.h"
 #include "../Graphics/ConstantBuffer.h"
 #include "GBuffer.h"
 

@@ -149,16 +149,22 @@ void EngineCore::Update()
 		float fps = frameCount / totalTime;
 
 		totalTime -= 1.0f;
-
-		//WCHAR text[256];
-		//swprintf_s(text, TEXT("FPS: %f"), fps);
-		//SetWindowText(GetWindowHWND(), text);
-
 		frameCount = 0;
 	}
 
+	for (auto& system : systems)
+	{
+		system->Run();
+	}
 	scene->Update(deltaTime);
 	cameraController->CameraMovement(deltaTime);
+}
+
+void EngineCore::StartUpSystems()
+{
+	std::unique_ptr<TransformSystem> ts= std::make_unique<TransformSystem>();
+	systems.push_back(std::move(ts));
+
 }
 
 void EngineCore::StartUp()
@@ -170,11 +176,19 @@ void EngineCore::StartUp()
 	hud->Initialize();
 	cameraController->Initialize();
 
+	for (auto& system : systems)
+	{
+		system->Init();
+	}
 }
 
 void EngineCore::ShutDown()
 {
 	RenderSystem::instance()->ShutDown();
+	for (auto& system : systems)
+	{
+		system->Destroy();
+	}
 }
 
 //TODO: ћб все-таки shared ptr у камера контроллера?

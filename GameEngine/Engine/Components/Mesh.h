@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "../../vendor/SimpleMath.h"
+#include "SimpleMath.h"
 #include "../Core/Graphics/Buffer.h"
 
 class EngineCore;

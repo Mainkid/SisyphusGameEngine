@@ -18,6 +18,8 @@
 #include "../Core/Rendering/RenderPipeline.h"
 #include "../Core/Camera/CameraController.h"
 #include "../Core/HUD/Hud.h"
+#include "../Systems/ISystem.h"
+#include "../Systems/TransformSystem.h"
 #include "../Systems/RenderSystem/RenderSystem.h"
 #include "../Core/Rendering/RenderTarget.h"
 #include "Scene/Scene.h"
@@ -55,6 +57,8 @@ public:
     ComPtr <ID3D11DepthStencilState> depthStencilState;
     std::unique_ptr<Scene> scene;
     std::unique_ptr<Hud> hud;
+
+    std::vector<std::unique_ptr<ISystem>> systems;
     
 
     float totalTime = 0;
@@ -78,6 +82,8 @@ public:
     void InitializeDirectX();
 
     void StartUp();
+
+    void StartUpSystems();
 
     void ShutDown();
 
