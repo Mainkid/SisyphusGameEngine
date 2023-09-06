@@ -152,13 +152,10 @@
     <ClCompile Include="Engine\Core\WinInput.cpp" />
     <ClCompile Include="Engine\GameEngine.cpp" />
     <ClCompile Include="Engine\Components\GameObject.cpp" />
-    <ClCompile Include="Engine\Components\TransformComponent.cpp" />
-    <ClCompile Include="Engine\Components\MeshComponent.cpp" />
     <ClCompile Include="Engine\Components\Mesh.cpp" />
     <ClCompile Include="Engine\Core\Rendering\RenderPipeline.cpp" />
     <ClCompile Include="Engine\Core\Scene\Scene.cpp" />
     <ClCompile Include="Engine\Systems\RenderSystem\RenderSystem.cpp" />
-    <ClCompile Include="Engine\Components\LightComponent.cpp" />
     <ClCompile Include="Engine\Core\HUD\Hud.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widgets\ViewportWidget.cpp" />
     <ClCompile Include="Engine\Core\Rendering\RenderTarget.cpp" />
@@ -169,6 +166,8 @@
     <ClCompile Include="Engine\Components\Particle.cpp" />
     <ClCompile Include="Engine\Systems\TransformSystem.cpp" />
     <ClCompile Include="Engine\Systems\TransformHelper.cpp" />
+    <ClCompile Include="Engine\Systems\MeshSystem.cpp" />
+    <ClCompile Include="Engine\Systems\LightSystem.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -206,6 +205,7 @@
     <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h" />
     <ClInclude Include="Engine\Core\WinInput.h" />
     <ClInclude Include="Engine\Core\Rendering\RenderPipeline.h" />
+    <ClInclude Include="Engine\Systems\Systems.h" />
     <ClInclude Include="Engine\Systems\SystemsEnum.h" />
     <ClInclude Include="Engine\Core\Scene\Scene.h" />
     <ClInclude Include="Engine\Systems\RenderSystem\RenderSystem.h" />
@@ -222,6 +222,8 @@
     <ClInclude Include="Engine\Systems\ISystem.h" />
     <ClInclude Include="Engine\Systems\TransformSystem.h" />
     <ClInclude Include="Engine\Systems\TransformHelper.h" />
+    <ClInclude Include="Engine\Systems\MeshSystem.h" />
+    <ClInclude Include="Engine\Systems\LightSystem.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />

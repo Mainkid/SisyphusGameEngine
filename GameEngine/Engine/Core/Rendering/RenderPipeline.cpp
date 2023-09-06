@@ -404,13 +404,12 @@ void RenderPipeline::ShadowPass()
         LightComponent& light = engine->scene->registry.get<LightComponent>(entity);
         if (light.lightType == LightType::Directional)
         {
-            light.GenerateViewMatrix(Vector3(engine->cameraController->camera->pos));
+            //TODO!!!! Вынести эти методы в систему рендера, а не систему света!!!
+            /*light.GenerateViewMatrix(Vector3(engine->cameraController->camera->pos));
             light.GenerateOrthoFromFrustum(engine->cameraController->GetViewMatrix(), engine->cameraController->GetProjectionMatrix());
+            light.GenerateOrthosFromFrustum(engine->cameraController->GetViewMatrix(), engine->cameraController->GetProjectionMatrix(), engine->cameraController->camera->farZ);*/
 
-            light.GenerateOrthosFromFrustum(engine->cameraController->GetViewMatrix(), engine->cameraController->GetProjectionMatrix(), engine->cameraController->camera->farZ);
 
-
-            //renderTexture->SetRenderTarget(context.Get(), shadowStencilView.Get());
             engine->context->OMSetRenderTargets(1, &m_renderTargetView, shadowStencilView.Get());
             m_renderTargetTexture = nullptr;
 
@@ -514,24 +513,12 @@ void RenderPipeline::OpaquePass()
         //dataOpaque.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
         dataOpaque.baseData.world = TransformHelper::ConstructTransformMatrix(transformComp);
 
-        //dataOpaque.worldViewProj =
-        //    engineActor->transform->world * engineActor->transform->GetViewMatrix() *
-        //    engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
-
         dataOpaque.baseData.worldViewProj =
             TransformHelper::ConstructTransformMatrix(transformComp) *
             engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
 
-        //dataOpaque.worldView = engineActor->transform->world * engineActor->transform->GetViewMatrix() *
-        //    engine->cameraController->GetViewMatrix();
-
         dataOpaque.baseData.worldView = TransformHelper::ConstructTransformMatrix(transformComp) *
             engine->cameraController->GetViewMatrix();
-
-        //dataOpaque.worldViewInverseTranspose =
-        //    DirectX::XMMatrixTranspose(
-        //        DirectX::XMMatrixInverse(nullptr,
-        //            engineActor->transform->world * engineActor->transform->GetViewMatrix()));
 
         dataOpaque.baseData.worldViewInverseTranspose =
             DirectX::XMMatrixTranspose(

@@ -165,6 +165,12 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<TransformSystem> ts= std::make_unique<TransformSystem>();
 	systems.push_back(std::move(ts));
 
+	std::unique_ptr<MeshSystem> ms = std::make_unique<MeshSystem>();
+	systems.push_back(std::move(ms));
+
+	std::unique_ptr<LightSystem> ls = std::make_unique<LightSystem>();
+	systems.push_back(std::move(ls));
+
 }
 
 void EngineCore::StartUp()
@@ -175,6 +181,8 @@ void EngineCore::StartUp()
 	renderPipeline->Initialize();
 	hud->Initialize();
 	cameraController->Initialize();
+
+	StartUpSystems();
 
 	for (auto& system : systems)
 	{
@@ -190,6 +198,3 @@ void EngineCore::ShutDown()
 		system->Destroy();
 	}
 }
-
-//TODO: ћб все-таки shared ptr у камера контроллера?
-//TODO: !!!”брать комментарии у сцены

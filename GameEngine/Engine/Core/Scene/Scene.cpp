@@ -7,14 +7,13 @@ Scene::Scene()
 
 void Scene::Initialize()
 {   
-	
+
 
 }
 
 void Scene::Update(float deltaSec)
 {
-	/*for (auto& component : gameObjects)
-		component->Update(deltaSec);*/
+
 }
 
 GameObject* Scene::AddGameObject()

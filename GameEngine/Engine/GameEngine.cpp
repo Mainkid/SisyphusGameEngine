@@ -11,7 +11,7 @@ int main()
 
     //EngineCore* engine = new EngineCore();
     EngineCore::instance()->StartUp();
-    //GameObject* _go = EngineCore::instance()->scene->AddGameObject();
+    GameObject* _go = EngineCore::instance()->scene->AddGameObject();
     ////_go->GetComponent<TransformComponent>().SetPosition(Vector3(-3, 0, 0));
     //auto t = _go->GetComponent<TransformComponent>();
     //
@@ -23,10 +23,10 @@ int main()
     //
     ////_go3->GetComponent<TransformComponent>().SetPosition(Vector3(-3, 0, 0));
     //_go3->GetComponent<MeshComponent>().UpdateMesh("./Engine/Assets/DefaultModel.obj");
-    //GameObject* _lightDir = EngineCore::instance()->scene->AddLight(Directional);
-    //GameObject* light=EngineCore::instance()->scene->AddLight(Ambient);
-    //light->GetComponent<LightComponent>().color = Vector4(0.15f, 0.15f, 0.15f, 0.15f);
-    //light->GetComponent<LightComponent>().direction = Vector4::Zero;
+    GameObject* _lightDir = EngineCore::instance()->scene->AddLight(LightType::Directional);
+    GameObject* light=EngineCore::instance()->scene->AddLight(LightType::Ambient);
+    light->GetComponent<LightComponent>().color = Vector4(0.15f, 0.15f, 0.15f, 0.15f);
+    light->GetComponent<LightComponent>().direction = Vector4::Zero;
     ////GameObject* _lightPoint = EngineCore::instance()->scene->AddLight(PointLight);
     ////_lightPoint->GetComponent<LightComponent>().params=Vector4(3.0f, 0.0f, 0.0f, 1.0f);
     ////_lightPoint->GetComponent<LightComponent>().position = Vector4(0, 0, 0.0f, 1.0f);

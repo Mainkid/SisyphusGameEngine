@@ -18,9 +18,7 @@
 #include "../Core/Rendering/RenderPipeline.h"
 #include "../Core/Camera/CameraController.h"
 #include "../Core/HUD/Hud.h"
-#include "../Systems/ISystem.h"
-#include "../Systems/TransformSystem.h"
-#include "../Systems/RenderSystem/RenderSystem.h"
+#include "../Systems/Systems.h"
 #include "../Core/Rendering/RenderTarget.h"
 #include "Scene/Scene.h"
 //#include "../"
@@ -32,9 +30,6 @@
 #pragma comment(lib, "dxguid.lib")
 
 using namespace Microsoft::WRL;
-
-
-
 
 class EngineCore
 {
@@ -78,22 +73,13 @@ public:
     HWND GetWindowHWND();
     
     void CreateDeviceAndSwapChain();
-
     void InitializeDirectX();
-
     void StartUp();
-
     void StartUpSystems();
-
     void ShutDown();
-
     void StartUpdateLoop();
 
-    
-
 protected:
-    
-
     void GetInput();
     void Render();
     void Update();

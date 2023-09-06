@@ -15,8 +15,6 @@ private:
 	void UpdateScaleMatrix(TransformComponent& tc, Vector3& scale);
 	void UpdateRotationMatrix(TransformComponent& tc, Vector3& rot);
 	void UpdateTranslationMatrix(TransformComponent& tc, Vector3& pos);
-	void RadToDegrees(Vector3& vec);
-	void DegreesToRad(Vector3& vec);
 
 };
 

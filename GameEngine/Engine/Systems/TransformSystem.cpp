@@ -13,17 +13,17 @@ void TransformSystem::Run()
 		TransformComponent& tc = EngineCore::instance()->scene->registry.get<TransformComponent>(entity);
 		if (tc.prevPos != tc.position);
 		{
-			tc.position = tc.prevPos;
+			tc.prevPos = tc.position;
 			UpdateTranslationMatrix(tc, tc.position);
 		}
 		if (tc.prevRot != tc.rotation)
 		{
-			tc.rotation = tc.prevRot;
+			tc.prevRot=tc.rotation;
 			UpdateRotationMatrix(tc, tc.rotation);
 		}
 		if (tc.prevScale != tc.scale)
 		{
-			tc.scale = tc.prevScale;
+			tc.prevScale=tc.scale;
 			UpdateScaleMatrix(tc, tc.scale);
 		}
 	}

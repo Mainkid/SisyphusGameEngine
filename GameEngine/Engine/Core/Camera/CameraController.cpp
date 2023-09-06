@@ -78,7 +78,7 @@ void CameraController::CameraMovement(float deltaSec)
         {
             for (auto& entity : EngineCore::instance()->scene->registry.view<LightComponent>())
             {
-                if (EngineCore::instance()->scene->registry.get<LightComponent>(entity).lightType == Directional)
+                if (EngineCore::instance()->scene->registry.get<LightComponent>(entity).lightType == LightType::Directional)
                 {
                     EngineCore::instance()->scene->registry.get<LightComponent>(entity).direction = camera->GetForwardVector();
                 }

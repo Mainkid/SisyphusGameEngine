@@ -16,9 +16,9 @@ Vector3 TransformHelper::GetRotationDegrees(TransformComponent& tc)
 
 void TransformHelper::DegreesToRad(Vector3& vec)
 {
-	vec.x = M_PI / 180.0f;
-	vec.y = M_PI / 180.0f;
-	vec.z = M_PI / 180.0f;
+	vec.x *= M_PI / 180.0f;
+	vec.y *= M_PI / 180.0f;
+	vec.z *= M_PI / 180.0f;
 }
 
 void TransformHelper::RadToDegrees(Vector3& vec)

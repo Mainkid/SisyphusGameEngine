@@ -20,11 +20,6 @@ public:
 	Mesh(std::vector<DirectX::SimpleMath::Vector4> _vertices, std::vector<int> _indices);
 	Mesh(const Mesh& mesh);
 
-	~Mesh()
-	{
-
-	}
-
 	std::vector<DirectX::SimpleMath::Vector4> vertices;
 	std::vector<int> indices;
 	std::shared_ptr<Buffer> indexBuffer;
