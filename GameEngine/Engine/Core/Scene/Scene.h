@@ -2,9 +2,9 @@
 #include "../../../vendor/entt/entt.hpp"
 #include <vector>
 #include <memory>
-
-#include "../../Components/GameObject.h"
+#include "../../Components/MeshComponent.h"
 #include "../../Components/LightComponent.h"
+#include "../../Components/TransformComponent.h"
 #include "../../Components/ParticleComponent.h"
 
 
@@ -14,7 +14,7 @@ class Scene
 	friend class HierarchyWidget;
 public:
 	
-	std::map<entt::entity,std::unique_ptr<GameObject>> gameObjects;
+	std::set<entt::entity> gameObjects;
 	entt::registry registry;
 
 	Scene();
@@ -23,18 +23,15 @@ public:
 	void Update(float deltaSec);
 	void Render() {};
 
-	GameObject* AddGameObject();
-	GameObject* AddLight(LightType _lightType);
-	GameObject* AddParticleSystem();
+	entt::entity AddGameObject();
+	entt::entity AddLight(LightType _lightType);
+	entt::entity AddParticleSystem();
 	bool DestroyGameObject(entt::entity);
-	bool DestroyGameObject(GameObject* _gameObject);
+
 
 private:
-	void SetParent(GameObject* sourceGameObject, GameObject* parentGameObject);
 	void SetParent(entt::entity sourceGameObject, entt::entity parentGameObject);
-	void AddChild(GameObject* parentGameObject, GameObject* childGameObject);
 	void AddChild(entt::entity parentGameObject, entt::entity childGameObject);  
-	void RemoveChild(GameObject* parentGameObject, GameObject* childGameObject);
 	void RemoveChild(entt::entity parentGameObject, entt::entity childGameObject);
 	bool HasHierarchyCycles(entt::entity childGameObject, entt::entity parentGameObject);
 	

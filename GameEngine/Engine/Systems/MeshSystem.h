@@ -1,7 +1,16 @@
 #pragma once
 #include "ISystem.h"
 #include "SimpleMath.h"
-#include "../Core/EngineCore.h"
+#include "assimp/postprocess.h"
+#include "assimp/scene.h"
+#include "assimp/Importer.hpp"
+#include "assimp/cimport.h"
+#include "../Components/Mesh.h"
+#include "SpriteBatch.h"
+
+
+
+class MeshComponent;
 
 class MeshSystem : public ISystem
 {

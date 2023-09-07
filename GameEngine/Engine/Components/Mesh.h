@@ -19,6 +19,7 @@ class Mesh
 public:
 	Mesh(std::vector<DirectX::SimpleMath::Vector4> _vertices, std::vector<int> _indices);
 	Mesh(const Mesh& mesh);
+	Mesh() = default;
 
 	std::vector<DirectX::SimpleMath::Vector4> vertices;
 	std::vector<int> indices;

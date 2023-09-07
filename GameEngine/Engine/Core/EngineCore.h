@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "../Components/GameComponent.h"
-#include "../Components/GameObject.h"
 #include "../Core/DisplayWin32.h"
 #include "../Core/WinInput.h"
 #include "../Core/Rendering/RenderPipeline.h"
@@ -30,6 +29,7 @@
 #pragma comment(lib, "dxguid.lib")
 
 using namespace Microsoft::WRL;
+
 
 class EngineCore
 {
@@ -91,5 +91,6 @@ static Scene* GetScene()
 {
     return EngineCore::instance()->scene.get();
 }
+
 
 //TODO: освободить все ресурсы при завершении.

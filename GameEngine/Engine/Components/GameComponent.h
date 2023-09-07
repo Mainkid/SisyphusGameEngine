@@ -13,4 +13,3 @@ protected:
 
 };
 
-//TODO: Разобраться с наследованием GameComponent

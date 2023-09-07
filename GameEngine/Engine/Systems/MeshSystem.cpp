@@ -1,4 +1,6 @@
 #include "MeshSystem.h"
+#include "../Components/MeshComponent.h"
+#include "../Core/EngineCore.h"
 
 void MeshSystem::Init()
 {
@@ -9,7 +11,8 @@ void MeshSystem::Run()
 	for (auto& entity : EngineCore::instance()->scene->registry.view<MeshComponent>())
 	{
 		MeshComponent& mesh = EngineCore::instance()->scene->registry.get<MeshComponent>(entity);
-		if (mesh.hash != hasher(mesh.modelPath + mesh.texturePath))
+		uint32_t hsh = hasher(mesh.modelPath + mesh.texturePath);
+		if (mesh.hash != hsh)
 		{
 			mesh.hash = hasher(mesh.modelPath + mesh.texturePath);
 			mesh.meshes.clear();

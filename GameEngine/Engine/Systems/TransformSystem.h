@@ -15,6 +15,6 @@ private:
 	void UpdateScaleMatrix(TransformComponent& tc, Vector3& scale);
 	void UpdateRotationMatrix(TransformComponent& tc, Vector3& rot);
 	void UpdateTranslationMatrix(TransformComponent& tc, Vector3& pos);
-
+	std::hash<TransformComponent> hasher;
 };
 

@@ -11,19 +11,10 @@ void TransformSystem::Run()
 	for (auto& entity : EngineCore::instance()->scene->registry.view<TransformComponent>())
 	{
 		TransformComponent& tc = EngineCore::instance()->scene->registry.get<TransformComponent>(entity);
-		if (tc.prevPos != tc.position);
+		if (tc.hash != hasher(tc));
 		{
-			tc.prevPos = tc.position;
 			UpdateTranslationMatrix(tc, tc.position);
-		}
-		if (tc.prevRot != tc.rotation)
-		{
-			tc.prevRot=tc.rotation;
 			UpdateRotationMatrix(tc, tc.rotation);
-		}
-		if (tc.prevScale != tc.scale)
-		{
-			tc.prevScale=tc.scale;
 			UpdateScaleMatrix(tc, tc.scale);
 		}
 	}
@@ -48,3 +39,4 @@ void TransformSystem::UpdateTranslationMatrix(TransformComponent& tc, Vector3& p
 {
 	tc.translationMatrix = Matrix::CreateTranslation(pos);
 }
+

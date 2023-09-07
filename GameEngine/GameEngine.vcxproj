@@ -151,7 +151,6 @@
     <ClCompile Include="Engine\Core\Rendering\GBuffer.cpp" />
     <ClCompile Include="Engine\Core\WinInput.cpp" />
     <ClCompile Include="Engine\GameEngine.cpp" />
-    <ClCompile Include="Engine\Components\GameObject.cpp" />
     <ClCompile Include="Engine\Components\Mesh.cpp" />
     <ClCompile Include="Engine\Core\Rendering\RenderPipeline.cpp" />
     <ClCompile Include="Engine\Core\Scene\Scene.cpp" />
@@ -184,13 +183,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Components\DataComponent.h" />
     <ClInclude Include="Engine\Core\HUD\Widgets\ContentBrowser.h" />
     <ClInclude Include="Engine\Core\Camera\Camera.h" />
     <ClInclude Include="Engine\Core\Camera\CameraController.h" />
     <ClInclude Include="Engine\Core\DisplayWin32.h" />
     <ClInclude Include="Engine\Core\EngineCore.h" />
     <ClInclude Include="Engine\Components\GameComponent.h" />
-    <ClInclude Include="Engine\Components\GameObject.h" />
     <ClInclude Include="Engine\Components\TransformComponent.h" />
     <ClInclude Include="Engine\Components\MeshComponent.h" />
     <ClInclude Include="Engine\Components\Mesh.h" />

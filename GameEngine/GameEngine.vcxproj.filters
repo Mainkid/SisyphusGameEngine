@@ -21,9 +21,6 @@
     <ClCompile Include="Engine\Components\GameComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Components\GameObject.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Components\Mesh.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -144,9 +141,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\GameComponent.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Components\GameObject.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Components\TransformComponent.h">
@@ -321,6 +315,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Systems\LightSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Components\DataComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

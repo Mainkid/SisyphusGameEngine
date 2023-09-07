@@ -130,10 +130,10 @@ void EngineCore::GetInput()
 
 void EngineCore::Render()
 {
+
 	renderPipeline->Render();
 	hud->Render();
 	swapChain->Present(1, 0);
-	
 }
 
 void EngineCore::Update()
@@ -171,6 +171,10 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<LightSystem> ls = std::make_unique<LightSystem>();
 	systems.push_back(std::move(ls));
 
+	for (const auto& system : systems)
+	{
+		system->Init();
+	}
 }
 
 void EngineCore::StartUp()

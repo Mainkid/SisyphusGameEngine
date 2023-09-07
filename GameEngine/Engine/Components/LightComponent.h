@@ -6,7 +6,6 @@
 #include <vector>
 
 class EngineCore;
-class MeshComponent;
 
 
 using namespace DirectX::SimpleMath;
@@ -21,7 +20,7 @@ public:
     std::vector<Matrix> viewMatrices;
     std::vector<Matrix> orthoMatrices;
     std::vector<Vector4> distances;
-    std::unique_ptr<MeshComponent> aabb;
+    std::unique_ptr<Mesh> aabb;
     LightType lightType = LightType::Ambient;
     Vector4 position = { 0,0,0,1 };
     Vector4 direction = { 1,0,0,0 };
@@ -44,8 +43,10 @@ namespace std
             result_type const h2(std::hash<float>()(a.y));
             result_type const h3(std::hash<float>()(a.z));
             result_type const h4(std::hash<float>()(a.w));
-            return a.x*37+(a.x*37+a.y)*37+
-                ((a.x * 37 + a.y) * 37 + a.z) * 37 + (((a.x * 37 + a.y) * 37 + a.z) * 37) + a.w;
+            return h1*37+
+                (h1*37+h2)*37+
+                ((h1 * 37 + h2) * 37 + h3) * 37 + 
+                (((h1 * 37 +h2) * 37 + h3) * 37)*h4;
         }
     };
 }

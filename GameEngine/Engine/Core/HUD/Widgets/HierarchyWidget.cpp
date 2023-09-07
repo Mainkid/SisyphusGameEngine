@@ -19,11 +19,11 @@ void HierarchyWidget::Render()
 	
 
 	std::set<entt::entity> tmpSet;
-	for (auto& gameObject : EngineCore::instance()->scene->gameObjects)
+	for (auto& id : EngineCore::instance()->scene->gameObjects)
 	{
-		if (!std::get<0>(gameObject.second->GetParentObjects()))
+		if (GetScene()->registry.get<TransformComponent>(id).parent==entt::null) //???
 		{
-			tmpSet.insert(gameObject.first);
+			tmpSet.insert(id);
 			
 		}
 	}
@@ -53,25 +53,22 @@ void HierarchyWidget::UpdateSelectedEntity(entt::entity)
 
 void HierarchyWidget::RenderTree(std::set<entt::entity>& gameObjectsVector)
 {
-
 	for (auto& gameObjectID : gameObjectsVector)
 	{
 		ImGuiTreeNodeFlags treeFlags = ((gameObjectID == hud->selectedEntityID) ? ImGuiTreeNodeFlags_Selected : 0);
-		treeFlags |= (EngineCore::instance()->scene->gameObjects[gameObjectID]->GetChildrenObjects().size() == 0) ?
+		treeFlags |= (GetScene()->registry.get<TransformComponent>(gameObjectID).children.size() == 0) ?
 			ImGuiTreeNodeFlags_Leaf : ImGuiTreeNodeFlags_None;
 		treeFlags |= baseFlags;
 
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)gameObjectID, treeFlags,
-			EngineCore::instance()->scene->gameObjects[gameObjectID]->name.c_str());
+			"GameObject");
 		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
-			//selectedEntity = gameObjectID;
 			hud->UpdateSelectedEntityEvent.Broadcast(gameObjectID);
 
 		if (ImGui::BeginDragDropSource())
 		{
 			const entt::entity item = entt::entity(gameObjectID);
 			ImGui::SetDragDropPayload("_TREENODE", &item, sizeof(entt::entity));
-			
 			ImGui::EndDragDropSource();
 		}
 
@@ -87,7 +84,7 @@ void HierarchyWidget::RenderTree(std::set<entt::entity>& gameObjectsVector)
 
 		if (opened)
 		{
-			RenderTree(EngineCore::instance()->scene->gameObjects[gameObjectID]->GetChildrenObjects());
+			RenderTree(GetScene()->registry.get<TransformComponent>(gameObjectID).children);
 			ImGui::TreePop();
 		}
 	}
