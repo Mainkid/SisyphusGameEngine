@@ -1,6 +1,7 @@
 #pragma once
 #include "DirectXHelpers.h"
 #include "SimpleMath.h"
+#include "../Components/Mesh.h"
 #include "../Core/Rendering/Lights/LightType.h"
 #include <memory>
 #include <vector>
@@ -20,7 +21,7 @@ public:
     std::vector<Matrix> viewMatrices;
     std::vector<Matrix> orthoMatrices;
     std::vector<Vector4> distances;
-    std::unique_ptr<Mesh> aabb;
+    std::shared_ptr<Mesh> aabb=nullptr;
     LightType lightType = LightType::Ambient;
     Vector4 position = { 0,0,0,1 };
     Vector4 direction = { 1,0,0,0 };

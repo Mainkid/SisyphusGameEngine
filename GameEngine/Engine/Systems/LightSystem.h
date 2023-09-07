@@ -1,6 +1,7 @@
 #pragma once
 #include "ISystem.h"
 #include "SimpleMath.h"
+#include "MeshLoader.h"
 #include "../Core/EngineCore.h"
 
 class LightSystem : public ISystem

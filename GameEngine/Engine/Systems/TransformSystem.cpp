@@ -11,11 +11,13 @@ void TransformSystem::Run()
 	for (auto& entity : EngineCore::instance()->scene->registry.view<TransformComponent>())
 	{
 		TransformComponent& tc = EngineCore::instance()->scene->registry.get<TransformComponent>(entity);
-		if (tc.hash != hasher(tc));
+		uint32_t hsh = hasher(tc);
+		if (tc.hash != hsh)
 		{
 			UpdateTranslationMatrix(tc, tc.position);
 			UpdateRotationMatrix(tc, tc.rotation);
 			UpdateScaleMatrix(tc, tc.scale);
+			tc.hash = hsh;
 		}
 	}
 }

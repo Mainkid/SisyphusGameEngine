@@ -1,10 +1,19 @@
 #include "TransformHelper.h"
+#include "../Core/EngineCore.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 
 Matrix TransformHelper::ConstructTransformMatrix(TransformComponent& tc)
 {
-	return tc.scaleMatrix * tc.rotationMatrix * tc.translationMatrix;
+	Matrix resultMat = tc.scaleMatrix * tc.rotationMatrix * tc.translationMatrix;
+	entt::entity curID = tc.parent;
+
+	while (curID != entt::null) {
+		TransformComponent& curTc = GetScene()->registry.get<TransformComponent>(curID);
+		resultMat *= curTc.rotationMatrix * curTc.translationMatrix;
+		curID = curTc.parent;
+	}
+	return resultMat;
 }
 
 Vector3 TransformHelper::GetRotationDegrees(TransformComponent& tc)

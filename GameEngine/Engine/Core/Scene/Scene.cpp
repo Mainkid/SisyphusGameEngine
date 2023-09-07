@@ -77,6 +77,9 @@ void Scene::SetParent(entt::entity sourceGameObject, entt::entity parentGameObje
 	}
 	else if (!HasHierarchyCycles(sourceGameObject, parentGameObject))
 	{
+
+		if (registry.get<TransformComponent>(sourceGameObject).parent!=entt::null)
+			RemoveChild(registry.get<TransformComponent>(sourceGameObject).parent, sourceGameObject);
 		registry.get<TransformComponent>(sourceGameObject).parent = parentGameObject;
 		registry.get<TransformComponent>(parentGameObject).children.insert(sourceGameObject);
 	}

@@ -3,6 +3,7 @@
 
 void LightSystem::Init()
 {
+
 }
 
 void LightSystem::Run()
@@ -23,7 +24,13 @@ void LightSystem::Run()
                 EngineCore::instance()->cameraController->camera->farZ);
         }
 
-		/*if (hasher(lc) != lc.hash)
+        if (!lc.aabb)
+        {
+            lc.aabb = MeshLoader::LoadSimpleMesh("Engine/Assets/sphere.fbx");
+        }
+        
+        /*
+		if (hasher(lc) != lc.hash)
 		{
 			lc.hash = hasher(lc);
 		}*/

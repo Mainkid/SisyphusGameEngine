@@ -22,8 +22,6 @@ private:
 	bool LoadModel(MeshComponent& mesh);
 	void LoadTexture(MeshComponent& mesh);
 	void ProcessNode(MeshComponent& meshComp, aiNode* node, const aiScene* scene);
-	std::shared_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
-	
 	
 	std::hash<std::string> hasher;
 };

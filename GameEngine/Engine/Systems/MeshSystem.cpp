@@ -1,5 +1,6 @@
 #include "MeshSystem.h"
 #include "../Components/MeshComponent.h"
+#include "MeshLoader.h"
 #include "../Core/EngineCore.h"
 
 void MeshSystem::Init()
@@ -18,6 +19,8 @@ void MeshSystem::Run()
 			mesh.meshes.clear();
 			LoadModel(mesh);
 			LoadTexture(mesh);
+			//MeshLoader::LoadModel(mesh.modelPath, mesh.meshes);
+			//MeshLoader::LoadTexture(mesh.texturePath, mesh.samplerState.GetAddressOf(), mesh.texture.GetAddressOf());
 		}
 	}
 }
@@ -58,9 +61,6 @@ void MeshSystem::LoadTexture(MeshComponent& mesh)
 		std::cout << "Texture Loading Failed!" << std::endl;
 	}
 
-	//D3D11_TEXTURE2D
-	//hr=DirectX::CreateWICTextureFromFileEx(game->device.Get(),texturePath,2000000,D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE,0,0,DirectX::WIC_LOADER_FORCE_SRGB,nullptr,texture.GetAddressOf());
-	
 	std::wstring stemp = std::wstring(mesh.texturePath.begin(), mesh.texturePath.end());
 	LPCWSTR sw = stemp.c_str();
 	hr = DirectX::CreateWICTextureFromFile(EngineCore::instance()->device.Get(),sw, nullptr, mesh.texture.GetAddressOf());
@@ -71,7 +71,7 @@ void MeshSystem::ProcessNode(MeshComponent& meshComp,aiNode* node, const aiScene
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshComp.meshes.push_back(this->ProcessMesh(mesh, scene));
+		meshComp.meshes.push_back(MeshLoader::ProcessMesh(mesh, scene));
 	}
 
 	for (UINT i = 0; i < node->mNumChildren; i++)
@@ -80,45 +80,4 @@ void MeshSystem::ProcessNode(MeshComponent& meshComp,aiNode* node, const aiScene
 	}
 }
 
-std::shared_ptr<Mesh> MeshSystem::ProcessMesh(aiMesh* mesh, const aiScene* scene)
-{
-	std::vector<DirectX::SimpleMath::Vector4> vertices;
-	std::vector<int> indices;
 
-	for (UINT i = 0; i < mesh->mNumVertices; i++)
-	{
-		DirectX::XMFLOAT4 vertex;
-		DirectX::XMFLOAT4 color;
-		DirectX::XMFLOAT4 normals = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-		vertex.x = mesh->mVertices[i].x;
-		vertex.y = mesh->mVertices[i].y;
-		vertex.z = mesh->mVertices[i].z;
-		vertex.w = 1.0f;
-
-		if (mesh->mTextureCoords[0])
-		{
-			color.x = (float)mesh->mTextureCoords[0][i].x;
-			color.y = (float)mesh->mTextureCoords[0][i].y;
-		}
-
-		normals.x = mesh->mNormals[i].x;
-		normals.y = mesh->mNormals[i].y;
-		normals.z = mesh->mNormals[i].z;
-
-
-		vertices.push_back(vertex); 
-		vertices.push_back(DirectX::XMFLOAT4(color.x, color.y, 1.0f, 1));
-		vertices.push_back(normals);
-
-	}
-
-	for (UINT i = 0; i < mesh->mNumFaces; i++)
-	{
-		aiFace face = mesh->mFaces[i];
-
-		for (UINT j = 0; j < face.mNumIndices; j++)
-			indices.push_back(face.mIndices[j]);
-	}
-
-	return  std::make_shared<Mesh>(vertices, indices);
-}

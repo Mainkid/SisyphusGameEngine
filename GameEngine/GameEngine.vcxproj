@@ -167,6 +167,7 @@
     <ClCompile Include="Engine\Systems\TransformHelper.cpp" />
     <ClCompile Include="Engine\Systems\MeshSystem.cpp" />
     <ClCompile Include="Engine\Systems\LightSystem.cpp" />
+    <ClCompile Include="Engine\Systems\MeshLoader.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="Engine\Systems\TransformHelper.h" />
     <ClInclude Include="Engine\Systems\MeshSystem.h" />
     <ClInclude Include="Engine\Systems\LightSystem.h" />
+    <ClInclude Include="Engine\Systems\MeshLoader.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
