@@ -8,15 +8,16 @@ void TransformSystem::Init()
 
 void TransformSystem::Run()
 {
-	for (auto& entity : EngineCore::instance()->scene->registry.view<TransformComponent>())
+	auto view = EngineCore::instance()->scene->registry.view<TransformComponent>();
+	for (auto& entity :view)
 	{
-		TransformComponent& tc = EngineCore::instance()->scene->registry.get<TransformComponent>(entity);
+		TransformComponent& tc = view.get<TransformComponent>(entity);
 		uint32_t hsh = hasher(tc);
 		if (tc.hash != hsh)
 		{
-			UpdateTranslationMatrix(tc, tc.position);
-			UpdateRotationMatrix(tc, tc.rotation);
-			UpdateScaleMatrix(tc, tc.scale);
+			UpdateTranslationMatrix(tc, tc.localPosition);
+			UpdateRotationMatrix(tc, tc.localRotation);
+			UpdateScaleMatrix(tc, tc.localScale);
 			tc.hash = hsh;
 		}
 	}

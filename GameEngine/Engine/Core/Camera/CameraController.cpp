@@ -76,13 +76,14 @@ void CameraController::CameraMovement(float deltaSec)
         }
         if (ImGui::IsKeyDown(ImGuiKey_E))
         {
-            for (auto& entity : EngineCore::instance()->scene->registry.view<LightComponent>())
+            /*auto view = EngineCore::instance()->scene->registry.view<LightComponent>();
+            for (auto& entity : view)
             {
-                if (EngineCore::instance()->scene->registry.get<LightComponent>(entity).lightType == LightType::Directional)
+                if (view.get<LightComponent>(entity).lightType == LightType::Directional)
                 {
-                    EngineCore::instance()->scene->registry.get<LightComponent>(entity).direction = camera->GetForwardVector();
+                    view.get<LightComponent>(entity).direction = camera->GetForwardVector();
                 }
-            }
+            }*/
         }
     }
 }

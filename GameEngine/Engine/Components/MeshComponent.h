@@ -19,9 +19,8 @@ using namespace DirectX::SimpleMath;
 
 class EngineCore;
 
-class MeshComponent
+struct MeshComponent
 {
-public:
 	MeshComponent()
 	{
 		this->texturePath = "Engine/Assets/DefaultTexture.png";

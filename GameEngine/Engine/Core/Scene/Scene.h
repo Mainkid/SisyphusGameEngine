@@ -2,6 +2,7 @@
 #include "../../../vendor/entt/entt.hpp"
 #include <vector>
 #include <memory>
+#include "../../Components/DataComponent.h"
 #include "../../Components/MeshComponent.h"
 #include "../../Components/LightComponent.h"
 #include "../../Components/TransformComponent.h"

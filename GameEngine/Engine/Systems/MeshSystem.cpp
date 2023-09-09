@@ -9,18 +9,19 @@ void MeshSystem::Init()
 
 void MeshSystem::Run()
 {
-	for (auto& entity : EngineCore::instance()->scene->registry.view<MeshComponent>())
+	auto view = EngineCore::instance()->scene->registry.view<MeshComponent>();
+	for (auto& entity : view)
 	{
-		MeshComponent& mesh = EngineCore::instance()->scene->registry.get<MeshComponent>(entity);
+		MeshComponent& mesh =view.get<MeshComponent>(entity);
 		uint32_t hsh = hasher(mesh.modelPath + mesh.texturePath);
 		if (mesh.hash != hsh)
 		{
 			mesh.hash = hasher(mesh.modelPath + mesh.texturePath);
 			mesh.meshes.clear();
-			LoadModel(mesh);
-			LoadTexture(mesh);
-			//MeshLoader::LoadModel(mesh.modelPath, mesh.meshes);
-			//MeshLoader::LoadTexture(mesh.texturePath, mesh.samplerState.GetAddressOf(), mesh.texture.GetAddressOf());
+			//LoadModel(mesh);
+			//LoadTexture(mesh);
+			MeshLoader::LoadModel(mesh.modelPath, mesh.meshes);
+			MeshLoader::LoadTexture(mesh.texturePath, mesh.samplerState.GetAddressOf(), mesh.texture.GetAddressOf());
 		}
 	}
 }

@@ -13,10 +13,10 @@ public:
 private:
 	std::hash<LightComponent> hasher;
 	std::vector<Vector4> GetFrustumCorners(const Matrix& view, const Matrix proj);
-	std::vector<Matrix> GenerateOrthosFromFrustum(LightComponent& lc,const Matrix& view, const Matrix proj, float _far);
+	std::vector<Matrix> GenerateOrthosFromFrustum(LightComponent& lc,Vector3 direction,const Matrix& view, const Matrix proj, float _far);
 	void GenerateOrthoMatrix(LightComponent& lc, float width, float depthPlane, float nearPlane);
 	void GenerateViewMatrix(LightComponent& lc, Vector3 pos);
-	void GenerateOrthoFromFrustum(LightComponent& lc, const Matrix& view, const Matrix proj);
+	void GenerateOrthoFromFrustum(LightComponent& lc,Vector3 direction, const Matrix& view, const Matrix proj);
 	
 };
 

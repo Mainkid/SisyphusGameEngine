@@ -14,7 +14,7 @@ struct CubeMesh {
 };
 
 using namespace DirectX::SimpleMath;
-class Mesh
+struct Mesh
 {
 public:
 	Mesh(std::vector<DirectX::SimpleMath::Vector4> _vertices, std::vector<int> _indices);

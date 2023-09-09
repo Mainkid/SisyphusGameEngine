@@ -84,23 +84,21 @@ void ViewportWidget::Render()
 		auto viewMat = EngineCore::instance()->cameraController->GetViewMatrix();
 		auto projMat = EngineCore::instance()->cameraController->GetProjectionMatrix();
 		auto& tc = EngineCore::instance()->scene->registry.get<TransformComponent>(hud->selectedEntityID);
+		auto localTransformMat = TransformHelper::ConstructLocalTransformMatrix(tc);
 		auto transformMat = TransformHelper::ConstructTransformMatrix(tc);
 
-		auto res=ImGuizmo::Manipulate(&viewMat._11, &projMat._11, guizmoType, ImGuizmo::LOCAL, &transformMat._11);
-
+		auto res=ImGuizmo::Manipulate(&viewMat._11, &projMat._11, guizmoType, ImGuizmo::LOCAL, &localTransformMat._11);
 		
 		if (ImGuizmo::IsUsing())	
 		{
-			Vector3 translation, scale;
-			Quaternion rotation;
-			transformMat.Decompose(scale, rotation,translation);
-			Vector3 deltaRotation = rotation.ToEuler() - tc.rotation;
-			tc.rotation = tc.rotation + deltaRotation;
-			tc.position = translation;
-			tc.scale = scale;
-			//tc.SetRotation(tc.GetRotation() + deltaRotation);
-			//tc.SetPosition(translation);
-			//tc.SetScale(scale);
+			Vector3 translation, scale,translationL,scaleL;
+			Quaternion rotation, rotationL;
+			localTransformMat.Decompose(scale, rotation, translation);
+			Vector3 deltaRotation = rotation.ToEuler() - tc.localRotation;
+			tc.localRotation = tc.localRotation + deltaRotation;
+			tc.localPosition = translation;
+			tc.localScale = scale;
+			//TransformHelper::RecalculateWorldPos(tc);
 		}
 	}
 

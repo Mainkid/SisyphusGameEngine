@@ -8,9 +8,11 @@ void LightSystem::Init()
 
 void LightSystem::Run()
 {
-	for (auto& entity : EngineCore::instance()->scene->registry.view<LightComponent>())
+    auto view = GetScene()->registry.view<TransformComponent,LightComponent>();
+	for (auto& entity : view)
 	{
-		LightComponent& lc = EngineCore::instance()->scene->registry.get<LightComponent>(entity);
+		LightComponent& lc = view.get<LightComponent>(entity);
+        TransformComponent& tc = view.get<TransformComponent>(entity);
         if (lc.lightType != LightType::Ambient)
         {
             GenerateViewMatrix(lc,
@@ -18,7 +20,7 @@ void LightSystem::Run()
             /*  GenerateOrthoFromFrustum(lc,
                   EngineCore::instance()->cameraController->GetViewMatrix(),
                   EngineCore::instance()->cameraController->GetProjectionMatrix());*/
-            GenerateOrthosFromFrustum(lc,
+            GenerateOrthosFromFrustum(lc, Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
                 EngineCore::instance()->cameraController->GetViewMatrix(),
                 EngineCore::instance()->cameraController->GetProjectionMatrix(),
                 EngineCore::instance()->cameraController->camera->farZ);
@@ -66,7 +68,7 @@ std::vector<Vector4> LightSystem::GetFrustumCorners(const Matrix& view, const Ma
     return frustumCorners;
 }
 
-std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc,const Matrix& view, const Matrix proj, float farZ)
+std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc,Vector3 direction,const Matrix& view, const Matrix proj, float farZ)
 {
     using namespace DirectX::SimpleMath;
     std::vector<Vector4> frustumCorners = GetFrustumCorners(view, proj);
@@ -101,7 +103,7 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc,co
 
         center /= newCorners.size();
 
-        Matrix viewMatrix2 = DirectX::XMMatrixLookAtLH(center, center - Vector3(lc.direction), Vector3::Up);
+        Matrix viewMatrix2 = DirectX::XMMatrixLookAtLH(center, center - direction, Vector3::Up);
 
         float minX = 10000000.0f;
         float maxX = -10000000.0f;
@@ -149,7 +151,7 @@ void LightSystem::GenerateViewMatrix(LightComponent& lc, Vector3 pos)
     lc.viewMatrix = DirectX::XMMatrixLookAtLH(pos, lookAt, up);
 }
 
-void LightSystem::GenerateOrthoFromFrustum(LightComponent& lc,const Matrix& view, const Matrix proj)
+void LightSystem::GenerateOrthoFromFrustum(LightComponent& lc,Vector3 direction,const Matrix& view, const Matrix proj)
 {
 
     std::vector<Vector4> frustumCorners = GetFrustumCorners(view, proj);
@@ -162,7 +164,7 @@ void LightSystem::GenerateOrthoFromFrustum(LightComponent& lc,const Matrix& view
 
     center /= frustumCorners.size();
 
-    lc.viewMatrix = DirectX::XMMatrixLookAtLH(center, center - Vector3(lc.direction), Vector3::Up);
+    lc.viewMatrix = DirectX::XMMatrixLookAtLH(center, center - direction, Vector3::Up);
 
     float minX = 10000000.0f;
     float maxX = -10000000.0f;

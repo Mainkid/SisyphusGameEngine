@@ -17,14 +17,12 @@ void HierarchyWidget::Render()
 	ImGui::Begin(windowID.c_str());
 	Widget::Render();
 	
-
 	std::set<entt::entity> tmpSet;
 	for (auto& id : EngineCore::instance()->scene->gameObjects)
 	{
 		if (GetScene()->registry.get<TransformComponent>(id).parent==entt::null) //???
 		{
 			tmpSet.insert(id);
-			
 		}
 	}
 	
@@ -60,8 +58,9 @@ void HierarchyWidget::RenderTree(std::set<entt::entity>& gameObjectsVector)
 			ImGuiTreeNodeFlags_Leaf : ImGuiTreeNodeFlags_None;
 		treeFlags |= baseFlags;
 
+		DataComponent& dc = GetScene()->registry.get<DataComponent>(gameObjectID);
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)gameObjectID, treeFlags,
-			"GameObject");
+			dc.name.c_str());
 		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 			hud->UpdateSelectedEntityEvent.Broadcast(gameObjectID);
 

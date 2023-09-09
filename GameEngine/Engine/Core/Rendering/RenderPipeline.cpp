@@ -399,9 +399,10 @@ void RenderPipeline::ShadowPass()
 
     engine->context->ClearDepthStencilView(this->shadowStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    for (auto& entity : engine->scene->registry.view<LightComponent>())
+    auto view = engine->scene->registry.view<LightComponent>();
+    for (auto& entity :view)
     {
-        LightComponent& light = engine->scene->registry.get<LightComponent>(entity);
+        LightComponent& light = view.get<LightComponent>(entity);
         if (light.lightType == LightType::Directional)
         {
             //TODO!!!! Вынести эти методы в систему рендера, а не систему света!!!
@@ -414,8 +415,8 @@ void RenderPipeline::ShadowPass()
             m_renderTargetTexture = nullptr;
 
 
-
-            for (auto& go_entity : engine->scene->registry.view<MeshComponent>())
+            auto view = engine->scene->registry.view<MeshComponent>();
+            for (auto& go_entity : view)
             {
                 TransformComponent& transform = engine->scene->registry.get<TransformComponent>(go_entity);
                 MeshComponent& meshComponent = engine->scene->registry.get<MeshComponent>(go_entity);
@@ -478,14 +479,7 @@ void RenderPipeline::ShadowPass()
                         meshComponent.strides, meshComponent.offsets);
                     engine->context->DrawInstanced(mesh->indexBuffer->size, 4, 0, 0);
                     engine->context->GSSetShader(nullptr, nullptr, 0);
-
-
-
-
-
                 }
-
-
             }
         }
     }
@@ -504,8 +498,8 @@ void RenderPipeline::ShadowPass()
 void RenderPipeline::OpaquePass()
 {
     engine->context->RSSetState(cullBackRS.Get());
-
-    for (auto& entity : engine->scene->registry.view<MeshComponent>())
+    auto view = engine->scene->registry.view<TransformComponent,MeshComponent>();
+    for (auto& entity : view)
     {
         CB_BaseEditorBuffer dataOpaque;
         TransformComponent& transformComp= engine->scene->registry.get<TransformComponent>(entity);
@@ -571,14 +565,16 @@ void RenderPipeline::LightPass()
     UINT stridesLight[1] = { 48 };
     UINT offsetsLight[1] = { 0 };
 
-
-    for (auto& entity : engine->scene->registry.view<LightComponent>())
+    auto view = engine->scene->registry.view<TransformComponent, LightComponent>();
+    for (auto& entity : view)
     {
-        LightComponent& light= engine->scene->registry.get<LightComponent>(entity);
-        lightBuffer.lightData.Pos = light.position;
+        
+        LightComponent& light= view.get<LightComponent>(entity);
+        TransformComponent& tc= view.get<TransformComponent>(entity);
+        lightBuffer.lightData.Pos = Vector4(tc.localPosition.x,tc.localPosition.y,tc.localPosition.z,1);
         lightBuffer.lightData.Color = light.color;
-        lightBuffer.lightData.Dir = light.direction;
-        lightBuffer.lightData.additiveParams = light.params;
+        lightBuffer.lightData.Dir =Vector4::Transform(Vector4::UnitX,Matrix::CreateFromYawPitchRoll(tc.localRotation));
+        lightBuffer.lightData.additiveParams = light.paramsRadiusAndAttenuation;
         lightBuffer.eyePos = DirectX::SimpleMath::Vector4(engine->cameraController->camera->pos.x,
             engine->cameraController->camera->pos.y,
             engine->cameraController->camera->pos.z,
@@ -606,7 +602,7 @@ void RenderPipeline::LightPass()
         else if (light.lightType == LightType::PointLight)
         {
             using namespace DirectX::SimpleMath;
-            lightBuffer.baseData.world = Matrix::CreateScale(light.params.x, light.params.x, light.params.x) * Matrix::CreateTranslation(light.position.x, light.position.y, light.position.z);
+            lightBuffer.baseData.world = Matrix::CreateScale(light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x) * Matrix::CreateTranslation(tc.localPosition);
 
             lightBuffer.baseData.worldView = lightBuffer.baseData.world * engine->cameraController->GetViewMatrix();
             lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * engine->cameraController->GetProjectionMatrix();
@@ -617,22 +613,20 @@ void RenderPipeline::LightPass()
             using namespace DirectX::SimpleMath;
             Vector3 a;
             Vector3 forward = Vector3(0, 0, 1);
-            Vector3 dir = Vector3(light.direction);
+            Vector3 dir = Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation));
             dir.Normalize();
             forward.Cross(dir, a);
             a.Normalize();
             float angle = acos(forward.Dot(dir));
 
-            float radius = sqrt(pow((light.params.x / light.params.y), 2.0f) - pow(light.params.x, 2.0f));
+            float radius = sqrt(pow((light.paramsRadiusAndAttenuation.x / light.paramsRadiusAndAttenuation.y), 2.0f) - pow(light.paramsRadiusAndAttenuation.x, 2.0f));
 
             lightBuffer.baseData.world = Matrix::CreateTranslation(Vector3(0,
                 0,
                 1.0f)) *
-                Matrix::CreateScale(radius, radius, light.params.x) *
+                Matrix::CreateScale(radius, radius, light.paramsRadiusAndAttenuation.x) *
                 Matrix::CreateFromAxisAngle(a, angle) *
-                Matrix::CreateTranslation(Vector3(light.position.x,
-                    light.position.y,
-                    light.position.z));
+                Matrix::CreateTranslation(tc.localPosition);
             lightBuffer.baseData.worldView = lightBuffer.baseData.world * engine->cameraController->GetViewMatrix();
             lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * engine->cameraController->GetProjectionMatrix();
             lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
@@ -785,9 +779,10 @@ void RenderPipeline::ParticlePass()
 {
     engine->context->OMSetDepthStencilState(offStencilState.Get(), 0);
     //engine->context->ClearDepthStencilView(engine->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1.0f, 0);
-    for (auto& entity : engine->scene->registry.view<ParticleComponent>())
+    auto view = engine->scene->registry.view<ParticleComponent>();
+    for (auto& entity :view)
     {
-        ParticleComponent& particleSystem = engine->scene->registry.get<ParticleComponent>(entity);
+        ParticleComponent& particleSystem = view.get<ParticleComponent>(entity);
         CB_ComputeShader dataGroup;
         particleSystem.NullSortList();
         dataGroup.GroupCount = Vector4(particleSystem.groupSizeX, particleSystem.groupSizeY, 0, 1);
@@ -873,13 +868,15 @@ void RenderPipeline::ParticlePass()
         dataParticle.viewDirection = vec;
         dataParticle.cameraRot = engine->cameraController->GetViewMatrix().Invert();
         int i = 0;
-        for (auto& entity : engine->scene->registry.view<LightComponent>())
+        auto view = engine->scene->registry.view<TransformComponent,LightComponent>();
+        for (auto& entity : view)
         {
-            LightComponent& light = engine->scene->registry.get<LightComponent>(entity);
-            dataParticle.lightData[i].Pos = light.position;
+            TransformComponent& tc = view.get<TransformComponent>(entity);
+            LightComponent& light = view.get<LightComponent>(entity);
+            dataParticle.lightData[i].Pos = Vector4(tc.localPosition.x,tc.localPosition.y,tc.localPosition.z,1);
             dataParticle.lightData[i].Color = light.color;
-            dataParticle.lightData[i].Dir = light.direction;
-            dataParticle.lightData[i].additiveParams = light.params;
+            dataParticle.lightData[i].Dir = Vector4::Transform(Vector4::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation));
+            dataParticle.lightData[i].additiveParams = light.paramsRadiusAndAttenuation;
 
             if (light.lightType == LightType::Directional)
             {

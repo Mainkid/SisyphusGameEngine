@@ -10,7 +10,7 @@
 
 
 
-class MeshComponent;
+struct MeshComponent;
 
 class MeshSystem : public ISystem
 {
