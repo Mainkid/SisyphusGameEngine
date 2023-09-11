@@ -23,6 +23,7 @@ struct TransformComponent
 	Matrix translationMatrix=Matrix::Identity;
 	Matrix rotationMatrix=Matrix::Identity;
 	Matrix scaleMatrix=Matrix::Identity;
+	Matrix transformMatrix = Matrix::Identity;
 	uint32_t hash = 0;
 	entt::entity parent = entt::null;
 	std::set<entt::entity> children = {};

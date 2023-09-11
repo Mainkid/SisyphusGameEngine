@@ -2,8 +2,6 @@
 #include "../../EngineCore.h"
 #include "../../../Core/Rendering/RenderTarget.h"
 #include "../Hud.h"
-
-
 #include "ViewportWidget.h"
 
 
@@ -53,7 +51,7 @@ void ViewportWidget::Render()
 		
 		ImVec2 pos2 = ImGui::GetMousePos();
 		ImVec2 pos = ImGui::GetCursorScreenPos();
-
+		std::cout << "Is over" << std::endl;
 		auto textureSize = EngineCore::instance()->renderPipeline->GetRtvResolution();
 
 
@@ -84,16 +82,17 @@ void ViewportWidget::Render()
 		auto viewMat = EngineCore::instance()->cameraController->GetViewMatrix();
 		auto projMat = EngineCore::instance()->cameraController->GetProjectionMatrix();
 		auto& tc = EngineCore::instance()->scene->registry.get<TransformComponent>(hud->selectedEntityID);
-		auto localTransformMat = TransformHelper::ConstructLocalTransformMatrix(tc);
 		auto transformMat = TransformHelper::ConstructTransformMatrix(tc);
+		//auto transformMat = TransformHelper::ConstructTransformMatrix(tc);
 
-		auto res=ImGuizmo::Manipulate(&viewMat._11, &projMat._11, guizmoType, ImGuizmo::LOCAL, &localTransformMat._11);
+		auto res=ImGuizmo::Manipulate(&viewMat._11, &projMat._11, guizmoType, ImGuizmo::LOCAL, &transformMat._11);
 		
 		if (ImGuizmo::IsUsing())	
 		{
 			Vector3 translation, scale,translationL,scaleL;
 			Quaternion rotation, rotationL;
-			localTransformMat.Decompose(scale, rotation, translation);
+			transformMat = transformMat * TransformHelper::ConstructInverseParentTransform(tc);
+			transformMat.Decompose(scale, rotation, translation);
 			Vector3 deltaRotation = rotation.ToEuler() - tc.localRotation;
 			tc.localRotation = tc.localRotation + deltaRotation;
 			tc.localPosition = translation;
@@ -168,7 +167,6 @@ void ViewportWidget::HandleResize()
 		hud->ViewportResizedEvent.Broadcast(newWidgetSize.x * 1.0f / newWidgetSize.y);
 		widgetSize = newWidgetSize;
 	}
-
 }
 
 void ViewportWidget::GetInput()

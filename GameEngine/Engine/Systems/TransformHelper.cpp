@@ -10,7 +10,7 @@ Matrix TransformHelper::ConstructTransformMatrix(TransformComponent& tc)
 
 	while (curID != entt::null) {
 		TransformComponent& curTc = GetScene()->registry.get<TransformComponent>(curID);
-		resultMat *= curTc.rotationMatrix * curTc.translationMatrix;
+		resultMat =resultMat* (curTc.rotationMatrix*curTc.translationMatrix);
 		curID = curTc.parent;
 	}
 	return resultMat;
@@ -21,23 +21,21 @@ Matrix TransformHelper::ConstructLocalTransformMatrix(TransformComponent& tc)
 	return  tc.scaleMatrix * tc.rotationMatrix * tc.translationMatrix;
 }
 
-Matrix TransformHelper::ConstructWorldTransformMatrix(TransformComponent& tc)
-{
-	return  Matrix::CreateScale(tc.scale) * Matrix::CreateFromYawPitchRoll(tc.rotation) * Matrix::CreateTranslation(tc.position);
-}
 
-void TransformHelper::RecalculateWorldPos(TransformComponent& tc)
+Matrix TransformHelper::ConstructInverseParentTransform(TransformComponent& tc)
 {
+	Matrix resultMat = Matrix::Identity;
 	entt::entity curID = tc.parent;
-	tc.rotation = tc.localRotation;
-	tc.position = tc.localPosition;
+
 	while (curID != entt::null) {
 		TransformComponent& curTc = GetScene()->registry.get<TransformComponent>(curID);
-		tc.rotation += curTc.localRotation;
-		tc.position += curTc.localPosition;
+		resultMat = resultMat * (curTc.rotationMatrix * curTc.translationMatrix);
 		curID = curTc.parent;
 	}
+	return resultMat.Invert();
 }
+
+
 
 Vector3 TransformHelper::GetRotationDegrees(TransformComponent& tc)
 {
@@ -46,63 +44,40 @@ Vector3 TransformHelper::GetRotationDegrees(TransformComponent& tc)
 	return rot;
 }
 
-Vector3 TransformHelper::GetRealScale(TransformComponent& tc, Vector3 scale)
-{
-	return Vector3::Zero;
-	// TODO: вставьте здесь оператор return
-}
-
-Vector3 TransformHelper::GetRealTranslation(TransformComponent& tc, Vector3 transform)
-{
-	entt::entity curID = tc.parent;
-	
-	while (curID != entt::null) {
-		TransformComponent& curTc = GetScene()->registry.get<TransformComponent>(curID);
-		transform -= curTc.localPosition;
-		curID = curTc.parent;
-	}
-	return transform;
-}
-
-Vector3 TransformHelper::GetRealRotation(TransformComponent& tc, Vector3 rotation)
-{
-	entt::entity curID = tc.parent;
-
-	while (curID != entt::null) {
-		TransformComponent& curTc = GetScene()->registry.get<TransformComponent>(curID);
-		rotation -= curTc.localRotation;
-		curID = curTc.parent;
-	}
-	return rotation;
-}
-
 void TransformHelper::UpdateRelativeToParent(const TransformComponent* parent, TransformComponent& tc)
 {
 	if (!parent)
 	{
-		entt::entity curID = tc.parent;
-		while (curID != entt::null)
-		{
-			TransformComponent& curTc =GetScene()->registry.get<TransformComponent>(curID);
-			tc.localPosition += curTc.localPosition;
-			tc.localRotation += curTc.localRotation;
-			curID = curTc.parent;
-		}
+		auto mat = ConstructLocalTransformMatrix(tc);
+		auto matInverse = ConstructInverseParentTransform(tc);
+		matInverse = matInverse.Invert();
+		mat = mat*matInverse;
+		Vector3 translation, scale;
+		Quaternion rotation;
+		mat.Decompose(scale, rotation, translation);
+		tc.localPosition = translation;
+		tc.localRotation = rotation.ToEuler();
+		tc.localScale = scale;
+
+		tc.scaleMatrix = Matrix::CreateScale(scale);
+		tc.rotationMatrix = Matrix::CreateFromYawPitchRoll(tc.localRotation);
+		tc.translationMatrix = Matrix::CreateTranslation(translation);
 	}
 	else
 	{
-		entt::entity curID = tc.parent;
-		tc.rotation = tc.localRotation;
-		tc.position = tc.localPosition;
-		while (curID != entt::null)
-		{
-			TransformComponent& curTc = GetScene()->registry.get<TransformComponent>(curID);
-			tc.localPosition -= curTc.localPosition;
-			tc.localRotation -= curTc.localRotation;
-			tc.rotation += curTc.localRotation;
-			tc.position += curTc.localPosition;
-			curID = curTc.parent;
-		}
+		auto mat=ConstructLocalTransformMatrix(tc);
+		auto matInverse = ConstructInverseParentTransform(tc);
+		mat = mat*matInverse;
+		Vector3 translation, scale;
+		Quaternion rotation;
+		mat.Decompose(scale, rotation, translation);
+		tc.localPosition = translation;
+		tc.localRotation = rotation.ToEuler();
+		tc.localScale = scale;
+
+		tc.scaleMatrix = Matrix::CreateScale(scale);
+		tc.rotationMatrix = Matrix::CreateFromYawPitchRoll(tc.localRotation);
+		tc.translationMatrix = Matrix::CreateTranslation(translation);
 	}
 }
 

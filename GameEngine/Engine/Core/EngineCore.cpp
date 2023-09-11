@@ -171,6 +171,7 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<LightSystem> ls = std::make_unique<LightSystem>();
 	systems.push_back(std::move(ls));
 
+
 	for (const auto& system : systems)
 	{
 		system->Init();
