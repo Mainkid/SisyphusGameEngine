@@ -422,23 +422,23 @@ void RenderPipeline::ShadowPass()
                 MeshComponent& meshComponent = engine->scene->registry.get<MeshComponent>(go_entity);
                 CB_ShadowBuffer dataShadow;
                 //dataShadow.baseData.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
-                dataShadow.baseData.world = TransformHelper::ConstructTransformMatrix(transform);
+                dataShadow.baseData.world = transform.transformMatrix;
                 
                 //!dataShadow.baseData.worldViewProj =
                 //    engineActor->transform->world * engineActor->transform->GetViewMatrix() *
                 //    engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
 
                 dataShadow.baseData.worldViewProj =
-                    TransformHelper::ConstructTransformMatrix(transform) *
+                    transform.transformMatrix *
                     engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
 
-                dataShadow.baseData.worldView = TransformHelper::ConstructTransformMatrix(transform) *
+                dataShadow.baseData.worldView = transform.transformMatrix *
                     engine->cameraController->GetViewMatrix();
 
                 dataShadow.baseData.worldViewInverseTranspose =
                     DirectX::XMMatrixTranspose(
                         DirectX::XMMatrixInverse(nullptr,
-                            TransformHelper::ConstructTransformMatrix(transform)*engine->cameraController->GetViewMatrix()));
+                            transform.transformMatrix*engine->cameraController->GetViewMatrix()));
 
                 for (int i = 0; i < 4; i++)
                     dataShadow.viewProjs[i] = light.viewMatrices[i] * light.orthoMatrices[i];
@@ -505,19 +505,19 @@ void RenderPipeline::OpaquePass()
         TransformComponent& transformComp= engine->scene->registry.get<TransformComponent>(entity);
         MeshComponent& meshComp = engine->scene->registry.get<MeshComponent>(entity);
         //dataOpaque.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
-        dataOpaque.baseData.world = TransformHelper::ConstructTransformMatrix(transformComp);
+        dataOpaque.baseData.world = transformComp.transformMatrix;
 
         dataOpaque.baseData.worldViewProj =
-            TransformHelper::ConstructTransformMatrix(transformComp) *
+            transformComp.transformMatrix *
             engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
 
-        dataOpaque.baseData.worldView = TransformHelper::ConstructTransformMatrix(transformComp) *
+        dataOpaque.baseData.worldView = transformComp.transformMatrix *
             engine->cameraController->GetViewMatrix();
 
         dataOpaque.baseData.worldViewInverseTranspose =
             DirectX::XMMatrixTranspose(
                 DirectX::XMMatrixInverse(nullptr,
-                    TransformHelper::ConstructTransformMatrix(transformComp)));
+                    transformComp.transformMatrix));
 
         dataOpaque.instanseID =(uint32_t)entity;
 
@@ -571,7 +571,7 @@ void RenderPipeline::LightPass()
         
         LightComponent& light= view.get<LightComponent>(entity);
         TransformComponent& tc= view.get<TransformComponent>(entity);
-        lightBuffer.lightData.Pos = Vector4(tc.localPosition.x,tc.localPosition.y,tc.localPosition.z,1);
+        lightBuffer.lightData.Pos = Vector4(tc.localPosition.x, tc.localPosition.y, tc.localPosition.z,1);
         lightBuffer.lightData.Color = light.color;
         lightBuffer.lightData.Dir =Vector4::Transform(Vector4::UnitX,Matrix::CreateFromYawPitchRoll(tc.localRotation));
         lightBuffer.lightData.additiveParams = light.paramsRadiusAndAttenuation;

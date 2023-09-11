@@ -82,7 +82,7 @@ void ViewportWidget::Render()
 		auto viewMat = EngineCore::instance()->cameraController->GetViewMatrix();
 		auto projMat = EngineCore::instance()->cameraController->GetProjectionMatrix();
 		auto& tc = EngineCore::instance()->scene->registry.get<TransformComponent>(hud->selectedEntityID);
-		auto transformMat = TransformHelper::ConstructTransformMatrix(tc);
+		auto transformMat = tc.transformMatrix;
 		//auto transformMat = TransformHelper::ConstructTransformMatrix(tc);
 
 		auto res=ImGuizmo::Manipulate(&viewMat._11, &projMat._11, guizmoType, ImGuizmo::LOCAL, &transformMat._11);

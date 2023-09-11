@@ -3,22 +3,9 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Matrix TransformHelper::ConstructTransformMatrix(TransformComponent& tc)
-{
-	Matrix resultMat = tc.scaleMatrix * tc.rotationMatrix * tc.translationMatrix;
-	entt::entity curID = tc.parent;
-
-	while (curID != entt::null) {
-		TransformComponent& curTc = GetScene()->registry.get<TransformComponent>(curID);
-		resultMat =resultMat* (curTc.rotationMatrix*curTc.translationMatrix);
-		curID = curTc.parent;
-	}
-	return resultMat;
-}
-
 Matrix TransformHelper::ConstructLocalTransformMatrix(TransformComponent& tc)
 {
-	return  tc.scaleMatrix * tc.rotationMatrix * tc.translationMatrix;
+	return  (Matrix::CreateScale(tc.localScale) * Matrix::CreateFromYawPitchRoll(tc.localRotation) * Matrix::CreateTranslation(tc.localPosition));
 }
 
 
@@ -29,10 +16,26 @@ Matrix TransformHelper::ConstructInverseParentTransform(TransformComponent& tc)
 
 	while (curID != entt::null) {
 		TransformComponent& curTc = GetScene()->registry.get<TransformComponent>(curID);
-		resultMat = resultMat * (curTc.rotationMatrix * curTc.translationMatrix);
+		resultMat = resultMat * (Matrix::CreateScale(curTc.scale)* Matrix::CreateFromYawPitchRoll(curTc.localRotation) * Matrix::CreateTranslation(curTc.localPosition));
 		curID = curTc.parent;
 	}
 	return resultMat.Invert();
+}
+
+void TransformHelper::UpdateTransformMatrix(TransformComponent& tc)
+{
+	tc.transformMatrix = Matrix::CreateScale(tc.localScale) * Matrix::CreateFromYawPitchRoll(tc.localRotation) * Matrix::CreateTranslation(tc.localPosition);
+	entt::entity curID = tc.parent;
+	if (curID!=entt::null)
+	{
+		TransformComponent& curTc = GetScene()->registry.get<TransformComponent>(curID);
+		tc.transformMatrix = tc.transformMatrix * curTc.transformMatrix;
+	}
+
+	for (auto& child : tc.children)
+	{
+		UpdateTransformMatrix(GetScene()->registry.get<TransformComponent>(child));
+	}
 }
 
 
@@ -58,10 +61,7 @@ void TransformHelper::UpdateRelativeToParent(const TransformComponent* parent, T
 		tc.localPosition = translation;
 		tc.localRotation = rotation.ToEuler();
 		tc.localScale = scale;
-
-		tc.scaleMatrix = Matrix::CreateScale(scale);
-		tc.rotationMatrix = Matrix::CreateFromYawPitchRoll(tc.localRotation);
-		tc.translationMatrix = Matrix::CreateTranslation(translation);
+		tc.transformMatrix = (Matrix::CreateScale(scale) * Matrix::CreateFromYawPitchRoll(tc.localRotation) * Matrix::CreateTranslation(translation));
 	}
 	else
 	{
@@ -74,11 +74,13 @@ void TransformHelper::UpdateRelativeToParent(const TransformComponent* parent, T
 		tc.localPosition = translation;
 		tc.localRotation = rotation.ToEuler();
 		tc.localScale = scale;
-
-		tc.scaleMatrix = Matrix::CreateScale(scale);
-		tc.rotationMatrix = Matrix::CreateFromYawPitchRoll(tc.localRotation);
-		tc.translationMatrix = Matrix::CreateTranslation(translation);
+		tc.transformMatrix = (Matrix::CreateScale(scale) * Matrix::CreateFromYawPitchRoll(tc.localRotation) * Matrix::CreateTranslation(translation));
 	}
+
+	/*for (auto& child : tc.children)
+	{
+		UpdateRelativeToParent(&tc, GetScene()->registry.get<TransformComponent>(child));
+	}*/
 }
 
 void TransformHelper::DegreesToRad(Vector3& vec)
