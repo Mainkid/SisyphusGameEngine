@@ -79,8 +79,8 @@ void ViewportWidget::Render()
 
 		
 
-		auto viewMat = EngineCore::instance()->cameraController->GetViewMatrix();
-		auto projMat = EngineCore::instance()->cameraController->GetProjectionMatrix();
+		auto viewMat = GetScene()->camera->view;
+		auto projMat = GetScene()->camera->projection;
 		auto& tc = EngineCore::instance()->scene->registry.get<TransformComponent>(hud->selectedEntityID);
 		auto transformMat = tc.transformMatrix;
 		//auto transformMat = TransformHelper::ConstructTransformMatrix(tc);

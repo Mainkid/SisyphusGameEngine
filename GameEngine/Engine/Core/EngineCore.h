@@ -34,11 +34,10 @@ using namespace Microsoft::WRL;
 class EngineCore
 {
 public:
-    
     std::unique_ptr<WinInput> wInput;
     std::unique_ptr<DisplayWin32> window;
     std::unique_ptr<RenderPipeline> renderPipeline;
-    std::unique_ptr<CameraController> cameraController;
+    //std::unique_ptr<CameraController> cameraController;
     std::unique_ptr<RenderTarget> renderTarget;
     std::chrono::time_point<std::chrono::steady_clock> PrevTime;
     ComPtr<ID3D11Device> device;

@@ -9,7 +9,7 @@ struct CameraComponent
 	float nearPlane = 0.01f;
 	float farPlane = 100.0f;
 	float fovDegrees = 90.0f;
-	float aspectRatio = 720.0 / 1280.0f;
+	float aspectRatio = 1280.0f/720.0f;
 	float cameraSpeed = 1.0f;
 	uint32_t hash = 0;
 	uint32_t transformHash = 0;
@@ -38,7 +38,9 @@ namespace std
 		{
 			result_type const h1(std::hash<float>()(a.nearPlane));
 			result_type const h2(std::hash<float>()(a.farPlane));
-			return h1 * 37 + (h1 * 37 + h2) * 37;
+			result_type const h3(std::hash<float>()(a.fovDegrees));
+			result_type const h4(std::hash<float>()(a.aspectRatio));
+			return h1 * 37 + (h1 * 37 + h2) * 37+ ((h1 * 37 + h2) * 37+h3)*37 +h4;
 		}
 	};
 }

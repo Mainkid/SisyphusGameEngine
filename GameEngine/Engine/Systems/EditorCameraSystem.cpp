@@ -5,9 +5,11 @@ void EditorCameraSystem::Init()
 {
     auto id = GetScene()->registry.create();
     GetScene()->registry.emplace<DataComponent>(id,"Camera");
-    GetScene()->registry.emplace<TransformComponent>(id);
+    TransformComponent& tc=GetScene()->registry.emplace<TransformComponent>(id);
     CameraComponent& cc = GetScene()->registry.emplace<CameraComponent>(id);
     GetScene()->camera = &cc;
+    GetScene()->cameraTransform = &tc;
+    SetLookAtPos(Vector3(-1, 0, 0), tc);
 }
 
 void EditorCameraSystem::Run()
@@ -19,7 +21,7 @@ void EditorCameraSystem::Run()
 		CameraComponent& cc = view.get<CameraComponent>(entity);
 		if (tc.hash != cc.transformHash)
 		{
-			tc.hash = cc.transformHash;
+            cc.transformHash = tc.hash;
 			UpdateViewMatrix(cc,tc);
 		}
 		uint32_t hash = hasher(cc);
@@ -28,7 +30,6 @@ void EditorCameraSystem::Run()
 			cc.hash = hash;
 			UpdateProjectionMatrix(cc);
 		}
-
         ProcessInput(cc,tc);
 	}
 
@@ -48,11 +49,10 @@ void EditorCameraSystem::UpdateViewMatrix(CameraComponent& cc, TransformComponen
     Vector3 camTarget = DirectX::XMVector3TransformCoord(
        cc.FORWARD_VECTOR, camRotationMatrix);
 
-
+    camTarget += tc.localPosition;
 
     DirectX::XMVECTOR upDir = DirectX::XMVector3TransformCoord(cc.UP_VECTOR, camRotationMatrix);
     cc.view = DirectX::XMMatrixLookAtLH(tc.localPosition, camTarget, upDir);
-
     cc.forward = Vector4::Transform(cc.FORWARD_VECTOR, camRotationMatrix);
     cc.up = Vector4::Transform(cc.UP_VECTOR, camRotationMatrix);
     cc.back = Vector4::Transform(cc.BACKWARD_VECTOR, camRotationMatrix);
@@ -66,55 +66,73 @@ void EditorCameraSystem::UpdateProjectionMatrix(CameraComponent& cc)
 	cc.projection = DirectX::XMMatrixPerspectiveFovLH(fovRadians, cc.aspectRatio, cc.nearPlane, cc.farPlane);
 }
 
+void EditorCameraSystem::SetLookAtPos(Vector3 lookAtPos,TransformComponent& tc)
+{
+    if (lookAtPos.x == tc.localPosition.x && lookAtPos.y == tc.localPosition.y && lookAtPos.z == tc.localPosition.z)
+        return;
+
+    lookAtPos.x = lookAtPos.x - tc.localPosition.x;
+    lookAtPos.y = lookAtPos.y - tc.localPosition.y;
+    lookAtPos.z = lookAtPos.z - tc.localPosition.z;
+
+    float pitch = 0.0f;
+    if (lookAtPos.y != 0.0f)
+    {
+        const float distance = sqrt(lookAtPos.x * lookAtPos.x + lookAtPos.z * lookAtPos.z);
+        pitch = atan(lookAtPos.y / distance);
+    }
+
+    float yaw = 0.0f;
+    if (lookAtPos.x != 0.0f)
+    {
+        yaw = atan(lookAtPos.x / lookAtPos.z);
+    }
+
+    if (lookAtPos.z > 0)
+        yaw += DirectX::XM_PI;
+    tc.localRotation.x = pitch;
+    tc.localRotation.y = yaw;
+}
+
 void EditorCameraSystem::ProcessInput(CameraComponent& cc, TransformComponent& tc)
 {
-    if (EngineCore::instance()->hud->GetFocusedWindowName() == "Viewport")
-    {
+    
         ImGuiIO& io = ImGui::GetIO(); (void)io;
-
         if (ImGui::IsMouseDown(ImGuiMouseButton_Right))
         {
-            tc.rotation += Vector3(io.MouseDelta.y * EngineCore::instance()->deltaTime, io.MouseDelta.x * EngineCore::instance()->deltaTime, 0.0f);
+            tc.localRotation += Vector3(io.MouseDelta.y * EngineCore::instance()->deltaTime, io.MouseDelta.x * EngineCore::instance()->deltaTime, 0.0f);
         }
-        //this->camera->AdjustRotation(io.MouseDelta.y * EngineCore::instance()->deltaTime, io.MouseDelta.x * EngineCore::instance()->deltaTime, 0.0f);
-
-        //EngineCore::instance()->H
         if (ImGui::IsKeyDown(ImGuiKey_W))
         {
-            tc.position += Vector3(cc.forward) * cc.cameraSpeed * EngineCore::instance()->deltaTime;
-            //this->camera->AdjustPosition(cc.forward * cc.cameraSpeed * EngineCore::instance()->deltaTime);
-
+            tc.localPosition += Vector3(cc.forward) * cc.cameraSpeed * EngineCore::instance()->deltaTime;
+            
         }
         if (ImGui::IsKeyDown(ImGuiKey_A))
         {
-            tc.position += Vector3(cc.left) * cc.cameraSpeed * EngineCore::instance()->deltaTime;
-            //this->camera->AdjustPosition(this->camera->GetLeftVector() * cameraSpeed * deltaSec);
-
+            tc.localPosition += Vector3(cc.left) * cc.cameraSpeed * EngineCore::instance()->deltaTime;
+            
         }
         if (ImGui::IsKeyDown(ImGuiKey_S))
         {
-            tc.position += Vector3(cc.back) * cc.cameraSpeed * EngineCore::instance()->deltaTime;
-            //this->camera->AdjustPosition(this->camera->GetBackwardVector() * cameraSpeed * deltaSec);
+            tc.localPosition += Vector3(cc.back) * cc.cameraSpeed * EngineCore::instance()->deltaTime;
         }
         if (ImGui::IsKeyDown(ImGuiKey_D))
         {
-            tc.position += Vector3(cc.right) * cc.cameraSpeed * EngineCore::instance()->deltaTime;
-           // this->camera->AdjustPosition(this->camera->GetRightVector() * cameraSpeed * deltaSec);
+            tc.localPosition += Vector3(cc.right) * cc.cameraSpeed * EngineCore::instance()->deltaTime;
         }
         if (ImGui::IsKeyDown(ImGuiKey_Space))
         {
-            tc.position += Vector3(0, cc.cameraSpeed* EngineCore::instance()->deltaTime,0.0f);
+            tc.localPosition += Vector3(0, cc.cameraSpeed* EngineCore::instance()->deltaTime,0.0f);
 
-            //this->camera->AdjustPosition(0.0f, cameraSpeed * deltaSec, 0.0f);
         }
         if (ImGui::IsKeyDown(ImGuiKey_LeftShift))
         {
-            tc.position += Vector3(0, -cc.cameraSpeed * EngineCore::instance()->deltaTime, 0.0f);
+            tc.localPosition += Vector3(0, -cc.cameraSpeed * EngineCore::instance()->deltaTime, 0.0f);
                       
         }
         if (ImGui::IsKeyDown(ImGuiKey_E))
         {
            
         }
-    }
+    
 }

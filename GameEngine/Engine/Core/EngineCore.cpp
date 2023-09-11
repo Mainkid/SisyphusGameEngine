@@ -89,7 +89,7 @@ void EngineCore::InitializeDirectX()
 {
 	window = std::make_unique<DisplayWin32>( L"Untitled", GetModuleHandle(nullptr), 1280, 720);
 	wInput = std::make_unique<WinInput>();
-	cameraController = std::make_unique<CameraController>();
+	//cameraController = std::make_unique<CameraController>();
 	CreateDeviceAndSwapChain();
 
 	scene = std::make_unique<Scene>();
@@ -157,7 +157,7 @@ void EngineCore::Update()
 		system->Run();
 	}
 	scene->Update(deltaTime);
-	cameraController->CameraMovement(deltaTime);
+	//cameraController->CameraMovement(deltaTime);
 }
 
 void EngineCore::StartUpSystems()
@@ -188,7 +188,7 @@ void EngineCore::StartUp()
 	renderTarget->Initialize(window->GetWidth(),window->GetHeight());
 	renderPipeline->Initialize();
 	hud->Initialize();
-	cameraController->Initialize();
+	//cameraController->Initialize();
 
 	StartUpSystems();
 

@@ -14,6 +14,7 @@ public:
 private:
 	void UpdateViewMatrix(CameraComponent& cc,TransformComponent& tc);
 	void UpdateProjectionMatrix(CameraComponent& cc);
+	void SetLookAtPos(Vector3 pos, TransformComponent& tc);
 	void ProcessInput(CameraComponent& cc, TransformComponent& tc);
 	std::hash<CameraComponent> hasher;
 };
