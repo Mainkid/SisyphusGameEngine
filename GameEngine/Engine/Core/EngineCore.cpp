@@ -165,6 +165,9 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<TransformSystem> ts= std::make_unique<TransformSystem>();
 	systems.push_back(std::move(ts));
 
+	std::unique_ptr<EditorCameraSystem> ecs = std::make_unique<EditorCameraSystem>();
+	systems.push_back(std::move(ecs));
+
 	std::unique_ptr<MeshSystem> ms = std::make_unique<MeshSystem>();
 	systems.push_back(std::move(ms));
 

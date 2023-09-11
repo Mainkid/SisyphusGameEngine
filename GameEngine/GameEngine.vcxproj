@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widgets\ContentBrowser.cpp" />
     <ClCompile Include="Engine\Core\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Core\Camera\CameraController.cpp" />
@@ -184,6 +185,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Systems\EditorCameraSystem.h" />
+    <ClInclude Include="Engine\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Components\DataComponent.h" />
     <ClInclude Include="Engine\Core\HUD\Widgets\ContentBrowser.h" />
     <ClInclude Include="Engine\Core\Camera\Camera.h" />

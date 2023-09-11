@@ -1,5 +1,6 @@
 #pragma once
 #include "ISystem.h"
+#include "EditorCameraSystem.h"
 #include "TransformSystem.h"
 #include "MeshSystem.h"
 #include "LightSystem.h"

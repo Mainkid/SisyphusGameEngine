@@ -92,5 +92,10 @@ static Scene* GetScene()
     return EngineCore::instance()->scene.get();
 }
 
+static CameraComponent& GetCamera()
+{
+    return *(EngineCore::instance()->scene.get()->camera);
+}
+
 
 //TODO: освободить все ресурсы при завершении.
