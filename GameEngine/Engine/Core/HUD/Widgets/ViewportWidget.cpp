@@ -166,6 +166,13 @@ void ViewportWidget::HandleResize()
 	{
 		hud->ViewportResizedEvent.Broadcast(newWidgetSize.x * 1.0f / newWidgetSize.y);
 		widgetSize = newWidgetSize;
+
+		auto view = EngineCore::instance()->scene->registry.view<TransformComponent, CameraComponent>();
+		for (auto& entity : view)
+		{
+			CameraComponent& cc = view.get<CameraComponent>(entity);
+			cc.aspectRatio = widgetSize.x / widgetSize.y;
+		}
 	}
 }
 

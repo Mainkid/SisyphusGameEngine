@@ -15,7 +15,6 @@
 #include "../Core/DisplayWin32.h"
 #include "../Core/WinInput.h"
 #include "../Core/Rendering/RenderPipeline.h"
-#include "../Core/Camera/CameraController.h"
 #include "../Core/HUD/Hud.h"
 #include "../Systems/Systems.h"
 #include "../Core/Rendering/RenderTarget.h"

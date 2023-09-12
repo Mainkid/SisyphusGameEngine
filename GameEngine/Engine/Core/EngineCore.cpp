@@ -82,6 +82,7 @@ void EngineCore::CreateDeviceAndSwapChain()
 
 	res = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)backTex.GetAddressOf());	// __uuidof(ID3D11Texture2D)
 	res = device->CreateRenderTargetView(backTex.Get(), nullptr, rtv.GetAddressOf());
+	backTex->Release();
 
 }
 
@@ -122,6 +123,8 @@ void EngineCore::StartUpdateLoop()
 
 	}
 }
+
+
 
 void EngineCore::GetInput()
 {

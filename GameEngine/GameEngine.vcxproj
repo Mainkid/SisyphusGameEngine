@@ -141,8 +141,6 @@
   <ItemGroup>
     <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widgets\ContentBrowser.cpp" />
-    <ClCompile Include="Engine\Core\Camera\Camera.cpp" />
-    <ClCompile Include="Engine\Core\Camera\CameraController.cpp" />
     <ClCompile Include="Engine\Core\DisplayWin32.cpp" />
     <ClCompile Include="Engine\Core\EngineCore.cpp" />
     <ClCompile Include="Engine\Components\GameComponent.cpp" />
@@ -189,8 +187,6 @@
     <ClInclude Include="Engine\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Components\DataComponent.h" />
     <ClInclude Include="Engine\Core\HUD\Widgets\ContentBrowser.h" />
-    <ClInclude Include="Engine\Core\Camera\Camera.h" />
-    <ClInclude Include="Engine\Core\Camera\CameraController.h" />
     <ClInclude Include="Engine\Core\DisplayWin32.h" />
     <ClInclude Include="Engine\Core\EngineCore.h" />
     <ClInclude Include="Engine\Components\GameComponent.h" />

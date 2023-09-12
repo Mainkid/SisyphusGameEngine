@@ -390,7 +390,7 @@ void RenderPipeline::Render()
     
     
     engine->context->ClearState();
-    engine->context->OMSetRenderTargets(1, engine->rtv.GetAddressOf(), engine->depthStencilView.Get());
+    //engine->context->OMSetRenderTargets(1, engine->rtv.GetAddressOf(), engine->depthStencilView.Get());
 }
 
 void RenderPipeline::ShadowPass()

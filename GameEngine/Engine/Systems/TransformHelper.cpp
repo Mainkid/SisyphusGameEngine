@@ -16,7 +16,7 @@ Matrix TransformHelper::ConstructInverseParentTransform(TransformComponent& tc)
 
 	while (curID != entt::null) {
 		TransformComponent& curTc = GetScene()->registry.get<TransformComponent>(curID);
-		resultMat = resultMat * (Matrix::CreateScale(curTc.scale)* Matrix::CreateFromYawPitchRoll(curTc.localRotation) * Matrix::CreateTranslation(curTc.localPosition));
+		resultMat = resultMat * (Matrix::CreateScale(curTc.localScale)* Matrix::CreateFromYawPitchRoll(curTc.localRotation) * Matrix::CreateTranslation(curTc.localPosition));
 		curID = curTc.parent;
 	}
 	return resultMat.Invert();
@@ -77,10 +77,6 @@ void TransformHelper::UpdateRelativeToParent(const TransformComponent* parent, T
 		tc.transformMatrix = (Matrix::CreateScale(scale) * Matrix::CreateFromYawPitchRoll(tc.localRotation) * Matrix::CreateTranslation(translation));
 	}
 
-	/*for (auto& child : tc.children)
-	{
-		UpdateRelativeToParent(&tc, GetScene()->registry.get<TransformComponent>(child));
-	}*/
 }
 
 void TransformHelper::DegreesToRad(Vector3& vec)

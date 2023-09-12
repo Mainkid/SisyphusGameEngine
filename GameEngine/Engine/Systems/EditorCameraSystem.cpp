@@ -19,6 +19,7 @@ void EditorCameraSystem::Run()
 	{
 		TransformComponent& tc = view.get<TransformComponent>(entity);
 		CameraComponent& cc = view.get<CameraComponent>(entity);
+        
 		if (tc.hash != cc.transformHash)
 		{
             cc.transformHash = tc.hash;
