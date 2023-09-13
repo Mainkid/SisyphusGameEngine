@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../../../vendor/SimpleMath.h"
+#include "SimpleMath.h"
 #include "../../Core/Rendering/Lights/LightData.h"
 
 class CB_BaseBuffer

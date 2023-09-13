@@ -44,15 +44,25 @@ void Hud::Render()
 {
     
     
-    EngineCore::instance()->context->OMSetRenderTargets(1, EngineCore::instance()->rtv.GetAddressOf(), EngineCore::instance()->depthStencilView.Get());
+    EngineCore::instance()->context->OMSetRenderTargets(1, EngineCore::instance()->rtv.GetAddressOf(), nullptr);
     bool show = true;
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    if (windowHeight != io.DisplaySize.y || windowWidth != io.DisplaySize.x)
+    {
+        CleanupRenderTarget();
+        windowWidth= max(io.DisplaySize.x, 0);
+        windowHeight = max(io.DisplaySize.y, 0);
+        EngineCore::instance()->swapChain->ResizeBuffers(0, windowWidth, windowHeight, DXGI_FORMAT_UNKNOWN, 0);
+        CreateRenderTarget();
+    }
     
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
-
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    
+    
+    
     ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
     for (auto& widget : widgets)
     {
@@ -61,6 +71,10 @@ void Hud::Render()
     ImGui::ShowDemoWindow(&show);
 
     ImGui::Render();
+
+    
+
+    EngineCore::instance()->context->OMSetRenderTargets(1, EngineCore::instance()->rtv.GetAddressOf(), nullptr);
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
     
 
@@ -68,6 +82,7 @@ void Hud::Render()
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
     }
+
 }
 
 void Hud::Shutdown()
@@ -90,5 +105,21 @@ void Hud::SetFocusedWindowName(std::string _str)
 void Hud::UpdateSelectedEntity(entt::entity _id)
 {
     this->selectedEntityID = _id;
+}
+
+void Hud::CleanupRenderTarget()
+{
+    if (EngineCore::instance()->rtv.Get())
+    {
+        EngineCore::instance()->rtv = nullptr;
+    }
+}
+
+void Hud::CreateRenderTarget()
+{
+    ID3D11Texture2D* pBackBuffer;
+    EngineCore::instance()->swapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
+    EngineCore::instance()->device->CreateRenderTargetView(pBackBuffer, nullptr, EngineCore::instance()->rtv.GetAddressOf());
+    pBackBuffer->Release();
 }
 

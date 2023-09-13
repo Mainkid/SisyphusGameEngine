@@ -112,7 +112,7 @@ float4 PS_PointLight(PS_IN input) : SV_Target
         
     }
     
-    float att = 1.0f / dot(lightData.params.yzw, float3(1.0f, distance * lightData.params.r, distance * distance * lightData.params.r));
+    float att = 1.0f / dot(lightData.params.yzw, float3(1.0f, distance , distance * distance));
 
     float3 resColor = diffuseFactor*att* pixelColor + specFactor*att;
     

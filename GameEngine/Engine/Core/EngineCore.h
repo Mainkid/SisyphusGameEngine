@@ -12,13 +12,11 @@
 #include <vector>
 
 #include "../Components/GameComponent.h"
-#include "../Components/GameObject.h"
 #include "../Core/DisplayWin32.h"
 #include "../Core/WinInput.h"
 #include "../Core/Rendering/RenderPipeline.h"
-#include "../Core/Camera/CameraController.h"
 #include "../Core/HUD/Hud.h"
-#include "../Systems/RenderSystem/RenderSystem.h"
+#include "../Systems/Systems.h"
 #include "../Core/Rendering/RenderTarget.h"
 #include "Scene/Scene.h"
 //#include "../"
@@ -32,16 +30,13 @@
 using namespace Microsoft::WRL;
 
 
-
-
 class EngineCore
 {
 public:
-    
     std::unique_ptr<WinInput> wInput;
     std::unique_ptr<DisplayWin32> window;
     std::unique_ptr<RenderPipeline> renderPipeline;
-    std::unique_ptr<CameraController> cameraController;
+    //std::unique_ptr<CameraController> cameraController;
     std::unique_ptr<RenderTarget> renderTarget;
     std::chrono::time_point<std::chrono::steady_clock> PrevTime;
     ComPtr<ID3D11Device> device;
@@ -55,6 +50,8 @@ public:
     ComPtr <ID3D11DepthStencilState> depthStencilState;
     std::unique_ptr<Scene> scene;
     std::unique_ptr<Hud> hud;
+
+    std::vector<std::unique_ptr<ISystem>> systems;
     
 
     float totalTime = 0;
@@ -74,20 +71,13 @@ public:
     HWND GetWindowHWND();
     
     void CreateDeviceAndSwapChain();
-
     void InitializeDirectX();
-
     void StartUp();
-
+    void StartUpSystems();
     void ShutDown();
-
     void StartUpdateLoop();
 
-    
-
 protected:
-    
-
     void GetInput();
     void Render();
     void Update();
@@ -99,5 +89,11 @@ static Scene* GetScene()
 {
     return EngineCore::instance()->scene.get();
 }
+
+static CameraComponent& GetCamera()
+{
+    return *(EngineCore::instance()->scene.get()->camera);
+}
+
 
 //TODO: освободить все ресурсы при завершении.

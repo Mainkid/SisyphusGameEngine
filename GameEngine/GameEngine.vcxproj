@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\Engine\DirectXSDK;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
   </PropertyGroup>
@@ -139,9 +139,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widgets\ContentBrowser.cpp" />
-    <ClCompile Include="Engine\Core\Camera\Camera.cpp" />
-    <ClCompile Include="Engine\Core\Camera\CameraController.cpp" />
     <ClCompile Include="Engine\Core\DisplayWin32.cpp" />
     <ClCompile Include="Engine\Core\EngineCore.cpp" />
     <ClCompile Include="Engine\Components\GameComponent.cpp" />
@@ -151,14 +150,10 @@
     <ClCompile Include="Engine\Core\Rendering\GBuffer.cpp" />
     <ClCompile Include="Engine\Core\WinInput.cpp" />
     <ClCompile Include="Engine\GameEngine.cpp" />
-    <ClCompile Include="Engine\Components\GameObject.cpp" />
-    <ClCompile Include="Engine\Components\TransformComponent.cpp" />
-    <ClCompile Include="Engine\Components\MeshComponent.cpp" />
     <ClCompile Include="Engine\Components\Mesh.cpp" />
     <ClCompile Include="Engine\Core\Rendering\RenderPipeline.cpp" />
     <ClCompile Include="Engine\Core\Scene\Scene.cpp" />
     <ClCompile Include="Engine\Systems\RenderSystem\RenderSystem.cpp" />
-    <ClCompile Include="Engine\Components\LightComponent.cpp" />
     <ClCompile Include="Engine\Core\HUD\Hud.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widgets\ViewportWidget.cpp" />
     <ClCompile Include="Engine\Core\Rendering\RenderTarget.cpp" />
@@ -167,6 +162,11 @@
     <ClCompile Include="Engine\Tools\ImageLoader.cpp" />
     <ClCompile Include="Engine\Components\ParticleComponent.cpp" />
     <ClCompile Include="Engine\Components\Particle.cpp" />
+    <ClCompile Include="Engine\Systems\TransformSystem.cpp" />
+    <ClCompile Include="Engine\Systems\TransformHelper.cpp" />
+    <ClCompile Include="Engine\Systems\MeshSystem.cpp" />
+    <ClCompile Include="Engine\Systems\LightSystem.cpp" />
+    <ClCompile Include="Engine\Systems\MeshLoader.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -183,13 +183,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Systems\EditorCameraSystem.h" />
+    <ClInclude Include="Engine\Components\CameraComponent.h" />
+    <ClInclude Include="Engine\Components\DataComponent.h" />
     <ClInclude Include="Engine\Core\HUD\Widgets\ContentBrowser.h" />
-    <ClInclude Include="Engine\Core\Camera\Camera.h" />
-    <ClInclude Include="Engine\Core\Camera\CameraController.h" />
     <ClInclude Include="Engine\Core\DisplayWin32.h" />
     <ClInclude Include="Engine\Core\EngineCore.h" />
     <ClInclude Include="Engine\Components\GameComponent.h" />
-    <ClInclude Include="Engine\Components\GameObject.h" />
     <ClInclude Include="Engine\Components\TransformComponent.h" />
     <ClInclude Include="Engine\Components\MeshComponent.h" />
     <ClInclude Include="Engine\Components\Mesh.h" />
@@ -204,6 +204,7 @@
     <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h" />
     <ClInclude Include="Engine\Core\WinInput.h" />
     <ClInclude Include="Engine\Core\Rendering\RenderPipeline.h" />
+    <ClInclude Include="Engine\Systems\Systems.h" />
     <ClInclude Include="Engine\Systems\SystemsEnum.h" />
     <ClInclude Include="Engine\Core\Scene\Scene.h" />
     <ClInclude Include="Engine\Systems\RenderSystem\RenderSystem.h" />
@@ -217,17 +218,14 @@
     <ClInclude Include="Engine\Tools\ImageLoader.h" />
     <ClInclude Include="Engine\Components\ParticleComponent.h" />
     <ClInclude Include="Engine\Components\Particle.h" />
-    <ClInclude Include="vendor\Audio.h" />
-    <ClInclude Include="vendor\BufferHelpers.h" />
-    <ClInclude Include="vendor\CommonStates.h" />
-    <ClInclude Include="vendor\DDSTextureLoader.h" />
+    <ClInclude Include="Engine\Systems\ISystem.h" />
+    <ClInclude Include="Engine\Systems\TransformSystem.h" />
+    <ClInclude Include="Engine\Systems\TransformHelper.h" />
+    <ClInclude Include="Engine\Systems\MeshSystem.h" />
+    <ClInclude Include="Engine\Systems\LightSystem.h" />
+    <ClInclude Include="Engine\Systems\MeshLoader.h" />
     <ClInclude Include="vendor\Delegates.h" />
-    <ClInclude Include="vendor\DirectXHelpers.h" />
-    <ClInclude Include="vendor\Effects.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
-    <ClInclude Include="vendor\GamePad.h" />
-    <ClInclude Include="vendor\GeometricPrimitive.h" />
-    <ClInclude Include="vendor\GraphicsMemory.h" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
     <ClInclude Include="vendor\ImGuizmo\ImCurveEdit.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGradient.h" />
@@ -242,19 +240,9 @@
     <ClInclude Include="vendor\ImGui\imstb_rectpack.h" />
     <ClInclude Include="vendor\ImGui\imstb_textedit.h" />
     <ClInclude Include="vendor\ImGui\imstb_truetype.h" />
-    <ClInclude Include="vendor\Keyboard.h" />
-    <ClInclude Include="vendor\Model.h" />
-    <ClInclude Include="vendor\Mouse.h" />
-    <ClInclude Include="vendor\PostProcess.h" />
-    <ClInclude Include="vendor\PrimitiveBatch.h" />
-    <ClInclude Include="vendor\ScreenGrab.h" />
-    <ClInclude Include="vendor\SimpleMath.h" />
-    <ClInclude Include="vendor\SpriteBatch.h" />
-    <ClInclude Include="vendor\SpriteFont.h" />
+    <ClInclude Include="vendor\DirectXTK\Inc\SimpleMath.h" />
     <ClInclude Include="vendor\stb_image.h" />
-    <ClInclude Include="vendor\VertexTypes.h" />
     <ClInclude Include="vendor\WICTextureLoader.h" />
-    <ClInclude Include="vendor\XboxDDSTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Assets\Shaders\LightShader.hlsl">
@@ -296,7 +284,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <None Include="vendor\SimpleMath.inl" />
+    <None Include="vendor\DirectXTK\Inc\SimpleMath.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

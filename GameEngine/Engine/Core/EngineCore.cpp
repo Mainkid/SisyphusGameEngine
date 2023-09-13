@@ -82,6 +82,7 @@ void EngineCore::CreateDeviceAndSwapChain()
 
 	res = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)backTex.GetAddressOf());	// __uuidof(ID3D11Texture2D)
 	res = device->CreateRenderTargetView(backTex.Get(), nullptr, rtv.GetAddressOf());
+	backTex->Release();
 
 }
 
@@ -89,7 +90,7 @@ void EngineCore::InitializeDirectX()
 {
 	window = std::make_unique<DisplayWin32>( L"Untitled", GetModuleHandle(nullptr), 1280, 720);
 	wInput = std::make_unique<WinInput>();
-	cameraController = std::make_unique<CameraController>();
+	//cameraController = std::make_unique<CameraController>();
 	CreateDeviceAndSwapChain();
 
 	scene = std::make_unique<Scene>();
@@ -123,6 +124,8 @@ void EngineCore::StartUpdateLoop()
 	}
 }
 
+
+
 void EngineCore::GetInput()
 {
 	wInput.get()->GetInput();
@@ -130,10 +133,10 @@ void EngineCore::GetInput()
 
 void EngineCore::Render()
 {
+
 	renderPipeline->Render();
 	hud->Render();
 	swapChain->Present(1, 0);
-	
 }
 
 void EngineCore::Update()
@@ -149,16 +152,36 @@ void EngineCore::Update()
 		float fps = frameCount / totalTime;
 
 		totalTime -= 1.0f;
-
-		//WCHAR text[256];
-		//swprintf_s(text, TEXT("FPS: %f"), fps);
-		//SetWindowText(GetWindowHWND(), text);
-
 		frameCount = 0;
 	}
 
+	for (auto& system : systems)
+	{
+		system->Run();
+	}
 	scene->Update(deltaTime);
-	cameraController->CameraMovement(deltaTime);
+	//cameraController->CameraMovement(deltaTime);
+}
+
+void EngineCore::StartUpSystems()
+{
+	std::unique_ptr<TransformSystem> ts= std::make_unique<TransformSystem>();
+	systems.push_back(std::move(ts));
+
+	std::unique_ptr<EditorCameraSystem> ecs = std::make_unique<EditorCameraSystem>();
+	systems.push_back(std::move(ecs));
+
+	std::unique_ptr<MeshSystem> ms = std::make_unique<MeshSystem>();
+	systems.push_back(std::move(ms));
+
+	std::unique_ptr<LightSystem> ls = std::make_unique<LightSystem>();
+	systems.push_back(std::move(ls));
+
+
+	for (const auto& system : systems)
+	{
+		system->Init();
+	}
 }
 
 void EngineCore::StartUp()
@@ -168,14 +191,21 @@ void EngineCore::StartUp()
 	renderTarget->Initialize(window->GetWidth(),window->GetHeight());
 	renderPipeline->Initialize();
 	hud->Initialize();
-	cameraController->Initialize();
+	//cameraController->Initialize();
 
+	StartUpSystems();
+
+	for (auto& system : systems)
+	{
+		system->Init();
+	}
 }
 
 void EngineCore::ShutDown()
 {
 	RenderSystem::instance()->ShutDown();
+	for (auto& system : systems)
+	{
+		system->Destroy();
+	}
 }
-
-//TODO: ћб все-таки shared ptr у камера контроллера?
-//TODO: !!!”брать комментарии у сцены

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-enum LightType
+enum class LightType
 {
     Ambient,
     Directional,

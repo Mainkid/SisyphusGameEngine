@@ -5,7 +5,7 @@
 #include <directxmath.h>
 #include <vector>
 
-#include "../../../vendor/SimpleMath.h"
+#include "SimpleMath.h"
 //#include "ParticleSystem/Particle.h"
 
 class EngineCore;

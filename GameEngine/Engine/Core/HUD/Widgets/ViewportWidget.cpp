@@ -2,8 +2,6 @@
 #include "../../EngineCore.h"
 #include "../../../Core/Rendering/RenderTarget.h"
 #include "../Hud.h"
-
-
 #include "ViewportWidget.h"
 
 
@@ -53,7 +51,7 @@ void ViewportWidget::Render()
 		
 		ImVec2 pos2 = ImGui::GetMousePos();
 		ImVec2 pos = ImGui::GetCursorScreenPos();
-
+		std::cout << "Is over" << std::endl;
 		auto textureSize = EngineCore::instance()->renderPipeline->GetRtvResolution();
 
 
@@ -81,25 +79,25 @@ void ViewportWidget::Render()
 
 		
 
-		auto viewMat = EngineCore::instance()->cameraController->GetViewMatrix();
-		auto projMat = EngineCore::instance()->cameraController->GetProjectionMatrix();
+		auto viewMat = GetScene()->camera->view;
+		auto projMat = GetScene()->camera->projection;
 		auto& tc = EngineCore::instance()->scene->registry.get<TransformComponent>(hud->selectedEntityID);
-		auto transformMat = tc.ConstructTransformMatrix();
+		auto transformMat = tc.transformMatrix;
+		//auto transformMat = TransformHelper::ConstructTransformMatrix(tc);
 
 		auto res=ImGuizmo::Manipulate(&viewMat._11, &projMat._11, guizmoType, ImGuizmo::LOCAL, &transformMat._11);
-
-
 		
 		if (ImGuizmo::IsUsing())	
 		{
-			Vector3 translation, scale;
-			Quaternion rotation;
-			transformMat.Decompose(scale, rotation,translation);
-			Vector3 deltaRotation = rotation.ToEuler() - tc.GetRotation();
-
-			tc.SetRotation(tc.GetRotation() + deltaRotation);
-			tc.SetPosition(translation);
-			tc.SetScale(scale);
+			Vector3 translation, scale,translationL,scaleL;
+			Quaternion rotation, rotationL;
+			transformMat = transformMat * TransformHelper::ConstructInverseParentTransform(tc);
+			transformMat.Decompose(scale, rotation, translation);
+			Vector3 deltaRotation = rotation.ToEuler() - tc.localRotation;
+			tc.localRotation = tc.localRotation + deltaRotation;
+			tc.localPosition = translation;
+			tc.localScale = scale;
+			//TransformHelper::RecalculateWorldPos(tc);
 		}
 	}
 
@@ -168,8 +166,14 @@ void ViewportWidget::HandleResize()
 	{
 		hud->ViewportResizedEvent.Broadcast(newWidgetSize.x * 1.0f / newWidgetSize.y);
 		widgetSize = newWidgetSize;
-	}
 
+		auto view = EngineCore::instance()->scene->registry.view<TransformComponent, CameraComponent>();
+		for (auto& entity : view)
+		{
+			CameraComponent& cc = view.get<CameraComponent>(entity);
+			cc.aspectRatio = widgetSize.x / widgetSize.y;
+		}
+	}
 }
 
 void ViewportWidget::GetInput()

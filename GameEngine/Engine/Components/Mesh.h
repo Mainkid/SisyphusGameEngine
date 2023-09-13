@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "../../vendor/SimpleMath.h"
+#include "SimpleMath.h"
 #include "../Core/Graphics/Buffer.h"
 
 class EngineCore;
@@ -14,16 +14,12 @@ struct CubeMesh {
 };
 
 using namespace DirectX::SimpleMath;
-class Mesh
+struct Mesh
 {
 public:
 	Mesh(std::vector<DirectX::SimpleMath::Vector4> _vertices, std::vector<int> _indices);
 	Mesh(const Mesh& mesh);
-
-	~Mesh()
-	{
-
-	}
+	Mesh() = default;
 
 	std::vector<DirectX::SimpleMath::Vector4> vertices;
 	std::vector<int> indices;

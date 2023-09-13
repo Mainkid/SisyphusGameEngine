@@ -29,10 +29,15 @@ public:
 	std::string GetFocusedWindowName();
 	void SetFocusedWindowName(std::string _str); //TODO: Инкапсулировать!
 	void UpdateSelectedEntity(entt::entity);
+	void CleanupRenderTarget();
+	void CreateRenderTarget();
+
 
 	MulticastDelegate<float> ViewportResizedEvent;
 	MulticastDelegate<entt::entity> UpdateSelectedEntityEvent;
 private:
+	int windowHeight = 0;
+	int windowWidth = 0;
 	std::set<std::unique_ptr<Widget>> widgets;
 	std::string focusedWindowName="NONE";
 	entt::entity selectedEntityID = entt::null;
