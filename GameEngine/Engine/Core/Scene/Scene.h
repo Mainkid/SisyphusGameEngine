@@ -8,6 +8,7 @@
 #include "../../Components/TransformComponent.h"
 #include "../../Components/ParticleComponent.h"
 #include "../../Components/CameraComponent.h"
+#include "../../Components/EditorBillboardComponent.h"
 
 
 class Scene

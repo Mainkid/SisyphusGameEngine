@@ -138,6 +138,9 @@
     <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\GameComponent.h">
@@ -323,6 +326,12 @@
     <ClInclude Include="Engine\Systems\EditorCameraSystem.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Components\EditorBillboardComponent.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\EditorBillboardSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Assets\Shaders\OpaqueShader.hlsl" />
@@ -337,5 +346,6 @@
     <None Include="vendor\DirectXTK\Inc\SimpleMath.inl">
       <Filter>Файлы заголовков</Filter>
     </None>
+    <None Include="Engine\Assets\Shaders\SpriteBillboardShader.hlsl" />
   </ItemGroup>
 </Project>
