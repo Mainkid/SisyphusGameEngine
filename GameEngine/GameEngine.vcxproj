@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp" />
     <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widgets\ContentBrowser.cpp" />
     <ClCompile Include="Engine\Core\DisplayWin32.cpp" />
@@ -183,6 +184,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Systems\EditorBillboardSystem.h" />
+    <ClInclude Include="Engine\Components\EditorBillboardComponent.h" />
     <ClInclude Include="Engine\Systems\EditorCameraSystem.h" />
     <ClInclude Include="Engine\Components\CameraComponent.h" />
     <ClInclude Include="Engine\Components\DataComponent.h" />
@@ -272,6 +275,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <None Include="Engine\Assets\Shaders\SpriteBillboardShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <FxCompile Include="Engine\Assets\Shaders\StencilPassShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

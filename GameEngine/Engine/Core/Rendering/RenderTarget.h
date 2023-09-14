@@ -24,10 +24,10 @@ public:
 
 	ID3D11ShaderResourceView* GetSRV();
 	ID3D11ShaderResourceView* GetImageSRV();
-
+	ComPtr<ID3D11RenderTargetView> renderTargetView;
 private:
 	ComPtr<ID3D11Texture2D> renderTargetTexture;
-	ComPtr<ID3D11RenderTargetView> renderTargetView;
+	
 	ComPtr<ID3D11ShaderResourceView> shaderResourceView;
 	ComPtr<ID3D11ShaderResourceView> ImageSRV;
 };

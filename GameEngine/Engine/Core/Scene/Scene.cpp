@@ -31,6 +31,10 @@ entt::entity Scene::AddLight(LightType _lightType)
 {
 	auto id = registry.create();
 	registry.emplace<DataComponent>(id,"LightObject");
+	if (_lightType == LightType::PointLight)
+		registry.emplace<EditorBillboardComponent>(id, "Engine/Assets/Sprites/PointLightSprite.png");
+	else
+		registry.emplace<EditorBillboardComponent>(id, "Engine/Assets/Sprites/DirLightSprite.png");
 	registry.emplace<LightComponent>(id,_lightType);
 	registry.emplace<TransformComponent>(id);
 	gameObjects.insert(id);
