@@ -1,38 +1,12 @@
 #pragma once
+#include <memory>
 #include <vector>
+#include "../../Core/Rendering/GBuffer.h"
+#include "../../Core/Graphics/Shader.h"
+#include "../../Core/IService.h"
 
-#include "../Graphics/Shader.h"
-#include "../../Components/EditorBillboardComponent.h"
-#include "../../Components/CameraComponent.h"
-#include "../../Components/LightComponent.h"
-#include "../../Components/ParticleComponent.h"
-#include "../../Components/MeshComponent.h"
-#include "../../Systems/TransformHelper.h"
-#include "../Graphics/ConstantBuffer.h"
-#include "GBuffer.h"
-
-class EngineCore;
-
-class RenderPipeline
+struct RenderContext : public IService
 {
-public:
-    RenderPipeline(EngineCore* _game);
-    void Initialize();
-    void CompileShaders();
-
-    void Render();
-    void ShadowPass();
-    void OpaquePass();
-    void EditorBillboardPass();
-    void LightPass();
-    void ParticlePass();
-    //void GetBoundingBoxForLight(BaseLight* light);
-    float GetPixelValue(int clickX, int clickY);
-    DirectX::SimpleMath::Vector2 GetRtvResolution();
-
-
-    //std::vector<BaseLight*> baseLights;
-
     ID3D11RenderTargetView* rtvs[5];
     ID3D11RenderTargetView* editorBillboardRtvs[2];
 
@@ -62,7 +36,6 @@ public:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> entityIdSRV;
 
 
-    EngineCore* engine;
 
     D3D11_VIEWPORT viewport = {};
 
@@ -101,19 +74,6 @@ public:
     ID3D11RenderTargetView* m_renderTargetView;
     ID3D11ShaderResourceView* m_shaderResourceView;
 
-    
-
     std::unique_ptr<Buffer> shadowConstBuffer;
-
-    //DebugWindow* debugWindow;
-    //TextureShaderClass* textureShader;
-
-
-    /*
-     *
-     * Particles
-     *
-     */
-
 };
 

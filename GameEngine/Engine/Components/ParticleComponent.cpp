@@ -1,6 +1,7 @@
 #include "ParticleComponent.h"
 
 #include "../../vendor/WICTextureLoader.h"
+#include "../Core/Graphics/ConstantBuffer.h"
 #include "../Core/EngineCore.h"
 
 UINT NUM_ELEMENTS = 512 * 512;

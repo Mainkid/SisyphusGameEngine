@@ -3,7 +3,6 @@
 EngineCore::EngineCore(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height)
 {
 	window = std::make_unique<DisplayWin32>(appName, hInstance, width, height);
-	wInput = std::make_unique<WinInput>();
 }
 
 HWND EngineCore::GetWindowHWND()
@@ -30,8 +29,6 @@ void EngineCore::CreateDeviceAndSwapChain()
 	swapDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 	swapDesc.SampleDesc.Count = 1;
 	swapDesc.SampleDesc.Quality = 0;
-
-	
 
 
 	D3D11_TEXTURE2D_DESC textureDesc;
@@ -89,7 +86,6 @@ void EngineCore::CreateDeviceAndSwapChain()
 void EngineCore::InitializeDirectX()
 {
 	window = std::make_unique<DisplayWin32>( L"Untitled", GetModuleHandle(nullptr), 1280, 720);
-	wInput = std::make_unique<WinInput>();
 	//cameraController = std::make_unique<CameraController>();
 	CreateDeviceAndSwapChain();
 
@@ -105,7 +101,6 @@ void EngineCore::InitializeDirectX()
 
 	context->RSSetViewports(1, &viewport);
 	renderTarget = std::make_unique<RenderTarget>();
-	renderPipeline = std::make_unique<RenderPipeline>(this);
 	hud = std::make_unique<Hud>();
 	
 
@@ -115,26 +110,19 @@ void EngineCore::StartUpdateLoop()
 {
 	PrevTime = std::chrono::steady_clock::now();
 
-	while (wInput->ProcessMessages()) {
-
+	while (true) {
 		Update();
-		GetInput();
 		Render();
-
 	}
 }
 
 
 
-void EngineCore::GetInput()
-{
-	wInput.get()->GetInput();
-}
 
 void EngineCore::Render()
 {
 
-	renderPipeline->Render();
+	//renderPipeline->Render();
 	hud->Render();
 	swapChain->Present(1, 0);
 }
@@ -165,6 +153,9 @@ void EngineCore::Update()
 
 void EngineCore::StartUpSystems()
 {
+	std::unique_ptr<InputSystem> is = std::make_unique < InputSystem>();
+	systems.push_back(std::move(is));
+
 	std::unique_ptr<TransformSystem> ts= std::make_unique<TransformSystem>();
 	systems.push_back(std::move(ts));
 
@@ -180,6 +171,26 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<EditorBillboardSystem> ebs = std::make_unique<EditorBillboardSystem>();
 	systems.push_back(std::move(ebs));
 
+	std::unique_ptr<RenderInitSystem> ris = std::make_unique<RenderInitSystem>();
+	systems.push_back(std::move(ris));
+
+	std::unique_ptr<PreRenderSystem> prs = std::make_unique<PreRenderSystem>();
+	systems.push_back(std::move(prs));
+
+	std::unique_ptr<ShadowRenderSystem> srs = std::make_unique<ShadowRenderSystem>();
+	systems.push_back(std::move(srs));
+
+	std::unique_ptr<OpaqueRenderSystem> ors = std::make_unique<OpaqueRenderSystem>();
+	systems.push_back(std::move(ors));
+
+	std::unique_ptr<LightRenderSystem> lrs = std::make_unique<LightRenderSystem>();
+	systems.push_back(std::move(lrs));
+
+	std::unique_ptr<EditorBillboardRenderSystem> brs = std::make_unique<EditorBillboardRenderSystem>();
+	systems.push_back(std::move(brs));
+
+	std::unique_ptr<PostRenderSystem> postrs = std::make_unique<PostRenderSystem>();
+	systems.push_back(std::move(postrs));
 	
 
 	for (const auto& system : systems)
@@ -191,12 +202,9 @@ void EngineCore::StartUpSystems()
 void EngineCore::StartUp()
 {
 	InitializeDirectX();
-	RenderSystem::instance()->StartUp();
-	renderTarget->Initialize(window->GetWidth(),window->GetHeight());
-	renderPipeline->Initialize();
-	hud->Initialize();
-	//cameraController->Initialize();
 
+	renderTarget->Initialize(window->GetWidth(),window->GetHeight());
+	hud->Initialize();
 	StartUpSystems();
 
 	for (auto& system : systems)
@@ -207,7 +215,7 @@ void EngineCore::StartUp()
 
 void EngineCore::ShutDown()
 {
-	RenderSystem::instance()->ShutDown();
+	//RenderSystem::instance()->ShutDown();
 	for (auto& system : systems)
 	{
 		system->Destroy();

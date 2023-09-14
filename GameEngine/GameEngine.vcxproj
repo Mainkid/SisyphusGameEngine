@@ -139,22 +139,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Systems\Rendering\EditorBillboardRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp" />
     <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widgets\ContentBrowser.cpp" />
     <ClCompile Include="Engine\Core\DisplayWin32.cpp" />
     <ClCompile Include="Engine\Core\EngineCore.cpp" />
-    <ClCompile Include="Engine\Components\GameComponent.cpp" />
     <ClCompile Include="Engine\Core\Graphics\Buffer.cpp" />
     <ClCompile Include="Engine\Core\Graphics\Shader.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widget.cpp" />
     <ClCompile Include="Engine\Core\Rendering\GBuffer.cpp" />
-    <ClCompile Include="Engine\Core\WinInput.cpp" />
     <ClCompile Include="Engine\GameEngine.cpp" />
     <ClCompile Include="Engine\Components\Mesh.cpp" />
-    <ClCompile Include="Engine\Core\Rendering\RenderPipeline.cpp" />
+    <ClCompile Include="Engine\Obsolete\RenderPipeline.cpp" />
     <ClCompile Include="Engine\Core\Scene\Scene.cpp" />
-    <ClCompile Include="Engine\Systems\RenderSystem\RenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\ShadowRenderSystem.cpp" />
     <ClCompile Include="Engine\Core\HUD\Hud.cpp" />
     <ClCompile Include="Engine\Core\HUD\Widgets\ViewportWidget.cpp" />
     <ClCompile Include="Engine\Core\Rendering\RenderTarget.cpp" />
@@ -168,6 +167,14 @@
     <ClCompile Include="Engine\Systems\MeshSystem.cpp" />
     <ClCompile Include="Engine\Systems\LightSystem.cpp" />
     <ClCompile Include="Engine\Systems\MeshLoader.cpp" />
+    <ClCompile Include="Engine\Systems\InputSystem.cpp" />
+    <ClCompile Include="Engine\Systems\StartUpSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\PreRenderSystem.cpp" />
+    <ClCompile Include="Engine\Core\ServiceLocator.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderInitSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\OpaqueRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\LightRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\PostRenderSystem.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -184,6 +191,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Systems\Rendering\EditorBillboardRenderSystem.h" />
+    <ClInclude Include="Engine\Core\IService.h" />
     <ClInclude Include="Engine\Systems\EditorBillboardSystem.h" />
     <ClInclude Include="Engine\Components\EditorBillboardComponent.h" />
     <ClInclude Include="Engine\Systems\EditorCameraSystem.h" />
@@ -192,7 +201,6 @@
     <ClInclude Include="Engine\Core\HUD\Widgets\ContentBrowser.h" />
     <ClInclude Include="Engine\Core\DisplayWin32.h" />
     <ClInclude Include="Engine\Core\EngineCore.h" />
-    <ClInclude Include="Engine\Components\GameComponent.h" />
     <ClInclude Include="Engine\Components\TransformComponent.h" />
     <ClInclude Include="Engine\Components\MeshComponent.h" />
     <ClInclude Include="Engine\Components\Mesh.h" />
@@ -205,12 +213,11 @@
     <ClInclude Include="Engine\Core\Rendering\GBuffer.h" />
     <ClInclude Include="Engine\Core\Rendering\Lights\LightData.h" />
     <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h" />
-    <ClInclude Include="Engine\Core\WinInput.h" />
-    <ClInclude Include="Engine\Core\Rendering\RenderPipeline.h" />
+    <ClInclude Include="Engine\Obsolete\RenderPipeline.h" />
     <ClInclude Include="Engine\Systems\Systems.h" />
     <ClInclude Include="Engine\Systems\SystemsEnum.h" />
     <ClInclude Include="Engine\Core\Scene\Scene.h" />
-    <ClInclude Include="Engine\Systems\RenderSystem\RenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\ShadowRenderSystem.h" />
     <ClInclude Include="Engine\Components\LightComponent.h" />
     <ClInclude Include="Engine\Core\HUD\Hud.h" />
     <ClInclude Include="Engine\Core\HUD\Widget.h" />
@@ -227,6 +234,16 @@
     <ClInclude Include="Engine\Systems\MeshSystem.h" />
     <ClInclude Include="Engine\Systems\LightSystem.h" />
     <ClInclude Include="Engine\Systems\MeshLoader.h" />
+    <ClInclude Include="Engine\Systems\InputSystem.h" />
+    <ClInclude Include="Engine\Systems\StartUpSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\PreRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderContext.h" />
+    <ClInclude Include="Engine\Core\ServiceLocator.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderInitSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\OpaqueRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\LightRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\PostRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderHelper.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />

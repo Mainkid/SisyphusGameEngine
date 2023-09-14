@@ -1,6 +1,8 @@
 #pragma once
 #include "../../EngineCore.h"
+#include "../../../Systems/Rendering/RenderHelper.h"
 #include "../../../Core/Rendering/RenderTarget.h"
+#include "../../../Systems/Rendering/RenderHelper.h"
 #include "../Hud.h"
 #include "ViewportWidget.h"
 
@@ -52,14 +54,14 @@ void ViewportWidget::Render()
 		ImVec2 pos2 = ImGui::GetMousePos();
 		ImVec2 pos = ImGui::GetCursorScreenPos();
 		std::cout << "Is over" << std::endl;
-		auto textureSize = EngineCore::instance()->renderPipeline->GetRtvResolution();
+		auto textureSize = RenderHelper::GetRtvResolution();
 
 
 		pos = ImVec2(pos2.x- pos.x, pos2.y - pos.y+imgSize.y);
 	    x = std::clamp((int)(pos.x * textureSize.x / imgSize.x),0, (int)textureSize.x-1);
 		y = std::clamp((int)(pos.y * textureSize.y / imgSize.y),0, (int)textureSize.y-1);
 		
-		int pixelColorR = EngineCore::instance()->renderPipeline->GetPixelValue(x, y);
+		int pixelColorR =RenderHelper::GetPixelValue(x, y);
 		if (pixelColorR != -1)
 		{
 			hud->UpdateSelectedEntityEvent.Broadcast(entt::entity(pixelColorR));

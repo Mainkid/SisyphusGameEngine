@@ -3,6 +3,7 @@
 #include "SimpleMath.h"
 #include "MeshLoader.h"
 #include "../Core/EngineCore.h"
+#include "../Components/LightComponent.h"
 
 class LightSystem : public ISystem
 {
