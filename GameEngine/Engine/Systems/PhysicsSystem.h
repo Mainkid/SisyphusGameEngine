@@ -1,6 +1,6 @@
 #pragma once
 #include "ISystem.h"
-#include "../../vendor/PhysX/PxPhysicsAPI.h"
+#include "PxPhysicsAPI.h"
 
 //using namespace physx;
 
