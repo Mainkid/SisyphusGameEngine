@@ -2,6 +2,8 @@
 #include <vector>
 
 #include "../Graphics/Shader.h"
+#include "../../Components/EditorBillboardComponent.h"
+#include "../../Components/CameraComponent.h"
 #include "../../Components/LightComponent.h"
 #include "../../Components/ParticleComponent.h"
 #include "../../Components/MeshComponent.h"
@@ -21,6 +23,7 @@ public:
     void Render();
     void ShadowPass();
     void OpaquePass();
+    void EditorBillboardPass();
     void LightPass();
     void ParticlePass();
     //void GetBoundingBoxForLight(BaseLight* light);
@@ -31,6 +34,7 @@ public:
     //std::vector<BaseLight*> baseLights;
 
     ID3D11RenderTargetView* rtvs[5];
+    ID3D11RenderTargetView* editorBillboardRtvs[2];
 
     std::unique_ptr<Shader> opaqueShader;
     std::unique_ptr<Shader> dirLightShader;
@@ -39,6 +43,7 @@ public:
     std::unique_ptr<Shader> stencilPassShader;
     std::unique_ptr<Shader> spotLightShader;
     std::unique_ptr<Shader> shadowShader;
+    std::unique_ptr<Shader> billboardShader;
 
 
     std::unique_ptr<GBuffer> gBuffer;

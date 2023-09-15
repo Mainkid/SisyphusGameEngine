@@ -7,6 +7,8 @@
 #include "../../Components/LightComponent.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Components/ParticleComponent.h"
+#include "../../Components/CameraComponent.h"
+#include "../../Components/EditorBillboardComponent.h"
 
 
 class Scene
@@ -17,6 +19,8 @@ public:
 	
 	std::set<entt::entity> gameObjects;
 	entt::registry registry;
+	CameraComponent* camera;
+	TransformComponent* cameraTransform;
 
 	Scene();
 	~Scene() = default;

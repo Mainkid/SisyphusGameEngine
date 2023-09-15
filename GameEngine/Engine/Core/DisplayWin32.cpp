@@ -15,8 +15,8 @@ LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT umessage, WPARAM wparam, LPA
 	case WM_SIZE:
 		if (wparam == SIZE_MINIMIZED)
 			return 0;
-		//g_ResizeWidth = (UINT)LOWORD(lparam); // Queue resize
-		//g_ResizeHeight = (UINT)HIWORD(lparam);
+		g_ResizeWidth = (UINT)LOWORD(lparam); // Queue resize
+		g_ResizeHeight = (UINT)HIWORD(lparam);
 		//if (isInitialized)
 		//{
 		//	EngineCore::instance()->window->HandleResize(g_ResizeWidth, g_ResizeHeight);

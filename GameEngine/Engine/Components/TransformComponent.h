@@ -19,10 +19,7 @@ struct TransformComponent
 	Vector3 localPosition = Vector3(0, 0, 0);
 	Vector3 localRotation = Vector3(0, 0, 0);
 	Vector3 localScale = Vector3(1, 1, 1);
-
-	Matrix translationMatrix=Matrix::Identity;
-	Matrix rotationMatrix=Matrix::Identity;
-	Matrix scaleMatrix=Matrix::Identity;
+	Matrix transformMatrix = Matrix::Identity;
 	uint32_t hash = 0;
 	entt::entity parent = entt::null;
 	std::set<entt::entity> children = {};
