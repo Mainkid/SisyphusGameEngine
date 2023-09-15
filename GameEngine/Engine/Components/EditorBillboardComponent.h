@@ -3,6 +3,7 @@
 #include "SpriteBatch.h"
 #include <wrl.h>
 #include "../../vendor/WICTextureLoader.h"
+#include <string>
 
 using namespace DirectX::SimpleMath;
 struct EditorBillboardComponent

@@ -4,7 +4,7 @@
 #include <typeindex>
 #include <typeinfo>
 #include "../Components/EditorBillboardComponent.h"
-
+#include <string>
 
 class EditorBillboardSystem : public ISystem
 {
