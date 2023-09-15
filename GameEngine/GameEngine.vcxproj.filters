@@ -162,6 +162,9 @@
     <ClCompile Include="Engine\Systems\Rendering\PostRenderSystem.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Systems\HardwareInitSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\TransformComponent.h">
@@ -381,6 +384,15 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Systems\Rendering\RenderHelper.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\HardwareInitSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\HardwareContext.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\EngineContext.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

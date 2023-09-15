@@ -5,6 +5,9 @@
 #include <memory>
 
 class EngineCore;
+struct EngineContext;
+struct RenderContext;
+struct HardwareContext;
 
 class OpaqueRenderSystem : public ISystem
 {
@@ -13,7 +16,8 @@ public:
 	void Run() override;
 	void Destroy() override;
 private:
-	EngineCore* engine;
+	EngineContext* ec;
 	RenderContext* rc;
+	HardwareContext* hc;
 };
 

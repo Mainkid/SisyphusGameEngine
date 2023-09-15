@@ -1,43 +1,48 @@
 #include "EditorBillboardRenderSystem.h"
-#include "../../Core/EngineCore.h"
+#include "RenderContext.h"
+#include "../HardwareContext.h"
+#include "../EngineContext.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
+#include "../../Components/TransformComponent.h"
+#include "../../Components/CameraComponent.h"
+#include "../../Components/EditorBillboardComponent.h"
 
 void EditorBillboardRenderSystem::Init()
 {
-	engine = EngineCore::instance();
+	hc = ServiceLocator::instance()->Get<HardwareContext>();
 	rc = ServiceLocator::instance()->Get<RenderContext>();
+    ec = ServiceLocator::instance()->Get<EngineContext>();
 }
 
 void EditorBillboardRenderSystem::Run()
 {
     ID3D11RenderTargetView* nullRTV[5] = { nullptr,nullptr,nullptr,nullptr,nullptr };
-    EngineCore::instance()->context->OMSetRenderTargets(5, nullRTV, nullptr);
-    engine->context->RSSetState(rc->cullBackRS.Get());
-    engine->context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
-
+    hc->context->OMSetRenderTargets(5, nullRTV, nullptr);
+    hc->context->RSSetState(rc->cullBackRS.Get());
+    hc->context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
     UINT strides[1] = { 32 };
     UINT offsets[1] = { 0 };
-    auto view = engine->scene->registry.view<TransformComponent, CameraComponent>();
-    CameraComponent& ecs = engine->scene->registry.get<CameraComponent>(view.front());
-    TransformComponent& camTransform = engine->scene->registry.get<TransformComponent>(view.front());
+    auto view = ec->scene->registry.view<TransformComponent, CameraComponent>();
+    CameraComponent& ecs = ec->scene->registry.get<CameraComponent>(view.front());
+    TransformComponent& camTransform = ec->scene->registry.get<TransformComponent>(view.front());
 
-    auto view2 = engine->scene->registry.view<TransformComponent, EditorBillboardComponent>();
+    auto view2 = ec->scene->registry.view<TransformComponent, EditorBillboardComponent>();
 
-    engine->context->OMSetDepthStencilState(engine->depthStencilState.Get(), 0);
-    engine->context->VSSetShader(rc->billboardShader->vertexShader.Get(), nullptr, 0); //
-    engine->context->PSSetShader(rc->billboardShader->pixelShader.Get(), nullptr, 0); //
-    engine->context->IASetInputLayout(rc->billboardShader->layout.Get());
-    engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    engine->context->IASetIndexBuffer(rc->indexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-    engine->context->IASetVertexBuffers(0, 1, rc->vertexQuadBuffer->buffer.GetAddressOf(),
+    hc->context->OMSetDepthStencilState(hc->depthStencilState.Get(), 0);
+    hc->context->VSSetShader(rc->billboardShader->vertexShader.Get(), nullptr, 0); //
+    hc->context->PSSetShader(rc->billboardShader->pixelShader.Get(), nullptr, 0); //
+    hc->context->IASetInputLayout(rc->billboardShader->layout.Get());
+    hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    hc->context->IASetIndexBuffer(rc->indexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+    hc->context->IASetVertexBuffers(0, 1, rc->vertexQuadBuffer->buffer.GetAddressOf(),
         strides, offsets);
-    EngineCore::instance()->context->OMSetRenderTargets(2, rc->editorBillboardRtvs, engine->depthStencilView.Get());
+    hc->context->OMSetRenderTargets(2, rc->editorBillboardRtvs, hc->depthStencilView.Get());
 
     for (auto& entity : view2)
     {
         CB_BaseEditorBuffer dataOpaque;
-        TransformComponent& transformComp = engine->scene->registry.get<TransformComponent>(entity);
-        EditorBillboardComponent& billboardComp = engine->scene->registry.get<EditorBillboardComponent>(entity);
+        TransformComponent& transformComp = ec->scene->registry.get<TransformComponent>(entity);
+        EditorBillboardComponent& billboardComp = ec->scene->registry.get<EditorBillboardComponent>(entity);
 
 
         Vector3 tmp = Vector3(ecs.forward.x, ecs.forward.y, ecs.forward.z);
@@ -50,10 +55,10 @@ void EditorBillboardRenderSystem::Run()
 
         dataOpaque.baseData.worldViewProj =
             billboardMat *
-            engine->scene->camera->view * engine->scene->camera->projection;
+            ec->scene->camera->view * ec->scene->camera->projection;
 
         dataOpaque.baseData.worldView = billboardMat *
-            engine->scene->camera->view;
+            ec->scene->camera->view;
 
         dataOpaque.baseData.worldViewInverseTranspose =
             DirectX::XMMatrixTranspose(
@@ -63,22 +68,21 @@ void EditorBillboardRenderSystem::Run()
         dataOpaque.instanseID = (uint32_t)entity;
 
         D3D11_MAPPED_SUBRESOURCE mappedResource;
-        HRESULT res = engine->context->Map(rc->opaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+        HRESULT res = hc->context->Map(rc->opaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
         CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_BaseEditorBuffer));
-        engine->context->Unmap(rc->opaqueConstBuffer->buffer.Get(), 0);
-        engine->context->VSSetConstantBuffers(0, 1, rc->opaqueConstBuffer->buffer.GetAddressOf());
-        engine->context->PSSetConstantBuffers(0, 1, rc->opaqueConstBuffer->buffer.GetAddressOf());
+        hc->context->Unmap(rc->opaqueConstBuffer->buffer.Get(), 0);
+        hc->context->VSSetConstantBuffers(0, 1, rc->opaqueConstBuffer->buffer.GetAddressOf());
+        hc->context->PSSetConstantBuffers(0, 1, rc->opaqueConstBuffer->buffer.GetAddressOf());
         //engine->renderTarget->SetRenderTarget(engine->depthStencilView.Get());
 
-        engine->context->PSSetSamplers(0, 1, billboardComp.samplerState.GetAddressOf());
-
-        engine->context->PSSetShaderResources(0, 1, billboardComp.texture.GetAddressOf());
-        engine->context->DrawIndexed(6, 0, 0);
+        hc->context->PSSetSamplers(0, 1, billboardComp.samplerState.GetAddressOf());
+        hc->context->PSSetShaderResources(0, 1, billboardComp.texture.GetAddressOf());
+        hc->context->DrawIndexed(6, 0, 0);
 
     }
     ID3D11ShaderResourceView* srvNull = nullptr;
-    engine->context->PSSetShaderResources(0, 1, &srvNull);
-    EngineCore::instance()->context->OMSetRenderTargets(2, nullRTV, nullptr);
+    hc->context->PSSetShaderResources(0, 1, &srvNull);
+    hc->context->OMSetRenderTargets(2, nullRTV, nullptr);
 
 }
 

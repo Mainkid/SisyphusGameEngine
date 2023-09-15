@@ -11,7 +11,7 @@
 #include <memory>
 #include <set>
 
-class EngineCore;
+struct HardwareContext;
 class ViewportWidget;
 
 class Hud
@@ -41,5 +41,6 @@ private:
 	std::set<std::unique_ptr<Widget>> widgets;
 	std::string focusedWindowName="NONE";
 	entt::entity selectedEntityID = entt::null;
+	HardwareContext* hc;
 };
 

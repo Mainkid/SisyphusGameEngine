@@ -2,8 +2,10 @@
 #include "ISystem.h"
 #include "SimpleMath.h"
 #include "MeshLoader.h"
-#include "../Core/EngineCore.h"
 #include "../Components/LightComponent.h"
+
+struct HardwareContext;
+struct EngineContext;
 
 class LightSystem : public ISystem
 {
@@ -19,5 +21,7 @@ private:
 	void GenerateViewMatrix(LightComponent& lc, Vector3 pos);
 	void GenerateOrthoFromFrustum(LightComponent& lc,Vector3 direction, const Matrix& view, const Matrix proj);
 	
+	HardwareContext* hc;
+	EngineContext* ec;
 };
 

@@ -1,10 +1,9 @@
 #pragma once
 #include "../ISystem.h"
 #include "../../Core/ServiceLocator.h"
-#include "RenderContext.h"
 #include <memory>
 
-class EngineCore;
+struct HardwareContext;
 class PostRenderSystem : public ISystem
 {
 public:
@@ -12,7 +11,6 @@ public:
 	void Run() override;
 	void Destroy() override;
 private:
-	EngineCore* engine;
-	RenderContext* rc;
+	HardwareContext* hc;
 };
 

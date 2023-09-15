@@ -1,15 +1,15 @@
 #include "PostRenderSystem.h"
-#include "../../Core/EngineCore.h"
+#include "../HardwareContext.h"
+
 
 void PostRenderSystem::Init()
 {
-	engine = EngineCore::instance();
-	rc = ServiceLocator::instance()->Get<RenderContext>();
+	hc = ServiceLocator::instance()->Get<HardwareContext>();
 }
 
 void PostRenderSystem::Run()
 {
-	engine->context->ClearState();
+	hc->context->ClearState();
 }
 
 void PostRenderSystem::Destroy()

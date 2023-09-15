@@ -1,5 +1,5 @@
 #include "MeshLoader.h"
-#include "../Core/EngineCore.h"
+#include "../Core/ServiceLocator.h"
 
 std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
@@ -61,6 +61,9 @@ void MeshLoader::ProcessNode(const std::string& modelPath, std::vector<std::shar
 void MeshLoader::LoadTexture(const std::string& texturePath,ID3D11SamplerState** samplerState,
 	 ID3D11ShaderResourceView** texture)
 {
+	HardwareContext* hc = ServiceLocator::instance()->Get<HardwareContext>();
+	
+
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
 	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -70,7 +73,7 @@ void MeshLoader::LoadTexture(const std::string& texturePath,ID3D11SamplerState**
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	HRESULT hr = EngineCore::instance()->device->CreateSamplerState(&sampDesc, samplerState); //Create sampler state
+	HRESULT hr = hc->device->CreateSamplerState(&sampDesc, samplerState); //Create sampler state
 	if (FAILED(hr))
 	{
 		std::cout << "Texture Loading Failed!" << std::endl;
@@ -78,7 +81,7 @@ void MeshLoader::LoadTexture(const std::string& texturePath,ID3D11SamplerState**
 
 	std::wstring stemp = std::wstring(texturePath.begin(), texturePath.end());
 	LPCWSTR sw = stemp.c_str();
-	hr = DirectX::CreateWICTextureFromFile(EngineCore::instance()->device.Get(), sw, nullptr, texture);
+	hr = DirectX::CreateWICTextureFromFile(hc->device.Get(), sw, nullptr, texture);
 	int q = 0;
 }
 

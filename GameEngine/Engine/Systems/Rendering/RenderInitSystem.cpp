@@ -1,12 +1,17 @@
 #include "RenderInitSystem.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
+#include "RenderContext.h"
+#include "../EngineContext.h"
+#include "../HardwareContext.h"
+#include "../../Core/ServiceLocator.h"
 
 void RenderInitSystem::Init()
 {
 	ServiceLocator::instance()->Register<RenderContext>();
-
-    EngineCore* engine = EngineCore::instance();
-    auto rc = ServiceLocator::instance()->Get<RenderContext>();
+    
+    hc = ServiceLocator::instance()->Get<HardwareContext>();
+    ec = ServiceLocator::instance()->Get<EngineContext>();
+    rc = ServiceLocator::instance()->Get<RenderContext>();
 
     using namespace DirectX::SimpleMath;
     {
@@ -18,24 +23,24 @@ void RenderInitSystem::Init()
         Vector4(-1.0f,  1.0f, 0.0f, 1.0f), Vector4(0.0f, 0.0f,0.0f,1.0f)
         };
 
-        rc->indexQuadBuffer = std::make_unique<Buffer>(engine->device.Get());
+        rc->indexQuadBuffer = std::make_unique<Buffer>(hc->device.Get());
         rc->indexQuadBuffer->Initialize(quadIndex);
-        rc->vertexQuadBuffer = std::make_unique<Buffer>(engine->device.Get());
+        rc->vertexQuadBuffer = std::make_unique<Buffer>(hc->device.Get());
         rc->vertexQuadBuffer->Initialize(quadCoords);
     }
 
 
-    rc->opaqueConstBuffer = std::make_unique<Buffer>(engine->device.Get());
+    rc->opaqueConstBuffer = std::make_unique<Buffer>(hc->device.Get());
     rc->opaqueConstBuffer->Initialize(sizeof(CB_BaseEditorBuffer));
 
-    rc->lightConstBuffer = std::make_unique<Buffer>(engine->device.Get());
+    rc->lightConstBuffer = std::make_unique<Buffer>(hc->device.Get());
     rc->lightConstBuffer->Initialize(sizeof(CB_LightBuffer));
 
-    rc->shadowConstBuffer = std::make_unique<Buffer>(engine->device.Get());
+    rc->shadowConstBuffer = std::make_unique<Buffer>(hc->device.Get());
     rc->shadowConstBuffer->Initialize(sizeof(CB_ShadowBuffer));
 
-    rc->gBuffer = std::make_unique<GBuffer>(engine->device);
-    rc->gBuffer->Initialize(engine->window->GetWidth(), engine->window->GetHeight());
+    rc->gBuffer = std::make_unique<GBuffer>(hc->device);
+    rc->gBuffer->Initialize(hc->window->GetWidth(), hc->window->GetHeight());
 
     rc->rtvs[0] = rc->gBuffer->normalRTV.Get();
     rc->rtvs[1] = rc->gBuffer->diffuseRTV.Get();
@@ -43,7 +48,7 @@ void RenderInitSystem::Init()
     rc->rtvs[3] = rc->gBuffer->depthRTV.Get();
     rc->rtvs[4] = rc->gBuffer->specularRTV.Get();
 
-    rc->editorBillboardRtvs[0] = engine->renderTarget->renderTargetView.Get();
+    rc->editorBillboardRtvs[0] = hc->renderTarget->renderTargetView.Get();
     rc->editorBillboardRtvs[1] = rc->gBuffer->depthRTV.Get();
 
 
@@ -56,7 +61,7 @@ void RenderInitSystem::Init()
     sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
     sampDesc.MinLOD = 0;
     sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-    HRESULT hr = engine->device->CreateSamplerState(&sampDesc, rc->samplerState.GetAddressOf()); //Create sampler state
+    HRESULT hr = hc->device->CreateSamplerState(&sampDesc, rc->samplerState.GetAddressOf()); //Create sampler state
 
 
     D3D11_DEPTH_STENCIL_DESC depthstencildesc;
@@ -66,7 +71,7 @@ void RenderInitSystem::Init()
     depthstencildesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ZERO;
     depthstencildesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
 
-    hr = engine->device->CreateDepthStencilState(&depthstencildesc, rc->offStencilState.GetAddressOf());
+    hr = hc->device->CreateDepthStencilState(&depthstencildesc, rc->offStencilState.GetAddressOf());
 
     depthstencildesc.DepthEnable = true;
     depthstencildesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ZERO;
@@ -85,7 +90,7 @@ void RenderInitSystem::Init()
     depthstencildesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
     depthstencildesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 
-    hr = engine->device->CreateDepthStencilState(&depthstencildesc, rc->backFaceStencilState.GetAddressOf());
+    hr = hc->device->CreateDepthStencilState(&depthstencildesc, rc->backFaceStencilState.GetAddressOf());
 
     depthstencildesc.DepthEnable = true;
     depthstencildesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ZERO;
@@ -101,7 +106,7 @@ void RenderInitSystem::Init()
     depthstencildesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
     depthstencildesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 
-    hr = engine->device->CreateDepthStencilState(&depthstencildesc, rc->frontFaceStencilState.GetAddressOf());
+    hr = hc->device->CreateDepthStencilState(&depthstencildesc, rc->frontFaceStencilState.GetAddressOf());
 
 
     depthstencildesc.DepthEnable = true;
@@ -118,7 +123,7 @@ void RenderInitSystem::Init()
     depthstencildesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
     depthstencildesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 
-    hr = engine->device->CreateDepthStencilState(&depthstencildesc, rc->finalPassStencilState.GetAddressOf());
+    hr = hc->device->CreateDepthStencilState(&depthstencildesc, rc->finalPassStencilState.GetAddressOf());
 
 
     D3D11_BLEND_DESC blendDesc;
@@ -142,7 +147,7 @@ void RenderInitSystem::Init()
 
     blendDesc.RenderTarget[0] = rtbd;
 
-    hr = engine->device->CreateBlendState(&blendDesc, rc->lightBlendState.GetAddressOf());
+    hr = hc->device->CreateBlendState(&blendDesc, rc->lightBlendState.GetAddressOf());
 
 
     D3D11_BLEND_DESC blendDesc2;
@@ -166,7 +171,7 @@ void RenderInitSystem::Init()
 
     blendDesc2.RenderTarget[0] = rtbd2;
 
-    hr = engine->device->CreateBlendState(&blendDesc2, rc->particlesBlendState.GetAddressOf());
+    hr = hc->device->CreateBlendState(&blendDesc2, rc->particlesBlendState.GetAddressOf());
 
 
 
@@ -175,10 +180,10 @@ void RenderInitSystem::Init()
     desc.FillMode = D3D11_FILL_SOLID;
     desc.CullMode = D3D11_CULL_FRONT;
 
-    engine->device->CreateRasterizerState(&desc, rc->cullFrontRS.GetAddressOf());
+    hc->device->CreateRasterizerState(&desc, rc->cullFrontRS.GetAddressOf());
 
     desc.CullMode = D3D11_CULL_BACK;
-    engine->device->CreateRasterizerState(&desc, rc->cullBackRS.GetAddressOf());
+    hc->device->CreateRasterizerState(&desc, rc->cullBackRS.GetAddressOf());
 
     //**Shadows**
 
@@ -196,7 +201,7 @@ void RenderInitSystem::Init()
     shadowMapDesc.CPUAccessFlags = 0;
     shadowMapDesc.MiscFlags = 0;
 
-    hr = engine->device->CreateTexture2D(&shadowMapDesc, nullptr, &rc->texture_);
+    hr = hc->device->CreateTexture2D(&shadowMapDesc, nullptr, &rc->texture_);
 
     D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
     ZeroMemory(&depthStencilViewDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
@@ -206,7 +211,7 @@ void RenderInitSystem::Init()
     depthStencilViewDesc.Texture2DArray.FirstArraySlice = 0;
     depthStencilViewDesc.Texture2DArray.ArraySize = 4;
 
-    hr = engine->device->CreateDepthStencilView(rc->texture_, &depthStencilViewDesc, &rc->shadowStencilView);
+    hr = hc->device->CreateDepthStencilView(rc->texture_, &depthStencilViewDesc, &rc->shadowStencilView);
 
     D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
     ZeroMemory(&shaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
@@ -218,7 +223,7 @@ void RenderInitSystem::Init()
     shaderResourceViewDesc.Texture2DArray.ArraySize = 4;
 
 
-    hr = engine->device->CreateShaderResourceView(rc->texture_, &shaderResourceViewDesc, &rc->shadowResourceView);
+    hr = hc->device->CreateShaderResourceView(rc->texture_, &shaderResourceViewDesc, &rc->shadowResourceView);
 
 
     D3D11_DEPTH_STENCIL_DESC depthstencildesc2;
@@ -228,19 +233,19 @@ void RenderInitSystem::Init()
     depthstencildesc2.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
     depthstencildesc2.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
 
-    hr = engine->device->CreateDepthStencilState(&depthstencildesc2, rc->shadowStencilState.GetAddressOf());
+    hr = hc->device->CreateDepthStencilState(&depthstencildesc2, rc->shadowStencilState.GetAddressOf());
 
     //**End
 
 
-    rc->viewport.Width = static_cast<float>(engine->window->GetWidth());
-    rc->viewport.Height = static_cast<float>(engine->window->GetHeight());
+    rc->viewport.Width = static_cast<float>(hc->window->GetWidth());
+    rc->viewport.Height = static_cast<float>(hc->window->GetHeight());
     rc->viewport.TopLeftX = 0;
     rc->viewport.TopLeftY = 0;
     rc->viewport.MinDepth = 0;
     rc->viewport.MaxDepth = 1.0f;
 
-    engine->context->RSSetViewports(1, &rc->viewport);
+    hc->context->RSSetViewports(1, &rc->viewport);
 
 
     D3D11_TEXTURE2D_DESC textureDesc;
@@ -265,7 +270,7 @@ void RenderInitSystem::Init()
     textureDesc.MiscFlags = 0;
 
     // Create the render target texture.
-    result = engine->device->CreateTexture2D(&textureDesc, NULL, &rc->m_renderTargetTexture);
+    result = hc->device->CreateTexture2D(&textureDesc, NULL, &rc->m_renderTargetTexture);
     // Setup the description of the render target view.
 
     renderTargetViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
@@ -275,7 +280,7 @@ void RenderInitSystem::Init()
     renderTargetViewDesc.Texture2DArray.FirstArraySlice = 0;
 
     // Create the render target view.
-    result = engine->device->CreateRenderTargetView(rc->m_renderTargetTexture, &renderTargetViewDesc, &rc->m_renderTargetView);
+    result = hc->device->CreateRenderTargetView(rc->m_renderTargetTexture, &renderTargetViewDesc, &rc->m_renderTargetView);
 
     //result=engine->device->CreateRenderTargetView(m_renderTargetTexture, nullptr, &m_renderTargetView);
     // Setup the description of the shader resource view.
@@ -288,15 +293,15 @@ void RenderInitSystem::Init()
 
 
     // Create the shader resource view.
-    result = engine->device->CreateShaderResourceView(rc->m_renderTargetTexture, &shaderResourceViewDesc2, &rc->m_shaderResourceView);
+    result = hc->device->CreateShaderResourceView(rc->m_renderTargetTexture, &shaderResourceViewDesc2, &rc->m_shaderResourceView);
 
 
     //Creating instance ID Texture
 
     D3D11_TEXTURE2D_DESC desc2;
     ZeroMemory(&desc2, sizeof(desc2));
-    desc2.Width = engine->window->GetWidth();
-    desc2.Height = engine->window->GetHeight();
+    desc2.Width = hc->window->GetWidth();
+    desc2.Height = hc->window->GetHeight();
     desc2.MipLevels = 1;
     desc2.ArraySize = 1;
     desc2.Format = DXGI_FORMAT_R32_FLOAT;
@@ -305,7 +310,7 @@ void RenderInitSystem::Init()
     desc2.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
     desc2.CPUAccessFlags = 0;
 
-    result = engine->device->CreateTexture2D(&desc2, NULL, rc->entityIdTexture.GetAddressOf());
+    result = hc->device->CreateTexture2D(&desc2, NULL, rc->entityIdTexture.GetAddressOf());
 
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
     ZeroMemory(&srvDesc, sizeof(srvDesc));
@@ -314,7 +319,7 @@ void RenderInitSystem::Init()
     srvDesc.Texture2D.MipLevels = 1;
     srvDesc.Texture2D.MostDetailedMip = 0;
 
-    result = engine->device->CreateShaderResourceView(rc->entityIdTexture.Get(), &srvDesc, rc->entityIdSRV.GetAddressOf());
+    result = hc->device->CreateShaderResourceView(rc->entityIdTexture.Get(), &srvDesc, rc->entityIdSRV.GetAddressOf());
 
 
     D3D11_SAMPLER_DESC samplerDesc;
@@ -324,7 +329,7 @@ void RenderInitSystem::Init()
     samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 
     // Create the texture sampler state.
-    auto res2 = engine->device->CreateSamplerState(&samplerDesc, rc->samplerDepthState.GetAddressOf());
+    auto res2 = hc->device->CreateSamplerState(&samplerDesc, rc->samplerDepthState.GetAddressOf());
 
 
 

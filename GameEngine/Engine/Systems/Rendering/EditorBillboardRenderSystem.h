@@ -1,10 +1,13 @@
 #pragma once
 #include "../ISystem.h"
 #include "../../Core/ServiceLocator.h"
-#include "RenderContext.h"
+
 #include <memory>
 
-class EngineCore;
+
+struct EngineContext;
+struct RenderContext;
+struct HardwareContext;
 
 class EditorBillboardRenderSystem : public ISystem
 {
@@ -13,7 +16,8 @@ public:
 	void Run() override;
 	void Destroy() override;
 private:
-	EngineCore* engine;
+	HardwareContext* hc;
 	RenderContext* rc;
+	EngineContext* ec;
 };
 

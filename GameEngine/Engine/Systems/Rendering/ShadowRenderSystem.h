@@ -1,8 +1,9 @@
 #pragma once
 #include "../ISystem.h"
-#include "RenderContext.h"
 
-class EngineCore;
+struct EngineContext;
+struct HardwareContext;
+struct RenderContext;
 
 
 class ShadowRenderSystem : public ISystem
@@ -12,7 +13,8 @@ public:
 	void Run() override;
 	void Destroy() override;
 private:
-	EngineCore* engine;
+	EngineContext* ec;
 	RenderContext* rc;
+	HardwareContext* hc;
 
 };

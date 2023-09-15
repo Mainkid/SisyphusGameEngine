@@ -4,10 +4,12 @@
 #include "../../../vendor/ImGui/imgui_impl_dx11.h"
 #include "../../../vendor/ImGui/imgui_impl_win32.h"
 #include "../../../vendor/ImGuizmo/ImGuizmo.h"
-#include "../EngineCore.h"
+#include "../../Systems/HardwareContext.h"
+#include "../ServiceLocator.h"
 
 void Hud::Initialize()
 {
+    hc = ServiceLocator::instance()->Get<HardwareContext>();
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -28,8 +30,8 @@ void Hud::Initialize()
     }
     //io.AddKeyEvent
 
-    ImGui_ImplWin32_Init(EngineCore::instance()->window->GetHWND());
-    ImGui_ImplDX11_Init(EngineCore::instance()->device.Get(), EngineCore::instance()->context.Get());
+    ImGui_ImplWin32_Init(hc->window->GetHWND());
+    ImGui_ImplDX11_Init(hc->device.Get(), hc->context.Get());
 
     widgets.insert(std::make_unique<ViewportWidget>(this));
     widgets.insert(std::make_unique<HierarchyWidget>(this));
@@ -44,7 +46,7 @@ void Hud::Render()
 {
     
     
-    EngineCore::instance()->context->OMSetRenderTargets(1, EngineCore::instance()->rtv.GetAddressOf(), nullptr);
+    hc->context->OMSetRenderTargets(1, hc->rtv.GetAddressOf(), nullptr);
     bool show = true;
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     if (windowHeight != io.DisplaySize.y || windowWidth != io.DisplaySize.x)
@@ -52,7 +54,7 @@ void Hud::Render()
         CleanupRenderTarget();
         windowWidth= max(io.DisplaySize.x, 0);
         windowHeight = max(io.DisplaySize.y, 0);
-        EngineCore::instance()->swapChain->ResizeBuffers(0, windowWidth, windowHeight, DXGI_FORMAT_UNKNOWN, 0);
+        hc->swapChain->ResizeBuffers(0, windowWidth, windowHeight, DXGI_FORMAT_UNKNOWN, 0);
         CreateRenderTarget();
     }
     
@@ -74,7 +76,7 @@ void Hud::Render()
 
     
 
-    EngineCore::instance()->context->OMSetRenderTargets(1, EngineCore::instance()->rtv.GetAddressOf(), nullptr);
+    hc->context->OMSetRenderTargets(1, hc->rtv.GetAddressOf(), nullptr);
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
     
 
@@ -109,17 +111,17 @@ void Hud::UpdateSelectedEntity(entt::entity _id)
 
 void Hud::CleanupRenderTarget()
 {
-    if (EngineCore::instance()->rtv.Get())
+    if (hc->rtv.Get())
     {
-        EngineCore::instance()->rtv = nullptr;
+        hc->rtv = nullptr;
     }
 }
 
 void Hud::CreateRenderTarget()
 {
     ID3D11Texture2D* pBackBuffer;
-    EngineCore::instance()->swapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
-    EngineCore::instance()->device->CreateRenderTargetView(pBackBuffer, nullptr, EngineCore::instance()->rtv.GetAddressOf());
+    hc->swapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
+    hc->device->CreateRenderTargetView(pBackBuffer, nullptr, hc->rtv.GetAddressOf());
     pBackBuffer->Release();
 }
 

@@ -17,7 +17,7 @@
 #define USE_COLOR 4
 #define USE_NORMAL 8
 
-class EngineCore;
+struct HardwareContext;
 
 class Shader 
 {
@@ -51,7 +51,7 @@ protected:
 
     Microsoft::WRL::ComPtr<ID3DBlob> errorPixelCode = nullptr;
     Microsoft::WRL::ComPtr<ID3DBlob> errorVertexCode = nullptr;
-    
+    HardwareContext* hc;
 };
 
 //TODO: убрать shared-ptr;

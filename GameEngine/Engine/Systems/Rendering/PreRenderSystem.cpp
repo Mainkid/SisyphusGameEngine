@@ -1,25 +1,28 @@
 #include "PreRenderSystem.h"
-#include "../../Core/EngineCore.h"
+#include "RenderContext.h"
+#include "../EngineContext.h"
+#include "../HardwareContext.h"
 #include "../../Core/ServiceLocator.h"
 
 void PreRenderSystem::Init()
 {
-    engine = EngineCore::instance();
     rc = ServiceLocator::instance()->Get<RenderContext>();
+    hc = ServiceLocator::instance()->Get<HardwareContext>();
+    ec = ServiceLocator::instance()->Get<EngineContext>();
 }
 
 void PreRenderSystem::Run()
 {
     
-    engine->context->ClearRenderTargetView(engine->rtv.Get(), bgColor);
-    engine->context->ClearRenderTargetView(rc->rtvs[0], bgColor);
-    engine->context->ClearRenderTargetView(rc->rtvs[1], bgColor);
-    engine->context->ClearRenderTargetView(rc->rtvs[2], bgColor);
-    engine->context->ClearRenderTargetView(rc->rtvs[3], bgEntitiesColor);
-    engine->context->ClearRenderTargetView(rc->rtvs[4], bgColor);
-    engine->context->ClearDepthStencilView(engine->depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    hc->context->ClearRenderTargetView(hc->rtv.Get(), bgColor);
+    hc->context->ClearRenderTargetView(rc->rtvs[0], bgColor);
+    hc->context->ClearRenderTargetView(rc->rtvs[1], bgColor);
+    hc->context->ClearRenderTargetView(rc->rtvs[2], bgColor);
+    hc->context->ClearRenderTargetView(rc->rtvs[3], bgEntitiesColor);
+    hc->context->ClearRenderTargetView(rc->rtvs[4], bgColor);
+    hc->context->ClearDepthStencilView(hc->depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    engine->context->RSSetViewports(1, &rc->viewport);
+    hc->context->RSSetViewports(1, &rc->viewport);
 }
 
 void PreRenderSystem::Destroy()

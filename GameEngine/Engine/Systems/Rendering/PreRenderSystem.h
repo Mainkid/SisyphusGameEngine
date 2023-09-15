@@ -1,9 +1,10 @@
 #pragma once
 #include "../ISystem.h"
-#include "RenderContext.h"
 #include "SimpleMath.h"
 
-class Engine;
+struct RenderContext;
+struct EngineContext;
+struct HardwareContext;
 
 class PreRenderSystem : public ISystem
 {
@@ -15,6 +16,7 @@ private:
 	float bgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float bgEntitiesColor[4] = { -1,-1,-1,1 };
 	RenderContext* rc;
-	EngineCore* engine;
+	EngineContext* ec;
+	HardwareContext* hc;
 };
 

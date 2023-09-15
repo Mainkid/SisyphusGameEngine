@@ -1,5 +1,6 @@
 #include "LightSystem.h"
-
+#include "HardwareContext.h"
+#include "EngineContext.h"
 
 void LightSystem::Init()
 {
@@ -8,7 +9,7 @@ void LightSystem::Init()
 
 void LightSystem::Run()
 {
-    auto view = GetScene()->registry.view<TransformComponent,LightComponent>();
+    auto view = ec->scene->registry.view<TransformComponent,LightComponent>();
 	for (auto& entity : view)
 	{
 		LightComponent& lc = view.get<LightComponent>(entity);
@@ -16,14 +17,14 @@ void LightSystem::Run()
         if (lc.lightType != LightType::Ambient)
         {
             GenerateViewMatrix(lc,
-                Vector3(GetScene()->cameraTransform->localPosition));
+                Vector3(ec->scene->cameraTransform->localPosition));
             /*  GenerateOrthoFromFrustum(lc,
                   EngineCore::instance()->cameraController->GetViewMatrix(),
                   EngineCore::instance()->cameraController->GetProjectionMatrix());*/
             GenerateOrthosFromFrustum(lc, Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
-                GetScene()->camera->view,
-                GetScene()->camera->projection,
-                GetScene()->camera->farPlane);
+                ec->scene->camera->view,
+                ec->scene ->camera->projection,
+                ec->scene->camera->farPlane);
         }
 
         if (!lc.aabb)
@@ -145,7 +146,7 @@ void LightSystem::GenerateOrthoMatrix(LightComponent& lc,float width, float dept
 
 void LightSystem::GenerateViewMatrix(LightComponent& lc, Vector3 pos)
 {
-    Vector3 tmp = Vector3(GetScene()->camera->forward);
+    Vector3 tmp = Vector3(ec->scene->camera->forward);
     Vector4 lookAt = pos + Vector4(tmp.x, tmp.y, tmp.z, 1.0f);
     Vector4 up = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
     lc.viewMatrix = DirectX::XMMatrixLookAtLH(pos, lookAt, up);
@@ -153,7 +154,6 @@ void LightSystem::GenerateViewMatrix(LightComponent& lc, Vector3 pos)
 
 void LightSystem::GenerateOrthoFromFrustum(LightComponent& lc,Vector3 direction,const Matrix& view, const Matrix proj)
 {
-
     std::vector<Vector4> frustumCorners = GetFrustumCorners(view, proj);
     Vector3 center = Vector3::Zero;
 

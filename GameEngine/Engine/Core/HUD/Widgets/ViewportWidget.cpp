@@ -1,8 +1,9 @@
 #pragma once
-#include "../../EngineCore.h"
 #include "../../../Systems/Rendering/RenderHelper.h"
 #include "../../../Core/Rendering/RenderTarget.h"
 #include "../../../Systems/Rendering/RenderHelper.h"
+#include "../../ServiceLocator.h"
+#include "../../../Systems/HardwareContext.h"
 #include "../Hud.h"
 #include "ViewportWidget.h"
 
@@ -12,6 +13,7 @@ ViewportWidget::ViewportWidget(Hud* _hud)
 	this->hud = _hud;
 	this->windowID = "Viewport";
 	hud->UpdateSelectedEntityEvent.AddRaw(this, &ViewportWidget::UpdateSelectedEntity);
+	hc = ServiceLocator::instance()->Get<HardwareContext>();
 	InitSRV();
 }
 
@@ -43,7 +45,7 @@ void ViewportWidget::Render()
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0,0));
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-	ImGui::Image((void*)EngineCore::instance()->renderTarget->GetImageSRV(), ImGui::GetContentRegionAvail());
+	ImGui::Image((void*)hc->renderTarget->GetImageSRV(), ImGui::GetContentRegionAvail());
 	ImVec2 r = ImGui::GetItemRectSize();
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();

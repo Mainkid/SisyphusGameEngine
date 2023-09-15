@@ -6,6 +6,7 @@
 #include "TransformSystem.h"
 #include "MeshSystem.h"
 #include "LightSystem.h"
+#include "HardwareInitSystem.h"
 #include "Rendering/ShadowRenderSystem.h"
 #include "Rendering/PreRenderSystem.h"
 #include "Rendering/RenderInitSystem.h"

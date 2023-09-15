@@ -2,9 +2,12 @@
 #include "ISystem.h"
 #include "SimpleMath.h"
 #include "../Components/CameraComponent.h"
-#include "../Core/EngineCore.h"
 
+struct TransformComponent;
+struct EngineContext;
+struct HardwareContext;
 
+using namespace DirectX::SimpleMath;
 class EditorCameraSystem : public ISystem
 {
 public:
@@ -17,5 +20,8 @@ private:
 	void SetLookAtPos(Vector3 pos, TransformComponent& tc);
 	void ProcessInput(CameraComponent& cc, TransformComponent& tc);
 	std::hash<CameraComponent> hasher;
+
+	EngineContext* ec;
+	HardwareContext* hc;
 };
 

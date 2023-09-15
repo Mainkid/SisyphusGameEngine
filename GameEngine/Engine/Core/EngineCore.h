@@ -16,6 +16,7 @@
 #include "../Core/HUD/Hud.h"
 #include "../Systems/Systems.h"
 #include "../Core/Rendering/RenderTarget.h"
+#include "../Systems/EngineContext.h"
 #include "Scene/Scene.h"
 
 
@@ -30,22 +31,9 @@ using namespace Microsoft::WRL;
 class EngineCore
 {
 public:
-    std::unique_ptr<DisplayWin32> window;
-    //std::unique_ptr<CameraController> cameraController;
-    std::unique_ptr<RenderTarget> renderTarget;
     std::chrono::time_point<std::chrono::steady_clock> PrevTime;
-    ComPtr<ID3D11Device> device;
-    ComPtr<ID3D11DeviceContext> context;
-    ComPtr <IDXGISwapChain> swapChain;
-    ComPtr<ID3D11RenderTargetView> rtv;
-    ComPtr <ID3D11Texture2D> backTex;
-    ComPtr <ID3D11RasterizerState> rastState;
-    ComPtr <ID3D11Texture2D> depthStencilBuffer;
-    ComPtr <ID3D11DepthStencilView> depthStencilView;
-    ComPtr <ID3D11DepthStencilState> depthStencilState;
     std::unique_ptr<Scene> scene;
     std::unique_ptr<Hud> hud;
-
     std::vector<std::unique_ptr<ISystem>> systems;
     
 
@@ -60,13 +48,9 @@ public:
     }
 
     EngineCore() = default;
-    EngineCore(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height);
     ~EngineCore() {};
 
     HWND GetWindowHWND();
-    
-    void CreateDeviceAndSwapChain();
-    void InitializeDirectX();
     void StartUp();
     void StartUpSystems();
     void ShutDown();

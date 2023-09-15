@@ -17,6 +17,7 @@
 #include <map>
 #include <filesystem>
 
+struct HardwareContext;
 
 class ViewportWidget: public Widget
 {
@@ -29,7 +30,7 @@ public:
 	void UpdateSelectedEntity(entt::entity);
 
 private:
-
+	HardwareContext* hc;
 	enum class EHoveringState
 	{
 		None,
