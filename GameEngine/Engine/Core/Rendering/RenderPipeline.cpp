@@ -53,6 +53,10 @@ void RenderPipeline::Initialize()
     rtvs[3] = gBuffer->depthRTV.Get();
     rtvs[4] = gBuffer->specularRTV.Get();
 
+    editorBillboardRtvs[0] = engine->renderTarget->renderTargetView.Get();
+    editorBillboardRtvs[1] = gBuffer->depthRTV.Get();
+    
+
     D3D11_SAMPLER_DESC sampDesc;
     ZeroMemory(&sampDesc, sizeof(sampDesc));
     sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -366,6 +370,10 @@ void RenderPipeline::CompileShaders()
     shadowShader = std::make_unique<Shader>();
     shadowShader->Initialize(L"./Engine/Assets/Shaders/ShadowShader.hlsl",
         COMPILE_VERTEX | COMPILE_GEOM, USE_POSITION | USE_COLOR | USE_NORMAL,"DepthVertexShader");
+
+    billboardShader = std::make_unique<Shader>();
+    billboardShader->Initialize(L"./Engine/Assets/Shaders/SpriteBillboardShader.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR | USE_NORMAL);
 }
 
 void RenderPipeline::Render()
@@ -384,13 +392,16 @@ void RenderPipeline::Render()
 
     ShadowPass();
     OpaquePass();
+    
     LightPass();
-    ParticlePass();
+    EditorBillboardPass();
+    //ParticlePass();
+    
 
     
     
     engine->context->ClearState();
-    engine->context->OMSetRenderTargets(1, engine->rtv.GetAddressOf(), engine->depthStencilView.Get());
+    //engine->context->OMSetRenderTargets(1, engine->rtv.GetAddressOf(), engine->depthStencilView.Get());
 }
 
 void RenderPipeline::ShadowPass()
@@ -413,8 +424,6 @@ void RenderPipeline::ShadowPass()
 
             engine->context->OMSetRenderTargets(1, &m_renderTargetView, shadowStencilView.Get());
             m_renderTargetTexture = nullptr;
-
-
             auto view = engine->scene->registry.view<MeshComponent>();
             for (auto& go_entity : view)
             {
@@ -422,23 +431,23 @@ void RenderPipeline::ShadowPass()
                 MeshComponent& meshComponent = engine->scene->registry.get<MeshComponent>(go_entity);
                 CB_ShadowBuffer dataShadow;
                 //dataShadow.baseData.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
-                dataShadow.baseData.world = TransformHelper::ConstructTransformMatrix(transform);
+                dataShadow.baseData.world = transform.transformMatrix;
                 
                 //!dataShadow.baseData.worldViewProj =
                 //    engineActor->transform->world * engineActor->transform->GetViewMatrix() *
                 //    engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
 
                 dataShadow.baseData.worldViewProj =
-                    TransformHelper::ConstructTransformMatrix(transform) *
-                    engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
+                    transform.transformMatrix *
+                    engine->scene->camera->view * engine->scene->camera->projection;
 
-                dataShadow.baseData.worldView = TransformHelper::ConstructTransformMatrix(transform) *
-                    engine->cameraController->GetViewMatrix();
+                dataShadow.baseData.worldView = transform.transformMatrix *
+                    engine->scene->camera->view;
 
                 dataShadow.baseData.worldViewInverseTranspose =
                     DirectX::XMMatrixTranspose(
                         DirectX::XMMatrixInverse(nullptr,
-                            TransformHelper::ConstructTransformMatrix(transform)*engine->cameraController->GetViewMatrix()));
+                            transform.transformMatrix* engine->scene->camera->view));
 
                 for (int i = 0; i < 4; i++)
                     dataShadow.viewProjs[i] = light.viewMatrices[i] * light.orthoMatrices[i];
@@ -505,19 +514,19 @@ void RenderPipeline::OpaquePass()
         TransformComponent& transformComp= engine->scene->registry.get<TransformComponent>(entity);
         MeshComponent& meshComp = engine->scene->registry.get<MeshComponent>(entity);
         //dataOpaque.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
-        dataOpaque.baseData.world = TransformHelper::ConstructTransformMatrix(transformComp);
+        dataOpaque.baseData.world = transformComp.transformMatrix;
 
         dataOpaque.baseData.worldViewProj =
-            TransformHelper::ConstructTransformMatrix(transformComp) *
-            engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
+            transformComp.transformMatrix *
+            engine->scene->camera->view * engine->scene->camera->projection;
 
-        dataOpaque.baseData.worldView = TransformHelper::ConstructTransformMatrix(transformComp) *
-            engine->cameraController->GetViewMatrix();
+        dataOpaque.baseData.worldView = transformComp.transformMatrix *
+            engine->scene->camera->view;
 
         dataOpaque.baseData.worldViewInverseTranspose =
             DirectX::XMMatrixTranspose(
                 DirectX::XMMatrixInverse(nullptr,
-                    TransformHelper::ConstructTransformMatrix(transformComp)));
+                    transformComp.transformMatrix));
 
         dataOpaque.instanseID =(uint32_t)entity;
 
@@ -550,11 +559,14 @@ void RenderPipeline::OpaquePass()
 
 }
 
+
+
 void RenderPipeline::LightPass()
 {
     CB_LightBuffer lightBuffer;
 
     float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    ID3D11ShaderResourceView* srvNull[] = { nullptr,nullptr,nullptr,nullptr,nullptr };
 
     ID3D11ShaderResourceView* resources[] = { gBuffer->diffuseSRV.Get(),gBuffer->normalSRV.Get(),gBuffer->positionSRV.Get(),gBuffer->depthSRV.Get(),gBuffer->specularSRV.Get() };
     //engine->context->ClearRenderTargetView(engine->rtv.Get(), bgColor);
@@ -571,13 +583,13 @@ void RenderPipeline::LightPass()
         
         LightComponent& light= view.get<LightComponent>(entity);
         TransformComponent& tc= view.get<TransformComponent>(entity);
-        lightBuffer.lightData.Pos = Vector4(tc.localPosition.x,tc.localPosition.y,tc.localPosition.z,1);
+        lightBuffer.lightData.Pos = Vector4(tc.localPosition.x, tc.localPosition.y, tc.localPosition.z,1);
         lightBuffer.lightData.Color = light.color;
         lightBuffer.lightData.Dir =Vector4::Transform(Vector4::UnitX,Matrix::CreateFromYawPitchRoll(tc.localRotation));
         lightBuffer.lightData.additiveParams = light.paramsRadiusAndAttenuation;
-        lightBuffer.eyePos = DirectX::SimpleMath::Vector4(engine->cameraController->camera->pos.x,
-            engine->cameraController->camera->pos.y,
-            engine->cameraController->camera->pos.z,
+        lightBuffer.eyePos = DirectX::SimpleMath::Vector4(engine->scene->cameraTransform->localPosition.x,
+            engine->scene->cameraTransform->localPosition.y,
+            engine->scene->cameraTransform->localPosition.z,
             1.0f);
 
         engine->context->ClearDepthStencilView(engine->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1, 0);
@@ -585,8 +597,8 @@ void RenderPipeline::LightPass()
         if (light.lightType == LightType::Directional || light.lightType == LightType::Ambient)
         {
             lightBuffer.baseData.world = DirectX::SimpleMath::Matrix::Identity;
-            lightBuffer.baseData.worldView = DirectX::SimpleMath::Matrix::Identity * engine->cameraController->GetViewMatrix();
-            lightBuffer.baseData.worldViewProj = DirectX::SimpleMath::Matrix::Identity * engine->cameraController->GetViewMatrix() * engine->cameraController->GetProjectionMatrix();
+            lightBuffer.baseData.worldView = DirectX::SimpleMath::Matrix::Identity * engine->scene->camera->view;
+            lightBuffer.baseData.worldViewProj = DirectX::SimpleMath::Matrix::Identity * engine->scene->camera->view * engine->scene->camera->projection;
             lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
 
 
@@ -604,8 +616,8 @@ void RenderPipeline::LightPass()
             using namespace DirectX::SimpleMath;
             lightBuffer.baseData.world = Matrix::CreateScale(light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x) * Matrix::CreateTranslation(tc.localPosition);
 
-            lightBuffer.baseData.worldView = lightBuffer.baseData.world * engine->cameraController->GetViewMatrix();
-            lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * engine->cameraController->GetProjectionMatrix();
+            lightBuffer.baseData.worldView = lightBuffer.baseData.world * engine->scene->camera->view;
+            lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * engine->scene->camera->projection;
             lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
         }
         else if (light.lightType == LightType::SpotLight)
@@ -618,7 +630,6 @@ void RenderPipeline::LightPass()
             forward.Cross(dir, a);
             a.Normalize();
             float angle = acos(forward.Dot(dir));
-
             float radius = sqrt(pow((light.paramsRadiusAndAttenuation.x / light.paramsRadiusAndAttenuation.y), 2.0f) - pow(light.paramsRadiusAndAttenuation.x, 2.0f));
 
             lightBuffer.baseData.world = Matrix::CreateTranslation(Vector3(0,
@@ -627,8 +638,8 @@ void RenderPipeline::LightPass()
                 Matrix::CreateScale(radius, radius, light.paramsRadiusAndAttenuation.x) *
                 Matrix::CreateFromAxisAngle(a, angle) *
                 Matrix::CreateTranslation(tc.localPosition);
-            lightBuffer.baseData.worldView = lightBuffer.baseData.world * engine->cameraController->GetViewMatrix();
-            lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * engine->cameraController->GetProjectionMatrix();
+            lightBuffer.baseData.worldView = lightBuffer.baseData.world * engine->scene->camera->view;
+            lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * engine->scene->camera->projection;
             lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
 
 
@@ -668,7 +679,6 @@ void RenderPipeline::LightPass()
             engine->context->IASetIndexBuffer(indexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
             engine->context->IASetVertexBuffers(0, 1, vertexQuadBuffer->buffer.GetAddressOf(),
                 strides, offsets);
-
             engine->context->DrawIndexed(6, 0, 0);
         }
         else if (light.lightType == LightType::PointLight)
@@ -773,6 +783,81 @@ void RenderPipeline::LightPass()
         }
 
     }
+    engine->context->PSSetShaderResources(0, 5, srvNull);
+}
+
+void RenderPipeline::EditorBillboardPass()
+{
+    ID3D11RenderTargetView* nullRTV[5] = { nullptr,nullptr,nullptr,nullptr,nullptr };
+    EngineCore::instance()->context->OMSetRenderTargets(5, nullRTV, nullptr);
+    engine->context->RSSetState(cullBackRS.Get());
+    engine->context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
+    
+    UINT strides[1] = { 32 };
+    UINT offsets[1] = { 0 };
+    auto view = engine->scene->registry.view<TransformComponent, CameraComponent>();
+    CameraComponent& ecs = engine->scene->registry.get<CameraComponent>(view.front());
+    TransformComponent& camTransform = engine->scene->registry.get<TransformComponent>(view.front());
+
+    auto view2 = engine->scene->registry.view<TransformComponent, EditorBillboardComponent>();
+
+    engine->context->OMSetDepthStencilState(engine->depthStencilState.Get(), 0);
+    engine->context->VSSetShader(billboardShader->vertexShader.Get(), nullptr, 0); //
+    engine->context->PSSetShader(billboardShader->pixelShader.Get(), nullptr, 0); //
+    engine->context->IASetInputLayout(billboardShader->layout.Get());
+    engine->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    engine->context->IASetIndexBuffer(indexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+    engine->context->IASetVertexBuffers(0, 1, vertexQuadBuffer->buffer.GetAddressOf(),
+        strides, offsets);
+    EngineCore::instance()->context->OMSetRenderTargets(2, editorBillboardRtvs, engine->depthStencilView.Get());
+
+    for (auto& entity : view2)
+    {
+        CB_BaseEditorBuffer dataOpaque;
+        TransformComponent& transformComp = engine->scene->registry.get<TransformComponent>(entity);
+        EditorBillboardComponent& billboardComp = engine->scene->registry.get<EditorBillboardComponent>(entity);
+
+
+        Vector3 tmp = Vector3(ecs.forward.x, ecs.forward.y, ecs.forward.z);
+        
+        auto billboardMat = Matrix::CreateConstrainedBillboard(transformComp.localPosition, camTransform.localPosition,
+            Vector3(ecs.up), &tmp);
+        billboardMat = Matrix::CreateScale(0.25f)*billboardMat ;
+
+        dataOpaque.baseData.world = billboardMat;
+
+        dataOpaque.baseData.worldViewProj =
+            billboardMat *
+            engine->scene->camera->view * engine->scene->camera->projection;
+
+        dataOpaque.baseData.worldView = billboardMat *
+            engine->scene->camera->view;
+
+        dataOpaque.baseData.worldViewInverseTranspose =
+            DirectX::XMMatrixTranspose(
+                DirectX::XMMatrixInverse(nullptr,
+                    billboardMat));
+
+        dataOpaque.instanseID = (uint32_t)entity;
+
+        D3D11_MAPPED_SUBRESOURCE mappedResource;
+        HRESULT res = engine->context->Map(opaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+        CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_BaseEditorBuffer));
+        engine->context->Unmap(opaqueConstBuffer->buffer.Get(), 0);
+        engine->context->VSSetConstantBuffers(0, 1, opaqueConstBuffer->buffer.GetAddressOf());
+        engine->context->PSSetConstantBuffers(0, 1, opaqueConstBuffer->buffer.GetAddressOf());
+         //engine->renderTarget->SetRenderTarget(engine->depthStencilView.Get());
+      
+        engine->context->PSSetSamplers(0, 1, billboardComp.samplerState.GetAddressOf());
+       
+        engine->context->PSSetShaderResources(0, 1, billboardComp.texture.GetAddressOf());
+        engine->context->DrawIndexed(6, 0, 0);
+
+    }
+    ID3D11ShaderResourceView* srvNull = nullptr;
+    engine->context->PSSetShaderResources(0, 1, &srvNull);
+    EngineCore::instance()->context->OMSetRenderTargets(2, nullRTV, nullptr);
+
 }
 
 void RenderPipeline::ParticlePass()
@@ -786,9 +871,11 @@ void RenderPipeline::ParticlePass()
         CB_ComputeShader dataGroup;
         particleSystem.NullSortList();
         dataGroup.GroupCount = Vector4(particleSystem.groupSizeX, particleSystem.groupSizeY, 0, 1);
-        dataGroup.viewProjBuff.projection = engine->cameraController->GetProjectionMatrix();
-        dataGroup.viewProjBuff.view = engine->cameraController->GetViewMatrix();
-        dataGroup.eyePos = Vector4(engine->cameraController->camera->pos.x, engine->cameraController->camera->pos.y, engine->cameraController->camera->pos.z, 1);
+        dataGroup.viewProjBuff.projection = engine->scene->camera->projection;
+        dataGroup.viewProjBuff.view = engine->scene->camera->view;
+        dataGroup.eyePos = Vector4(engine->scene->cameraTransform->localPosition.x,
+            engine->scene->cameraTransform->localPosition.y,
+            engine->scene->cameraTransform->localPosition.z, 1);
 
         D3D11_MAPPED_SUBRESOURCE mappedResource;
         HRESULT res = engine->context->Map(particleSystem.groupCountConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -857,16 +944,16 @@ void RenderPipeline::ParticlePass()
 
 
         CB_ParticleVisualisation dataParticle;
-        dataParticle.viewProj.projection = engine->cameraController->GetProjectionMatrix();
-        dataParticle.viewProj.view = engine->cameraController->GetViewMatrix();
-        dataParticle.eyePos = DirectX::SimpleMath::Vector4(engine->cameraController->camera->pos.x,
-            engine->cameraController->camera->pos.y,
-            engine->cameraController->camera->pos.z,
+        dataParticle.viewProj.projection = engine->scene->camera->projection;
+        dataParticle.viewProj.view = engine->scene->camera->view;
+        dataParticle.eyePos = DirectX::SimpleMath::Vector4(engine->scene->cameraTransform->localPosition.x,
+            engine->scene->cameraTransform->localPosition.y,
+            engine->scene->cameraTransform->localPosition.z,
             1.0f);
         dataParticle.lightCount = engine->scene->registry.view<LightComponent>().size();
-        Vector3 vec = engine->cameraController->camera->GetForwardVector();
+        Vector3 vec = Vector3(engine->scene->camera->forward.x, engine->scene->camera->forward.y, engine->scene->camera->forward.z);
         dataParticle.viewDirection = vec;
-        dataParticle.cameraRot = engine->cameraController->GetViewMatrix().Invert();
+        dataParticle.cameraRot = (engine->scene->camera->view).Invert();
         int i = 0;
         auto view = engine->scene->registry.view<TransformComponent,LightComponent>();
         for (auto& entity : view)

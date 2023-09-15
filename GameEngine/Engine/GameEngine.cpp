@@ -4,9 +4,6 @@
 
 int main()
 {
-    
-
-
 
     //EngineCore* engine = new EngineCore();
     EngineCore::instance()->StartUp();
@@ -25,11 +22,11 @@ int main()
     ////_go3->GetComponent<TransformComponent>().SetPosition(Vector3(-3, 0, 0));
     //_go3->GetComponent<MeshComponent>().UpdateMesh("./Engine/Assets/DefaultModel.obj");
     auto _lightDir = EngineCore::instance()->scene->AddLight(LightType::Directional);
-    auto light=EngineCore::instance()->scene->AddLight(LightType::Ambient);
-    GetScene()->registry.get<LightComponent>(light).color= Vector4(0.15f, 0.15f, 0.15f, 0.15f);
+    auto light = EngineCore::instance()->scene->AddLight(LightType::Ambient);
+    GetScene()->registry.get<LightComponent>(light).color = Vector4(0.15f, 0.15f, 0.15f, 0.15f);
     auto _lightPoint = EngineCore::instance()->scene->AddLight(LightType::PointLight);
 
-    GetScene()->registry.get<LightComponent>(_lightPoint).paramsRadiusAndAttenuation =Vector4(3.0f, 0.0f, 0.0f, 1.0f);
+    GetScene()->registry.get<LightComponent>(_lightPoint).paramsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
     GetScene()->registry.get<LightComponent>(_lightPoint).color = Vector4(1, 1, 0.0f, 1.0f);
     GetScene()->registry.get<TransformComponent>(_lightPoint).position = Vector3(10, 10, 10);
     //_go3->SetParent(_go);
@@ -39,7 +36,6 @@ int main()
     ////auto res= EngineCore::instance()->scene->DestroyGameObject(_go2);
     ////_go2 = EngineCore::instance()->scene->AddGameObject();
     ////engine->scene->Initialize();
-
     
     EngineCore::instance()->StartUpdateLoop();
 

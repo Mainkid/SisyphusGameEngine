@@ -31,6 +31,10 @@ entt::entity Scene::AddLight(LightType _lightType)
 {
 	auto id = registry.create();
 	registry.emplace<DataComponent>(id,"LightObject");
+	if (_lightType == LightType::PointLight)
+		registry.emplace<EditorBillboardComponent>(id, "Engine/Assets/Sprites/PointLightSprite.png");
+	else
+		registry.emplace<EditorBillboardComponent>(id, "Engine/Assets/Sprites/DirLightSprite.png");
 	registry.emplace<LightComponent>(id,_lightType);
 	registry.emplace<TransformComponent>(id);
 	gameObjects.insert(id);
@@ -77,9 +81,10 @@ void Scene::SetParent(entt::entity sourceGameObject, entt::entity parentGameObje
 	{
 		if (registry.get<TransformComponent>(sourceGameObject).parent != entt::null) // Если есть предок
 		{
+			
 			RemoveChild(registry.get<TransformComponent>(sourceGameObject).parent, sourceGameObject);
-			TransformHelper::UpdateRelativeToParent(nullptr, registry.get<TransformComponent>(sourceGameObject));
 		}
+		TransformHelper::UpdateRelativeToParent(nullptr, registry.get<TransformComponent>(sourceGameObject));
 		registry.get<TransformComponent>(sourceGameObject).parent = entt::null;
 	}
 	else if (!HasHierarchyCycles(sourceGameObject, parentGameObject))
@@ -87,15 +92,18 @@ void Scene::SetParent(entt::entity sourceGameObject, entt::entity parentGameObje
 
 		if (registry.get<TransformComponent>(sourceGameObject).parent != entt::null)
 		{
+			
 			RemoveChild(registry.get<TransformComponent>(sourceGameObject).parent, sourceGameObject);
-			TransformHelper::UpdateRelativeToParent(nullptr, registry.get<TransformComponent>(sourceGameObject));
+			
 		}
+		TransformHelper::UpdateRelativeToParent(nullptr, registry.get<TransformComponent>(sourceGameObject));
 		registry.get<TransformComponent>(sourceGameObject).parent = parentGameObject;
 		registry.get<TransformComponent>(parentGameObject).children.insert(sourceGameObject);
-		
+		TransformHelper::UpdateRelativeToParent(registry.try_get<TransformComponent>(parentGameObject),
+			registry.get<TransformComponent>(sourceGameObject));
 	}
-	TransformHelper::UpdateRelativeToParent(registry.try_get<TransformComponent>(parentGameObject),
-		registry.get<TransformComponent>(sourceGameObject));
+	/*TransformHelper::UpdateRelativeToParent(registry.try_get<TransformComponent>(parentGameObject),
+		registry.get<TransformComponent>(sourceGameObject));*/
 }   
 
 void Scene::AddChild(entt::entity parentGameObject, entt::entity childGameObject)

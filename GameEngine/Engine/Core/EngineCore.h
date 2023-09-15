@@ -15,7 +15,6 @@
 #include "../Core/DisplayWin32.h"
 #include "../Core/WinInput.h"
 #include "../Core/Rendering/RenderPipeline.h"
-#include "../Core/Camera/CameraController.h"
 #include "../Core/HUD/Hud.h"
 #include "../Systems/Systems.h"
 #include "../Core/Rendering/RenderTarget.h"
@@ -34,11 +33,10 @@ using namespace Microsoft::WRL;
 class EngineCore
 {
 public:
-    
     std::unique_ptr<WinInput> wInput;
     std::unique_ptr<DisplayWin32> window;
     std::unique_ptr<RenderPipeline> renderPipeline;
-    std::unique_ptr<CameraController> cameraController;
+    //std::unique_ptr<CameraController> cameraController;
     std::unique_ptr<RenderTarget> renderTarget;
     std::chrono::time_point<std::chrono::steady_clock> PrevTime;
     ComPtr<ID3D11Device> device;
@@ -90,6 +88,11 @@ protected:
 static Scene* GetScene()
 {
     return EngineCore::instance()->scene.get();
+}
+
+static CameraComponent& GetCamera()
+{
+    return *(EngineCore::instance()->scene.get()->camera);
 }
 
 

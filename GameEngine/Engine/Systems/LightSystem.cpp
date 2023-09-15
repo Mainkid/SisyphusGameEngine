@@ -16,14 +16,14 @@ void LightSystem::Run()
         if (lc.lightType != LightType::Ambient)
         {
             GenerateViewMatrix(lc,
-                Vector3(EngineCore::instance()->cameraController->camera->pos));
+                Vector3(GetScene()->cameraTransform->localPosition));
             /*  GenerateOrthoFromFrustum(lc,
                   EngineCore::instance()->cameraController->GetViewMatrix(),
                   EngineCore::instance()->cameraController->GetProjectionMatrix());*/
             GenerateOrthosFromFrustum(lc, Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
-                EngineCore::instance()->cameraController->GetViewMatrix(),
-                EngineCore::instance()->cameraController->GetProjectionMatrix(),
-                EngineCore::instance()->cameraController->camera->farZ);
+                GetScene()->camera->view,
+                GetScene()->camera->projection,
+                GetScene()->camera->farPlane);
         }
 
         if (!lc.aabb)
@@ -145,7 +145,7 @@ void LightSystem::GenerateOrthoMatrix(LightComponent& lc,float width, float dept
 
 void LightSystem::GenerateViewMatrix(LightComponent& lc, Vector3 pos)
 {
-    Vector3 tmp = Vector3(EngineCore::instance()->cameraController->camera->GetForwardVector());
+    Vector3 tmp = Vector3(GetScene()->camera->forward);
     Vector4 lookAt = pos + Vector4(tmp.x, tmp.y, tmp.z, 1.0f);
     Vector4 up = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
     lc.viewMatrix = DirectX::XMMatrixLookAtLH(pos, lookAt, up);
