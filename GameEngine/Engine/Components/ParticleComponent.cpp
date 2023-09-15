@@ -247,7 +247,7 @@ void ParticleComponent::SortGPU()
         EngineCore::instance()->context->CSSetUnorderedAccessViews(0, 1, sortBufferUAV.GetAddressOf(), nullptr);
         EngineCore::instance()->context->CSSetShader(bitonicSortShader->computeShader.Get(), nullptr, 0);
         EngineCore::instance()->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
-        std::cout << NUM_ELEMENTS / BITONIC_BLOCK_SIZE << std::endl;
+        //std::cout << NUM_ELEMENTS / BITONIC_BLOCK_SIZE << std::endl;
     }
 
     // Then sort the rows and columns for the levels > than the block size
@@ -264,7 +264,7 @@ void ParticleComponent::SortGPU()
         EngineCore::instance()->context->CSSetShader(matrixTransposeShader->computeShader.Get(), nullptr, 0);
         EngineCore::instance()->context->Dispatch(MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE, MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE, 1);
 
-        std::cout << MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE << " " << MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE << std::endl;
+        //std::cout << MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE << " " << MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE << std::endl;
         // Sort the transposed column data
         EngineCore::instance()->context->CSSetShader(bitonicSortShader->computeShader.Get(), nullptr, 0);
         EngineCore::instance()->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);

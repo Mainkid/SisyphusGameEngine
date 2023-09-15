@@ -155,7 +155,7 @@ void ViewportWidget::Render()
 
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();
-	std::cout <<(int) hoverState << std::endl;
+	//std::cout <<(int) hoverState << std::endl;
 
 	HandleResize();
 	ImGui::End();
