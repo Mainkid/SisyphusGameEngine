@@ -4,6 +4,3 @@
 [submodule "GameEngine/vendor/assimp"]
 	path = GameEngine/vendor/assimp
 	url = https://github.com/assimp/assimp.git
-[submodule "GameEngine/vendor/PhysX"]
-	path = GameEngine/vendor/PhysX
-	url = https://github.com/Libertus-Lab/PhysX-5.1.git
