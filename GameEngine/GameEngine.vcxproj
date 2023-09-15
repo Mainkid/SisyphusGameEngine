@@ -109,8 +109,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MinimalRebuild>false</MinimalRebuild>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -169,6 +173,7 @@
     <ClCompile Include="Engine\Systems\MeshSystem.cpp" />
     <ClCompile Include="Engine\Systems\LightSystem.cpp" />
     <ClCompile Include="Engine\Systems\MeshLoader.cpp" />
+    <ClCompile Include="ErrorLogger.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -228,6 +233,7 @@
     <ClInclude Include="Engine\Systems\MeshSystem.h" />
     <ClInclude Include="Engine\Systems\LightSystem.h" />
     <ClInclude Include="Engine\Systems\MeshLoader.h" />
+    <ClInclude Include="ErrorLogger.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
