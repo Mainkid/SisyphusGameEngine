@@ -135,6 +135,14 @@
     <ClCompile Include="Engine\Systems\MeshLoader.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+
+    <ClCompile Include="Engine\Systems\PhysicsSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Components\RBodyComponent.cpp">
+            <Filter>Исходные файлы</Filter>
+    </ClCompile>
+
     <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -323,6 +331,14 @@
     <ClInclude Include="Engine\Systems\MeshLoader.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+
+    <ClInclude Include="Engine\Systems\PhysicsSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Components\RBodyComponent.h">
+            <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+
     <ClInclude Include="Engine\Components\CameraComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>

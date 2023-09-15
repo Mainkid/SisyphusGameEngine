@@ -177,10 +177,12 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<LightSystem> ls = std::make_unique<LightSystem>();
 	systems.push_back(std::move(ls));
 
+	std::unique_ptr<PhysicsSystem> ps = std::make_unique<PhysicsSystem>();
+	systems.push_back(std::move(ps));
+
 	std::unique_ptr<EditorBillboardSystem> ebs = std::make_unique<EditorBillboardSystem>();
 	systems.push_back(std::move(ebs));
 
-	
 
 	for (const auto& system : systems)
 	{

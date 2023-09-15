@@ -6,3 +6,4 @@
 #include "MeshSystem.h"
 #include "LightSystem.h"
 #include "RenderSystem\RenderSystem.h"
+#include "PhysicsSystem.h"
