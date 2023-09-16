@@ -1,5 +1,6 @@
 #include "MeshLoader.h"
 #include "../Core/ServiceLocator.h"
+#include "../Systems/HardwareContext.h"
 
 std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {

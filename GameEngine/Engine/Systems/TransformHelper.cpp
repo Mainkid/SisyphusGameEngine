@@ -1,5 +1,7 @@
 #include "TransformHelper.h"
 #include "../Core/EngineCore.h"
+#include "../Core/ServiceLocator.h"
+#include "../Systems/EngineContext.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -12,10 +14,11 @@ Matrix TransformHelper::ConstructLocalTransformMatrix(TransformComponent& tc)
 Matrix TransformHelper::ConstructInverseParentTransform(TransformComponent& tc)
 {
 	Matrix resultMat = Matrix::Identity;
+	EngineContext* ec = ServiceLocator::instance()->Get<EngineContext>();
 	entt::entity curID = tc.parent;
 
 	while (curID != entt::null) {
-		TransformComponent& curTc = GetScene()->registry.get<TransformComponent>(curID);
+		TransformComponent& curTc = ec->scene->registry.get<TransformComponent>(curID);
 		resultMat = resultMat * (Matrix::CreateScale(curTc.localScale)* Matrix::CreateFromYawPitchRoll(curTc.localRotation) * Matrix::CreateTranslation(curTc.localPosition));
 		curID = curTc.parent;
 	}
@@ -24,17 +27,18 @@ Matrix TransformHelper::ConstructInverseParentTransform(TransformComponent& tc)
 
 void TransformHelper::UpdateTransformMatrix(TransformComponent& tc)
 {
+	EngineContext* ec = ServiceLocator::instance()->Get<EngineContext>();
 	tc.transformMatrix = Matrix::CreateScale(tc.localScale) * Matrix::CreateFromYawPitchRoll(tc.localRotation) * Matrix::CreateTranslation(tc.localPosition);
 	entt::entity curID = tc.parent;
 	if (curID!=entt::null)
 	{
-		TransformComponent& curTc = GetScene()->registry.get<TransformComponent>(curID);
+		TransformComponent& curTc = ec->scene->registry.get<TransformComponent>(curID);
 		tc.transformMatrix = tc.transformMatrix * curTc.transformMatrix;
 	}
 
 	for (auto& child : tc.children)
 	{
-		UpdateTransformMatrix(GetScene()->registry.get<TransformComponent>(child));
+		UpdateTransformMatrix(ec->scene->registry.get<TransformComponent>(child));
 	}
 }
 

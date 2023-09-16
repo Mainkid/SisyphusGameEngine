@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../../vendor/Delegates.h"
+
 #include "Widgets/ViewportWidget.h"
 #include "Widgets/HierarchyWidget.h"
 #include "Widgets/ContentBrowser.h"
 #include "Widgets/PropertiesWidget.h"
-
+#include "../../../vendor/Delegates.h"
 
 #include "Widget.h"
 #include <memory>
@@ -33,14 +33,14 @@ public:
 	void CreateRenderTarget();
 
 
-	MulticastDelegate<float> ViewportResizedEvent;
-	MulticastDelegate<entt::entity> UpdateSelectedEntityEvent;
+	CustomDelegates::MulticastDelegate<float> ViewportResizedEvent;
+	CustomDelegates::MulticastDelegate<entt::entity> UpdateSelectedEntityEvent;
 private:
 	int windowHeight = 0;
 	int windowWidth = 0;
 	std::set<std::unique_ptr<Widget>> widgets;
 	std::string focusedWindowName="NONE";
 	entt::entity selectedEntityID = entt::null;
-	HardwareContext* hc;
+	HardwareContext* hc=nullptr;
 };
 

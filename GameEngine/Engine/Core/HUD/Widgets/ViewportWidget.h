@@ -18,6 +18,7 @@
 #include <filesystem>
 
 struct HardwareContext;
+struct EngineContext;
 
 class ViewportWidget: public Widget
 {
@@ -31,6 +32,7 @@ public:
 
 private:
 	HardwareContext* hc;
+	EngineContext* ec;
 	enum class EHoveringState
 	{
 		None,

@@ -1,5 +1,7 @@
 #pragma once
 #include "../../Core/ServiceLocator.h"
+#include "../HardwareContext.h"
+#include "../Rendering/RenderContext.h"
 
 class RenderHelper {
 

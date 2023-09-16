@@ -5,14 +5,15 @@
 #include "../Hud.h"
 
 #include <map>
-
+struct EngineContext;
 
 class PropertiesWidget : public Widget
 {
 public:
 	PropertiesWidget(Hud* _hud);
 	void Render() override;
-	
+private:
+	EngineContext* ec;
 };
 
 //const std::map<Com

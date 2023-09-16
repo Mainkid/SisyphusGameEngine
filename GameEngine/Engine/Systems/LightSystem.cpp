@@ -1,10 +1,11 @@
 #include "LightSystem.h"
 #include "HardwareContext.h"
 #include "EngineContext.h"
+#include "../Core/ServiceLocator.h"
 
 void LightSystem::Init()
 {
-
+    ec = ServiceLocator::instance()->Get<EngineContext>();
 }
 
 void LightSystem::Run()

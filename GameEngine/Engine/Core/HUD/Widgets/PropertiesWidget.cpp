@@ -3,11 +3,15 @@
 #include "../../../../vendor/ImGui/imgui_impl_dx11.h"
 #include "../../../../vendor/ImGui/imgui_impl_win32.h"
 #include "../../../../vendor/ImGuizmo/ImGuizmo.h"
+#include "../../ServiceLocator.h"
+#include "../../../Systems/EngineContext.h"
+#include "../../../Core/ServiceLocator.h"
 
 PropertiesWidget::PropertiesWidget(Hud* _hud)
 {
 	this->hud = _hud;
 	this->windowID = "Properties";
+	this->ec = ServiceLocator::instance()->Get<EngineContext>();
 }
 
 void PropertiesWidget::Render()
@@ -15,7 +19,7 @@ void PropertiesWidget::Render()
 	ImGui::Begin(windowID.c_str());
 	Widget::Render();
 
-	TransformComponent* tc = GetScene()->registry.try_get<TransformComponent>(hud->selectedEntityID);
+	TransformComponent* tc = ec->scene->registry.try_get<TransformComponent>(hud->selectedEntityID);
 
 	if (tc)
 	{

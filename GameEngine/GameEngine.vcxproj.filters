@@ -105,9 +105,6 @@
     <ClCompile Include="vendor\ImGuizmo\ImSequencer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="vendor\Delegates.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Components\ParticleComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -163,6 +160,9 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Systems\HardwareInitSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Delegates.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -296,9 +296,6 @@
     <ClInclude Include="vendor\entt\entt.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="vendor\Delegates.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="vendor\DirectXTK\Inc\SimpleMath.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -393,6 +390,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Systems\EngineContext.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Delegates.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

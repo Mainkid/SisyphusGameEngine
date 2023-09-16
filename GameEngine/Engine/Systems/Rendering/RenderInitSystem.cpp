@@ -13,6 +13,8 @@ void RenderInitSystem::Init()
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
 
+    ec->scene=std::make_unique<Scene>();
+
     using namespace DirectX::SimpleMath;
     {
         std::vector<int> quadIndex = { 3,1,0,2,1,3 };

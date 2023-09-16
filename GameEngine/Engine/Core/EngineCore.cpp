@@ -5,6 +5,11 @@
 //	window = std::make_unique<DisplayWin32>(appName, hInstance, width, height);
 //}
 
+EngineCore::EngineCore()
+{
+	
+}
+
 HWND EngineCore::GetWindowHWND()
 {
 	return HWND();
@@ -129,33 +134,40 @@ void EngineCore::Render()
 void EngineCore::Update()
 {
 	auto	curTime = std::chrono::steady_clock::now();
-	deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
+	ec->deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
 	PrevTime = curTime;
 
-	totalTime += deltaTime;
-	frameCount++;
+	ec->totalTime += ec->deltaTime;
+	ec->frameCount++;
 
-	if (totalTime > 1.0f) {
-		float fps = frameCount / totalTime;
+	if (ec->totalTime > 1.0f) {
+		float fps = ec->frameCount / ec->totalTime;
 
-		totalTime -= 1.0f;
-		frameCount = 0;
+		ec->totalTime -= 1.0f;
+		ec->frameCount = 0;
 	}
 
 	for (auto& system : systems)
 	{
 		system->Run();
 	}
-	scene->Update(deltaTime);
-	//cameraController->CameraMovement(deltaTime);
+	ec->scene->Update(ec->deltaTime);
 }
 
 void EngineCore::StartUpSystems()
 {
 	ServiceLocator::instance()->Register<EngineContext>();
+	ec = ServiceLocator::instance()->Get<EngineContext>();
+
+	
+
+	hud = std::make_unique<Hud>();
 
 	std::unique_ptr<HardwareInitSystem> his = std::make_unique < HardwareInitSystem>();
 	systems.push_back(std::move(his));
+
+	std::unique_ptr<RenderInitSystem> ris = std::make_unique<RenderInitSystem>();
+	systems.push_back(std::move(ris));
 
 	std::unique_ptr<InputSystem> is = std::make_unique < InputSystem>();
 	systems.push_back(std::move(is));
@@ -174,9 +186,6 @@ void EngineCore::StartUpSystems()
 
 	std::unique_ptr<EditorBillboardSystem> ebs = std::make_unique<EditorBillboardSystem>();
 	systems.push_back(std::move(ebs));
-
-	std::unique_ptr<RenderInitSystem> ris = std::make_unique<RenderInitSystem>();
-	systems.push_back(std::move(ris));
 
 	std::unique_ptr<PreRenderSystem> prs = std::make_unique<PreRenderSystem>();
 	systems.push_back(std::move(prs));
@@ -212,7 +221,6 @@ void EngineCore::StartUp()
 
 void EngineCore::ShutDown()
 {
-	//RenderSystem::instance()->ShutDown();
 	for (auto& system : systems)
 	{
 		system->Destroy();

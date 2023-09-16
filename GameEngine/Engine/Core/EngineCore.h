@@ -32,14 +32,9 @@ class EngineCore
 {
 public:
     std::chrono::time_point<std::chrono::steady_clock> PrevTime;
-    std::unique_ptr<Scene> scene;
     std::unique_ptr<Hud> hud;
     std::vector<std::unique_ptr<ISystem>> systems;
-    
-
-    float totalTime = 0;
-    unsigned int frameCount = 0;
-    float deltaTime = 0;
+    EngineContext* ec;
 
     static EngineCore* instance()
     {
@@ -47,7 +42,7 @@ public:
         return &inst;
     }
 
-    EngineCore() = default;
+    EngineCore();
     ~EngineCore() {};
 
     HWND GetWindowHWND();
@@ -62,16 +57,3 @@ protected:
 
     
 };
-
-static Scene* GetScene()
-{
-    return EngineCore::instance()->scene.get();
-}
-
-static CameraComponent& GetCamera()
-{
-    return *(EngineCore::instance()->scene.get()->camera);
-}
-
-
-//TODO: освободить все ресурсы при завершении.

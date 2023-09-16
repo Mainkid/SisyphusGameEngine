@@ -6,13 +6,16 @@
 #include "../../../Systems/HardwareContext.h"
 #include "../Hud.h"
 #include "ViewportWidget.h"
+#include "../../../../vendor/Delegates.h"
+#include "../../../Systems/EngineContext.h"
+#include "../../../Core/ServiceLocator.h"
 
 
 ViewportWidget::ViewportWidget(Hud* _hud)
 {
 	this->hud = _hud;
 	this->windowID = "Viewport";
-	hud->UpdateSelectedEntityEvent.AddRaw(this, &ViewportWidget::UpdateSelectedEntity);
+	ec = ServiceLocator::instance()->Get<EngineContext>();
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
 	InitSRV();
 }
@@ -83,9 +86,9 @@ void ViewportWidget::Render()
 
 		
 
-		auto viewMat = GetScene()->camera->view;
-		auto projMat = GetScene()->camera->projection;
-		auto& tc = EngineCore::instance()->scene->registry.get<TransformComponent>(hud->selectedEntityID);
+		auto viewMat = ec->scene->camera->view;
+		auto projMat = ec->scene->camera->projection;
+		auto& tc = ec->scene->registry.get<TransformComponent>(hud->selectedEntityID);
 		auto transformMat = tc.transformMatrix;
 		//auto transformMat = TransformHelper::ConstructTransformMatrix(tc);
 
@@ -171,7 +174,7 @@ void ViewportWidget::HandleResize()
 		hud->ViewportResizedEvent.Broadcast(newWidgetSize.x * 1.0f / newWidgetSize.y);
 		widgetSize = newWidgetSize;
 
-		auto view = EngineCore::instance()->scene->registry.view<TransformComponent, CameraComponent>();
+		auto view = ec->scene->registry.view<TransformComponent, CameraComponent>();
 		for (auto& entity : view)
 		{
 			CameraComponent& cc = view.get<CameraComponent>(entity);

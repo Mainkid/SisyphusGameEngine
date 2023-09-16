@@ -1,13 +1,16 @@
 #include "HardwareInitSystem.h"
 #include "../Core/DisplayWin32.h"
+#include "../Core/Rendering/RenderTarget.h"
 
 void HardwareInitSystem::Init()
 {
 	ServiceLocator::instance()->Register<HardwareContext>();
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
-	
+	CreateOSWindow(L"Sisyphus", GetModuleHandle(nullptr), 1280, 720);
 	CreateDeviceAndSwapChain();
 	InitializeDirectX();
+	hc->renderTarget = std::make_unique<RenderTarget>();
+	hc->renderTarget->Initialize();
 }
 
 void HardwareInitSystem::Run()
@@ -86,7 +89,7 @@ void HardwareInitSystem::CreateDeviceAndSwapChain()
 
 	hr = hc->device->CreateDepthStencilView(hc->depthStencilBuffer.Get(), NULL, hc->depthStencilView.GetAddressOf());
 
-
+	
 
 	res = hc->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)hc->backTex.GetAddressOf());	// __uuidof(ID3D11Texture2D)
 	res = hc->device->CreateRenderTargetView(hc->backTex.Get(), nullptr, hc->rtv.GetAddressOf());
@@ -95,6 +98,17 @@ void HardwareInitSystem::CreateDeviceAndSwapChain()
 
 void HardwareInitSystem::InitializeDirectX()
 {
+
+	D3D11_VIEWPORT viewport = {};
+	viewport.Width = static_cast<float>(1280);
+	viewport.Height = static_cast<float>(720);
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	viewport.MinDepth = 0;
+	viewport.MaxDepth = 1.0f;
+
+	hc->context->RSSetViewports(1, &viewport);
+	hc->renderTarget = std::make_unique<RenderTarget>();
 }
 
 void HardwareInitSystem::CreateOSWindow(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height)

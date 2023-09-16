@@ -7,7 +7,7 @@
 
 class Hud;
 
-class Widget
+class Widget     
 {
 public:
 	

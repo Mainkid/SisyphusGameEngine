@@ -10,6 +10,7 @@ Buffer::Buffer()
 
 Buffer::Buffer(ID3D11Device* _device)
 {
+    hc = ServiceLocator::instance()->Get<HardwareContext>();
 }
 
 
