@@ -26,6 +26,7 @@ struct CameraComponent
 	Vector4 left = LEFT_VECTOR;
 	Vector4 right = RIGHT_VECTOR;
 
+	float mouseWheel = 0;
 };
 
 namespace std

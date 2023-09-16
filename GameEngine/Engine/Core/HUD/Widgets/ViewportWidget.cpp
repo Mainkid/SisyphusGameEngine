@@ -58,7 +58,7 @@ void ViewportWidget::Render()
 		
 		ImVec2 pos2 = ImGui::GetMousePos();
 		ImVec2 pos = ImGui::GetCursorScreenPos();
-		std::cout << "Is over" << std::endl;
+		//std::cout << "Is over" << std::endl;
 		auto textureSize = RenderHelper::GetRtvResolution();
 
 
@@ -74,6 +74,9 @@ void ViewportWidget::Render()
 
 	}
 
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ec->scene->camera->mouseWheel = io.MouseWheel;
+
 	//Gizmos
 	if (hud->selectedEntityID!=entt::null)
 	{
@@ -84,8 +87,8 @@ void ViewportWidget::Render()
 		float windowHeight = (float)ImGui::GetWindowHeight();
 		ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		
-
 		auto viewMat = ec->scene->camera->view;
 		auto projMat = ec->scene->camera->projection;
 		auto& tc = ec->scene->registry.get<TransformComponent>(hud->selectedEntityID);

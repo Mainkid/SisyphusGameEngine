@@ -19,6 +19,11 @@ void PropertiesWidget::Render()
 	ImGui::Begin(windowID.c_str());
 	Widget::Render();
 
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	//for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) if (ImGui::IsMouseDown(i)) { ImGui::SameLine(); ImGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]); }
+	if (io.MouseWheel > 0.0f)
+		std::cout << "";
+
 	TransformComponent* tc = ec->scene->registry.try_get<TransformComponent>(hud->selectedEntityID);
 
 	if (tc)

@@ -14,12 +14,12 @@ void Hud::Initialize()
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+    /*io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;*/
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-    
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.WantCaptureKeyboard = false;
-    io.WantCaptureMouse = true;
+    io.WantCaptureMouse = false;
     
     
     ImGuiStyle& style = ImGui::GetStyle();
@@ -49,6 +49,7 @@ void Hud::Render()
     hc->context->OMSetRenderTargets(1, hc->rtv.GetAddressOf(), nullptr);
     bool show = true;
     ImGuiIO& io = ImGui::GetIO(); (void)io;
+    
     if (windowHeight != io.DisplaySize.y || windowWidth != io.DisplaySize.x)
     {
         CleanupRenderTarget();

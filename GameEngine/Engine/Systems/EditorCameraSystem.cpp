@@ -106,7 +106,6 @@ void EditorCameraSystem::SetLookAtPos(Vector3 lookAtPos,TransformComponent& tc)
 
 void EditorCameraSystem::ProcessInput(CameraComponent& cc, TransformComponent& tc)
 {
-    
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         if (ImGui::IsMouseDown(ImGuiMouseButton_Right))
         {
@@ -140,9 +139,8 @@ void EditorCameraSystem::ProcessInput(CameraComponent& cc, TransformComponent& t
             tc.localPosition += Vector3(0, -cc.cameraSpeed * ec->deltaTime, 0.0f);
                       
         }
-        if (ImGui::IsKeyDown(ImGuiKey_E))
-        {
-           
-        }
+        tc.localPosition += Vector3(cc.forward) * cc.mouseWheel*0.25f;
+        cc.mouseWheel = 0.0f;
+        //std::cout << io.MouseWheel << std::endl;
     
 }
