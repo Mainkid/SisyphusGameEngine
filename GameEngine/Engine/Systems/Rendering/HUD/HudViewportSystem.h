@@ -1,12 +1,7 @@
 #pragma once
-
-#include "../Widget.h"
-#include "../Hud.h"
-#include <windows.h>
-#include <WinUser.h>
+#include "../../ISystem.h"
 #include <wrl.h>
 #include "../../../../vendor/entt/entt.hpp"
-//#include "../../../DirectXSDK/entt/entt.hpp"
 #include "../../../../vendor/ImGui/imgui.h"
 #include "../../../../vendor/ImGui/imgui_impl_dx11.h"
 #include "../../../../vendor/ImGui/imgui_impl_win32.h"
@@ -17,22 +12,27 @@
 #include <map>
 #include <filesystem>
 
-struct HardwareContext;
 struct EngineContext;
+struct HardwareContext;
+struct RenderContext;
 
-class ViewportWidget: public Widget
+
+class HudViewportSystem : public ISystem
 {
 public:
-	ViewportWidget(Hud* _hud);
-	void InitSRV();
-	void Render() override;
-	void HandleResize();
-	void GetInput() override;
-	void UpdateSelectedEntity(entt::entity);
-
+	void Init() override;
+	void Run() override;
+	void Destroy() override;
 private:
-	HardwareContext* hc;
 	EngineContext* ec;
+	RenderContext* rc;
+	HardwareContext* hc;
+
+	void InitSRV();
+	void HandleResize();
+
+	std::string windowID;
+	bool isFocused;
 	enum class EHoveringState
 	{
 		None,
@@ -58,5 +58,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> translateSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> rotateSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> scaleSRV;
+
 };
 

@@ -1,45 +1,23 @@
-#pragma once
-#include "../../../Systems/Rendering/RenderHelper.h"
-#include "../../../Core/Rendering/RenderTarget.h"
-#include "../../../Systems/Rendering/RenderHelper.h"
-#include "../../ServiceLocator.h"
-#include "../../../Systems/HardwareContext.h"
-#include "../Hud.h"
-#include "ViewportWidget.h"
-#include "../../../../vendor/Delegates.h"
-#include "../../../Systems/EngineContext.h"
+#include "HudViewportSystem.h"
 #include "../../../Core/ServiceLocator.h"
+#include "../RenderHelper.h"
+#include "../../Core/Rendering/RenderTarget.h"
+#include "../../EngineContext.h"
 
-
-ViewportWidget::ViewportWidget(Hud* _hud)
+void HudViewportSystem::Init()
 {
-	this->hud = _hud;
-	this->windowID = "Viewport";
-	ec = ServiceLocator::instance()->Get<EngineContext>();
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
+	rc = ServiceLocator::instance()->Get<RenderContext>();
+	ec = ServiceLocator::instance()->Get<EngineContext>();
+	windowID = "Viewport";
 	InitSRV();
 }
 
-void ViewportWidget::InitSRV()
-{
-	int width, height;
-	ImageLoader::LoadTextureFromFile(translateIconPath.string().c_str(),translateSRV.GetAddressOf(), &width, &height);
-	guizmoIconSRV[ImGuizmo::OPERATION::TRANSLATE] = translateSRV.Get();
-
-	ImageLoader::LoadTextureFromFile(rotateIconPath.string().c_str(), rotateSRV.GetAddressOf(), &width, &height);
-	guizmoIconSRV[ImGuizmo::OPERATION::ROTATE] = rotateSRV.Get();
-
-	ImageLoader::LoadTextureFromFile(scaleIconPath.string().c_str(), scaleSRV.GetAddressOf(), &width, &height);
-	guizmoIconSRV[ImGuizmo::OPERATION::SCALE] =scaleSRV.Get();
-}
-
-using namespace DirectX::SimpleMath;
-void ViewportWidget::Render()
+void HudViewportSystem::Run()
 {
 	ImGui::Begin(windowID.c_str());
 
-	Widget::Render();
-
+	//Widget::Render();
 	ImVec2 imgSize = ImGui::GetContentRegionAvail();
 	ImVec2 startCursorPos = ImGui::GetCursorScreenPos();
 	//ImGui::SameLine();
@@ -69,7 +47,7 @@ void ViewportWidget::Render()
 		int pixelColorR =RenderHelper::GetPixelValue(x, y);
 		if (pixelColorR != -1)
 		{
-			hud->UpdateSelectedEntityEvent.Broadcast(entt::entity(pixelColorR));
+			ec->selectedEntityID=entt::entity(pixelColorR);
 		}
 
 	}
@@ -78,7 +56,7 @@ void ViewportWidget::Render()
 	ec->scene->camera->mouseWheel = io.MouseWheel;
 
 	//Gizmos
-	if (hud->selectedEntityID!=entt::null)
+	if (ec->selectedEntityID!=entt::null)
 	{
 		ImGuizmo::SetOrthographic(false);
 		ImGuizmo::SetDrawlist();
@@ -91,7 +69,7 @@ void ViewportWidget::Render()
 		
 		auto viewMat = ec->scene->camera->view;
 		auto projMat = ec->scene->camera->projection;
-		auto& tc = ec->scene->registry.get<TransformComponent>(hud->selectedEntityID);
+		auto& tc = ec->scene->registry.get<TransformComponent>(ec->selectedEntityID);
 		auto transformMat = tc.transformMatrix;
 		//auto transformMat = TransformHelper::ConstructTransformMatrix(tc);
 
@@ -169,12 +147,29 @@ void ViewportWidget::Render()
 	ImGui::End();
 }
 
-void ViewportWidget::HandleResize()
+void HudViewportSystem::Destroy()
+{
+}
+
+void HudViewportSystem::InitSRV()
+{
+	int width, height;
+	ImageLoader::LoadTextureFromFile(translateIconPath.string().c_str(),translateSRV.GetAddressOf(), &width, &height);
+	guizmoIconSRV[ImGuizmo::OPERATION::TRANSLATE] = translateSRV.Get();
+
+	ImageLoader::LoadTextureFromFile(rotateIconPath.string().c_str(), rotateSRV.GetAddressOf(), &width, &height);
+	guizmoIconSRV[ImGuizmo::OPERATION::ROTATE] = rotateSRV.Get();
+
+	ImageLoader::LoadTextureFromFile(scaleIconPath.string().c_str(), scaleSRV.GetAddressOf(), &width, &height);
+	guizmoIconSRV[ImGuizmo::OPERATION::SCALE] =scaleSRV.Get();
+}
+
+void HudViewportSystem::HandleResize()
 {
 	auto newWidgetSize = ImGui::GetWindowSize();
 	if (widgetSize.x != newWidgetSize.x || widgetSize.y != newWidgetSize.y)
 	{
-		hud->ViewportResizedEvent.Broadcast(newWidgetSize.x * 1.0f / newWidgetSize.y);
+		//hud->ViewportResizedEvent.Broadcast(newWidgetSize.x * 1.0f / newWidgetSize.y);
 		widgetSize = newWidgetSize;
 
 		auto view = ec->scene->registry.view<TransformComponent, CameraComponent>();
@@ -186,12 +181,3 @@ void ViewportWidget::HandleResize()
 	}
 }
 
-void ViewportWidget::GetInput()
-{
-	
-}
-
-void ViewportWidget::UpdateSelectedEntity(entt::entity)
-{
-	
-}

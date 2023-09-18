@@ -1,7 +1,7 @@
 #include "ShadowRenderSystem.h"
-#include "RenderContext.h"
-#include "../EngineContext.h"
-#include "../HardwareContext.h"
+#include "../RenderContext.h"
+#include "../../EngineContext.h"
+#include "../../HardwareContext.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
 
@@ -23,7 +23,7 @@ void ShadowRenderSystem::Run()
         LightComponent& light = view.get<LightComponent>(entity);
         if (light.lightType == LightType::Directional)
         {
-            //TODO!!!! Вынести эти методы в систему рендера, а не систему света!!!
+            //TODO!!!! пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ!!!
             /*light.GenerateViewMatrix(Vector3(engine->cameraController->camera->pos));
             light.GenerateOrthoFromFrustum(engine->cameraController->GetViewMatrix(), engine->cameraController->GetProjectionMatrix());
             light.GenerateOrthosFromFrustum(engine->cameraController->GetViewMatrix(), engine->cameraController->GetProjectionMatrix(), engine->cameraController->camera->farZ);*/

@@ -1,15 +1,12 @@
 #pragma once
-#include "../ISystem.h"
-#include "../../Core/ServiceLocator.h"
-#include "RenderContext.h"
-#include <memory>
+#include "../../ISystem.h"
 
-class EngineCore;
 struct EngineContext;
-struct RenderContext;
 struct HardwareContext;
+struct RenderContext;
 
-class OpaqueRenderSystem : public ISystem
+
+class ShadowRenderSystem : public ISystem
 {
 public:
 	void Init() override;
@@ -19,5 +16,5 @@ private:
 	EngineContext* ec;
 	RenderContext* rc;
 	HardwareContext* hc;
-};
 
+};

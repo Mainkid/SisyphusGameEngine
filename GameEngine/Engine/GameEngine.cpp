@@ -7,6 +7,7 @@ int main()
 
     //EngineCore* engine = new EngineCore();
     EngineCore::instance()->StartUp();
+    EngineContext* ec = EngineCore::instance()->ec;
     auto _go = EngineCore::instance()->ec->scene->AddGameObject();
     auto _go1 = EngineCore::instance()->ec->scene->AddGameObject();
     auto _go2 = EngineCore::instance()->ec->scene->AddGameObject();

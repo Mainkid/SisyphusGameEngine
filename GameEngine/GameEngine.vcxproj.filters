@@ -156,13 +156,19 @@
     <ClCompile Include="Engine\Systems\Rendering\EditorBillboardRenderSystem.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\PostRenderSystem.cpp">
+    <ClCompile Include="Engine\Systems\Rendering\PostViewportRenderSystem.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Systems\HardwareInitSystem.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="vendor\Delegates.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\HudPreRenderSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\HudRender.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -377,7 +383,7 @@
     <ClInclude Include="Engine\Systems\Rendering\EditorBillboardRenderSystem.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\PostRenderSystem.h">
+    <ClInclude Include="Engine\Systems\Rendering\PostViewportRenderSystem.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Systems\Rendering\RenderHelper.h">
@@ -393,6 +399,12 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="vendor\Delegates.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\HudPreRenderSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\HudRender.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

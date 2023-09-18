@@ -1,8 +1,8 @@
 #include "OpaqueRenderSystem.h"
 
-#include "../EngineContext.h"
-#include "../HardwareContext.h"
-#include "RenderContext.h"
+#include "../../EngineContext.h"
+#include "../../HardwareContext.h"
+#include "../RenderContext.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
 
 void OpaqueRenderSystem::Init()
