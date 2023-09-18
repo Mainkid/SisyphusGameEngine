@@ -10,7 +10,7 @@
 
 
 
-class EngineCore;
+struct HardwareContext;
 
 using namespace Microsoft::WRL;
 class RenderTarget
@@ -27,8 +27,10 @@ public:
 	ComPtr<ID3D11RenderTargetView> renderTargetView;
 private:
 	ComPtr<ID3D11Texture2D> renderTargetTexture;
-	
 	ComPtr<ID3D11ShaderResourceView> shaderResourceView;
 	ComPtr<ID3D11ShaderResourceView> ImageSRV;
+
+	HardwareContext* hc;
+
 };
 

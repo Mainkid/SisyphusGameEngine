@@ -1,4 +1,5 @@
-#include "../../Core/EngineCore.h"
+#include "../ServiceLocator.h"
+#include "../../Systems/HardwareContext.h"
 #include "RenderTarget.h"
 
 
@@ -7,6 +8,8 @@ RenderTarget::RenderTarget()
 	renderTargetTexture = nullptr;
 	renderTargetView = nullptr;
 	shaderResourceView = nullptr;
+	
+	hc = ServiceLocator::instance()->Get<HardwareContext>();
 	
 }
 
@@ -28,7 +31,7 @@ bool RenderTarget::Initialize(int textureWidth, int textureHeight)
 	//textureDesc.MiscFlags = 0;
 
 	// Создание текстуры
-	HRESULT result = EngineCore::instance()->device->CreateTexture2D(&textureDesc, NULL, renderTargetTexture.GetAddressOf());
+	HRESULT result = hc->device->CreateTexture2D(&textureDesc, NULL, renderTargetTexture.GetAddressOf());
 	if (FAILED(result))
 		return false;
 
@@ -39,7 +42,7 @@ bool RenderTarget::Initialize(int textureWidth, int textureHeight)
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 
 	// Создание render target view.
-	result = EngineCore::instance()->device->CreateRenderTargetView(renderTargetTexture.Get(), &renderTargetViewDesc, renderTargetView.GetAddressOf());
+	result =hc->device->CreateRenderTargetView(renderTargetTexture.Get(), &renderTargetViewDesc, renderTargetView.GetAddressOf());
 	if (FAILED(result))
 		return false;
 
@@ -51,7 +54,7 @@ bool RenderTarget::Initialize(int textureWidth, int textureHeight)
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
 	// Создание shader resource view.
-	result = EngineCore::instance()->device->CreateShaderResourceView(renderTargetTexture.Get(), &shaderResourceViewDesc, shaderResourceView.GetAddressOf());
+	result = hc->device->CreateShaderResourceView(renderTargetTexture.Get(), &shaderResourceViewDesc, shaderResourceView.GetAddressOf());
 	if (FAILED(result))
 		return false;
 
@@ -61,7 +64,7 @@ bool RenderTarget::Initialize(int textureWidth, int textureHeight)
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
 	srvDesc.Texture2D.MostDetailedMip = 0;
-	result = EngineCore::instance()->device->CreateShaderResourceView(renderTargetTexture.Get(), &srvDesc,ImageSRV.GetAddressOf());
+	result = hc->device->CreateShaderResourceView(renderTargetTexture.Get(), &srvDesc,ImageSRV.GetAddressOf());
 
 	return true;
 }
@@ -75,15 +78,15 @@ void RenderTarget::Close()
 
 void RenderTarget::SetRenderTarget(ID3D11DepthStencilView* depthStencilView)
 {
-	EngineCore::instance()->context->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView);
+	hc->context->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView);
 }
 
 void RenderTarget::ClearRenderTarget( ID3D11DepthStencilView* depthStencilView, D3D11_CLEAR_FLAG flags)
 {
 	float color[4] = { 0, 0,0, 1 };
 
-	EngineCore::instance()->context->ClearRenderTargetView(renderTargetView.Get(), color);
-	EngineCore::instance()->context->ClearDepthStencilView(depthStencilView, flags, 1.0f, 0);
+	hc->context->ClearRenderTargetView(renderTargetView.Get(), color);
+	hc->context->ClearDepthStencilView(depthStencilView, flags, 1.0f, 0);
 }
 
 ID3D11ShaderResourceView* RenderTarget::GetSRV()

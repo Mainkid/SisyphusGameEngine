@@ -2,6 +2,7 @@
 #include <math.h>
 #include "Particle.h"
 #include "../Core/Graphics/Shader.h"
+#include "../Systems/HardwareContext.h"
 
 class ParticleComponent
 {
@@ -83,5 +84,7 @@ public:
 
 
     std::vector<int> indices;
+private:
+    HardwareContext* hc;
 };
 

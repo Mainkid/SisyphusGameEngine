@@ -4,6 +4,7 @@
 #include "assimp/scene.h"
 #include "assimp/Importer.hpp"
 #include "assimp/cimport.h"
+#include "../../vendor/WICTextureLoader.h"
 
 class MeshLoader
 {

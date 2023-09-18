@@ -1,10 +1,14 @@
 #include "ImageLoader.h"
-#include "../Core/EngineCore.h"
+#include "../Systems/HardwareContext.h"
+#include "../Core/ServiceLocator.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "../../vendor/stb_image.h"
 
+
 bool ImageLoader::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
 {
+	auto hc=ServiceLocator::instance()->Get<HardwareContext>();
+
 	// Load from disk into a raw RGBA buffer
 	int image_width = 0;
 	int image_height = 0;
@@ -30,7 +34,7 @@ bool ImageLoader::LoadTextureFromFile(const char* filename, ID3D11ShaderResource
 	subResource.pSysMem = image_data;
 	subResource.SysMemPitch = desc.Width * 4;
 	subResource.SysMemSlicePitch = 0;
-	EngineCore::instance()->device->CreateTexture2D(&desc, &subResource, &pTexture);
+	hc->device->CreateTexture2D(&desc, &subResource, &pTexture);
 
 	// Create texture view
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -39,7 +43,7 @@ bool ImageLoader::LoadTextureFromFile(const char* filename, ID3D11ShaderResource
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = desc.MipLevels;
 	srvDesc.Texture2D.MostDetailedMip = 0;
-	EngineCore::instance()->device->CreateShaderResourceView(pTexture, &srvDesc, out_srv);
+	hc->device->CreateShaderResourceView(pTexture, &srvDesc, out_srv);
 	pTexture->Release();
 
 	*out_width = image_width;

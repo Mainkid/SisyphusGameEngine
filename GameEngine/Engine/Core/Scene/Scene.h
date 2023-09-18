@@ -15,6 +15,7 @@ class Scene
 {
 	friend class GameObject;
 	friend class HierarchyWidget;
+	friend class HudHierarchySystem;
 public:
 	
 	std::set<entt::entity> gameObjects;

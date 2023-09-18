@@ -1,15 +1,19 @@
 #include "MeshSystem.h"
 #include "../Components/MeshComponent.h"
+#include "../Core/ServiceLocator.h"
+#include "../Systems/HardwareContext.h"
+#include "../Systems/EngineContext.h"
 #include "MeshLoader.h"
-#include "../Core/EngineCore.h"
 
 void MeshSystem::Init()
 {
+	hc = ServiceLocator::instance()->Get<HardwareContext>();
+	ec = ServiceLocator::instance()->Get<EngineContext>();
 }
 
 void MeshSystem::Run()
 {
-	auto view = EngineCore::instance()->scene->registry.view<MeshComponent>();
+	auto view = ec->scene->registry.view<MeshComponent>();
 	for (auto& entity : view)
 	{
 		MeshComponent& mesh =view.get<MeshComponent>(entity);
@@ -56,7 +60,7 @@ void MeshSystem::LoadTexture(MeshComponent& mesh)
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	HRESULT hr = EngineCore::instance()->device->CreateSamplerState(&sampDesc,mesh.samplerState.GetAddressOf()); //Create sampler state
+	HRESULT hr =hc->device->CreateSamplerState(&sampDesc,mesh.samplerState.GetAddressOf()); //Create sampler state
 	if (FAILED(hr))
 	{
 		std::cout << "Texture Loading Failed!" << std::endl;
@@ -64,7 +68,7 @@ void MeshSystem::LoadTexture(MeshComponent& mesh)
 
 	std::wstring stemp = std::wstring(mesh.texturePath.begin(), mesh.texturePath.end());
 	LPCWSTR sw = stemp.c_str();
-	hr = DirectX::CreateWICTextureFromFile(EngineCore::instance()->device.Get(),sw, nullptr, mesh.texture.GetAddressOf());
+	hr = DirectX::CreateWICTextureFromFile(hc->device.Get(),sw, nullptr, mesh.texture.GetAddressOf());
 }
 
 void MeshSystem::ProcessNode(MeshComponent& meshComp,aiNode* node, const aiScene* scene)

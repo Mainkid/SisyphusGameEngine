@@ -1,20 +1,29 @@
 #include "EditorCameraSystem.h"
+#include "HardwareContext.h"
+#include "EngineContext.h"
 #include "../Components/CameraComponent.h"
+#include "../Components/TransformComponent.h"
+#include "../Core/ServiceLocator.h"
+#include "../../../vendor/ImGui/imgui.h"
+#include "../../../vendor/ImGui/imgui_impl_dx11.h"
+#include "../../../vendor/ImGui/imgui_impl_win32.h"
 
 void EditorCameraSystem::Init()
 {
-    auto id = GetScene()->registry.create();
-    GetScene()->registry.emplace<DataComponent>(id,"Camera");
-    TransformComponent& tc=GetScene()->registry.emplace<TransformComponent>(id);
-    CameraComponent& cc = GetScene()->registry.emplace<CameraComponent>(id);
-    GetScene()->camera = &cc;
-    GetScene()->cameraTransform = &tc;
+    ec = ServiceLocator::instance()->Get<EngineContext>();
+    hc = ServiceLocator::instance()->Get<HardwareContext>();
+    auto id = ec->scene->registry.create();
+    ec->scene->registry.emplace<DataComponent>(id,"Camera");
+    TransformComponent& tc=ec->scene->registry.emplace<TransformComponent>(id);
+    CameraComponent& cc = ec->scene->registry.emplace<CameraComponent>(id);
+    ec->scene->camera = &cc;
+    ec->scene->cameraTransform = &tc;
     SetLookAtPos(Vector3(-1, 0, 0), tc);
 }
 
 void EditorCameraSystem::Run()
 {
-	auto view = EngineCore::instance()->scene->registry.view<TransformComponent,CameraComponent>();
+	auto view = ec->scene->registry.view<TransformComponent,CameraComponent>();
 	for (auto& entity : view)
 	{
 		TransformComponent& tc = view.get<TransformComponent>(entity);
@@ -97,43 +106,41 @@ void EditorCameraSystem::SetLookAtPos(Vector3 lookAtPos,TransformComponent& tc)
 
 void EditorCameraSystem::ProcessInput(CameraComponent& cc, TransformComponent& tc)
 {
-    
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         if (ImGui::IsMouseDown(ImGuiMouseButton_Right))
         {
-            tc.localRotation += Vector3(io.MouseDelta.y * EngineCore::instance()->deltaTime, io.MouseDelta.x * EngineCore::instance()->deltaTime, 0.0f);
+            tc.localRotation += Vector3(io.MouseDelta.y * ec->deltaTime, io.MouseDelta.x * ec->deltaTime, 0.0f);
         }
         if (ImGui::IsKeyDown(ImGuiKey_W))
         {
-            tc.localPosition += Vector3(cc.forward) * cc.cameraSpeed * EngineCore::instance()->deltaTime;
+            tc.localPosition += Vector3(cc.forward) * cc.cameraSpeed * ec->deltaTime;
             
         }
         if (ImGui::IsKeyDown(ImGuiKey_A))
         {
-            tc.localPosition += Vector3(cc.left) * cc.cameraSpeed * EngineCore::instance()->deltaTime;
+            tc.localPosition += Vector3(cc.left) * cc.cameraSpeed * ec->deltaTime;
             
         }
         if (ImGui::IsKeyDown(ImGuiKey_S))
         {
-            tc.localPosition += Vector3(cc.back) * cc.cameraSpeed * EngineCore::instance()->deltaTime;
+            tc.localPosition += Vector3(cc.back) * cc.cameraSpeed * ec->deltaTime;
         }
         if (ImGui::IsKeyDown(ImGuiKey_D))
         {
-            tc.localPosition += Vector3(cc.right) * cc.cameraSpeed * EngineCore::instance()->deltaTime;
+            tc.localPosition += Vector3(cc.right) * cc.cameraSpeed * ec->deltaTime;
         }
         if (ImGui::IsKeyDown(ImGuiKey_Space))
         {
-            tc.localPosition += Vector3(0, cc.cameraSpeed* EngineCore::instance()->deltaTime,0.0f);
+            tc.localPosition += Vector3(0, cc.cameraSpeed*ec->deltaTime,0.0f);
 
         }
         if (ImGui::IsKeyDown(ImGuiKey_LeftShift))
         {
-            tc.localPosition += Vector3(0, -cc.cameraSpeed * EngineCore::instance()->deltaTime, 0.0f);
+            tc.localPosition += Vector3(0, -cc.cameraSpeed * ec->deltaTime, 0.0f);
                       
         }
-        if (ImGui::IsKeyDown(ImGuiKey_E))
-        {
-           
-        }
+        tc.localPosition += Vector3(cc.forward) * cc.mouseWheel*0.25f;
+        cc.mouseWheel = 0.0f;
+        //std::cout << io.MouseWheel << std::endl;
     
 }

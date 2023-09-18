@@ -1,7 +1,8 @@
 #include "ParticleComponent.h"
 
 #include "../../vendor/WICTextureLoader.h"
-#include "../Core/EngineCore.h"
+#include "../Core/ServiceLocator.h"
+#include "../Core/Graphics/ConstantBuffer.h"
 
 UINT NUM_ELEMENTS = 512 * 512;
 UINT BITONIC_BLOCK_SIZE = 512; //Ближайшая степень двойки
@@ -27,34 +28,34 @@ ParticleComponent::ParticleComponent( int _maxParticles, DirectX::SimpleMath::Ve
 
 void ParticleComponent::InitializeBuffers()
 {
-    this->indexBuffer = std::make_unique<Buffer>(EngineCore::instance()->device.Get());
+    this->indexBuffer = std::make_unique<Buffer>(hc->device.Get());
     indexBuffer->Initialize(indices);
 
-    this->poolBuffer = std::make_unique<Buffer>(EngineCore::instance()->device.Get());
+    this->poolBuffer = std::make_unique<Buffer>(hc->device.Get());
     poolBuffer->Initialize(particleList, maxParticles, sizeof(Particle), true);
 
-    this->deadListBuffer = std::make_unique<Buffer>(EngineCore::instance()->device.Get());
+    this->deadListBuffer = std::make_unique<Buffer>(hc->device.Get());
     deadListBuffer->Initialize(indexList, maxParticles, sizeof(int), true);
 
-    this->sortListBuffer = std::make_unique<Buffer>(EngineCore::instance()->device.Get());
+    this->sortListBuffer = std::make_unique<Buffer>(hc->device.Get());
     sortListBuffer->Initialize(nullptr, maxParticles, sizeof(SortListParticle), true);
 
-    this->constBuffer = std::make_unique<Buffer>(EngineCore::instance()->device.Get());
+    this->constBuffer = std::make_unique<Buffer>(hc->device.Get());
     constBuffer->Initialize(sizeof(CB_ParticleVisualisation));
 
-    this->groupCountConstBuffer = std::make_unique<Buffer>(EngineCore::instance()->device.Get());
+    this->groupCountConstBuffer = std::make_unique<Buffer>(hc->device.Get());
     groupCountConstBuffer->Initialize(sizeof(CB_ComputeShader));
 
-    this->sortGPUConstBuffer = std::make_unique<Buffer>(EngineCore::instance()->device.Get());
+    this->sortGPUConstBuffer = std::make_unique<Buffer>(hc->device.Get());
     sortGPUConstBuffer->Initialize(sizeof(CB));
 
-    this->tmpGPUBuffer = std::make_unique<Buffer>(EngineCore::instance()->device.Get());
+    this->tmpGPUBuffer = std::make_unique<Buffer>(hc->device.Get());
     tmpGPUBuffer->Initialize(nullptr, maxParticles, sizeof(SortListParticle), true);
 
-    this->indirectDrawBuffer = std::make_unique<Buffer>(EngineCore::instance()->device.Get());
+    this->indirectDrawBuffer = std::make_unique<Buffer>(hc->device.Get());
     indirectDrawBuffer->InitializeIndirect(maxParticles);
 
-    this->counterBuffer = std::make_unique<Buffer>(EngineCore::instance()->device.Get());
+    this->counterBuffer = std::make_unique<Buffer>(hc->device.Get());
     counterBuffer->InitializeCounterBuffer();
 
 
@@ -63,7 +64,7 @@ void ParticleComponent::InitializeBuffers()
     readback_buffer_desc.Usage = D3D11_USAGE_STAGING;
     readback_buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
     readback_buffer_desc.StructureByteStride = sizeof(SortListParticle);
-    EngineCore::instance()->device->CreateBuffer(&readback_buffer_desc, nullptr, &g_pReadBackBuffer);
+    hc->device->CreateBuffer(&readback_buffer_desc, nullptr, &g_pReadBackBuffer);
 
 }
 
@@ -105,19 +106,21 @@ void ParticleComponent::LoadTexture()
     sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
     sampDesc.MinLOD = 0;
     sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-    HRESULT hr = EngineCore::instance()->device->CreateSamplerState(&sampDesc, this->samplerState.GetAddressOf()); //Create sampler state
+    HRESULT hr = hc->device->CreateSamplerState(&sampDesc, this->samplerState.GetAddressOf()); //Create sampler state
     if (FAILED(hr))
     {
         std::cout << "OP" << std::endl;
     }
 
-    hr = DirectX::CreateWICTextureFromFile(EngineCore::instance()->device.Get(), texturePath, nullptr, textureSRV.GetAddressOf());
+    hr = DirectX::CreateWICTextureFromFile(hc->device.Get(), texturePath, nullptr, textureSRV.GetAddressOf());
     int q = 0;
 }
 
 
 void ParticleComponent::Initialize()
 {
+    hc = ServiceLocator::instance()->Get<HardwareContext>();
+
     particleList = new Particle[maxParticles];
     indexList = new int[maxParticles];
     for (int i = 0; i < maxParticles; i++)
@@ -151,13 +154,13 @@ void ParticleComponent::Initialize()
     viewDesc.Buffer.Flags = 0;
     viewDesc.Buffer.NumElements = poolBuffer->size;
 
-    HRESULT res = EngineCore::instance()->device->CreateUnorderedAccessView(poolBuffer->buffer.Get(), &viewDesc, poolBufferUAV.GetAddressOf());
+    HRESULT res = hc->device->CreateUnorderedAccessView(poolBuffer->buffer.Get(), &viewDesc, poolBufferUAV.GetAddressOf());
 
     viewDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_APPEND;
 
-    res = EngineCore::instance()->device->CreateUnorderedAccessView(deadListBuffer->buffer.Get(), &viewDesc, deadListUAV.GetAddressOf());
+    res = hc->device->CreateUnorderedAccessView(deadListBuffer->buffer.Get(), &viewDesc, deadListUAV.GetAddressOf());
     viewDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_COUNTER;
-    res = EngineCore::instance()->device->CreateUnorderedAccessView(sortListBuffer->buffer.Get(), &viewDesc, sortBufferUAV.GetAddressOf());
+    res = hc->device->CreateUnorderedAccessView(sortListBuffer->buffer.Get(), &viewDesc, sortBufferUAV.GetAddressOf());
 
 
     D3D11_BUFFER_DESC constant_buffer_desc = {};
@@ -165,22 +168,22 @@ void ParticleComponent::Initialize()
     constant_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
     constant_buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     constant_buffer_desc.CPUAccessFlags = 0;
-    HRESULT hr = EngineCore::instance()->device->CreateBuffer(&constant_buffer_desc, nullptr, sortGPUConstBuffer->buffer.GetAddressOf());
+    HRESULT hr = hc->device->CreateBuffer(&constant_buffer_desc, nullptr, sortGPUConstBuffer->buffer.GetAddressOf());
 
     D3D11_SHADER_RESOURCE_VIEW_DESC srvbuffer_desc = {};
     srvbuffer_desc.Format = DXGI_FORMAT_UNKNOWN;
     srvbuffer_desc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
     srvbuffer_desc.Buffer.ElementWidth = maxParticles;
-    hr = EngineCore::instance()->device->CreateShaderResourceView(sortListBuffer->buffer.Get(), &srvbuffer_desc, sortBufferSRV.GetAddressOf());
-    hr = EngineCore::instance()->device->CreateShaderResourceView(poolBuffer->buffer.Get(), &srvbuffer_desc, poolBufferSRV.GetAddressOf());
-    hr = EngineCore::instance()->device->CreateShaderResourceView(tmpGPUBuffer->buffer.Get(), &srvbuffer_desc, tmpGPUBufferSRV.GetAddressOf());
+    hr = hc->device->CreateShaderResourceView(sortListBuffer->buffer.Get(), &srvbuffer_desc, sortBufferSRV.GetAddressOf());
+    hr = hc->device->CreateShaderResourceView(poolBuffer->buffer.Get(), &srvbuffer_desc, poolBufferSRV.GetAddressOf());
+    hr = hc->device->CreateShaderResourceView(tmpGPUBuffer->buffer.Get(), &srvbuffer_desc, tmpGPUBufferSRV.GetAddressOf());
 
     D3D11_UNORDERED_ACCESS_VIEW_DESC uavbuffer_desc = {};
     uavbuffer_desc.Format = DXGI_FORMAT_UNKNOWN;
     uavbuffer_desc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
     uavbuffer_desc.Buffer.NumElements = maxParticles;
     uavbuffer_desc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_COUNTER;
-    hr = EngineCore::instance()->device->CreateUnorderedAccessView(tmpGPUBuffer->buffer.Get(), &uavbuffer_desc, tmpGPUBufferUAV.GetAddressOf());
+    hr = hc->device->CreateUnorderedAccessView(tmpGPUBuffer->buffer.Get(), &uavbuffer_desc, tmpGPUBufferUAV.GetAddressOf());
 
 
     D3D11_UNORDERED_ACCESS_VIEW_DESC counterDesc = {};
@@ -188,7 +191,7 @@ void ParticleComponent::Initialize()
     counterDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
     counterDesc.Buffer.NumElements = 1;
     counterDesc.Buffer.Flags = 0;
-    hr = EngineCore::instance()->device->CreateUnorderedAccessView(counterBuffer->buffer.Get(), &counterDesc, counterUAV.GetAddressOf());
+    hr = hc->device->CreateUnorderedAccessView(counterBuffer->buffer.Get(), &counterDesc, counterUAV.GetAddressOf());
 
     int numGroups = (maxParticles % 768 != 0) ? ((maxParticles / 768) + 1) : (maxParticles / 768);
     double secondRoot = sqrt(numGroups);
@@ -243,10 +246,10 @@ void ParticleComponent::SortGPU()
         SetConstants(level, level, MATRIX_HEIGHT, MATRIX_WIDTH);
 
         // Sort the row data
-        EngineCore::instance()->context->CSSetUnorderedAccessViews(0, 1, sortBufferUAV.GetAddressOf(), nullptr);
-        EngineCore::instance()->context->CSSetShader(bitonicSortShader->computeShader.Get(), nullptr, 0);
-        EngineCore::instance()->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
-        std::cout << NUM_ELEMENTS / BITONIC_BLOCK_SIZE << std::endl;
+        hc->context->CSSetUnorderedAccessViews(0, 1, sortBufferUAV.GetAddressOf(), nullptr);
+        hc->context->CSSetShader(bitonicSortShader->computeShader.Get(), nullptr, 0);
+        hc->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
+        //std::cout << NUM_ELEMENTS / BITONIC_BLOCK_SIZE << std::endl;
     }
 
     // Then sort the rows and columns for the levels > than the block size
@@ -257,32 +260,32 @@ void ParticleComponent::SortGPU()
 
         // Transpose the data from buffer 1 into buffer 2
         ID3D11ShaderResourceView* pViewnullptr = nullptr;
-        EngineCore::instance()->context->CSSetShaderResources(0, 1, &pViewnullptr);
-        EngineCore::instance()->context->CSSetUnorderedAccessViews(0, 1, tmpGPUBufferUAV.GetAddressOf(), nullptr);
-        EngineCore::instance()->context->CSSetShaderResources(0, 1, sortBufferSRV.GetAddressOf());
-        EngineCore::instance()->context->CSSetShader(matrixTransposeShader->computeShader.Get(), nullptr, 0);
-        EngineCore::instance()->context->Dispatch(MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE, MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE, 1);
+        hc->context->CSSetShaderResources(0, 1, &pViewnullptr);
+        hc->context->CSSetUnorderedAccessViews(0, 1, tmpGPUBufferUAV.GetAddressOf(), nullptr);
+        hc->context->CSSetShaderResources(0, 1, sortBufferSRV.GetAddressOf());
+        hc->context->CSSetShader(matrixTransposeShader->computeShader.Get(), nullptr, 0);
+        hc->context->Dispatch(MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE, MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE, 1);
 
-        std::cout << MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE << " " << MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE << std::endl;
+        //std::cout << MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE << " " << MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE << std::endl;
         // Sort the transposed column data
-        EngineCore::instance()->context->CSSetShader(bitonicSortShader->computeShader.Get(), nullptr, 0);
-        EngineCore::instance()->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
+        hc->context->CSSetShader(bitonicSortShader->computeShader.Get(), nullptr, 0);
+        hc->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
 
         //std::cout << NUM_ELEMENTS / BITONIC_BLOCK_SIZE << std::endl;
 
         SetConstants(BITONIC_BLOCK_SIZE, level, MATRIX_HEIGHT, MATRIX_WIDTH);
 
         // Transpose the data from buffer 2 back into buffer 1
-        EngineCore::instance()->context->CSSetShaderResources(0, 1, &pViewnullptr);
-        EngineCore::instance()->context->CSSetUnorderedAccessViews(0, 1, sortBufferUAV.GetAddressOf(), nullptr);
-        EngineCore::instance()->context->CSSetShaderResources(0, 1, tmpGPUBufferSRV.GetAddressOf());
-        EngineCore::instance()->context->CSSetShader(matrixTransposeShader->computeShader.Get(), nullptr, 0);
-        EngineCore::instance()->context->Dispatch(MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE, MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE, 1);
+        hc->context->CSSetShaderResources(0, 1, &pViewnullptr);
+        hc->context->CSSetUnorderedAccessViews(0, 1, sortBufferUAV.GetAddressOf(), nullptr);
+        hc->context->CSSetShaderResources(0, 1, tmpGPUBufferSRV.GetAddressOf());
+        hc->context->CSSetShader(matrixTransposeShader->computeShader.Get(), nullptr, 0);
+        hc->context->Dispatch(MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE, MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE, 1);
         //std::cout << MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE<<" "<< MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE << std::endl;
 
         // Sort the row data
-        EngineCore::instance()->context->CSSetShader(bitonicSortShader->computeShader.Get(), nullptr, 0);
-        EngineCore::instance()->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
+        hc->context->CSSetShader(bitonicSortShader->computeShader.Get(), nullptr, 0);
+        hc->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
 
         //std::cout << NUM_ELEMENTS / BITONIC_BLOCK_SIZE << std::endl;
     }
@@ -317,14 +320,14 @@ void ParticleComponent::SetConstants(UINT iLevel, UINT iLevelMask, UINT iWidth, 
 {
 
     CB cb = { iLevel, iLevelMask, iWidth, iHeight };
-    EngineCore::instance()->context->UpdateSubresource(sortGPUConstBuffer->buffer.Get(), 0, nullptr, &cb, 0, 0);
-    EngineCore::instance()->context->CSSetConstantBuffers(0, 1, sortGPUConstBuffer->buffer.GetAddressOf());
+    hc->context->UpdateSubresource(sortGPUConstBuffer->buffer.Get(), 0, nullptr, &cb, 0, 0);
+    hc->context->CSSetConstantBuffers(0, 1, sortGPUConstBuffer->buffer.GetAddressOf());
 }
 
 void ParticleComponent::NullSortList()
 {
     std::generate(data.begin(), data.end(), [&] { return SortListParticle(0, 0); });
-    EngineCore::instance()->context->UpdateSubresource(sortListBuffer->buffer.Get(), 0, nullptr, &data[0], 0, 0);
+    hc->context->UpdateSubresource(sortListBuffer->buffer.Get(), 0, nullptr, &data[0], 0, 0);
 }
 
 

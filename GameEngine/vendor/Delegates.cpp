@@ -1,3 +1,3 @@
 #include "Delegates.h"
 
-unsigned int DelegateHandle::CURRENT_ID = 0;
+unsigned int CustomDelegates::DelegateHandle::CURRENT_ID = 0;
