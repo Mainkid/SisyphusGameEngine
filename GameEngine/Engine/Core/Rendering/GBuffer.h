@@ -9,6 +9,7 @@ class Game;
 class GBuffer
 {
 public:
+    friend class RenderHelper;
     friend class RenderPipeline;
     GBuffer(Microsoft::WRL::ComPtr<ID3D11Device> _device);
     void Initialize(int height, int width);
@@ -26,7 +27,6 @@ public:
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> positionRTV;
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> depthRTV;
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> specularRTV;
-
 private:
     int t_height;
     int t_width;

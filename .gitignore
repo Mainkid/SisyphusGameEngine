@@ -1,3 +1,5 @@
+imgui.ini
+
 ##### Windows
 # Windows thumbnail cache files
 Thumbs.db
@@ -8,6 +10,7 @@ ehthumbs_vista.db
 # Dump file
 *.stackdump
 
+*.idea
 # Folder config file
 [Dd]esktop.ini
 

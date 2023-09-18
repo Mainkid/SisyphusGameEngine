@@ -1,5 +1,6 @@
 #include "RBodyComponent.h"
-#include "../../vendor/PhysX/PxPhysicsAPI.h"
+#include "PxConfig.h"
+#include "PxPhysicsAPI.h"
 #include <iostream>
 using namespace physx;
 

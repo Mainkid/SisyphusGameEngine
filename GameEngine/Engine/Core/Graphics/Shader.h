@@ -6,7 +6,6 @@
 #include <d3dcompiler.h>
 
 #include "Buffer.h"
-#include "../../Components/GameComponent.h"
 
 #define COMPILE_PIXEL 1
 #define COMPILE_VERTEX 2
@@ -18,7 +17,7 @@
 #define USE_COLOR 4
 #define USE_NORMAL 8
 
-class EngineCore;
+struct HardwareContext;
 
 class Shader 
 {
@@ -52,7 +51,7 @@ protected:
 
     Microsoft::WRL::ComPtr<ID3DBlob> errorPixelCode = nullptr;
     Microsoft::WRL::ComPtr<ID3DBlob> errorVertexCode = nullptr;
-    
+    HardwareContext* hc;
 };
 
 //TODO: убрать shared-ptr;

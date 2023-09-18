@@ -50,8 +50,8 @@ struct RBodyComponent
 	physx::PxShape*			rbShape = nullptr;
 	RBodyMaterial			rbMaterial;
 
-	RBodyComponent(	physx::PxPhysics&		psPhysics_, 
-					physx::PxScene&			psScene_, 
+	RBodyComponent(	physx::PxPhysics&			psPhysics_, 
+					physx::PxScene&				psScene_, 
 					const RBodyType&			rbType_, 
 					const RBodyShapeType&		rbShapeType_, 
 					const RBodyShapeDescBase&	rbShapeDesc_, 

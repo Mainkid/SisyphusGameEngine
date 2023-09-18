@@ -1,6 +1,4 @@
 #pragma once
-#include "GameComponent.h"
-
 #include "Mesh.h"
 #include "SimpleMath.h"
 #include "assimp/postprocess.h"

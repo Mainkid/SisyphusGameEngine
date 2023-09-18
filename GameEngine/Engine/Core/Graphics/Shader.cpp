@@ -1,9 +1,12 @@
 ﻿#include "Shader.h"
-#include "../EngineCore.h"
+#include "../../Systems/HardwareContext.h"
+#include "../ServiceLocator.h"
 
 void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned int uniform_flags,
     LPCSTR v_entryPoint, LPCSTR p_entryPoint, LPCSTR g_entryPoint, LPCSTR c_entryPoint)
 {
+    hc = ServiceLocator::instance()->Get<HardwareContext>();
+
     HRESULT res;
     if ((compile_flags & COMPILE_PIXEL) == COMPILE_PIXEL)
     {
@@ -11,7 +14,7 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
             p_entryPoint, "ps_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
             0, pixelBC.GetAddressOf(), errorPixelCode.GetAddressOf());
 
-        res = EngineCore::instance()->device->CreatePixelShader(
+        res = hc->device->CreatePixelShader(
             this->pixelBC->GetBufferPointer(),
             this->pixelBC->GetBufferSize(),
             nullptr, this->pixelShader.GetAddressOf());
@@ -23,7 +26,7 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
             v_entryPoint, "vs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0,
             vertexBC.GetAddressOf(), errorVertexCode.GetAddressOf());
 
-        res = EngineCore::instance()->device->CreateVertexShader(
+        res = hc->device->CreateVertexShader(
             this->vertexBC->GetBufferPointer(),
             this->vertexBC->GetBufferSize(),
             nullptr, this->vertexShader.GetAddressOf());
@@ -35,7 +38,7 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
             g_entryPoint, "gs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
             0, geomBC.GetAddressOf(), errorPixelCode.GetAddressOf());
 
-        res = EngineCore::instance()->device->CreateGeometryShader(
+        res = hc->device->CreateGeometryShader(
             this->geomBC->GetBufferPointer(),
             this->geomBC->GetBufferSize(),
             nullptr, this->geomShader.GetAddressOf());
@@ -48,7 +51,7 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
             c_entryPoint, "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
             0, computeBC.GetAddressOf(), errorPixelCode.GetAddressOf());
 
-         res = EngineCore::instance()->device->CreateComputeShader(
+         res = hc->device->CreateComputeShader(
              this->computeBC->GetBufferPointer(),
              this->computeBC->GetBufferSize(),
              nullptr, this->computeShader.GetAddressOf());
@@ -100,7 +103,7 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
 
     if ((uniform_flags & USE_NONE) != USE_NONE)
     {
-        res = EngineCore::instance()->device->CreateInputLayout(
+        res = hc->device->CreateInputLayout(
             inputElements,
             ctr,
             vertexBC->GetBufferPointer(),

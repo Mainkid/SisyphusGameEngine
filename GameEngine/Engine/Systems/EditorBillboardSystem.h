@@ -3,8 +3,9 @@
 #include "SimpleMath.h"
 #include <typeindex>
 #include <typeinfo>
-#include "../Components/EditorBillboardComponent.h"
 #include <string>
+
+struct EngineContext;
 
 class EditorBillboardSystem : public ISystem
 {
@@ -14,6 +15,7 @@ public:
 	void Destroy() override;
 private:
 	std::hash<std::string> hasher;
+	EngineContext* ec;
 };
 
 

@@ -1,14 +1,16 @@
 #include "TransformSystem.h"
-
+#include "EngineContext.h"
+#include "../Core/ServiceLocator.h"
+#include "TransformHelper.h"
 
 void TransformSystem::Init()
 {
-	
+	ec = ServiceLocator::instance()->Get<EngineContext>();
 }
 
 void TransformSystem::Run()
 {
-	auto view = EngineCore::instance()->scene->registry.view<TransformComponent>();
+	auto view = ec->scene->registry.view<TransformComponent>();
 	for (auto& entity :view)
 	{
 		TransformComponent& tc = view.get<TransformComponent>(entity);

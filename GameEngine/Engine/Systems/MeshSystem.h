@@ -11,6 +11,8 @@
 
 
 struct MeshComponent;
+struct HardwareContext;
+struct EngineContext;
 
 class MeshSystem : public ISystem
 {
@@ -22,7 +24,8 @@ private:
 	bool LoadModel(MeshComponent& mesh);
 	void LoadTexture(MeshComponent& mesh);
 	void ProcessNode(MeshComponent& meshComp, aiNode* node, const aiScene* scene);
-	
 	std::hash<std::string> hasher;
+	HardwareContext* hc;
+	EngineContext* ec;
 };
 

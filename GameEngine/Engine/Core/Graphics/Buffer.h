@@ -8,7 +8,7 @@
 #include "SimpleMath.h"
 //#include "ParticleSystem/Particle.h"
 
-class EngineCore;
+struct HardwareContext;
 
 class Buffer
 {
@@ -47,5 +47,7 @@ public:
     Microsoft::WRL::ComPtr<ID3D11Buffer> buffer;
     size_t size=0;
   
+private:
+    HardwareContext* hc;
     
 };

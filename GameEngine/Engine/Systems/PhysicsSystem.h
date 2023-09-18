@@ -1,5 +1,6 @@
 #pragma once
 #include "ISystem.h"
+#include "PxConfig.h"
 #include "PxPhysicsAPI.h"
 
 //using namespace physx;
