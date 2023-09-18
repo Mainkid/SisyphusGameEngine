@@ -6,6 +6,7 @@
 #include "TransformSystem.h"
 #include "MeshSystem.h"
 #include "LightSystem.h"
+#include "PhysicsSystem.h"
 #include "HardwareInitSystem.h"
 #include "Rendering/HUD/HudPropertiesSystem.h"
 #include "Rendering/HUD/HudContentBrowserSystem.h"

@@ -3,6 +3,7 @@
 #include "SimpleMath.h"
 #include <typeindex>
 #include <typeinfo>
+#include <string>
 
 struct EngineContext;
 
