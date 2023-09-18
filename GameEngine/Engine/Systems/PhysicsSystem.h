@@ -1,24 +1,27 @@
 #pragma once
 #include "ISystem.h"
-#include "PxConfig.h"
-#include "PxPhysicsAPI.h"
-
-//using namespace physx;
-
-
+#include "../Tools/Data/Vector.h"
+namespace physx
+{
+    class PxDefaultAllocator;
+    class PxDefaultErrorCallback;
+    class PxFoundation;
+    class PxPhysics;
+    class PxScene;
+}
 
 class PhysicsSystem :
     public ISystem
 {
-    physx::PxDefaultAllocator		psAllocator;
-    physx::PxDefaultErrorCallback	psErrorCallback;
-    physx::PxFoundation*            psFoundation = NULL;
+    physx::PxDefaultAllocator*		pxAllocator = nullptr;
+    physx::PxDefaultErrorCallback*	pxErrorCallback = nullptr;
+    physx::PxFoundation*            pxFoundation = nullptr;
 
 public:
-    physx::PxPhysics*               psPhysics = NULL;
-    physx::PxScene*                 psScene = NULL;
-    physx::PxVec3                   gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
-    physx::PxReal                   stepsPerSecond = 60.0f;
+    physx::PxPhysics*               pxPhysics = nullptr;
+    physx::PxScene*                 psScene = nullptr;
+    SyVector3                       gravity = { 0.0f, -9.81f, 0.0f };
+    float                           stepsPerSecond = 60.0f;
 
     void Init();
     void Run();

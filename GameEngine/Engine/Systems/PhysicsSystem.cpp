@@ -1,16 +1,18 @@
 #include "PhysicsSystem.h"
-
+#include "PxPhysicsAPI.h"
 using namespace physx;
 
 void PhysicsSystem::Init()
 {
-	psFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, psAllocator, psErrorCallback);
-	psPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *psFoundation, PxTolerancesScale(), true, nullptr);
-	PxSceneDesc sceneDesc(psPhysics->getTolerancesScale());
+	pxAllocator = new PxDefaultAllocator;
+	pxErrorCallback = new PxDefaultErrorCallback;
+	pxFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, *pxAllocator, *pxErrorCallback);
+	pxPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *pxFoundation, PxTolerancesScale(), true, nullptr);
+	PxSceneDesc sceneDesc(pxPhysics->getTolerancesScale());
 	sceneDesc.gravity = gravity;
 	sceneDesc.cpuDispatcher = PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
-	psScene = psPhysics->createScene(sceneDesc);
+	psScene = pxPhysics->createScene(sceneDesc);
 	
 }
 
@@ -23,6 +25,6 @@ void PhysicsSystem::Run()
 void PhysicsSystem::Destroy()
 {
 	PX_RELEASE(psScene);
-	PX_RELEASE(psPhysics);
-	PX_RELEASE(psFoundation);
+	PX_RELEASE(pxPhysics);
+	PX_RELEASE(pxFoundation);
 }

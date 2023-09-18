@@ -594,6 +594,7 @@
       <SDLCheck>true</SDLCheck>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="Engine\Tools\ErrorLogger.cpp" />
     <ClCompile Include="Engine\Tools\ImageLoader.cpp" />
     <ClCompile Include="Engine\Components\ParticleComponent.cpp" />
     <ClCompile Include="Engine\Components\Particle.cpp" />
@@ -609,9 +610,9 @@
     <ClCompile Include="Engine\Systems\Rendering\RenderInitSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\PostViewportRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\HardwareInitSystem.cpp" />
-        <ClCompile Include="Engine\Systems\PhysicsSystem.cpp" />
+    <ClCompile Include="Engine\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="Engine\Components\RBodyComponent.cpp" />
-    <ClCompile Include="ErrorLogger.cpp" />
+    <ClCompile Include="Engine\Tools\Data\Vector.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -665,6 +666,7 @@
     <ClInclude Include="Engine\Core\Scene\Scene.h" />
     <ClInclude Include="Engine\Components\LightComponent.h" />
     <ClInclude Include="Engine\Core\Rendering\RenderTarget.h" />
+    <ClInclude Include="Engine\Tools\ErrorLogger.h" />
     <ClInclude Include="Engine\Tools\ImageLoader.h" />
     <ClInclude Include="Engine\Components\ParticleComponent.h" />
     <ClInclude Include="Engine\Components\Particle.h" />
@@ -674,7 +676,7 @@
     <ClInclude Include="Engine\Systems\MeshSystem.h" />
     <ClInclude Include="Engine\Systems\LightSystem.h" />
     <ClInclude Include="Engine\Systems\MeshLoader.h" />
-       <ClInclude Include="Engine\Systems\InputSystem.h" />
+    <ClInclude Include="Engine\Systems\InputSystem.h" />
     <ClInclude Include="Engine\Systems\StartUpSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\PreRenderSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderContext.h" />
@@ -684,9 +686,9 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderHelper.h" />
     <ClInclude Include="Engine\Systems\HardwareInitSystem.h" />
     <ClInclude Include="Engine\Systems\HardwareContext.h" />
-        <ClInclude Include="Engine\Systems\PhysicsSystem.h" />
+    <ClInclude Include="Engine\Systems\PhysicsSystem.h" />
     <ClInclude Include="Engine\Components\RBodyComponent.h" />
-    <ClInclude Include="ErrorLogger.h" />
+    <ClInclude Include="Engine\Tools\Data\Vector.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
