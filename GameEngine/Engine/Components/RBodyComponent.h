@@ -50,11 +50,11 @@ struct SyRBodyComponent
 	SyRBodyMaterial			rbMaterial;
 
 	SyRBodyComponent(	physx::PxPhysics&		physics_, 
-					physx::PxScene&				scene_, 
-					const SyRBodyType&			rbType_, 
-					const SyRBodyShapeType&		rbShapeType_, 
-					const SyRBodyShapeDescBase&	rbShapeDesc_, 
-					const SyRBodyMaterial&		rbMaterial_);
+						physx::PxScene&				scene_, 
+						const SyRBodyType&			rbType_, 
+						const SyRBodyShapeType&		rbShapeType_, 
+						const SyRBodyShapeDescBase&	rbShapeDesc_, 
+						const SyRBodyMaterial&		rbMaterial_);
 	~SyRBodyComponent();
 };
 

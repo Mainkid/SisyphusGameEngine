@@ -2,6 +2,8 @@
 #include <memory>
 #include "ISystem.h"
 #include "../Tools/Data/Vector.h"
+
+# pragma region forward declaration
 namespace physx
 {
     class PxDefaultAllocator;
@@ -10,6 +12,7 @@ namespace physx
     class PxPhysics;
     class PxScene;
 }
+#pragma endregion
 
 class SyPhysicsSystem :
     public ISystem
@@ -27,6 +30,5 @@ public:
     void Init();
     void Run();
     void Destroy();
-
 };
 

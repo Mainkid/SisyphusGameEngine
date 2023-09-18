@@ -5,11 +5,11 @@
 using namespace physx;
 
 SyRBodyComponent::SyRBodyComponent(	PxPhysics&					psPhysics_, 
-								PxScene&					psScene_, 
-								const SyRBodyType&			rbType_, 
-								const SyRBodyShapeType&		rbShapeType_,
-								const SyRBodyShapeDescBase&	rbShapeDesc_,
-								const SyRBodyMaterial&		rbMaterial_)
+									PxScene&					psScene_, 
+									const SyRBodyType&			rbType_, 
+									const SyRBodyShapeType&		rbShapeType_,
+									const SyRBodyShapeDescBase&	rbShapeDesc_,
+									const SyRBodyMaterial&		rbMaterial_)
 {
 	rbType = rbType_;
 	switch (rbType)

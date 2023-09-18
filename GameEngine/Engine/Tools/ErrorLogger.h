@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
-#define ERRORLG_EMPTY 0
-#define ERRORLG_GENERIC 1
-#define ERRORLG_GENERIC_CRITICAL 2
+#define SY_NO_ERROR 0
+#define SY_GENERIC_ERROR 1
+#define SY_GENERIC_ERROR_CRITICAL 2
 class ErrorLogger
 {
 public:

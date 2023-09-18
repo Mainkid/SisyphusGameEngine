@@ -177,6 +177,9 @@
     <ClCompile Include="Engine\Tools\Data\Vector.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Matrix4x4.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Components\TransformComponent.h">
@@ -417,6 +420,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Tools\Data\Vector.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix4x4.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

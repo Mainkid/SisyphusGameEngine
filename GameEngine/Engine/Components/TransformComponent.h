@@ -13,7 +13,7 @@ struct TransformComponent
 		this->rotation = _rot;
 		this->scale = _scale;
 	}
-	Vector3 position = Vector3(0, 0, 0);
+	Vector3 position = Vector3(0, 0, 0 );
 	Vector3 rotation = Vector3(0, 0, 0);
 	Vector3 scale = Vector3(1, 1, 1);
 	Vector3 localPosition = Vector3(0, 0, 0);

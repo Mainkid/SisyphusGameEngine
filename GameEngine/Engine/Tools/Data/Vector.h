@@ -22,9 +22,11 @@ struct SyVector3
 
 	SyVector3();
 	SyVector3(float x_, float y_, float z_);
-	SyVector3(const DirectX::SimpleMath::Vector3& dxVector3);
-	SyVector3(const physx::PxVec3& pxVector3);
+	SyVector3(const DirectX::SimpleMath::Vector3& dxVector3_);
+	SyVector3(const physx::PxVec3& pxVector3_);
 	operator DirectX::SimpleMath::Vector3() const;
 	operator physx::PxVec3() const;
+	SyVector3 operator= (const DirectX::SimpleMath::Vector3& dxVector3_);
 };
 
+void FromQuatToEuler(const SyVector3& quat, SyVector3& res);
