@@ -1,5 +1,5 @@
 #pragma once
-#include "SimpleMath.h"
+#include "../Tools/Data/Vector.h"
 #pragma region forward declaration
 namespace physx
 {
@@ -11,51 +11,50 @@ namespace physx
 }
 #pragma endregion
 
-struct RBodyMaterial
+struct SyRBodyMaterial
 {
 	float staticFriction;
 	float dynamicFriction;
 	float restitution;
 };
-enum RBodyType
+enum SyRBodyType
 {
 	RB_TYPE_STATIC = 0,
 	RB_TYPE_DYNAMIC = 1
 };
-enum RBodyShapeType
+enum SyRBodyShapeType
 {
 	RB_SHAPE_TYPE_BOX = 0,
 	RB_SHAPE_TYPE_SPHERE = 1
 };
 
-struct RBodyShapeDescBase
+struct SyRBodyShapeDescBase
 {
-	DirectX::SimpleMath::Vector3 origin;
+	SyVector3 origin;
 };
 
-struct RBodyBoxShapeDesc : RBodyShapeDescBase
+struct SyRBodyBoxShapeDesc : SyRBodyShapeDescBase
 {
-	DirectX::SimpleMath::Vector3 halfExt;
+	SyVector3 halfExt;
 };
-struct RBodySphereShapeDesc : RBodyShapeDescBase
+struct SyRBodySphereShapeDesc : SyRBodyShapeDescBase
 {
 	float radius;
 };
-struct RBodyComponent
+struct SyRBodyComponent
 {
-
-	RBodyType				rbType;
+	SyRBodyType				rbType;
 	physx::PxRigidActor*	rbActor = nullptr;
-	RBodyShapeType			rbShapeType;
+	SyRBodyShapeType		rbShapeType;
 	physx::PxShape*			rbShape = nullptr;
-	RBodyMaterial			rbMaterial;
+	SyRBodyMaterial			rbMaterial;
 
-	RBodyComponent(	physx::PxPhysics&			psPhysics_, 
-					physx::PxScene&				psScene_, 
-					const RBodyType&			rbType_, 
-					const RBodyShapeType&		rbShapeType_, 
-					const RBodyShapeDescBase&	rbShapeDesc_, 
-					const RBodyMaterial&		rbMaterial_);
-	~RBodyComponent();
+	SyRBodyComponent(	physx::PxPhysics&		physics_, 
+					physx::PxScene&				scene_, 
+					const SyRBodyType&			rbType_, 
+					const SyRBodyShapeType&		rbShapeType_, 
+					const SyRBodyShapeDescBase&	rbShapeDesc_, 
+					const SyRBodyMaterial&		rbMaterial_);
+	~SyRBodyComponent();
 };
 

@@ -74,7 +74,7 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<TransformSystem> ts= std::make_unique<TransformSystem>();
 	systems.push_back(std::move(ts));
 
-	std::unique_ptr<PhysicsSystem> ps = std::make_unique<PhysicsSystem>();
+	std::unique_ptr<SyPhysicsSystem> ps = std::make_unique<SyPhysicsSystem>();
 	systems.push_back(std::move(ps));
 
 	std::unique_ptr<EditorCameraSystem> ecs = std::make_unique<EditorCameraSystem>();

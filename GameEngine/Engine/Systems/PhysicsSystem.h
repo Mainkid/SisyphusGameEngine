@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "ISystem.h"
 #include "../Tools/Data/Vector.h"
 namespace physx
@@ -10,18 +11,18 @@ namespace physx
     class PxScene;
 }
 
-class PhysicsSystem :
+class SyPhysicsSystem :
     public ISystem
 {
-    physx::PxDefaultAllocator*		pxAllocator = nullptr;
-    physx::PxDefaultErrorCallback*	pxErrorCallback = nullptr;
-    physx::PxFoundation*            pxFoundation = nullptr;
+    std::shared_ptr<physx::PxDefaultAllocator>		allocator = nullptr;
+    std::shared_ptr<physx::PxDefaultErrorCallback>	errorCallback = nullptr;
+    physx::PxFoundation*                            foundation = nullptr;
 
 public:
-    physx::PxPhysics*               pxPhysics = nullptr;
-    physx::PxScene*                 psScene = nullptr;
-    SyVector3                       gravity = { 0.0f, -9.81f, 0.0f };
-    float                           stepsPerSecond = 60.0f;
+    physx::PxPhysics*                               physics = nullptr;
+    physx::PxScene*                                 scene = nullptr;
+    SyVector3                                       gravity = { 0.0f, -9.81f, 0.0f };
+    float                                           stepsPerSecond = 60.0f;
 
     void Init();
     void Run();

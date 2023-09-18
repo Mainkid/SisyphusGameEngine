@@ -1,30 +1,31 @@
-#include "PhysicsSystem.h"
 #include "PxPhysicsAPI.h"
+#include "PhysicsSystem.h"
+
 using namespace physx;
 
-void PhysicsSystem::Init()
+void SyPhysicsSystem::Init()
 {
-	pxAllocator = new PxDefaultAllocator;
-	pxErrorCallback = new PxDefaultErrorCallback;
-	pxFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, *pxAllocator, *pxErrorCallback);
-	pxPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *pxFoundation, PxTolerancesScale(), true, nullptr);
-	PxSceneDesc sceneDesc(pxPhysics->getTolerancesScale());
+	allocator = std::make_shared<PxDefaultAllocator>();
+	errorCallback = std::make_shared<PxDefaultErrorCallback>();
+	foundation = PxCreateFoundation(PX_PHYSICS_VERSION, *allocator, *errorCallback);
+	physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, PxTolerancesScale(), true, nullptr);
+	PxSceneDesc sceneDesc(physics->getTolerancesScale());
 	sceneDesc.gravity = gravity;
 	sceneDesc.cpuDispatcher = PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
-	psScene = pxPhysics->createScene(sceneDesc);
+	scene = physics->createScene(sceneDesc);
 	
 }
 
-void PhysicsSystem::Run()
+void SyPhysicsSystem::Run()
 {
-	psScene->simulate(1 / stepsPerSecond);
-	psScene->fetchResults(true);
+	scene->simulate(1 / stepsPerSecond);
+	scene->fetchResults(true);
 }
 
-void PhysicsSystem::Destroy()
+void SyPhysicsSystem::Destroy()
 {
-	PX_RELEASE(psScene);
-	PX_RELEASE(pxPhysics);
-	PX_RELEASE(pxFoundation);
+	PX_RELEASE(scene);
+	PX_RELEASE(physics);
+	PX_RELEASE(foundation);
 }

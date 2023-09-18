@@ -4,31 +4,19 @@
 #include <iostream>
 using namespace physx;
 
-inline PxVec3 FromDxVector3(const DirectX::SimpleMath::Vector3& dxVector3)
-{
-	return PxVec3(
-		dxVector3.x,
-		dxVector3.y,
-		dxVector3.z
-	);
-}
-//must create separate class for conversions!!!
-	
-RBodyComponent::RBodyComponent(	PxPhysics&					psPhysics_, 
+SyRBodyComponent::SyRBodyComponent(	PxPhysics&					psPhysics_, 
 								PxScene&					psScene_, 
-								const RBodyType&			rbType_, 
-								const RBodyShapeType&		rbShapeType_,
-								const RBodyShapeDescBase&	rbShapeDesc_,
-								const RBodyMaterial&		rbMaterial_)
+								const SyRBodyType&			rbType_, 
+								const SyRBodyShapeType&		rbShapeType_,
+								const SyRBodyShapeDescBase&	rbShapeDesc_,
+								const SyRBodyMaterial&		rbMaterial_)
 {
 	rbType = rbType_;
 	switch (rbType)
 	{
-	case RB_TYPE_STATIC: rbActor = psPhysics_.createRigidStatic(PxTransform(
-					FromDxVector3(rbShapeDesc_.origin)));
+	case RB_TYPE_STATIC: rbActor = psPhysics_.createRigidStatic(PxTransform(rbShapeDesc_.origin));
 	break;
-	case RB_TYPE_DYNAMIC: rbActor = psPhysics_.createRigidDynamic(PxTransform(
-					FromDxVector3(rbShapeDesc_.origin)));
+	case RB_TYPE_DYNAMIC: rbActor = psPhysics_.createRigidDynamic(PxTransform(rbShapeDesc_.origin));
 	break;
 	default:
 		std::cout << "Unknown RB_TYPE!\n";
@@ -45,9 +33,9 @@ RBodyComponent::RBodyComponent(	PxPhysics&					psPhysics_,
 	{
 	case RB_SHAPE_TYPE_BOX: 
 	{
-		const RBodyBoxShapeDesc& boxDesc = static_cast<const RBodyBoxShapeDesc&>(rbShapeDesc_);
+		const SyRBodyBoxShapeDesc& boxDesc = static_cast<const SyRBodyBoxShapeDesc&>(rbShapeDesc_);
 		PxRigidActorExt::createExclusiveShape(	*rbActor,
-												PxBoxGeometry(FromDxVector3(boxDesc.halfExt)),
+												PxBoxGeometry(boxDesc.halfExt),
 												*psPhysics_.createMaterial(
 												rbMaterial.staticFriction,
 												rbMaterial.dynamicFriction,
@@ -56,7 +44,7 @@ RBodyComponent::RBodyComponent(	PxPhysics&					psPhysics_,
 	break;
 	case RB_SHAPE_TYPE_SPHERE:
 	{
-		const RBodySphereShapeDesc& sphereDesc = static_cast<const RBodySphereShapeDesc&>(rbShapeDesc_);
+		const SyRBodySphereShapeDesc& sphereDesc = static_cast<const SyRBodySphereShapeDesc&>(rbShapeDesc_);
 		PxRigidActorExt::createExclusiveShape(	*rbActor,
 												PxSphereGeometry(sphereDesc.radius),
 												*psPhysics_.createMaterial(
@@ -73,7 +61,7 @@ RBodyComponent::RBodyComponent(	PxPhysics&					psPhysics_,
 	psScene_.addActor(*rbActor);
 }
 
-RBodyComponent::~RBodyComponent()
+SyRBodyComponent::~SyRBodyComponent()
 {
 	PX_RELEASE(rbActor);
 	PX_RELEASE(rbShape);
