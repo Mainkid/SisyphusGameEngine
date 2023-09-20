@@ -9,6 +9,7 @@
 #include "../../Components/ParticleComponent.h"
 #include "../../Components/CameraComponent.h"
 #include "../../Components/EditorBillboardComponent.h"
+#include "../../Components/RBodyComponent.h"
 
 
 class Scene

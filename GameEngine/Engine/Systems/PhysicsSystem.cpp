@@ -7,17 +7,22 @@
 
 using namespace physx;
 
+PxPhysics*	SyRBodyComponent::physics;
+PxScene*	SyRBodyComponent::scene;
+
 void SyPhysicsSystem::Init()
 {
 	allocator = std::make_shared<PxDefaultAllocator>();
 	errorCallback = std::make_shared<PxDefaultErrorCallback>();
 	foundation = PxCreateFoundation(PX_PHYSICS_VERSION, *allocator, *errorCallback);
 	physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, PxTolerancesScale(), true, nullptr);
+	SyRBodyComponent::physics = physics;
 	PxSceneDesc sceneDesc(physics->getTolerancesScale());
 	sceneDesc.gravity = gravity;
 	sceneDesc.cpuDispatcher = PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 	scene = physics->createScene(sceneDesc);
+	SyRBodyComponent::scene = scene;
 	
 }
 

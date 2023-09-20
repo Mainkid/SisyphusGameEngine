@@ -1,28 +1,24 @@
 #include "RBodyComponent.h"
 #include "PxConfig.h"
 #include "PxPhysicsAPI.h"
+#include "../Tools/ErrorLogger.h"
 #include <iostream>
 using namespace physx;
 
-SyRBodyComponent::SyRBodyComponent(	PxPhysics*					psPhysics_, 
-									PxScene*					psScene_, 
-									const SyRBodyType&			rbType_, 
+SyRBodyComponent::SyRBodyComponent(	const SyRBodyType&			rbType_, 
 									const SyRBodyShapeType&		rbShapeType_,
-									const SyRBodyShapeDescBase&	rbShapeDesc_,
+									const SyRBodyShapeDescBase& rbDefaultShapeDesc_,
 									const SyRBodyMaterial&		rbMaterial_)
-{
-	physics = psPhysics_;
-	scene = psScene_;
-	rbDefaultShapeDesc = new SyRBodyShapeDescBase(rbShapeDesc_);
-	rbType = rbType_;
+{	rbType = rbType_;
 	rbShapeType = rbShapeType_;
 	rbMaterial = rbMaterial_;
-	
-}
+	if (physics == nullptr)
+		//SyRbodyComponent::physics has not been initialized
+		ErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 16);
+	if (scene == nullptr)
+		//SyRbodyComponent::scene has not been initialized
+		ErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 16);
 
-void SyRBodyComponent::Init()
-{
-	
 	switch (rbType)
 	{
 	case RB_TYPE_STATIC: rbActor = physics->createRigidStatic(PxTransform(rbDefaultShapeDesc->origin));
@@ -30,17 +26,17 @@ void SyRBodyComponent::Init()
 	case RB_TYPE_DYNAMIC: rbActor = physics->createRigidDynamic(PxTransform(rbDefaultShapeDesc->origin));
 		break;
 	default:
-		std::cout << "Unknown RB_TYPE!\n";
-		return;
+		//Unknown RB_TYPE!;
+		ErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 40);
 		break;
 	};
 	switch (rbShapeType)
 	{
 	case RB_SHAPE_TYPE_BOX:
 	{
-		auto boxDesc = static_cast<SyRBodyBoxShapeDesc*>(rbDefaultShapeDesc);
+		auto boxDesc = static_cast<const SyRBodyBoxShapeDesc&>(rbDefaultShapeDesc_);
 		PxRigidActorExt::createExclusiveShape(*rbActor,
-			PxBoxGeometry(boxDesc->halfExt),
+			PxBoxGeometry(boxDesc.halfExt),
 			*physics->createMaterial(
 				rbMaterial.staticFriction,
 				rbMaterial.dynamicFriction,
@@ -49,9 +45,9 @@ void SyRBodyComponent::Init()
 	break;
 	case RB_SHAPE_TYPE_SPHERE:
 	{
-		auto sphereDesc = static_cast<SyRBodySphereShapeDesc*>(rbDefaultShapeDesc);
+		auto sphereDesc = static_cast<const SyRBodySphereShapeDesc&>(rbDefaultShapeDesc_);
 		PxRigidActorExt::createExclusiveShape(*rbActor,
-			PxSphereGeometry(sphereDesc->radius),
+			PxSphereGeometry(sphereDesc.radius),
 			*physics->createMaterial(
 				rbMaterial.staticFriction,
 				rbMaterial.dynamicFriction,
@@ -59,13 +55,13 @@ void SyRBodyComponent::Init()
 	}
 	break;
 	default:
-		std::cout << "Unknown RB_SHAPE_TYPE!\n";
-		return;
+		//Unknown RB_SHAPE_TYPE!
+		ErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 70);
 		break;
 	}
 	scene->addActor(*rbActor);
-
 }
+
 
 SyRBodyComponent::~SyRBodyComponent()
 {
