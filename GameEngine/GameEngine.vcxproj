@@ -609,9 +609,11 @@
     <ClCompile Include="Engine\Systems\Rendering\RenderInitSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\PostViewportRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\HardwareInitSystem.cpp" />
-        <ClCompile Include="Engine\Systems\PhysicsSystem.cpp" />
+    <ClCompile Include="Engine\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="Engine\Components\RBodyComponent.cpp" />
     <ClCompile Include="ErrorLogger.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -628,6 +630,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Components\SkyboxComponent.h" />
     <ClInclude Include="Engine\Systems\EngineContext.h" />
     <ClInclude Include="Engine\Core\IService.h" />
     <ClInclude Include="Engine\Systems\EditorBillboardSystem.h" />
@@ -674,7 +677,7 @@
     <ClInclude Include="Engine\Systems\MeshSystem.h" />
     <ClInclude Include="Engine\Systems\LightSystem.h" />
     <ClInclude Include="Engine\Systems\MeshLoader.h" />
-       <ClInclude Include="Engine\Systems\InputSystem.h" />
+    <ClInclude Include="Engine\Systems\InputSystem.h" />
     <ClInclude Include="Engine\Systems\StartUpSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\PreRenderSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderContext.h" />
@@ -684,9 +687,11 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderHelper.h" />
     <ClInclude Include="Engine\Systems\HardwareInitSystem.h" />
     <ClInclude Include="Engine\Systems\HardwareContext.h" />
-        <ClInclude Include="Engine\Systems\PhysicsSystem.h" />
+    <ClInclude Include="Engine\Systems\PhysicsSystem.h" />
     <ClInclude Include="Engine\Components\RBodyComponent.h" />
     <ClInclude Include="ErrorLogger.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
@@ -723,12 +728,18 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <None Include="Engine\Assets\Shaders\ShadowMapGenerator.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <FxCompile Include="Engine\Assets\Shaders\ShadowShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <None Include="Engine\Assets\Shaders\Skybox.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <FxCompile Include="Engine\Assets\Shaders\SpotLightShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -751,6 +762,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <None Include="vendor\DirectXTK\Inc\SimpleMath.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_2.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_3.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_4.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_5.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_6.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

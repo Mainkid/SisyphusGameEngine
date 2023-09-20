@@ -26,12 +26,13 @@ Texture2D<float4> NormalTex : register(t1);
 Texture2D<float4> WorldPosTex : register(t2);
 Texture2D<float4> DepthTex : register(t3);
 Texture2D<float4> SpecularTex : register(t4);
-Texture2DArray depthMapTexture : register(t5);
-
+Texture2D shadowTexture : register(t5);
+Texture2D skyboxTexture : register(t6);
+Texture2D depthTexture : register(t7);
 
 
 SamplerState textureSampler : SAMPLER : register(s0);
-SamplerState depthMapSampler : register(s1);
+SamplerState shadowSampler : register(s1);
 
 struct VS_IN
 {
@@ -45,13 +46,6 @@ struct PS_IN
     float4 col :COLOR;
 };
 
-//struct GBuffer
-//{
-//    float4 Normals : SV_Target0;
-//    float4 DiffuseSpec : SV_Target1;
-//    float4 WorldPos : SV_Target2;
-    
-//};
 
 PS_IN VSMain(VS_IN input)
 {
@@ -81,54 +75,31 @@ float4 PS_Directional(PS_IN input) : SV_Target
   
 
     float3 lightVec = -normalize(lightData.dir.xyz).xyz;
-    
     float3 toEye = normalize(eyePos.xyz - worldPos.xyz);
     float lightIntesity = lightData.color.w;
     float specularAlpha = 50.0f;
     
-    //www
-    float bias = 0.001f;
-    float3 projectTexCoord;
-    float depthValue;
-    float lightDepthValue;
-    int layer = 3;
-    float depthVal = abs(mul(float4(worldPos, 1), worldView).z);
-    for (int i = 0; i < 4; i++)
-        if (depthVal < distances[i].x)
+    //PCF --->
+    
+    float texelWidth = 1.0 / 1280.0f;
+    float texelHeight = 1.0 / 720.0f;
+    float2 texelSize = float2(texelWidth, texelHeight);
+    float shadowSum = 0.0f;
+    
+    for (int y = -3; y <= 3; y++)
+    {
+        for (int x = -3; x <= 3; x++)
         {
-            layer = i;
-            break;
+            float2 offset = float2(x, y) * texelSize;
+            shadowSum=shadowSum+ shadowTexture.Sample(textureSampler, input.col.xy + offset);
         }
+    }
+    shadowSum = shadowSum / 49.0f;
     
-  
-    //if (layer == 0)
-    //    return float4(1, 0, 0, 1);
-    //else if (layer == 1)
-    //    return float4(0, 1, 0, 1);
-    //else if (layer == 2)
-    //    return float4(0, 0, 1, 1);
+    //<--- PCF
     
-    
-    float4 posLight = float4(worldPos, 1);
-    posLight = mul(posLight, viewProj[layer]);
-    
-    
-    projectTexCoord.x = posLight.x / posLight.w / 2.0f + 0.5f;
-    projectTexCoord.y = -posLight.y / posLight.w / 2.0f + 0.5f;
-    projectTexCoord.z = layer;
-  
-    depthValue = depthMapTexture.Sample(textureSampler, projectTexCoord).r;
-    lightDepthValue = posLight.z / posLight.w - bias;
-    
-   
-    
-    if (lightDepthValue > depthValue)
-        lightIntesity = 0.0f;
+    lightIntesity = lightIntesity * shadowSum;
         
-    
-    
-    ///
-  
     
     float3 diffuseFactor = lightIntesity * lightData.color.xyz * dot(lightVec, normal.xyz);
     
@@ -148,8 +119,6 @@ float4 PS_Directional(PS_IN input) : SV_Target
 
     float3 resColor = diffuseFactor * pixelColor + specFactor;
     
-    //resColor = pow(resColor, 0.45f);
-    
     
     return float4(resColor, 1.0f);
 
@@ -159,10 +128,13 @@ float4 PS_Ambient(PS_IN input) : SV_Target
 {
     
     float3 pixelColor = DiffuseTex.Sample(textureSampler, input.col.xy);
-    //pixelColor = pow(pixelColor, 2.2f);
-    float3 resColor =pixelColor*lightData.color.xyz;
+    float3 instanceID = DepthTex.Sample(textureSampler, input.col.xy);
+    float3 skyBoxColor = skyboxTexture.Sample(textureSampler, input.col.xy);
+    float3 resColor;
+    resColor = pixelColor * lightData.color.xyz * (instanceID.x > 0) + skyBoxColor*(instanceID.x<0);
     
-    //resColor = pow(resColor,0.45f);
+
     return float4(resColor, 1.0f);
+
 
 }

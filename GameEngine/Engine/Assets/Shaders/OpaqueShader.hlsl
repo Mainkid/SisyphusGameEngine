@@ -65,10 +65,10 @@ GBuffer PSMain(PS_IN input) : SV_Target
     output.Normals = float4(input.normals.xyz/2 + float3(0.5f, 0.5f, 0.5f),1.0f);
     output.WorldPos = float4(input.posW.xyz, 1.0f);
     output.DiffuseSpec = float4(pixelColor, 1.0f);
-    output.InstanceIDs = float4(instanceID, 4,5,1.0f);
+    output.InstanceIDs = float4(instanceID, instanceID, instanceID, 1.0f);
     //output.Depth = float4(input.posH.z / input.posH.w, input.posH.z / input.posH.w, input.posH.z / input.posH.w, 1.0f);
     output.Specular = float4(0.5f, 0.5f, 0.5f, 50.0f);
-    
+      
     
     return output;
 }

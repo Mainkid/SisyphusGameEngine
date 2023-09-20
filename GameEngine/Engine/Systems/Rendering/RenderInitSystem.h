@@ -13,6 +13,7 @@ public:
 	void Run() override;
 	void Destroy() override;
 private:
+	void InitSkybox();
 	EngineContext* ec;
 	RenderContext* rc;
 	HardwareContext* hc;
