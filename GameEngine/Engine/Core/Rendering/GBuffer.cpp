@@ -29,6 +29,7 @@ void GBuffer::Initialize(int width, int height)
     res = device->CreateTexture2D(&textureDesc, nullptr, positionTexture.GetAddressOf());
     res = device->CreateTexture2D(&textureDesc, nullptr, depthTexture.GetAddressOf());
     res = device->CreateTexture2D(&textureDesc, nullptr, specularTexture.GetAddressOf());
+    res = device->CreateTexture2D(&textureDesc, nullptr, skyboxTexture.GetAddressOf());
 
     textureDesc.BindFlags = 0;
     textureDesc.Usage = D3D11_USAGE_STAGING;
@@ -42,6 +43,7 @@ void GBuffer::Initialize(int width, int height)
     res = device->CreateRenderTargetView(positionTexture.Get(), nullptr, positionRTV.GetAddressOf());
     res = device->CreateRenderTargetView(depthTexture.Get(), nullptr, depthRTV.GetAddressOf());
     res = device->CreateRenderTargetView(specularTexture.Get(), nullptr, specularRTV.GetAddressOf());
+    res = device->CreateRenderTargetView(skyboxTexture.Get(), nullptr, skyboxRTV.GetAddressOf());
 
     D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc1;
     ZeroMemory(&shaderResourceViewDesc1, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
@@ -55,9 +57,14 @@ void GBuffer::Initialize(int width, int height)
     res = device->CreateShaderResourceView(positionTexture.Get(), &shaderResourceViewDesc1, positionSRV.GetAddressOf());
     res = device->CreateShaderResourceView(depthTexture.Get(), &shaderResourceViewDesc1, depthSRV.GetAddressOf());
     res = device->CreateShaderResourceView(specularTexture.Get(), &shaderResourceViewDesc1, specularSRV.GetAddressOf());
+    res = device->CreateShaderResourceView(skyboxTexture.Get(), &shaderResourceViewDesc1, skyboxSRV.GetAddressOf());
+    
 
-    //res = device->CreateShaderResourceView(depthCpuTexture.Get(), &shaderResourceViewDesc1, depthCpuSRV.GetAddressOf());
-    res = 0;
+
+
+
+
+
 }
 
 

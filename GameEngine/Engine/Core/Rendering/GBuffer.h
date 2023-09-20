@@ -20,13 +20,16 @@ public:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> positionSRV;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> depthSRV;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> specularSRV;
+    Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> skyboxSRV;
     
+   
 
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> diffuseRTV;
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> normalRTV;
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> positionRTV;
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> depthRTV;
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> specularRTV;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> skyboxRTV;
 private:
     int t_height;
     int t_width;
@@ -36,6 +39,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Texture2D> depthTexture;
     Microsoft::WRL::ComPtr<ID3D11Texture2D> specularTexture;
     Microsoft::WRL::ComPtr<ID3D11Texture2D> depthCpuTexture;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> skyboxTexture;
 
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> depthCpuSRV;
 

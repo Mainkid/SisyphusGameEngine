@@ -1,8 +1,9 @@
+#define STB_IMAGE_IMPLEMENTATION
+#include "../../vendor/stb_image.h"
 #include "ImageLoader.h"
 #include "../Systems/HardwareContext.h"
 #include "../Core/ServiceLocator.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "../../vendor/stb_image.h"
+
 
 
 bool ImageLoader::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
@@ -52,3 +53,16 @@ bool ImageLoader::LoadTextureFromFile(const char* filename, ID3D11ShaderResource
 
 	return true;
 }
+
+void* ImageLoader::LoadImageFromFile(const char* filename, int* out_width, int* out_height)
+{
+	int image_width = 0;
+	int image_height = 0;
+	unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
+	if (image_data == nullptr)
+		return nullptr;
+	*out_width = image_width;
+	*out_height = image_height;
+	return image_data;
+}
+

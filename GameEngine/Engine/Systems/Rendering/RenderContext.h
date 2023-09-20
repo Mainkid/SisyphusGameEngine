@@ -4,6 +4,7 @@
 #include "../../Core/Rendering/GBuffer.h"
 #include "../../Core/Graphics/Shader.h"
 #include "../../Core/IService.h"
+#include "../../Components/Mesh.h"
 
 struct RenderContext : public IService
 {
@@ -18,7 +19,10 @@ struct RenderContext : public IService
     std::unique_ptr<Shader> spotLightShader;
     std::unique_ptr<Shader> shadowShader;
     std::unique_ptr<Shader> billboardShader;
+    std::unique_ptr<Shader> shadowMapGenerator;
+    std::unique_ptr<Shader> skyBoxShader;
 
+    std::shared_ptr<Mesh> cubeMesh;
 
     std::unique_ptr<GBuffer> gBuffer;
     Microsoft::WRL::ComPtr<ID3D11BlendState> lightBlendState;
@@ -69,10 +73,27 @@ struct RenderContext : public IService
     Microsoft::WRL::ComPtr <ID3D11DepthStencilState> shadowStencilState;
     Microsoft::WRL::ComPtr <ID3D11DepthStencilView> shadowStencilView;
     ID3D11ShaderResourceView* shadowResourceView;
+    
     ID3D11Texture2D* texture_;
+    
     ID3D11Texture2D* m_renderTargetTexture;
     ID3D11RenderTargetView* m_renderTargetView;
     ID3D11ShaderResourceView* m_shaderResourceView;
+
+    /*
+        PCF
+    */
+
+    ID3D11ShaderResourceView* shadowMapResourceView;
+    ID3D11Texture2D* texturePCF;
+    ID3D11RenderTargetView* shadowMapRTV;
+
+    /*
+        SkyBox
+    */
+
+    Microsoft::WRL::ComPtr < ID3D11Texture2D> skyboxTexture;
+    Microsoft::WRL::ComPtr < ID3D11ShaderResourceView> skyboxSRV;
 
     std::unique_ptr<Buffer> shadowConstBuffer;
 };

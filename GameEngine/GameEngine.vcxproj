@@ -612,6 +612,8 @@
     <ClCompile Include="Engine\Systems\HardwareInitSystem.cpp" />
     <ClCompile Include="Engine\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="Engine\Components\RBodyComponent.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.cpp" />
     <ClCompile Include="Engine\Tools\Data\Vector.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
@@ -630,6 +632,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Components\SkyboxComponent.h" />
     <ClInclude Include="Engine\Systems\EngineContext.h" />
     <ClInclude Include="Engine\Core\IService.h" />
     <ClInclude Include="Engine\Systems\EditorBillboardSystem.h" />
@@ -689,6 +692,8 @@
     <ClInclude Include="Engine\Systems\HardwareContext.h" />
     <ClInclude Include="Engine\Systems\PhysicsSystem.h" />
     <ClInclude Include="Engine\Components\RBodyComponent.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.h" />
     <ClInclude Include="Engine\Tools\Data\Vector.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="vendor\Delegates.h" />
@@ -727,12 +732,18 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <None Include="Engine\Assets\Shaders\ShadowMapGenerator.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <FxCompile Include="Engine\Assets\Shaders\ShadowShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <None Include="Engine\Assets\Shaders\Skybox.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <FxCompile Include="Engine\Assets\Shaders\SpotLightShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -755,6 +766,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <None Include="vendor\DirectXTK\Inc\SimpleMath.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_2.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_3.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_4.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_5.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_6.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

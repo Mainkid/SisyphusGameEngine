@@ -1,9 +1,12 @@
 #include "RenderInitSystem.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
 #include "RenderContext.h"
+#include "../../../vendor/WICTextureLoader.h"
 #include "../EngineContext.h"
 #include "../HardwareContext.h"
 #include "../../Core/ServiceLocator.h"
+#include "../../Tools/ImageLoader.h"
+#include "../MeshLoader.h"
 
 void RenderInitSystem::Init()
 {
@@ -14,6 +17,8 @@ void RenderInitSystem::Init()
     rc = ServiceLocator::instance()->Get<RenderContext>();
 
     ec->scene=std::make_unique<Scene>();
+
+    rc->cubeMesh = MeshLoader::LoadSimpleMesh("./Engine/Assets/Cube.fbx");
 
     using namespace DirectX::SimpleMath;
     {
@@ -227,6 +232,53 @@ void RenderInitSystem::Init()
 
     hr = hc->device->CreateShaderResourceView(rc->texture_, &shaderResourceViewDesc, &rc->shadowResourceView);
 
+    //Shadow maps -->
+
+    D3D11_TEXTURE2D_DESC shadowMapDesc_;
+    ZeroMemory(&shadowMapDesc_, sizeof(D3D11_TEXTURE2D_DESC));
+    shadowMapDesc_.Width = hc->window->GetWidth();
+    shadowMapDesc_.Height = hc->window->GetHeight();
+    shadowMapDesc_.MipLevels = 1;
+    shadowMapDesc_.Format = DXGI_FORMAT_R32_TYPELESS;
+    shadowMapDesc_.SampleDesc.Count = 1;
+    shadowMapDesc_.ArraySize = 1;
+    shadowMapDesc_.SampleDesc.Quality = 0;
+    shadowMapDesc_.Usage = D3D11_USAGE_DEFAULT;
+    shadowMapDesc_.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    shadowMapDesc_.CPUAccessFlags = 0;
+    shadowMapDesc_.MiscFlags = 0;
+
+    hr = hc->device->CreateTexture2D(&shadowMapDesc_, nullptr, &rc->texturePCF);
+
+    /*D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+    ZeroMemory(&depthStencilViewDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+    depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+    depthStencilViewDesc.Texture2DArray.MipSlice = 0;
+    depthStencilViewDesc.Texture2DArray.FirstArraySlice = 0;
+    depthStencilViewDesc.Texture2DArray.ArraySize = 4;
+
+    hr = hc->device->CreateDepthStencilView(rc->texture_, &depthStencilViewDesc, &rc->shadowStencilView);*/
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc_;
+    ZeroMemory(&shaderResourceViewDesc_, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+    shaderResourceViewDesc_.Format = DXGI_FORMAT_R32_FLOAT;
+    shaderResourceViewDesc_.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    shaderResourceViewDesc_.Texture2D.MipLevels = 1;
+
+
+    hr = hc->device->CreateShaderResourceView(rc->texturePCF, &shaderResourceViewDesc_, &rc->shadowMapResourceView);
+
+    D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
+    renderTargetViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
+    renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+    renderTargetViewDesc.Texture2D.MipSlice = 0;
+
+    // Create the render target view.
+    hr = hc->device->CreateRenderTargetView(rc->texturePCF, &renderTargetViewDesc, &rc->shadowMapRTV);
+
+    //<---
+
 
     D3D11_DEPTH_STENCIL_DESC depthstencildesc2;
     ZeroMemory(&depthstencildesc2, sizeof(D3D11_DEPTH_STENCIL_DESC));
@@ -252,7 +304,6 @@ void RenderInitSystem::Init()
 
     D3D11_TEXTURE2D_DESC textureDesc;
     HRESULT result;
-    D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
     D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc2;
 
 
@@ -299,7 +350,6 @@ void RenderInitSystem::Init()
 
 
     //Creating instance ID Texture
-
     D3D11_TEXTURE2D_DESC desc2;
     ZeroMemory(&desc2, sizeof(desc2));
     desc2.Width = hc->window->GetWidth();
@@ -334,7 +384,7 @@ void RenderInitSystem::Init()
     auto res2 = hc->device->CreateSamplerState(&samplerDesc, rc->samplerDepthState.GetAddressOf());
 
 
-
+    InitSkybox();
 
 
 
@@ -370,6 +420,14 @@ void RenderInitSystem::Init()
     rc->billboardShader->Initialize(L"./Engine/Assets/Shaders/SpriteBillboardShader.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR | USE_NORMAL);
 
+    rc->shadowMapGenerator = std::make_unique<Shader>();
+    rc->shadowMapGenerator->Initialize(L"./Engine/Assets/Shaders/ShadowMapGenerator.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR,"VSMain","PS_ShadowMapGenerator");
+
+    rc->skyBoxShader = std::make_unique<Shader>();
+    rc->skyBoxShader->Initialize(L"./Engine/Assets/Shaders/Skybox.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VS", "PS");
+
 }
 
 void RenderInitSystem::Run()
@@ -378,4 +436,44 @@ void RenderInitSystem::Run()
 
 void RenderInitSystem::Destroy()
 {
+}
+
+void RenderInitSystem::InitSkybox()
+{
+
+    int resolution = 512;
+    D3D11_TEXTURE2D_DESC textureDesc_ = {};
+    textureDesc_.Width = resolution;
+    textureDesc_.Height = resolution;
+    textureDesc_.MipLevels = 1;
+    textureDesc_.ArraySize = 6;
+    textureDesc_.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    textureDesc_.SampleDesc.Count = 1;
+    textureDesc_.SampleDesc.Quality = 0;
+    textureDesc_.Usage = D3D11_USAGE_DEFAULT;
+    textureDesc_.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    textureDesc_.CPUAccessFlags = 0;
+    textureDesc_.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+
+    D3D11_SUBRESOURCE_DATA data[6];
+    for (int i = 0; i < 6; i++)
+    {
+        std::string file = "./Engine/Assets/SkyBox/skybox_";
+        file += std::to_string(i + 1);
+        file += ".png";
+        int width = 0;
+        int height = 0;
+        data[i].pSysMem = ImageLoader::LoadImageFromFile(file.c_str(), &width, &height);
+        data[i].SysMemPitch = sizeof(char) * width * 4;
+        data[i].SysMemSlicePitch = 0;
+    }
+    HRESULT result = hc->device->CreateTexture2D(&textureDesc_, data, rc->skyboxTexture.GetAddressOf());
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Format = textureDesc_.Format;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    srvDesc.Texture2D.MipLevels = 1;
+    result = hc->device->CreateShaderResourceView(rc->skyboxTexture.Get(), &srvDesc, rc->skyboxSRV.GetAddressOf());
 }

@@ -1,432 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Исходные файлы">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Файлы заголовков">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Файлы ресурсов">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Engine\GameEngine.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Components\Mesh.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\EngineCore.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\DisplayWin32.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Obsolete\RenderPipeline.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\Buffer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\Shader.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Rendering\GBuffer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Scene\Scene.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\Rendering\RenderTarget.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Tools\ImageLoader.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_demo.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_draw.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_impl_dx11.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_impl_win32.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_tables.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_widgets.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGuizmo\ImGradient.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGuizmo\ImSequencer.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Components\ParticleComponent.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Components\Particle.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\TransformSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\TransformHelper.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\MeshSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\LightSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\MeshLoader.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\InputSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\StartUpSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\PreRenderSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\ServiceLocator.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\RenderInitSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\PostViewportRenderSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\HardwareInitSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\Delegates.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Components\RBodyComponent.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\PhysicsSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\HUD\HudPostRenderSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\HUD\HudPreRenderSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\HUD\HudPropertiesSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\HUD\HudViewportSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\EditorBillboardRenderSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\LightRenderSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\OpaqueRenderSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowRenderSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Tools\ErrorLogger.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Tools\Data\Vector.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Matrix4x4.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Engine\Components\TransformComponent.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Components\MeshComponent.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Components\Mesh.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\EngineCore.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\DisplayWin32.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Keys.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Obsolete\RenderPipeline.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\Buffer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\ConstantBuffer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\Material.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\Shader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Rendering\GBuffer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\SystemsEnum.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Scene\Scene.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Components\LightComponent.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Rendering\Lights\LightData.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Rendering\RenderTarget.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Downloads\stb_image.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Tools\ImageLoader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imconfig.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imgui.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imgui_impl_dx11.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imgui_impl_win32.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imgui_internal.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imstb_rectpack.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imstb_textedit.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imstb_truetype.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGuizmo\GraphEditor.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGuizmo\ImCurveEdit.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGuizmo\ImGradient.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGuizmo\ImSequencer.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGuizmo\ImZoomSlider.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\entt\entt.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\DirectXTK\Inc\SimpleMath.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\stb_image.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\WICTextureLoader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Components\ParticleComponent.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Components\Particle.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\ISystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\TransformSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\TransformHelper.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\MeshSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Systems.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\LightSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Components\DataComponent.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\MeshLoader.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Components\CameraComponent.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\EditorCameraSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Components\EditorBillboardComponent.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\EditorBillboardSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\InputSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\StartUpSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\PreRenderSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\RenderContext.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\IService.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\ServiceLocator.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\RenderInitSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\PostViewportRenderSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\RenderHelper.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\HardwareInitSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\HardwareContext.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\EngineContext.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\Delegates.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Components\RBodyComponent.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\PhysicsSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\HUD\ContentBrowserTypes.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\HUD\HudPostRenderSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\HUD\HudPreRenderSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\HUD\HudPropertiesSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\HUD\HudViewportSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorBillboardRenderSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\LightRenderSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\OpaqueRenderSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowRenderSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Tools\ErrorLogger.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Tools\Data\Vector.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Matrix4x4.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <FxCompile Include="Engine\Assets\Shaders\OpaqueShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\PointLightShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\ShadowShader.hlsl" />
@@ -435,10 +9,163 @@
     <FxCompile Include="Engine\Assets\Shaders\TextureShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp" />
+    <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp" />
+    <ClCompile Include="Engine\Core\DisplayWin32.cpp" />
+    <ClCompile Include="Engine\Core\EngineCore.cpp" />
+    <ClCompile Include="Engine\Core\Graphics\Buffer.cpp" />
+    <ClCompile Include="Engine\Core\Graphics\Shader.cpp" />
+    <ClCompile Include="Engine\Core\Rendering\GBuffer.cpp" />
+    <ClCompile Include="Engine\GameEngine.cpp" />
+    <ClCompile Include="Engine\Components\Mesh.cpp" />
+    <ClCompile Include="Engine\Obsolete\RenderPipeline.cpp" />
+    <ClCompile Include="Engine\Core\Scene\Scene.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\HUD\HudPostRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\HUD\HudPreRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\HUD\HudPropertiesSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\HUD\HudViewportSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\EditorBillboardRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\LightRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\OpaqueRenderSystem.cpp" />
+    <ClCompile Include="Engine\Core\Rendering\RenderTarget.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowRenderSystem.cpp" />
+    <ClCompile Include="Engine\Tools\ErrorLogger.cpp" />
+    <ClCompile Include="Engine\Tools\ImageLoader.cpp" />
+    <ClCompile Include="Engine\Components\ParticleComponent.cpp" />
+    <ClCompile Include="Engine\Components\Particle.cpp" />
+    <ClCompile Include="Engine\Systems\TransformSystem.cpp" />
+    <ClCompile Include="Engine\Systems\TransformHelper.cpp" />
+    <ClCompile Include="Engine\Systems\MeshSystem.cpp" />
+    <ClCompile Include="Engine\Systems\LightSystem.cpp" />
+    <ClCompile Include="Engine\Systems\MeshLoader.cpp" />
+    <ClCompile Include="Engine\Systems\InputSystem.cpp" />
+    <ClCompile Include="Engine\Systems\StartUpSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\PreRenderSystem.cpp" />
+    <ClCompile Include="Engine\Core\ServiceLocator.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderInitSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\PostViewportRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\HardwareInitSystem.cpp" />
+    <ClCompile Include="Engine\Systems\PhysicsSystem.cpp" />
+    <ClCompile Include="Engine\Components\RBodyComponent.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.cpp" />
+    <ClCompile Include="Engine\Tools\Data\Vector.cpp" />
+    <ClCompile Include="Matrix4x4.cpp" />
+    <ClCompile Include="vendor\Delegates.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\ImGradient.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\ImSequencer.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="vendor\ImGui\imgui_widgets.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Components\SkyboxComponent.h" />
+    <ClInclude Include="Engine\Systems\EngineContext.h" />
+    <ClInclude Include="Engine\Core\IService.h" />
+    <ClInclude Include="Engine\Systems\EditorBillboardSystem.h" />
+    <ClInclude Include="Engine\Components\EditorBillboardComponent.h" />
+    <ClInclude Include="Engine\Systems\EditorCameraSystem.h" />
+    <ClInclude Include="Engine\Components\CameraComponent.h" />
+    <ClInclude Include="Engine\Components\DataComponent.h" />
+    <ClInclude Include="Engine\Core\DisplayWin32.h" />
+    <ClInclude Include="Engine\Core\EngineCore.h" />
+    <ClInclude Include="Engine\Components\TransformComponent.h" />
+    <ClInclude Include="Engine\Components\MeshComponent.h" />
+    <ClInclude Include="Engine\Components\Mesh.h" />
+    <ClInclude Include="Engine\Core\Graphics\Buffer.h" />
+    <ClInclude Include="Engine\Core\Graphics\ConstantBuffer.h" />
+    <ClInclude Include="Engine\Core\Graphics\Material.h" />
+    <ClInclude Include="Engine\Core\Graphics\Shader.h" />
+    <ClInclude Include="Engine\Core\Keys.h" />
+    <ClInclude Include="Engine\Core\Rendering\GBuffer.h" />
+    <ClInclude Include="Engine\Core\Rendering\Lights\LightData.h" />
+    <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h" />
+    <ClInclude Include="Engine\Obsolete\RenderPipeline.h" />
+    <ClInclude Include="Engine\Systems\Rendering\HUD\ContentBrowserTypes.h" />
+    <ClInclude Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\HUD\HudPostRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\HUD\HudPreRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\HUD\HudPropertiesSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\HUD\HudViewportSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorBillboardRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\LightRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\OpaqueRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Systems.h" />
+    <ClInclude Include="Engine\Systems\SystemsEnum.h" />
+    <ClInclude Include="Engine\Core\Scene\Scene.h" />
+    <ClInclude Include="Engine\Components\LightComponent.h" />
+    <ClInclude Include="Engine\Core\Rendering\RenderTarget.h" />
+    <ClInclude Include="Engine\Tools\ErrorLogger.h" />
+    <ClInclude Include="Engine\Tools\ImageLoader.h" />
+    <ClInclude Include="Engine\Components\ParticleComponent.h" />
+    <ClInclude Include="Engine\Components\Particle.h" />
+    <ClInclude Include="Engine\Systems\ISystem.h" />
+    <ClInclude Include="Engine\Systems\TransformSystem.h" />
+    <ClInclude Include="Engine\Systems\TransformHelper.h" />
+    <ClInclude Include="Engine\Systems\MeshSystem.h" />
+    <ClInclude Include="Engine\Systems\LightSystem.h" />
+    <ClInclude Include="Engine\Systems\MeshLoader.h" />
+    <ClInclude Include="Engine\Systems\InputSystem.h" />
+    <ClInclude Include="Engine\Systems\StartUpSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\PreRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderContext.h" />
+    <ClInclude Include="Engine\Core\ServiceLocator.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderInitSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\PostViewportRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderHelper.h" />
+    <ClInclude Include="Engine\Systems\HardwareInitSystem.h" />
+    <ClInclude Include="Engine\Systems\HardwareContext.h" />
+    <ClInclude Include="Engine\Systems\PhysicsSystem.h" />
+    <ClInclude Include="Engine\Components\RBodyComponent.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.h" />
+    <ClInclude Include="Engine\Tools\Data\Vector.h" />
+    <ClInclude Include="Matrix4x4.h" />
+    <ClInclude Include="vendor\Delegates.h" />
+    <ClInclude Include="vendor\entt\entt.hpp" />
+    <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImCurveEdit.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImGradient.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImSequencer.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImZoomSlider.h" />
+    <ClInclude Include="vendor\ImGui\imconfig.h" />
+    <ClInclude Include="vendor\ImGui\imgui.h" />
+    <ClInclude Include="vendor\ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="vendor\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="vendor\ImGui\imgui_internal.h" />
+    <ClInclude Include="vendor\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="vendor\ImGui\imstb_textedit.h" />
+    <ClInclude Include="vendor\ImGui\imstb_truetype.h" />
+    <ClInclude Include="vendor\DirectXTK\Inc\SimpleMath.h" />
+    <ClInclude Include="vendor\stb_image.h" />
+    <ClInclude Include="vendor\WICTextureLoader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_2.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_3.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_4.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_5.png" />
+    <Image Include="Engine\Assets\SkyBox\skybox_6.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Engine\Assets\Shaders\LightShader.hlsl" />
-    <None Include="vendor\DirectXTK\Inc\SimpleMath.inl">
-      <Filter>Файлы заголовков</Filter>
-    </None>
+    <None Include="Engine\Assets\Shaders\ShadowMapGenerator.hlsl" />
+    <None Include="Engine\Assets\Shaders\Skybox.hlsl" />
     <None Include="Engine\Assets\Shaders\SpriteBillboardShader.hlsl" />
+    <None Include="vendor\DirectXTK\Inc\SimpleMath.inl" />
   </ItemGroup>
 </Project>

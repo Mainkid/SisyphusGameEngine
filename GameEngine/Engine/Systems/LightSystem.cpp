@@ -19,9 +19,9 @@ void LightSystem::Run()
         {
             GenerateViewMatrix(lc,
                 Vector3(ec->scene->cameraTransform->localPosition));
-            /*  GenerateOrthoFromFrustum(lc,
-                  EngineCore::instance()->cameraController->GetViewMatrix(),
-                  EngineCore::instance()->cameraController->GetProjectionMatrix());*/
+              //GenerateOrthoFromFrustum(lc, Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
+              //    ec->scene->camera->view,
+              //    ec->scene->camera->projection);
             GenerateOrthosFromFrustum(lc, Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
                 ec->scene->camera->view,
                 ec->scene ->camera->projection,
@@ -30,7 +30,7 @@ void LightSystem::Run()
 
         if (!lc.aabb)
         {
-            lc.aabb = MeshLoader::LoadSimpleMesh("Engine/Assets/sphere.fbx");
+            lc.aabb = MeshLoader::LoadSimpleMesh("Engine/Assets/Cube.fbx");
         }
         
         /*
@@ -79,7 +79,7 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc,Ve
     lc.distances.clear();
 
     int n = 4;
-    int exp = 2;
+    int exp = 3;
 
 
 
@@ -126,7 +126,7 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc,Ve
             maxZ = max(maxZ, trf.z);
         }
 
-        constexpr float zMult = 10.0f;
+        constexpr float zMult = 5.0f;
         minZ = (minZ < 0) ? minZ * zMult : minZ / zMult;
         maxZ = (maxZ < 0) ? maxZ / zMult : maxZ * zMult;
 
