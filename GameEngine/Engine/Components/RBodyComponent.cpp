@@ -21,9 +21,11 @@ SyRBodyComponent::SyRBodyComponent(	const SyRBodyType&			rbType_,
 
 	switch (rbType)
 	{
-	case RB_TYPE_STATIC: rbActor = physics->createRigidStatic(PxTransform(rbDefaultShapeDesc->origin));
+	case RB_TYPE_STATIC: rbActor = physics->createRigidStatic(PxTransform(rbDefaultShapeDesc_.origin, 
+														SyVector3::EulerToPxQuat(rbDefaultShapeDesc_.rotation)));
 		break;
-	case RB_TYPE_DYNAMIC: rbActor = physics->createRigidDynamic(PxTransform(rbDefaultShapeDesc->origin));
+	case RB_TYPE_DYNAMIC: rbActor = physics->createRigidDynamic(PxTransform(rbDefaultShapeDesc_.origin, 
+														SyVector3::EulerToPxQuat(rbDefaultShapeDesc_.rotation)));
 		break;
 	default:
 		//Unknown RB_TYPE!;
@@ -59,13 +61,16 @@ SyRBodyComponent::SyRBodyComponent(	const SyRBodyType&			rbType_,
 		ErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 70);
 		break;
 	}
+	if (rbType == RB_TYPE_DYNAMIC)
+	{
+		PxRigidBodyExt::updateMassAndInertia(*static_cast<PxRigidBody*>(rbActor), rbMaterial.density);
+	}
 	scene->addActor(*rbActor);
 }
 
 
 SyRBodyComponent::~SyRBodyComponent()
 {
-	delete rbDefaultShapeDesc;
 	PX_RELEASE(rbActor);
 	PX_RELEASE(rbShape);
 }

@@ -12,6 +12,9 @@ namespace physx
 	template <class Type>
 	class PxVec3T;
 	typedef PxVec3T<float>	PxVec3;
+	template <class Type>
+	class PxQuatT;
+	typedef PxQuatT<float> PxQuat;
 }
 
 struct SyVector3
@@ -27,6 +30,8 @@ struct SyVector3
 	operator DirectX::SimpleMath::Vector3() const;
 	operator physx::PxVec3() const;
 	SyVector3 operator= (const DirectX::SimpleMath::Vector3& dxVector3_);
+
+	static SyVector3 PxQuatToEuler(const physx::PxQuat& pxQuat); //returns euler angle vector
+	static physx::PxQuat EulerToPxQuat(const SyVector3& euler);
 };
 
-void FromQuatToEuler(const SyVector3& quat, SyVector3& res);

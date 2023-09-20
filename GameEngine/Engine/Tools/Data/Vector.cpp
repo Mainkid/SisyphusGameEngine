@@ -1,5 +1,6 @@
 #include "SimpleMath.h"
 #include "foundation/PxVec3.h"
+#include "foundation/PxQuat.h"
 #include "Vector.h"
 SyVector3::SyVector3()
 {
@@ -44,8 +45,16 @@ SyVector3 SyVector3::operator=(const DirectX::SimpleMath::Vector3& dxVector3_)
 	return *this;
 }
 
-void FromQuatToEuler(const SyVector3& quat, SyVector3& res)
+SyVector3 SyVector3::PxQuatToEuler(const physx::PxQuat& pxQuat)
 {
-	auto q = DirectX::SimpleMath::Quaternion::Quaternion((DirectX::SimpleMath::Vector3)quat);
-	res = q.DirectX::SimpleMath::Quaternion::ToEuler();
+	DirectX::SimpleMath::Quaternion q(pxQuat.x, pxQuat.y, pxQuat.z, pxQuat.w);
+	auto v = q.ToEuler();
+	return SyVector3(v);
+}
+
+physx::PxQuat SyVector3::EulerToPxQuat(const SyVector3& euler)
+{
+	auto q = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(euler);
+	physx::PxQuat qq = {q.x, q.y, q.z, q.w};
+	return qq;
 }

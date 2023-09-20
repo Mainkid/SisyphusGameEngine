@@ -13,9 +13,10 @@ namespace physx
 
 struct SyRBodyMaterial
 {
-	float staticFriction;
-	float dynamicFriction;
-	float restitution;
+	float staticFriction =	1.0f;
+	float dynamicFriction = 1.0f;
+	float restitution =		0.3f;
+	float density =			0.0001f;
 };
 enum SyRBodyType
 {
@@ -30,23 +31,24 @@ enum SyRBodyShapeType
 
 struct SyRBodyShapeDescBase
 {
-	SyVector3 origin;
+	SyVector3 origin = {0.0f, 0.0f, 0.0f};
+	SyVector3 rotation = { 0.0f, 0.0f, 0.0f };
 };
 
 struct SyRBodyBoxShapeDesc : SyRBodyShapeDescBase
 {
-	SyVector3 halfExt;
+	SyVector3 halfExt = {1.0f, 1.0f, 1.0f};
 };
 struct SyRBodySphereShapeDesc : SyRBodyShapeDescBase
 {
-	float radius;
+	float radius = 1.0f;
 };
 struct SyRBodyComponent
 {
-	SyRBodyComponent(	const SyRBodyType&			rbType_, 
-						const SyRBodyShapeType&		rbShapeType_,
-						const SyRBodyShapeDescBase& rbDefaultShapeDesc_,
-						const SyRBodyMaterial&		rbMaterial_);
+	SyRBodyComponent(	const SyRBodyType&			rbType_ = RB_TYPE_DYNAMIC,
+						const SyRBodyShapeType&		rbShapeType_ = RB_SHAPE_TYPE_BOX,
+						const SyRBodyShapeDescBase& rbDefaultShapeDesc_ = SyRBodyBoxShapeDesc(),
+						const SyRBodyMaterial&		rbMaterial_ = SyRBodyMaterial());
 	
 	~SyRBodyComponent();
 private:
@@ -55,7 +57,6 @@ private:
 	SyRBodyShapeType			rbShapeType;
 	physx::PxShape*				rbShape = nullptr;
 	SyRBodyMaterial				rbMaterial;
-	SyRBodyShapeDescBase*		rbDefaultShapeDesc =  nullptr;
 	static physx::PxPhysics*	physics;
 	static physx::PxScene*		scene;
 
