@@ -1,28 +1,34 @@
 #pragma once
+#include <memory>
 #include "ISystem.h"
-#include "PxConfig.h"
-#include "PxPhysicsAPI.h"
+#include "../Tools/Data/Vector.h"
 
-//using namespace physx;
+# pragma region forward declaration
+namespace physx
+{
+    class PxDefaultAllocator;
+    class PxDefaultErrorCallback;
+    class PxFoundation;
+    class PxPhysics;
+    class PxScene;
+}
+#pragma endregion
 
-
-
-class PhysicsSystem :
+class SyPhysicsSystem :
     public ISystem
 {
-    physx::PxDefaultAllocator		psAllocator;
-    physx::PxDefaultErrorCallback	psErrorCallback;
-    physx::PxFoundation*            psFoundation = NULL;
+    std::shared_ptr<physx::PxDefaultAllocator>		allocator = nullptr;
+    std::shared_ptr<physx::PxDefaultErrorCallback>	errorCallback = nullptr;
+    physx::PxFoundation*                            foundation = nullptr;
 
 public:
-    physx::PxPhysics*               psPhysics = NULL;
-    physx::PxScene*                 psScene = NULL;
-    physx::PxVec3                   gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
-    physx::PxReal                   stepsPerSecond = 60.0f;
+    physx::PxPhysics*                               physics = nullptr;
+    physx::PxScene*                                 scene = nullptr;
+    SyVector3                                       gravity = { 0.0f, -9.81f, 0.0f };
+    float                                           stepsPerSecond = 60.0f;
 
     void Init();
     void Run();
     void Destroy();
-
 };
 

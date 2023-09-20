@@ -1,5 +1,5 @@
 #pragma once
-#include "SimpleMath.h"
+#include "../Tools/Data/Vector.h"
 #pragma region forward declaration
 namespace physx
 {
@@ -11,51 +11,55 @@ namespace physx
 }
 #pragma endregion
 
-struct RBodyMaterial
+struct SyRBodyMaterial
 {
-	float staticFriction;
-	float dynamicFriction;
-	float restitution;
+	float staticFriction =	1.0f;
+	float dynamicFriction = 1.0f;
+	float restitution =		0.3f;
+	float density =			0.0001f;
 };
-enum RBodyType
+enum SyRBodyType
 {
 	RB_TYPE_STATIC = 0,
 	RB_TYPE_DYNAMIC = 1
 };
-enum RBodyShapeType
+enum SyRBodyShapeType
 {
 	RB_SHAPE_TYPE_BOX = 0,
 	RB_SHAPE_TYPE_SPHERE = 1
 };
 
-struct RBodyShapeDescBase
+struct SyRBodyShapeDescBase
 {
-	DirectX::SimpleMath::Vector3 origin;
+	SyVector3 origin = {0.0f, 0.0f, 0.0f};
+	SyVector3 rotation = { 0.0f, 0.0f, 0.0f };
 };
 
-struct RBodyBoxShapeDesc : RBodyShapeDescBase
+struct SyRBodyBoxShapeDesc : SyRBodyShapeDescBase
 {
-	DirectX::SimpleMath::Vector3 halfExt;
+	SyVector3 halfExt = {1.0f, 1.0f, 1.0f};
 };
-struct RBodySphereShapeDesc : RBodyShapeDescBase
+struct SyRBodySphereShapeDesc : SyRBodyShapeDescBase
 {
-	float radius;
+	float radius = 1.0f;
 };
-struct RBodyComponent
+struct SyRBodyComponent
 {
+	SyRBodyComponent(	const SyRBodyType&			rbType_ = RB_TYPE_DYNAMIC,
+						const SyRBodyShapeType&		rbShapeType_ = RB_SHAPE_TYPE_BOX,
+						const SyRBodyShapeDescBase& rbDefaultShapeDesc_ = SyRBodyBoxShapeDesc(),
+						const SyRBodyMaterial&		rbMaterial_ = SyRBodyMaterial());
+	
+	~SyRBodyComponent();
+private:
+	SyRBodyType					rbType;
+	physx::PxRigidActor*		rbActor = nullptr;
+	SyRBodyShapeType			rbShapeType;
+	physx::PxShape*				rbShape = nullptr;
+	SyRBodyMaterial				rbMaterial;
+	static physx::PxPhysics*	physics;
+	static physx::PxScene*		scene;
 
-	RBodyType				rbType;
-	physx::PxRigidActor*	rbActor = nullptr;
-	RBodyShapeType			rbShapeType;
-	physx::PxShape*			rbShape = nullptr;
-	RBodyMaterial			rbMaterial;
-
-	RBodyComponent(	physx::PxPhysics&			psPhysics_, 
-					physx::PxScene&				psScene_, 
-					const RBodyType&			rbType_, 
-					const RBodyShapeType&		rbShapeType_, 
-					const RBodyShapeDescBase&	rbShapeDesc_, 
-					const RBodyMaterial&		rbMaterial_);
-	~RBodyComponent();
+	friend class SyPhysicsSystem;
 };
 

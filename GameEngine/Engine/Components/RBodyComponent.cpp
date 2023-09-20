@@ -1,79 +1,75 @@
 #include "RBodyComponent.h"
 #include "PxConfig.h"
 #include "PxPhysicsAPI.h"
+#include "../Tools/ErrorLogger.h"
 #include <iostream>
 using namespace physx;
 
-inline PxVec3 FromDxVector3(const DirectX::SimpleMath::Vector3& dxVector3)
-{
-	return PxVec3(
-		dxVector3.x,
-		dxVector3.y,
-		dxVector3.z
-	);
-}
-//must create separate class for conversions!!!
-	
-RBodyComponent::RBodyComponent(	PxPhysics&					psPhysics_, 
-								PxScene&					psScene_, 
-								const RBodyType&			rbType_, 
-								const RBodyShapeType&		rbShapeType_,
-								const RBodyShapeDescBase&	rbShapeDesc_,
-								const RBodyMaterial&		rbMaterial_)
-{
-	rbType = rbType_;
-	switch (rbType)
-	{
-	case RB_TYPE_STATIC: rbActor = psPhysics_.createRigidStatic(PxTransform(
-					FromDxVector3(rbShapeDesc_.origin)));
-	break;
-	case RB_TYPE_DYNAMIC: rbActor = psPhysics_.createRigidDynamic(PxTransform(
-					FromDxVector3(rbShapeDesc_.origin)));
-	break;
-	default:
-		std::cout << "Unknown RB_TYPE!\n";
-		return;
-	break;
-	}
+SyRBodyComponent::SyRBodyComponent(	const SyRBodyType&			rbType_, 
+									const SyRBodyShapeType&		rbShapeType_,
+									const SyRBodyShapeDescBase& rbDefaultShapeDesc_,
+									const SyRBodyMaterial&		rbMaterial_)
+{	rbType = rbType_;
 	rbShapeType = rbShapeType_;
 	rbMaterial = rbMaterial_;
-	PxMaterial* psMaterial = psPhysics_.createMaterial(
-											rbMaterial.staticFriction, 
-											rbMaterial.dynamicFriction, 
-											rbMaterial.restitution);
+	if (physics == nullptr)
+		//SyRbodyComponent::physics has not been initialized
+		ErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 16);
+	if (scene == nullptr)
+		//SyRbodyComponent::scene has not been initialized
+		ErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 16);
+
+	switch (rbType)
+	{
+	case RB_TYPE_STATIC: rbActor = physics->createRigidStatic(PxTransform(rbDefaultShapeDesc_.origin, 
+														SyVector3::EulerToPxQuat(rbDefaultShapeDesc_.rotation)));
+		break;
+	case RB_TYPE_DYNAMIC: rbActor = physics->createRigidDynamic(PxTransform(rbDefaultShapeDesc_.origin, 
+														SyVector3::EulerToPxQuat(rbDefaultShapeDesc_.rotation)));
+		break;
+	default:
+		//Unknown RB_TYPE!;
+		ErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 40);
+		break;
+	};
 	switch (rbShapeType)
 	{
-	case RB_SHAPE_TYPE_BOX: 
+	case RB_SHAPE_TYPE_BOX:
 	{
-		const RBodyBoxShapeDesc& boxDesc = static_cast<const RBodyBoxShapeDesc&>(rbShapeDesc_);
-		PxRigidActorExt::createExclusiveShape(	*rbActor,
-												PxBoxGeometry(FromDxVector3(boxDesc.halfExt)),
-												*psPhysics_.createMaterial(
-												rbMaterial.staticFriction,
-												rbMaterial.dynamicFriction,
-												rbMaterial.restitution));
+		auto boxDesc = static_cast<const SyRBodyBoxShapeDesc&>(rbDefaultShapeDesc_);
+		PxRigidActorExt::createExclusiveShape(*rbActor,
+			PxBoxGeometry(boxDesc.halfExt),
+			*physics->createMaterial(
+				rbMaterial.staticFriction,
+				rbMaterial.dynamicFriction,
+				rbMaterial.restitution));
 	}
 	break;
 	case RB_SHAPE_TYPE_SPHERE:
 	{
-		const RBodySphereShapeDesc& sphereDesc = static_cast<const RBodySphereShapeDesc&>(rbShapeDesc_);
-		PxRigidActorExt::createExclusiveShape(	*rbActor,
-												PxSphereGeometry(sphereDesc.radius),
-												*psPhysics_.createMaterial(
-												rbMaterial.staticFriction,
-												rbMaterial.dynamicFriction,
-												rbMaterial.restitution));
+		auto sphereDesc = static_cast<const SyRBodySphereShapeDesc&>(rbDefaultShapeDesc_);
+		PxRigidActorExt::createExclusiveShape(*rbActor,
+			PxSphereGeometry(sphereDesc.radius),
+			*physics->createMaterial(
+				rbMaterial.staticFriction,
+				rbMaterial.dynamicFriction,
+				rbMaterial.restitution));
 	}
 	break;
 	default:
-		std::cout << "Unknown RB_SHAPE_TYPE!\n";
-		return;
-	break;
+		//Unknown RB_SHAPE_TYPE!
+		ErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 70);
+		break;
 	}
-	psScene_.addActor(*rbActor);
+	if (rbType == RB_TYPE_DYNAMIC)
+	{
+		PxRigidBodyExt::updateMassAndInertia(*static_cast<PxRigidBody*>(rbActor), rbMaterial.density);
+	}
+	scene->addActor(*rbActor);
 }
 
-RBodyComponent::~RBodyComponent()
+
+SyRBodyComponent::~SyRBodyComponent()
 {
 	PX_RELEASE(rbActor);
 	PX_RELEASE(rbShape);

@@ -1,6 +1,8 @@
 ﻿#include <iostream>
 #include "Core/EngineCore.h"
 
+#define SY_PI 3.14f
+#define SY_PI2 SY_PI / 2 
 
 int main()
 {
@@ -8,15 +10,17 @@ int main()
     //EngineCore* engine = new EngineCore();
     EngineCore::instance()->StartUp();
     EngineContext* ec = EngineCore::instance()->ec;
-    auto _go = EngineCore::instance()->ec->scene->AddGameObject();
-    auto _go1 = EngineCore::instance()->ec->scene->AddGameObject();
-    auto _go2 = EngineCore::instance()->ec->scene->AddGameObject();
+    auto box1 = ec->scene->AddStaticBox({ -5.0f, -5.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 3.0f, 1.0f, 3.0f });
+    auto box2 = ec->scene->AddDynamicBox({ -5.0f, 10.0f, 0.0f }, { SY_PI2 / 2, 0.0f, SY_PI2 / 2 });
+    //auto _go = EngineCore::instance()->ec->scene->AddGameObject();
+    //auto _go1 = EngineCore::instance()->ec->scene->AddGameObject();
+    //auto _go2 = EngineCore::instance()->ec->scene->AddGameObject();
     ////_go->GetComponent<TransformComponent>().SetPosition(Vector3(-3, 0, 0));
     //auto t = _go->GetComponent<TransformComponent>();
     //
     //GameObject* _go2 = EngineCore::instance()->scene->AddGameObject();
     //_go2->SetParent(_go);
-    EngineCore::instance()->ec->scene->registry.get<MeshComponent>(_go).modelPath = "./Engine/Assets/sphere.fbx";
+    //EngineCore::instance()->ec->scene->registry.get<MeshComponent>(_go).modelPath = "./Engine/Assets/sphere.fbx";
     //auto mesh = _go->GetComponent<MeshComponent>();
     //GameObject* _go3 = EngineCore::instance()->scene->AddGameObject();
     //

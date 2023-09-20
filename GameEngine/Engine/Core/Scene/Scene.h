@@ -9,7 +9,8 @@
 #include "../../Components/ParticleComponent.h"
 #include "../../Components/CameraComponent.h"
 #include "../../Components/EditorBillboardComponent.h"
-
+#include "../../Components/RBodyComponent.h"
+#include "../../Tools/Data/Vector.h"
 
 class Scene
 {
@@ -30,6 +31,8 @@ public:
 	void Render() {};
 
 	entt::entity AddGameObject();
+	entt::entity AddStaticBox(const SyVector3& position_, const SyVector3& rotation_ = SyVector3(), const SyVector3 scale_ = {1.0f, 1.0f, 1.0f});
+	entt::entity AddDynamicBox(const SyVector3& position_, const SyVector3& rotation_ = SyVector3(), const SyVector3 scale_ = { 1.0f, 1.0f, 1.0f });
 	entt::entity AddLight(LightType _lightType);
 	entt::entity AddParticleSystem();
 	bool DestroyGameObject(entt::entity);
