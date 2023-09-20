@@ -43,18 +43,24 @@ struct SyRBodySphereShapeDesc : SyRBodyShapeDescBase
 };
 struct SyRBodyComponent
 {
+	SyRBodyComponent(	physx::PxPhysics*			physics_, 
+						physx::PxScene*				scene_, 
+						const SyRBodyType&			rbType_, 
+						const SyRBodyShapeType&		rbShapeType_, 
+						const SyRBodyShapeDescBase&	rbShapeDesc_, 
+						const SyRBodyMaterial&		rbMaterial_);
+	void Init();
+	~SyRBodyComponent();
+private:
 	SyRBodyType				rbType;
 	physx::PxRigidActor*	rbActor = nullptr;
 	SyRBodyShapeType		rbShapeType;
 	physx::PxShape*			rbShape = nullptr;
 	SyRBodyMaterial			rbMaterial;
+	physx::PxPhysics*		physics = nullptr;
+	physx::PxScene*			scene = nullptr;
+	SyRBodyShapeDescBase*	rbDefaultShapeDesc = nullptr;
 
-	SyRBodyComponent(	physx::PxPhysics&		physics_, 
-						physx::PxScene&				scene_, 
-						const SyRBodyType&			rbType_, 
-						const SyRBodyShapeType&		rbShapeType_, 
-						const SyRBodyShapeDescBase&	rbShapeDesc_, 
-						const SyRBodyMaterial&		rbMaterial_);
-	~SyRBodyComponent();
+	friend class SyPhysicsSystem;
 };
 
