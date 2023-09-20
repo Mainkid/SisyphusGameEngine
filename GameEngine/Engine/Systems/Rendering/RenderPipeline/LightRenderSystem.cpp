@@ -15,7 +15,7 @@ void LightRenderSystem::Run()
 {
     CB_LightBuffer lightBuffer;
 
-    float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float bgColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
     ID3D11ShaderResourceView* srvNull[] = { nullptr,nullptr,nullptr,nullptr,nullptr };
 
     ID3D11ShaderResourceView* resources[] = { rc->gBuffer->diffuseSRV.Get(),rc->gBuffer->normalSRV.Get(),rc->gBuffer->positionSRV.Get(),rc->gBuffer->depthSRV.Get(),rc->gBuffer->specularSRV.Get() };
@@ -119,10 +119,14 @@ void LightRenderSystem::Run()
             if (light.lightType == LightType::Directional)
             {
                 hc->context->PSSetShader(rc->dirLightShader->pixelShader.Get(), nullptr, 0);
-                hc->context->PSSetShaderResources(5, 1, &rc->shadowResourceView);
+                hc->context->PSSetShaderResources(5, 1, &rc->shadowMapResourceView);
             }
             else
+            {
                 hc->context->PSSetShader(rc->ambientLightShader->pixelShader.Get(), nullptr, 0);
+                hc->context->PSSetShaderResources(6, 1, rc->gBuffer->skyboxSRV.GetAddressOf());
+                //hc->context->PSSetShaderResources(7, 1, hc->depthStencilView.GetAddressOf());
+            }
 
             hc->context->IASetInputLayout(rc->dirLightShader->layout.Get());
             hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?

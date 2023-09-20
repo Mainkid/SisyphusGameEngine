@@ -16,7 +16,7 @@ int main()
     //
     //GameObject* _go2 = EngineCore::instance()->scene->AddGameObject();
     //_go2->SetParent(_go);
-    ////_go->GetComponent<MeshComponent>().UpdateMesh("./Engine/Assets/floor.fbx");
+    EngineCore::instance()->ec->scene->registry.get<MeshComponent>(_go).modelPath = "./Engine/Assets/sphere.fbx";
     //auto mesh = _go->GetComponent<MeshComponent>();
     //GameObject* _go3 = EngineCore::instance()->scene->AddGameObject();
     //

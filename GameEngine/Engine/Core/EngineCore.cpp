@@ -89,15 +89,24 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<PreRenderSystem> prs = std::make_unique<PreRenderSystem>();
 	systems.push_back(std::move(prs));
 
+	
+
 	std::unique_ptr<ShadowRenderSystem> srs = std::make_unique<ShadowRenderSystem>();
 	systems.push_back(std::move(srs));
+
+	std::unique_ptr<SkyboxRenderSystem> srs2 = std::make_unique<SkyboxRenderSystem>();
+	systems.push_back(std::move(srs2));
 
 	std::unique_ptr<OpaqueRenderSystem> ors = std::make_unique<OpaqueRenderSystem>();
 	systems.push_back(std::move(ors));
 
+	std::unique_ptr<ShadowMapGenerationSystem> sgs = std::make_unique<ShadowMapGenerationSystem>();
+	systems.push_back(std::move(sgs));
+
 	std::unique_ptr<LightRenderSystem> lrs = std::make_unique<LightRenderSystem>();
 	systems.push_back(std::move(lrs));
 
+	
 	std::unique_ptr<EditorBillboardRenderSystem> brs = std::make_unique<EditorBillboardRenderSystem>();
 	systems.push_back(std::move(brs));
 

@@ -42,28 +42,7 @@
     <ClCompile Include="Engine\Core\Scene\Scene.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\ShadowRenderSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\HUD\Hud.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\HUD\Widgets\ViewportWidget.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Core\Rendering\RenderTarget.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\HUD\Widget.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\HUD\Widgets\HierarchyWidget.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\HUD\Widgets\ContentBrowser.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Core\HUD\Widgets\PropertiesWidget.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Tools\ImageLoader.cpp">
@@ -147,15 +126,6 @@
     <ClCompile Include="Engine\Systems\Rendering\RenderInitSystem.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\OpaqueRenderSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\LightRenderSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\EditorBillboardRenderSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Systems\Rendering\PostViewportRenderSystem.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -165,16 +135,49 @@
     <ClCompile Include="vendor\Delegates.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\HudPreRenderSystem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Systems\Rendering\HudRender.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Components\RBodyComponent.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Systems\PhysicsSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\HUD\HudPostRenderSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\HUD\HudPreRenderSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\HUD\HudPropertiesSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\HUD\HudViewportSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\EditorBillboardRenderSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\LightRenderSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\OpaqueRenderSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowRenderSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="ErrorLogger.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -224,40 +227,16 @@
     <ClInclude Include="Engine\Core\Scene\Scene.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\ShadowRenderSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Components\LightComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\Rendering\Lights\LightData.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Core\HUD\Hud.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\HUD\Widget.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\HUD\Widgets\ViewportWidget.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Core\Rendering\RenderTarget.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\HUD\Widgets\HierarchyWidget.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\HUD\Widgets\ContentBrowser.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\HUD\Widgets\ContentBrowserTypes.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\HUD\Widgets\PropertiesWidget.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Tools\ImageLoader.h">
@@ -380,15 +359,6 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderInitSystem.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\OpaqueRenderSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\LightRenderSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\EditorBillboardRenderSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Systems\Rendering\PostViewportRenderSystem.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -407,16 +377,55 @@
     <ClInclude Include="vendor\Delegates.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\HudPreRenderSystem.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\Rendering\HudRender.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Components\RBodyComponent.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Systems\PhysicsSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\HUD\ContentBrowserTypes.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\HUD\HudPostRenderSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\HUD\HudPreRenderSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\HUD\HudPropertiesSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\HUD\HudViewportSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorBillboardRenderSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\LightRenderSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\OpaqueRenderSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowRenderSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorLogger.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Components\SkyboxComponent.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
@@ -434,5 +443,27 @@
       <Filter>Файлы заголовков</Filter>
     </None>
     <None Include="Engine\Assets\Shaders\SpriteBillboardShader.hlsl" />
+    <None Include="Engine\Assets\Shaders\ShadowMapGenerator.hlsl" />
+    <None Include="Engine\Assets\Shaders\Skybox.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Engine\Assets\SkyBox\skybox_1.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Engine\Assets\SkyBox\skybox_2.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Engine\Assets\SkyBox\skybox_3.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Engine\Assets\SkyBox\skybox_4.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Engine\Assets\SkyBox\skybox_5.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Engine\Assets\SkyBox\skybox_6.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
   </ItemGroup>
 </Project>

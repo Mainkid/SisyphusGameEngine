@@ -13,7 +13,7 @@ public:
 	void Run() override;
 	void Destroy() override;
 private:
-	float bgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float bgColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	float bgEntitiesColor[4] = { -1,-1,-1,1 };
 	RenderContext* rc;
 	EngineContext* ec;
