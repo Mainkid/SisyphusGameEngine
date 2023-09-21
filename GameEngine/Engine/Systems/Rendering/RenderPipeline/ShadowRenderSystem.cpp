@@ -93,8 +93,10 @@ void ShadowRenderSystem::Run()
             }
             hc->context->GSSetShader(nullptr, nullptr, 0);
         }
-        else if (light.lightType == LightType::PointLight)
+        else if (light.lightType == LightType::PointLight && (light.lightBehavior==LightBehavior::Movable ||
+            (light.lightBehavior==LightBehavior::Static && light.shouldBakeShadows)))
         {
+            light.shouldBakeShadows = false;
             hc->context->RSSetState(rc->cullNoneRS.Get());
             float bgColor[4] = { 0,0,0,1 };
             hc->context->ClearDepthStencilView(light.shadowMapDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
