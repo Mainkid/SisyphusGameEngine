@@ -101,20 +101,20 @@ void ShadowRenderSystem::Run()
             hc->context->ClearRenderTargetView(light.shadowMapRTV.Get(),bgColor);
            
             CB_PointlightShadowBuffer dataShadow;
-            dataShadow.world = Matrix::CreateTranslation(tc.localPosition);
+            dataShadow.world = Matrix::CreateTranslation(tc.position);
             
             //dataShadow.baseData.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
-            dataShadow.view[0] = DirectX::XMMatrixLookAtLH(tc.localPosition, tc.localPosition + Vector3(1, 0, 0),
+            dataShadow.view[0] = DirectX::XMMatrixLookAtLH(tc.position, tc.position + Vector3(1, 0, 0),
                 Vector3(0, 1, 0));
-            dataShadow.view[1] = DirectX::XMMatrixLookAtLH(tc.localPosition, tc.localPosition + Vector3(-1, 0, 0),
+            dataShadow.view[1] = DirectX::XMMatrixLookAtLH(tc.position, tc.position + Vector3(-1, 0, 0),
                 Vector3(0, 1, 0));
-            dataShadow.view[2] = DirectX::XMMatrixLookAtLH(tc.localPosition, tc.localPosition + Vector3(0, 1, 0),
+            dataShadow.view[2] = DirectX::XMMatrixLookAtLH(tc.position, tc.position + Vector3(0, 1, 0),
                 Vector3(0, 0, -1));
-            dataShadow.view[3] = DirectX::XMMatrixLookAtLH(tc.localPosition, tc.localPosition + Vector3(0, -1, 0),
+            dataShadow.view[3] = DirectX::XMMatrixLookAtLH(tc.position, tc.position + Vector3(0, -1, 0),
                 Vector3(0, 0, 1));
-            dataShadow.view[4] = DirectX::XMMatrixLookAtLH(tc.localPosition, tc.localPosition + Vector3(0, 0, 1),
+            dataShadow.view[4] = DirectX::XMMatrixLookAtLH(tc.position, tc.position + Vector3(0, 0, 1),
                 Vector3(0, 1, 0));
-            dataShadow.view[5] = DirectX::XMMatrixLookAtLH(tc.localPosition, tc.localPosition + Vector3(0, 0, -1),
+            dataShadow.view[5] = DirectX::XMMatrixLookAtLH(tc.position, tc.position + Vector3(0, 0, -1),
                 Vector3(0, 1, 0));
 
             

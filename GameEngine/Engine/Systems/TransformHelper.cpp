@@ -40,6 +40,9 @@ void TransformHelper::UpdateTransformMatrix(TransformComponent& tc)
 	{
 		UpdateTransformMatrix(ec->scene->registry.get<TransformComponent>(child));
 	}
+	Quaternion q;
+	tc.transformMatrix.Decompose(tc.scale, q, tc.position);
+	tc.rotation = q.ToEuler();
 }
 
 

@@ -30,13 +30,13 @@ int main()
 
     EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint).paramsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
     EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint).color = Vector4(1, 1, 0.0f, 3.0f);
-    EngineCore::instance()->ec->scene->registry.get<TransformComponent>(_lightPoint).localPosition = Vector3(3, 0, 0);
+    EngineCore::instance()->ec->scene->registry.get<TransformComponent>(_lightPoint).position = Vector3(3, 0, 0);
 
     auto _lightPoint2 = EngineCore::instance()->ec->scene->AddLight(LightType::PointLight);
 
     EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint2).paramsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
     EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint2).color = Vector4(1, 0, 0.0f, 3.0f);
-    EngineCore::instance()->ec->scene->registry.get<TransformComponent>(_lightPoint2).localPosition = Vector3(3, 0, 0);
+    EngineCore::instance()->ec->scene->registry.get<TransformComponent>(_lightPoint2).position = Vector3(3, 0, 0);
     //_go3->SetParent(_go);
 
     ////GameObject* particles = EngineCore::instance()->scene->AddParticleSystem();

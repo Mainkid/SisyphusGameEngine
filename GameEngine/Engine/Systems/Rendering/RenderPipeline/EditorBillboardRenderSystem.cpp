@@ -47,7 +47,7 @@ void EditorBillboardRenderSystem::Run()
 
         Vector3 tmp = Vector3(ecs.forward.x, ecs.forward.y, ecs.forward.z);
 
-        auto billboardMat = Matrix::CreateConstrainedBillboard(transformComp.localPosition, camTransform.localPosition,
+        auto billboardMat = Matrix::CreateConstrainedBillboard(transformComp.position, camTransform.position,
             Vector3(ecs.up), &tmp);
         billboardMat = Matrix::CreateScale(0.25f) * billboardMat;
 

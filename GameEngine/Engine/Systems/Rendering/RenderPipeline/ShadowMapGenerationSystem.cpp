@@ -39,13 +39,13 @@ void ShadowMapGenerationSystem::Run()
         TransformComponent& tc = view.get<TransformComponent>(entity);
         if (light.lightType == LightType::Directional)
         {
-            lightBuffer.lightData.Pos = Vector4(tc.localPosition.x, tc.localPosition.y, tc.localPosition.z, 1);
+            lightBuffer.lightData.Pos = Vector4(tc.position.x, tc.position.y, tc.position.z, 1);
             lightBuffer.lightData.Color = light.color;
             lightBuffer.lightData.Dir = Vector4::Transform(Vector4::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation));
             lightBuffer.lightData.additiveParams = light.paramsRadiusAndAttenuation;
-            lightBuffer.eyePos = DirectX::SimpleMath::Vector4(ec->scene->cameraTransform->localPosition.x,
-                ec->scene->cameraTransform->localPosition.y,
-                ec->scene->cameraTransform->localPosition.z,
+            lightBuffer.eyePos = DirectX::SimpleMath::Vector4(ec->scene->cameraTransform->position.x,
+                ec->scene->cameraTransform->position.y,
+                ec->scene->cameraTransform->position.z,
                 1.0f);
 
             hc->context->ClearDepthStencilView(hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1, 0);
@@ -66,7 +66,7 @@ void ShadowMapGenerationSystem::Run()
             }
             else if (light.lightType == LightType::PointLight)
             {
-                lightBuffer.lightData.Pos = Vector4(tc.localPosition.x, tc.localPosition.y, tc.localPosition.z, 25);
+                lightBuffer.lightData.Pos = Vector4(tc.position.x, tc.position.y, tc.position.z, 25);
                 lightBuffer.lightData.additiveParams = light.paramsRadiusAndAttenuation;
                 lightBuffer.baseData.world = tc.transformMatrix;
 
