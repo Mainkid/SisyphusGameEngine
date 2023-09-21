@@ -9,5 +9,13 @@ struct EngineContext : public IService
 	float totalTime = 0;
 	unsigned int frameCount = 0;
 	float deltaTime = 0;
+	//PlayMode states and var for it
+	enum class EPlayModeState
+	{
+		EditorMode,
+		PlayMode,
+		PauseMode
+	};
+	EPlayModeState playModeState = EPlayModeState::EditorMode;
 };
 

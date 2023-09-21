@@ -96,7 +96,8 @@ void HudViewportSystem::Run()
 	if (ImGui::IsKeyDown(ImGuiKey_E))
 		guizmoType = ImGuizmo::OPERATION::SCALE;
 
-
+	
+	drawPlayMode(startCursorPos);
 	hoverState = EHoveringState::Viewport;
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
@@ -112,7 +113,6 @@ void HudViewportSystem::Run()
 	{
 		guizmoType = ImGuizmo::OPERATION::TRANSLATE;
 	}
-
 	ImGui::SameLine();
 	ImGui::SetNextItemAllowOverlap();
 	ImGui::ImageButton((void*)guizmoIconSRV[ImGuizmo::OPERATION::ROTATE], { 20,20 });
@@ -141,6 +141,8 @@ void HudViewportSystem::Run()
 
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();
+
+	
 	//std::cout <<(int) hoverState << std::endl;
 
 	HandleResize();
@@ -162,6 +164,21 @@ void HudViewportSystem::InitSRV()
 
 	ImageLoader::LoadTextureFromFile(scaleIconPath.string().c_str(), scaleSRV.GetAddressOf(), &width, &height);
 	guizmoIconSRV[ImGuizmo::OPERATION::SCALE] =scaleSRV.Get();
+
+	ImageLoader::LoadTextureFromFile(
+		playButtonPath.string().c_str(), 
+		playBtnSRV.GetAddressOf(), &width, &height
+	);
+
+	ImageLoader::LoadTextureFromFile(
+		stopButtonPath.string().c_str(),
+		stopBtnSRV.GetAddressOf(), &width, &height
+	);
+
+	ImageLoader::LoadTextureFromFile(
+		pauseButtonPath.string().c_str(),
+		pauseBtnSRV.GetAddressOf(), &width, &height
+	);
 }
 
 void HudViewportSystem::HandleResize()
@@ -179,5 +196,43 @@ void HudViewportSystem::HandleResize()
 			cc.aspectRatio = widgetSize.x / widgetSize.y;
 		}
 	}
+}
+
+void HudViewportSystem::drawPlayMode(ImVec2 cursorStartPostion)
+{
+	hoverState = EHoveringState::PlayMode;
+	int offset = ImGui::GetContentRegionAvail().x / 2;
+	int dtOffset = 24;
+	
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+	ImGui::SetNextItemAllowOverlap();
+	ImGui::SetCursorScreenPos(cursorStartPostion);
+	ImGui::SameLine(offset);
+	ImGui::ImageButton((void*)(playBtnSRV.Get()), { 20,20 });
+	if (ImGui::IsItemClicked())
+	{
+		ec->playModeState = EngineContext::EPlayModeState::PlayMode;
+	}
+	offset += dtOffset;
+	ImGui::SameLine(offset);
+	ImGui::SetNextItemAllowOverlap();
+	ImGui::ImageButton((void*)pauseBtnSRV.Get(), { 20,20 });
+	if (ImGui::IsItemClicked() &&
+		ec->playModeState == EngineContext::EPlayModeState::PlayMode)
+	{
+		ec->playModeState = EngineContext::EPlayModeState::PauseMode;
+	}
+	offset += dtOffset;
+	ImGui::SameLine(offset);
+	ImGui::SetNextItemAllowOverlap();
+	ImGui::ImageButton((void*)stopBtnSRV.Get(), { 20,20 });
+	if (ImGui::IsItemClicked() &&
+		ec->playModeState != EngineContext::EPlayModeState::EditorMode)
+	{
+		ec->playModeState = EngineContext::EPlayModeState::EditorMode;
+	}
+	ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
 }
 
