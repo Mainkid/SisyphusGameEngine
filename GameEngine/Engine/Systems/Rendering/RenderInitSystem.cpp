@@ -189,12 +189,14 @@ void RenderInitSystem::Init()
     ZeroMemory(&desc, sizeof(D3D11_RASTERIZER_DESC));
     desc.FillMode = D3D11_FILL_SOLID;
     desc.CullMode = D3D11_CULL_FRONT;
-
+    
     hc->device->CreateRasterizerState(&desc, rc->cullFrontRS.GetAddressOf());
 
     desc.CullMode = D3D11_CULL_BACK;
     hc->device->CreateRasterizerState(&desc, rc->cullBackRS.GetAddressOf());
 
+    desc.CullMode = D3D11_CULL_NONE;
+    hc->device->CreateRasterizerState(&desc, rc->cullNoneRS.GetAddressOf());
     //**Shadows**
 
     D3D11_TEXTURE2D_DESC shadowMapDesc;

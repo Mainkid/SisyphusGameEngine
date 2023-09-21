@@ -38,6 +38,7 @@ struct RenderContext : public IService
     Microsoft::WRL::ComPtr<ID3D11DepthStencilState> finalPassStencilState;
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> cullFrontRS;
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> cullBackRS;
+    Microsoft::WRL::ComPtr<ID3D11RasterizerState> cullNoneRS;
 
     Microsoft::WRL::ComPtr<ID3D11Texture2D> entityIdTexture;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> entityIdSRV;

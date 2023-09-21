@@ -26,7 +26,7 @@ void ShadowRenderSystem::Run()
         TransformComponent& tc = view.get<TransformComponent>(entity);
         if (light.lightType == LightType::Directional)
         {
-            hc->context->RSSetState(rc->cullBackRS.Get());
+            hc->context->RSSetState(rc->cullNoneRS.Get());
             hc->context->OMSetRenderTargets(1, &rc->m_renderTargetView, rc->shadowStencilView.Get());
             rc->m_renderTargetTexture = nullptr;
             auto view = ec->scene->registry.view<MeshComponent>();
@@ -95,7 +95,7 @@ void ShadowRenderSystem::Run()
         }
         else if (light.lightType == LightType::PointLight)
         {
-            hc->context->RSSetState(rc->cullFrontRS.Get());
+            hc->context->RSSetState(rc->cullNoneRS.Get());
             float bgColor[4] = { 0,0,0,1 };
             hc->context->ClearDepthStencilView(light.shadowMapDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
             hc->context->ClearRenderTargetView(light.shadowMapRTV.Get(),bgColor);
