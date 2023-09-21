@@ -23,7 +23,7 @@ int main()
     //
     ////_go3->GetComponent<TransformComponent>().SetPosition(Vector3(-3, 0, 0));
     //_go3->GetComponent<MeshComponent>().UpdateMesh("./Game/Assets/DefaultModel.obj");
-    //auto _lightDir = EngineCore::instance()->ec->scene->AddLight(LightType::Directional);
+    auto _lightDir = EngineCore::instance()->ec->scene->AddLight(LightType::Directional);
     auto light = EngineCore::instance()->ec->scene->AddLight(LightType::Ambient);
     EngineCore::instance()->ec->scene->registry.get<LightComponent>(light).color = Vector4(0.15f, 0.15f, 0.15f, 0.15f);
     auto _lightPoint = EngineCore::instance()->ec->scene->AddLight(LightType::PointLight);

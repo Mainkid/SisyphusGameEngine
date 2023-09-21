@@ -22,7 +22,6 @@ struct RenderContext : public IService
     std::unique_ptr<Shader> billboardShader;
     std::unique_ptr<Shader> shadowMapGenerator;
     std::unique_ptr<Shader> shadowMapPointLightGenerator;
-    std::unique_ptr<Shader> shadowMapFinal;
     std::unique_ptr<Shader> skyBoxShader;
     
 

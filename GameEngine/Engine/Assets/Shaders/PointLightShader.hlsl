@@ -25,7 +25,7 @@ Texture2D<float4> NormalTex : register(t1);
 Texture2D<float4> WorldPosTex : register(t2);
 Texture2D<float4> DepthTex : register(t3);
 Texture2D<float4> SpecularTex : register(t4);
-Texture2D ShadowMap : register(t5);
+TextureCube cubeMap : register(t5);
 
 SamplerState textureSampler : SAMPLER : register(s0);
 
@@ -70,7 +70,7 @@ float4 PS_PointLight(PS_IN input) : SV_Target
     float3 pixelColor =DiffuseTex.Sample(textureSampler, input.col.xy);
     float3 worldPos = WorldPosTex.Sample(textureSampler, input.col.xy);
     float3 normal = NormalTex.Sample(textureSampler, input.col.xy);
-    float shadowVal = clamp(ShadowMap.Sample(textureSampler, input.col.xy), 0, 1);
+    //float shadowVal = clamp(ShadowMap.Sample(textureSampler, input.col.xy), 0, 1);
     normal = (normal.xyz - float3(0.5f, 0.5f, 0.5f)) * 2.0f;
     normal = normalize(normal);
    
@@ -80,14 +80,23 @@ float4 PS_PointLight(PS_IN input) : SV_Target
     float3 lightVec = -(worldPos.xyz - lightData.pos.xyz);
     float distance = length(lightVec);
     
+    float3 fragToLight = -(lightData.pos.xyz - worldPos).xyz;
+    float currentDepth = length(fragToLight.xyz);
+    bool res = currentDepth < lightData.params.r;
+    fragToLight.xyz = normalize(fragToLight.xyz);
     
-    //return float4(lightVec, 1.0f);
+    float3 depthCoord = cubeMap.Sample(textureSampler, fragToLight.xyz);
+    float3 depthToLight = -(lightData.pos.xyz - depthCoord).xyz;
+    //depthToLight.y = depthToLight.y * (-1);
+    float bias = 0.03f;
+    float4 posLight = float4(worldPos, 1);
+    float shadowVal = currentDepth - bias < length(depthToLight);
+
     
     
     if (distance > lightData.params.r)
         return float4(0.0f, 0.0f, 0.0f, 1.0f);
-    //else
-    //    return float4(0.5, 0.5, 0.5, 1);
+
     
     lightVec /= distance;
     

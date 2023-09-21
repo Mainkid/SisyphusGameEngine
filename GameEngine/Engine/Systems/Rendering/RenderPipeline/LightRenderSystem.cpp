@@ -140,7 +140,7 @@ void LightRenderSystem::Run()
         {
 
             //Back Face Pass
-            hc->context->PSSetShaderResources(5, 1, &rc->shadowMapResourceView);
+            hc->context->PSSetShaderResources(5, 1, light.shadowMapSRV.GetAddressOf());
 
             hc->context->RSSetState(rc->cullFrontRS.Get());
             hc->context->OMSetDepthStencilState(rc->backFaceStencilState.Get(), 0);
@@ -239,8 +239,7 @@ void LightRenderSystem::Run()
 
     }
     hc->context->PSSetShaderResources(0, 5, srvNull);
-    
-    //ShadowMap();
+   
 }
 
 void LightRenderSystem::Destroy()
@@ -249,22 +248,5 @@ void LightRenderSystem::Destroy()
 
 void LightRenderSystem::ShadowMap()
 {
-    UINT strides[1] = { 32 };
-    UINT offsets[1] = { 0 };
-    hc->renderTarget->SetRenderTarget(nullptr);
-    hc->context->OMSetBlendState(rc->lightBlendState.Get(), nullptr, 0xffffffff);
-    hc->context->RSSetState(rc->cullBackRS.Get());
-    hc->context->OMSetDepthStencilState(hc->depthStencilState.Get(), 0);
-    hc->context->VSSetShader(rc->shadowMapFinal->vertexShader.Get(), nullptr, 0);
-    hc->context->PSSetShaderResources(0, 1, &rc->shadowMapResourceView);
-    hc->context->PSSetSamplers(0, 1, rc->samplerState.GetAddressOf());
-    hc->context->PSSetShader(rc->shadowMapFinal->pixelShader.Get(), nullptr, 0);
-    hc->context->IASetInputLayout(rc->shadowMapFinal->layout.Get());
-    hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
-    hc->context->IASetIndexBuffer(rc->indexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-    hc->context->IASetVertexBuffers(0, 1, rc->vertexQuadBuffer->buffer.GetAddressOf(),
-        strides, offsets);
-
-    hc->context->DrawIndexed(6, 0, 0);
-    hc->context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
+    
 }

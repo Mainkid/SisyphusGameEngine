@@ -37,7 +37,7 @@ void ShadowMapGenerationSystem::Run()
         
         LightComponent& light = view.get<LightComponent>(entity);
         TransformComponent& tc = view.get<TransformComponent>(entity);
-        if (light.lightType == LightType::Directional || light.lightType == LightType::PointLight)
+        if (light.lightType == LightType::Directional)
         {
             lightBuffer.lightData.Pos = Vector4(tc.localPosition.x, tc.localPosition.y, tc.localPosition.z, 1);
             lightBuffer.lightData.Color = light.color;

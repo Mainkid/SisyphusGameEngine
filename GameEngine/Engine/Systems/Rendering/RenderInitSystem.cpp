@@ -437,11 +437,7 @@ void RenderInitSystem::Init()
     rc->shadowMapPointLightGenerator->Initialize(L"./Engine/Assets/Shaders/ShadowPointLightGenerator.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VS", "PS");
 
-    rc->shadowMapFinal= std::make_unique<Shader>();
-    rc->shadowMapFinal->Initialize(L"./Engine/Assets/Shaders/ShadowFinal.hlsl",
-        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VS", "PS");
-
-
+  
     rc->skyBoxShader = std::make_unique<Shader>();
     rc->skyBoxShader->Initialize(L"./Engine/Assets/Shaders/Skybox.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VS", "PS");

@@ -447,7 +447,6 @@
     <None Include="Engine\Assets\Shaders\Skybox.hlsl" />
     <None Include="Engine\Assets\Shaders\ShadowPointlightShader.hlsl" />
     <None Include="Engine\Assets\Shaders\ShadowPointLightGenerator.hlsl" />
-    <None Include="Engine\Assets\Shaders\ShadowFinal.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png">
