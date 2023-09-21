@@ -25,6 +25,7 @@ Texture2D<float4> NormalTex : register(t1);
 Texture2D<float4> WorldPosTex : register(t2);
 Texture2D<float4> DepthTex : register(t3);
 Texture2D<float4> SpecularTex : register(t4);
+Texture2D ShadowMap : register(t5);
 
 SamplerState textureSampler : SAMPLER : register(s0);
 
@@ -69,6 +70,7 @@ float4 PS_PointLight(PS_IN input) : SV_Target
     float3 pixelColor =DiffuseTex.Sample(textureSampler, input.col.xy);
     float3 worldPos = WorldPosTex.Sample(textureSampler, input.col.xy);
     float3 normal = NormalTex.Sample(textureSampler, input.col.xy);
+    float shadowVal = clamp(ShadowMap.Sample(textureSampler, input.col.xy), 0, 1);
     normal = (normal.xyz - float3(0.5f, 0.5f, 0.5f)) * 2.0f;
     normal = normalize(normal);
    
@@ -112,11 +114,11 @@ float4 PS_PointLight(PS_IN input) : SV_Target
         
     }
     
-    float att = 1.0f / dot(lightData.params.yzw, float3(1.0f, distance , distance * distance));
+    float att = pow((1 - distance / lightData.params.r), 2.0f) ;
 
     float3 resColor = diffuseFactor*att* pixelColor + specFactor*att;
     
-    
+    resColor = resColor * shadowVal;
     
     
     return float4(resColor, 1.0f);

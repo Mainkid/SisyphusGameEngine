@@ -731,6 +731,15 @@
     <None Include="Engine\Assets\Shaders\ShadowMapGenerator.hlsl">
       <FileType>Document</FileType>
     </None>
+    <None Include="Engine\Assets\Shaders\ShadowPointlightShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Engine\Assets\Shaders\ShadowPointLightGenerator.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Engine\Assets\Shaders\ShadowFinal.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <FxCompile Include="Engine\Assets\Shaders\ShadowShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

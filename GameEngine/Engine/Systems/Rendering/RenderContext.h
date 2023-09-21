@@ -18,9 +18,13 @@ struct RenderContext : public IService
     std::unique_ptr<Shader> stencilPassShader;
     std::unique_ptr<Shader> spotLightShader;
     std::unique_ptr<Shader> shadowShader;
+    std::unique_ptr<Shader> shadowPointLightShader;
     std::unique_ptr<Shader> billboardShader;
     std::unique_ptr<Shader> shadowMapGenerator;
+    std::unique_ptr<Shader> shadowMapPointLightGenerator;
+    std::unique_ptr<Shader> shadowMapFinal;
     std::unique_ptr<Shader> skyBoxShader;
+    
 
     std::shared_ptr<Mesh> cubeMesh;
 
@@ -72,6 +76,7 @@ struct RenderContext : public IService
     const int SHADOWMAP_HEIGHT = 1024;
     Microsoft::WRL::ComPtr <ID3D11DepthStencilState> shadowStencilState;
     Microsoft::WRL::ComPtr <ID3D11DepthStencilView> shadowStencilView;
+    Microsoft::WRL::ComPtr <ID3D11DepthStencilView> shadowPointLightStencilView;
     ID3D11ShaderResourceView* shadowResourceView;
     
     ID3D11Texture2D* texture_;
@@ -96,5 +101,6 @@ struct RenderContext : public IService
     Microsoft::WRL::ComPtr < ID3D11ShaderResourceView> skyboxSRV;
 
     std::unique_ptr<Buffer> shadowConstBuffer;
+    std::unique_ptr<Buffer> shadowPointlightConstBuffer;
 };
 

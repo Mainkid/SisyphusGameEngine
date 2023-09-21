@@ -36,6 +36,14 @@ public:
     DirectX::SimpleMath::Vector4 distances[4];
 };
 
+class CB_PointlightShadowBuffer
+{
+public:
+    DirectX::SimpleMath::Matrix world;
+    DirectX::SimpleMath::Matrix view[6];
+    DirectX::SimpleMath::Matrix proj;
+};
+
 
 
 class CB_viewProjBuffer
