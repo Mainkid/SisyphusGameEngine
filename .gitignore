@@ -1,4 +1,6 @@
 imgui.ini
+GameEngine\vendor\PhysX
+
 
 ##### Windows
 # Windows thumbnail cache files
@@ -1032,7 +1034,7 @@ _deps
 
 # Kernel Module Compile Results
 *.mod*
-*.cmd
+#*.cmd
 .tmp_versions/
 modules.order
 Module.symvers
