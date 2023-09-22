@@ -1,5 +1,5 @@
 imgui.ini
-GameEngine\vendor\PhysX
+#GameEngine\vendor\PhysX
 
 
 ##### Windows
@@ -1034,7 +1034,7 @@ _deps
 
 # Kernel Module Compile Results
 *.mod*
-*.cmd
+#*.cmd
 .tmp_versions/
 modules.order
 Module.symvers
