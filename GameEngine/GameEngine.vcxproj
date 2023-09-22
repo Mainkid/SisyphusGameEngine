@@ -122,6 +122,9 @@
       </ShaderType>
       <EntryPointName />
     </FxCompile>
+    <PreBuildEvent>
+      <Command>$(SolutionDir)pre-build.bat $(SolutionDir)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
