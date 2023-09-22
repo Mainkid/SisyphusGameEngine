@@ -7,13 +7,13 @@ void ErrorLogger::Log(int errorCode, const std::string& fileName, int lineNum)
 							"Line: " + std::to_string(lineNum) + "\n";
 	switch (errorCode)
 	{
-	case ERRORLG_EMPTY:
+	case SY_NO_ERROR:
 		break;
-	case ERRORLG_GENERIC:
+	case SY_GENERIC_ERROR:
 		message = "A non-critical error occured!\n" + message;
 		MessageBoxA(NULL, message.c_str(), "Error", MB_ICONERROR);
 		break;
-	case ERRORLG_GENERIC_CRITICAL :
+	case SY_GENERIC_ERROR_CRITICAL :
 		message = "A critical error occured!\n" + message;
 		MessageBoxA(NULL, message.c_str(), "Error", MB_ICONERROR);
 		exit(-1);

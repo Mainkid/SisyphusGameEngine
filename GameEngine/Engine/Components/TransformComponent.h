@@ -1,7 +1,7 @@
 #pragma once
 #include "SimpleMath.h"
 #include "../../vendor/entt/entt.hpp"
-
+#include "../Tools/Data/Vector.h"
 
 using namespace DirectX::SimpleMath;
 struct TransformComponent
@@ -13,17 +13,34 @@ struct TransformComponent
 		this->rotation = _rot;
 		this->scale = _scale;
 	}
-	Vector3 position = Vector3(0, 0, 0);
-	Vector3 rotation = Vector3(0, 0, 0);
-	Vector3 scale = Vector3(1, 1, 1);
-	Vector3 localPosition = Vector3(0, 0, 0);
-	Vector3 localRotation = Vector3(0, 0, 0);
-	Vector3 localScale = Vector3(1, 1, 1);
-	Matrix transformMatrix = Matrix::Identity;
-	uint32_t hash = 0;
-	entt::entity parent = entt::null;
+	SyVector3 position =		SyVector3(0, 0, 0 );
+	SyVector3 rotation =		SyVector3(0, 0, 0);
+	SyVector3 scale =			SyVector3(1, 1, 1);
+	SyVector3 localPosition =	SyVector3(0, 0, 0);
+	SyVector3 localRotation =	SyVector3(0, 0, 0);
+	SyVector3 localScale =		SyVector3(1, 1, 1);
+	Matrix transformMatrix =	Matrix::Identity;
+	uint32_t hash =				0;
+	entt::entity parent =		entt::null;
 	std::set<entt::entity> children = {};
 };
+
+namespace std
+{
+	template<> struct hash<SyVector3>
+	{
+		using argument_type = SyVector3;
+		using result_type = std::size_t;
+		result_type operator()(argument_type const& a) const
+		{
+			result_type const h1(std::hash<float>()(a.x));
+			result_type const h2(std::hash<float>()(a.y));
+			result_type const h3(std::hash<float>()(a.z));
+			return h1 * 37 + (h1 * 37 + h2) * 37 +
+				((h1 * 37 + h2) * 37 + h3) * 37;
+		}
+	};
+}
 
 namespace std
 {
@@ -50,13 +67,13 @@ namespace std
 		using result_type = std::size_t;
 		result_type operator()(argument_type const& a) const
 		{
-			result_type const h1(std::hash<Vector3>()(a.position));
-			result_type const h2(std::hash<Vector3>()(a.scale));
-			result_type const h3(std::hash<Vector3>()(a.rotation));
+			result_type const h1(std::hash<SyVector3>()(a.position));
+			result_type const h2(std::hash<SyVector3>()(a.scale));
+			result_type const h3(std::hash<SyVector3>()(a.rotation));
 			result_type const h4(std::hash<entt::entity>()(a.parent));
-			result_type const h5(std::hash<Vector3>()(a.localPosition));
-			result_type const h6(std::hash<Vector3>()(a.localRotation));
-			result_type const h7(std::hash<Vector3>()(a.localScale));
+			result_type const h5(std::hash<SyVector3>()(a.localPosition));
+			result_type const h6(std::hash<SyVector3>()(a.localRotation));
+			result_type const h7(std::hash<SyVector3>()(a.localScale));
 			return h1 * 37 + (h1 * 37 + h2) * 37 +
 				((h1 * 37 + h2) * 37 + h3) * 37+
 				(((h1 * 37 + h2) * 37 + h3) * 37+h4)*37+

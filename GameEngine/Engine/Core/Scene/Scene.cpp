@@ -27,14 +27,58 @@ entt::entity Scene::AddGameObject()
 	return id;
 }
 
+entt::entity Scene::AddStaticBox(const SyVector3& position_, const SyVector3& rotation_, const SyVector3 scale_)
+{
+	auto id = registry.create();
+	registry.emplace<DataComponent>(id, "Box");
+	registry.emplace<TransformComponent>(id);
+	auto& tc = registry.get<TransformComponent>(id);
+	tc.localPosition = position_;
+	tc.localRotation = rotation_;
+	tc.localScale = scale_;
+	registry.emplace<MeshComponent>(id);
+	SyRBodyBoxShapeDesc boxDesc;
+	boxDesc.origin = position_;
+	boxDesc.rotation = rotation_;
+	boxDesc.halfExt = scale_;
+	registry.emplace<SyRBodyComponent>(id, RB_TYPE_STATIC, RB_SHAPE_TYPE_BOX, boxDesc);
+	gameObjects.insert(id);
+	return id;
+}
+
+entt::entity Scene::AddDynamicBox(const SyVector3& position_, const SyVector3& rotation_, const SyVector3 scale_)
+{
+	auto id = registry.create();
+	registry.emplace<DataComponent>(id, "Box");
+	registry.emplace<TransformComponent>(id);
+	auto& tc = registry.get<TransformComponent>(id);
+	tc.localPosition = position_;
+	tc.localRotation = rotation_;
+	tc.localScale = scale_;
+	registry.emplace<MeshComponent>(id);
+	SyRBodyBoxShapeDesc boxDesc;
+	boxDesc.origin = position_;
+	boxDesc.rotation = rotation_;
+	boxDesc.halfExt = scale_;
+	registry.emplace<SyRBodyComponent>(id, RB_TYPE_DYNAMIC, RB_SHAPE_TYPE_BOX, boxDesc);
+	gameObjects.insert(id);
+	return id;
+}
+
 entt::entity Scene::AddLight(LightType _lightType)
 {
 	auto id = registry.create();
-	registry.emplace<DataComponent>(id,"LightObject");
+	
 	if (_lightType == LightType::PointLight)
+	{
+		registry.emplace<DataComponent>(id, "PointLight");
 		registry.emplace<EditorBillboardComponent>(id, "Engine/Assets/Sprites/PointLightSprite.png");
+	}
 	else
+	{
+		registry.emplace<DataComponent>(id, "DirectionalLight");
 		registry.emplace<EditorBillboardComponent>(id, "Engine/Assets/Sprites/DirLightSprite.png");
+	}
 	registry.emplace<LightComponent>(id,_lightType);
 	registry.emplace<TransformComponent>(id);
 	gameObjects.insert(id);
