@@ -70,5 +70,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pauseBtnSRV;
 
 
+	ImVec4 activeButtonBG = { 0.258f, 0.588f, 1.0f, 1 };
+
 };
 

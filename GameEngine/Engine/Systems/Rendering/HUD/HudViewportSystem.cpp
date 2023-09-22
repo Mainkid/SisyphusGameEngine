@@ -209,7 +209,8 @@ void HudViewportSystem::drawPlayMode(ImVec2 cursorStartPostion)
 	ImGui::SetNextItemAllowOverlap();
 	ImGui::SetCursorScreenPos(cursorStartPostion);
 	ImGui::SameLine(offset);
-	ImGui::ImageButton((void*)(playBtnSRV.Get()), { 20,20 });
+	activeButtonBG.w = ec->playModeState == EngineContext::EPlayModeState::PlayMode;
+	ImGui::ImageButton((void*)(playBtnSRV.Get()), { 20,20 },ImVec2(0,0),ImVec2(1,1),-1,activeButtonBG);
 	if (ImGui::IsItemClicked())
 	{
 		ec->playModeState = EngineContext::EPlayModeState::PlayMode;
@@ -217,7 +218,8 @@ void HudViewportSystem::drawPlayMode(ImVec2 cursorStartPostion)
 	offset += dtOffset;
 	ImGui::SameLine(offset);
 	ImGui::SetNextItemAllowOverlap();
-	ImGui::ImageButton((void*)pauseBtnSRV.Get(), { 20,20 });
+	activeButtonBG.w = ec->playModeState == EngineContext::EPlayModeState::PauseMode;
+	ImGui::ImageButton((void*)pauseBtnSRV.Get(), { 20,20 }, ImVec2(0, 0), ImVec2(1, 1), -1, activeButtonBG);
 	if (ImGui::IsItemClicked() &&
 		ec->playModeState == EngineContext::EPlayModeState::PlayMode)
 	{
@@ -226,7 +228,9 @@ void HudViewportSystem::drawPlayMode(ImVec2 cursorStartPostion)
 	offset += dtOffset;
 	ImGui::SameLine(offset);
 	ImGui::SetNextItemAllowOverlap();
+
 	ImGui::ImageButton((void*)stopBtnSRV.Get(), { 20,20 });
+
 	if (ImGui::IsItemClicked() &&
 		ec->playModeState != EngineContext::EPlayModeState::EditorMode)
 	{
