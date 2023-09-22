@@ -7,3 +7,9 @@ enum class LightType
     PointLight,
     SpotLight
 };
+
+enum class LightBehavior
+{
+    Static,
+    Movable
+};

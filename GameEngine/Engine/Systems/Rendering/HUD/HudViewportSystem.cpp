@@ -71,7 +71,6 @@ void HudViewportSystem::Run()
 		auto projMat = ec->scene->camera->projection;
 		auto& tc = ec->scene->registry.get<TransformComponent>(ec->selectedEntityID);
 		auto transformMat = tc.transformMatrix;
-		//auto transformMat = TransformHelper::ConstructTransformMatrix(tc);
 
 		auto res=ImGuizmo::Manipulate(&viewMat._11, &projMat._11, guizmoType, ImGuizmo::LOCAL, &transformMat._11);
 		
@@ -85,7 +84,6 @@ void HudViewportSystem::Run()
 			tc.localRotation = tc.localRotation + deltaRotation;
 			tc.localPosition = translation;
 			tc.localScale = scale;
-			//TransformHelper::RecalculateWorldPos(tc);
 		}
 	}
 

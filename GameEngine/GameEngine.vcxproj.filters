@@ -165,7 +165,29 @@
     <None Include="Engine\Assets\Shaders\LightShader.hlsl" />
     <None Include="Engine\Assets\Shaders\ShadowMapGenerator.hlsl" />
     <None Include="Engine\Assets\Shaders\Skybox.hlsl" />
-    <None Include="Engine\Assets\Shaders\SpriteBillboardShader.hlsl" />
+    <None Include="Engine\Assets\Shaders\ShadowPointlightShader.hlsl" />
+    <None Include="Engine\Assets\Shaders\ShadowPointLightGenerator.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Engine\Assets\SkyBox\skybox_1.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Engine\Assets\SkyBox\skybox_2.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Engine\Assets\SkyBox\skybox_3.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Engine\Assets\SkyBox\skybox_4.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Engine\Assets\SkyBox\skybox_5.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Engine\Assets\SkyBox\skybox_6.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+     <None Include="Engine\Assets\Shaders\SpriteBillboardShader.hlsl" />
     <None Include="vendor\DirectXTK\Inc\SimpleMath.inl" />
   </ItemGroup>
 </Project>

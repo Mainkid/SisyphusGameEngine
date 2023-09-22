@@ -1,11 +1,14 @@
 #include "LightSystem.h"
 #include "HardwareContext.h"
 #include "EngineContext.h"
+#include "Rendering\RenderContext.h"
 #include "../Core/ServiceLocator.h"
 
 void LightSystem::Init()
 {
     ec = ServiceLocator::instance()->Get<EngineContext>();
+    rc = ServiceLocator::instance()->Get<RenderContext>();
+    hc = ServiceLocator::instance()->Get<HardwareContext>();
 }
 
 void LightSystem::Run()
@@ -33,11 +36,8 @@ void LightSystem::Run()
             lc.aabb = MeshLoader::LoadSimpleMesh("Engine/Assets/Cube.fbx");
         }
         
-        /*
-		if (hasher(lc) != lc.hash)
-		{
-			lc.hash = hasher(lc);
-		}*/
+        if (lc.lightType == LightType::PointLight && lc.shadowMapTexture==nullptr)
+            InitPointLightResources(lc);
 	}
 }
 
@@ -192,4 +192,58 @@ void LightSystem::GenerateOrthoFromFrustum(LightComponent& lc,Vector3 direction,
 
 
     lc.orthoMatrix = Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ);
+}
+
+void LightSystem::InitPointLightResources(LightComponent& lc)
+{
+    D3D11_TEXTURE2D_DESC textureDesc_ = {};
+    textureDesc_.Width = rc->SHADOWMAP_WIDTH;
+    textureDesc_.Height = rc->SHADOWMAP_HEIGHT;
+    textureDesc_.MipLevels = 1;
+    textureDesc_.ArraySize = 6;
+    textureDesc_.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    textureDesc_.SampleDesc.Count = 1;
+    textureDesc_.SampleDesc.Quality = 0;
+    textureDesc_.Usage = D3D11_USAGE_DEFAULT;
+    textureDesc_.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+    textureDesc_.CPUAccessFlags = 0;
+    textureDesc_.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+    HRESULT result = hc->device->CreateTexture2D(&textureDesc_, nullptr, lc.shadowMapTexture.GetAddressOf());
+
+    
+    result = hc->device->CreateRenderTargetView(lc.shadowMapTexture.Get(),nullptr, lc.shadowMapRTV.GetAddressOf());
+
+    D3D11_TEXTURE2D_DESC textureDescDSV = {};
+    textureDescDSV.Width = rc->SHADOWMAP_WIDTH;
+    textureDescDSV.Height = rc->SHADOWMAP_HEIGHT;
+    textureDescDSV.MipLevels = 1;
+    textureDescDSV.ArraySize = 6;
+    textureDescDSV.Format = DXGI_FORMAT_R32_TYPELESS;
+    textureDescDSV.SampleDesc.Count = 1;
+    textureDescDSV.SampleDesc.Quality = 0;
+    textureDescDSV.Usage = D3D11_USAGE_DEFAULT;
+    textureDescDSV.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
+    textureDescDSV.CPUAccessFlags = 0;
+    textureDescDSV.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+    result = hc->device->CreateTexture2D(&textureDescDSV, nullptr, lc.depthStencilViewTexture.GetAddressOf());
+
+
+    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewPointDesc;
+    ZeroMemory(&depthStencilViewPointDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+    depthStencilViewPointDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    depthStencilViewPointDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+    depthStencilViewPointDesc.Texture2DArray.MipSlice = 0; 
+    depthStencilViewPointDesc.Texture2DArray.FirstArraySlice = 0;
+    depthStencilViewPointDesc.Texture2DArray.ArraySize = 6;
+
+    result = hc->device->CreateDepthStencilView(lc.depthStencilViewTexture.Get(), &depthStencilViewPointDesc, lc.shadowMapDSV.GetAddressOf());
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    srvDesc.Texture2D.MipLevels = 1;
+    result = hc->device->CreateShaderResourceView(lc.shadowMapTexture.Get(), &srvDesc, lc.shadowMapSRV.GetAddressOf());
 }

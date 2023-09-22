@@ -46,6 +46,9 @@ void RenderInitSystem::Init()
     rc->shadowConstBuffer = std::make_unique<Buffer>(hc->device.Get());
     rc->shadowConstBuffer->Initialize(sizeof(CB_ShadowBuffer));
 
+    rc->shadowPointlightConstBuffer = std::make_unique<Buffer>(hc->device.Get());
+    rc->shadowPointlightConstBuffer->Initialize(sizeof(CB_PointlightShadowBuffer));
+
     rc->gBuffer = std::make_unique<GBuffer>(hc->device);
     rc->gBuffer->Initialize(hc->window->GetWidth(), hc->window->GetHeight());
 
@@ -186,12 +189,14 @@ void RenderInitSystem::Init()
     ZeroMemory(&desc, sizeof(D3D11_RASTERIZER_DESC));
     desc.FillMode = D3D11_FILL_SOLID;
     desc.CullMode = D3D11_CULL_FRONT;
-
+    
     hc->device->CreateRasterizerState(&desc, rc->cullFrontRS.GetAddressOf());
 
     desc.CullMode = D3D11_CULL_BACK;
     hc->device->CreateRasterizerState(&desc, rc->cullBackRS.GetAddressOf());
 
+    desc.CullMode = D3D11_CULL_NONE;
+    hc->device->CreateRasterizerState(&desc, rc->cullNoneRS.GetAddressOf());
     //**Shadows**
 
     D3D11_TEXTURE2D_DESC shadowMapDesc;
@@ -219,6 +224,8 @@ void RenderInitSystem::Init()
     depthStencilViewDesc.Texture2DArray.ArraySize = 4;
 
     hr = hc->device->CreateDepthStencilView(rc->texture_, &depthStencilViewDesc, &rc->shadowStencilView);
+
+    
 
     D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
     ZeroMemory(&shaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
@@ -416,6 +423,10 @@ void RenderInitSystem::Init()
     rc->shadowShader->Initialize(L"./Engine/Assets/Shaders/ShadowShader.hlsl",
         COMPILE_VERTEX | COMPILE_GEOM, USE_POSITION | USE_COLOR | USE_NORMAL, "DepthVertexShader");
 
+    rc->shadowPointLightShader = std::make_unique<Shader>();
+    rc->shadowPointLightShader->Initialize(L"./Engine/Assets/Shaders/ShadowPointlightShader.hlsl",
+        COMPILE_VERTEX | COMPILE_GEOM | COMPILE_PIXEL, USE_POSITION | USE_COLOR | USE_NORMAL, "DepthVertexShader","PSMain");
+
     rc->billboardShader = std::make_unique<Shader>();
     rc->billboardShader->Initialize(L"./Engine/Assets/Shaders/SpriteBillboardShader.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR | USE_NORMAL);
@@ -424,6 +435,11 @@ void RenderInitSystem::Init()
     rc->shadowMapGenerator->Initialize(L"./Engine/Assets/Shaders/ShadowMapGenerator.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR,"VSMain","PS_ShadowMapGenerator");
 
+    rc->shadowMapPointLightGenerator = std::make_unique<Shader>();
+    rc->shadowMapPointLightGenerator->Initialize(L"./Engine/Assets/Shaders/ShadowPointLightGenerator.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VS", "PS");
+
+  
     rc->skyBoxShader = std::make_unique<Shader>();
     rc->skyBoxShader->Initialize(L"./Engine/Assets/Shaders/Skybox.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VS", "PS");

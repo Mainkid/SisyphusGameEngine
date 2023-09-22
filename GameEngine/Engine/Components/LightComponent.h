@@ -1,6 +1,7 @@
 #pragma once
 #include "DirectXHelpers.h"
 #include "SimpleMath.h"
+#include <d3d11.h>
 #include "../Components/Mesh.h"
 #include "../Core/Rendering/Lights/LightType.h"
 #include <memory>
@@ -22,11 +23,20 @@ struct LightComponent
     std::vector<Vector4> distances;
     std::shared_ptr<Mesh> aabb = nullptr;
     LightType lightType = LightType::Ambient;
+    LightBehavior lightBehavior = LightBehavior::Movable;
     Vector4 color = { 1,1,1,1 };
     Vector4 paramsRadiusAndAttenuation = { 0,1,1,1 };
     uint32_t hash = 0;
     Matrix viewMatrix;
     Matrix orthoMatrix;
+    bool shouldBakeShadows = true;
+
+    //Rendering shadows
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> shadowMapTexture = nullptr;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencilViewTexture = nullptr;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shadowMapSRV = nullptr;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> shadowMapRTV = nullptr;
+    Microsoft::WRL::ComPtr<ID3D11DepthStencilView> shadowMapDSV = nullptr;
 };
 
 namespace std

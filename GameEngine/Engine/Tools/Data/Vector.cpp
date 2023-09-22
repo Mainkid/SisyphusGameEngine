@@ -13,12 +13,21 @@ SyVector3::SyVector3(float x_, float y_, float z_)
 	z = z_;
 }
 
+SyVector3::SyVector3(const SyVector3& other_)
+{
+	x = other_.x;
+	y = other_.y;
+	z = other_.z;
+}
+
 SyVector3::SyVector3(const DirectX::SimpleMath::Vector3& dxVector3_)
 {
 	x = dxVector3_.x;
 	y = dxVector3_.y;
 	z = dxVector3_.z;
 }
+
+
 
 SyVector3::SyVector3(const physx::PxVec3& pxVector3_)
 {
@@ -37,11 +46,35 @@ SyVector3::operator physx::PxVec3() const
 	return physx::PxVec3(x, y, z);
 }
 
-SyVector3 SyVector3::operator=(const DirectX::SimpleMath::Vector3& dxVector3_)
+SyVector3& SyVector3::operator=(const DirectX::SimpleMath::Vector3& dxVector3_)
 {
 	x = dxVector3_.x;
 	y = dxVector3_.y;
 	z = dxVector3_.z;
+	return *this;
+}
+
+SyVector3& SyVector3::operator+=(const SyVector3& other_)
+{
+	x += other_.x;
+	y += other_.y;
+	z += other_.z;
+	return *this;
+}
+
+SyVector3& SyVector3::operator-=(const SyVector3& other_)
+{
+	x -= other_.x;
+	y -= other_.y;
+	z -= other_.z;
+	return *this;
+}
+
+SyVector3& SyVector3::operator*=(float factor_)
+{
+	x *= factor_;
+	y *= factor_;
+	z *= factor_;
 	return *this;
 }
 
@@ -58,3 +91,21 @@ physx::PxQuat SyVector3::EulerToPxQuat(const SyVector3& euler)
 	physx::PxQuat qq = {q.x, q.y, q.z, q.w};
 	return qq;
 }
+
+//SyVector3 operator+(const SyVector3& left_, const SyVector3& right_)
+//{
+//	SyVector3 newVec(left_);
+//	return newVec += right_;
+//}
+//
+//SyVector3 operator-(const SyVector3& left_, const SyVector3& right_)
+//{
+//	SyVector3 newVec(left_);
+//	return newVec -= right_;
+//}
+//
+//SyVector3 operator*(const SyVector3& vec_, float factor_)
+//{
+//	SyVector3 newVec(vec_);
+//	return newVec *= factor_;
+//}

@@ -18,5 +18,7 @@ private:
 	EngineContext* ec;
 	RenderContext* rc;
 	HardwareContext* hc;
+
+	void ShadowMap();
 };
 

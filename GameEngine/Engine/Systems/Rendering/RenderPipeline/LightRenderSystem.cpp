@@ -13,6 +13,7 @@ void LightRenderSystem::Init()
 
 void LightRenderSystem::Run()
 {
+
     CB_LightBuffer lightBuffer;
 
     float bgColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -33,13 +34,13 @@ void LightRenderSystem::Run()
 
         LightComponent& light = view.get<LightComponent>(entity);
         TransformComponent& tc = view.get<TransformComponent>(entity);
-        lightBuffer.lightData.Pos = Vector4(tc.localPosition.x, tc.localPosition.y, tc.localPosition.z, 1);
+        lightBuffer.lightData.Pos = Vector4(tc.position.x, tc.position.y, tc.position.z, 1);
         lightBuffer.lightData.Color = light.color;
         lightBuffer.lightData.Dir = Vector4::Transform(Vector4::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation));
         lightBuffer.lightData.additiveParams = light.paramsRadiusAndAttenuation;
-        lightBuffer.eyePos = DirectX::SimpleMath::Vector4(ec->scene->cameraTransform->localPosition.x,
-            ec->scene->cameraTransform->localPosition.y,
-            ec->scene->cameraTransform->localPosition.z,
+        lightBuffer.eyePos = DirectX::SimpleMath::Vector4(ec->scene->cameraTransform->position.x,
+            ec->scene->cameraTransform->position.y,
+            ec->scene->cameraTransform->position.z,
             1.0f);
 
         hc->context->ClearDepthStencilView(hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1, 0);
@@ -64,7 +65,7 @@ void LightRenderSystem::Run()
         else if (light.lightType == LightType::PointLight)
         {
             using namespace DirectX::SimpleMath;
-            lightBuffer.baseData.world = Matrix::CreateScale(light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x) * Matrix::CreateTranslation(tc.localPosition);
+            lightBuffer.baseData.world = Matrix::CreateScale(light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x) * Matrix::CreateTranslation(tc.position);
 
             lightBuffer.baseData.worldView = lightBuffer.baseData.world * ec->scene->camera->view;
             lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * ec->scene->camera->projection;
@@ -87,7 +88,7 @@ void LightRenderSystem::Run()
                 1.0f)) *
                 Matrix::CreateScale(radius, radius, light.paramsRadiusAndAttenuation.x) *
                 Matrix::CreateFromAxisAngle(a, angle) *
-                Matrix::CreateTranslation(tc.localPosition);
+                Matrix::CreateTranslation(tc.position);
             lightBuffer.baseData.worldView = lightBuffer.baseData.world * ec->scene->camera->view;
             lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * ec->scene->camera->projection;
             lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
@@ -139,7 +140,7 @@ void LightRenderSystem::Run()
         {
 
             //Back Face Pass
-
+            hc->context->PSSetShaderResources(5, 1, light.shadowMapSRV.GetAddressOf());
 
             hc->context->RSSetState(rc->cullFrontRS.Get());
             hc->context->OMSetDepthStencilState(rc->backFaceStencilState.Get(), 0);
@@ -238,8 +239,14 @@ void LightRenderSystem::Run()
 
     }
     hc->context->PSSetShaderResources(0, 5, srvNull);
+   
 }
 
 void LightRenderSystem::Destroy()
 {
+}
+
+void LightRenderSystem::ShadowMap()
+{
+    
 }

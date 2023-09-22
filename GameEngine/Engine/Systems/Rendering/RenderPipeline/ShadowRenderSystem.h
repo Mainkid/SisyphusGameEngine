@@ -1,11 +1,12 @@
 #pragma once
 #include "../../ISystem.h"
+#include "SimpleMath.h"
 
 struct EngineContext;
 struct HardwareContext;
 struct RenderContext;
 
-
+using namespace DirectX::SimpleMath;
 class ShadowRenderSystem : public ISystem
 {
 public:
@@ -17,4 +18,5 @@ private:
 	RenderContext* rc;
 	HardwareContext* hc;
 
+	Matrix pointlightShadowProjectionMat;
 };

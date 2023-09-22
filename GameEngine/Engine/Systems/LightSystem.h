@@ -6,6 +6,7 @@
 
 struct HardwareContext;
 struct EngineContext;
+struct RenderContext;
 
 class LightSystem : public ISystem
 {
@@ -20,8 +21,10 @@ private:
 	void GenerateOrthoMatrix(LightComponent& lc, float width, float depthPlane, float nearPlane);
 	void GenerateViewMatrix(LightComponent& lc, Vector3 pos);
 	void GenerateOrthoFromFrustum(LightComponent& lc,Vector3 direction, const Matrix& view, const Matrix proj);
-	
+	void InitPointLightResources(LightComponent& lc);
+
 	HardwareContext* hc;
+	RenderContext* rc;
 	EngineContext* ec;
 };
 

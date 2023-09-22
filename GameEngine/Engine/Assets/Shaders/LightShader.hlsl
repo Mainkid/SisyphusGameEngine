@@ -83,7 +83,8 @@ float4 PS_Directional(PS_IN input) : SV_Target
     
     float texelWidth = 1.0 / 1280.0f;
     float texelHeight = 1.0 / 720.0f;
-    float2 texelSize = float2(texelWidth, texelHeight);
+    float texelOffset = 3;
+    float2 texelSize = float2(texelWidth, texelHeight)*texelOffset;
     float shadowSum = 0.0f;
     
     for (int y = -3; y <= 3; y++)
@@ -91,7 +92,7 @@ float4 PS_Directional(PS_IN input) : SV_Target
         for (int x = -3; x <= 3; x++)
         {
             float2 offset = float2(x, y) * texelSize;
-            shadowSum=shadowSum+ shadowTexture.Sample(textureSampler, input.col.xy + offset);
+            shadowSum = shadowSum + clamp(shadowTexture.Sample(textureSampler, input.col.xy + offset), 0, 1);
         }
     }
     shadowSum = shadowSum / 49.0f;
@@ -132,9 +133,5 @@ float4 PS_Ambient(PS_IN input) : SV_Target
     float3 skyBoxColor = skyboxTexture.Sample(textureSampler, input.col.xy);
     float3 resColor;
     resColor = pixelColor * lightData.color.xyz * (instanceID.x > 0) + skyBoxColor*(instanceID.x<0);
-    
-
     return float4(resColor, 1.0f);
-
-
 }
