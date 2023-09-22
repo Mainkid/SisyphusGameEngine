@@ -30,6 +30,7 @@ private:
 
 	void InitSRV();
 	void HandleResize();
+	void drawPlayMode(ImVec2 cursorStartPos);
 
 	std::string windowID;
 	bool isFocused;
@@ -39,7 +40,8 @@ private:
 		TransformGizmo,
 		RotateGizmo,
 		ScaleGizmo,
-		Viewport
+		Viewport,
+		PlayMode
 	};
 
 	ImGuizmo::OPERATION guizmoType= ImGuizmo::OPERATION::TRANSLATE;
@@ -58,6 +60,17 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> translateSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> rotateSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> scaleSRV;
+
+	const std::filesystem::path playButtonPath = "Engine/Assets/HUD/Viewport/PlayButton.png";
+	const std::filesystem::path stopButtonPath = "Engine/Assets/HUD/Viewport/StopButton.png";
+	const std::filesystem::path pauseButtonPath = "Engine/Assets/HUD/Viewport/PauseButton.png";
+
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> playBtnSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> stopBtnSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pauseBtnSRV;
+
+
+	ImVec4 activeButtonBG = { 0.258f, 0.588f, 1.0f, 1 };
 
 };
 
