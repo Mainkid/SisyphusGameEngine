@@ -19,6 +19,11 @@ mkdir GameEngine/bin
 cd GameEngine/bin
 cmake ../GameEngine
 ```
+Physx
+1) GameEngine\vendor\PhysX\physx\generate_projects.bat - start and choose installation preset (checked on x64 VC17 (MSVS 2022), so pick preset #2)
+2) GameEngine\vendor\PhysX\physx\compiler\vc17win64\PhysxSDK.sln - open with MSVS, RMB->Build on CMakePredefinedTargets\ALL_BUILD in Solution Explorer
+3) Just build GameEngine.sln project, in MSVS log check that all necessary .dll and .lib files has been distributed properly.
+   
 ## Screenshots
 ![alt text](GameEngine/info/engineGUI.png)
 ![alt text](GameEngine/info/particles.gif)
