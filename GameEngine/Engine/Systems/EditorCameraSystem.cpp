@@ -62,7 +62,7 @@ void EditorCameraSystem::UpdateViewMatrix(CameraComponent& cc, TransformComponen
     camTarget += tc.localPosition;
 
     DirectX::XMVECTOR upDir = DirectX::XMVector3TransformCoord(cc.UP_VECTOR, camRotationMatrix);
-    cc.view = DirectX::XMMatrixLookAtLH((DirectX::SimpleMath::Vector3)tc.localPosition, camTarget, upDir);
+    cc.view = DirectX::XMMatrixLookAtLH(tc.localPosition, camTarget, upDir);
     cc.forward = Vector4::Transform(cc.FORWARD_VECTOR, camRotationMatrix);
     cc.up = Vector4::Transform(cc.UP_VECTOR, camRotationMatrix);
     cc.back = Vector4::Transform(cc.BACKWARD_VECTOR, camRotationMatrix);

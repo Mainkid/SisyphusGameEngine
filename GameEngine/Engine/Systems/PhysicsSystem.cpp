@@ -51,7 +51,7 @@ void SyPhysicsSystem::Run()
 		ErrorLogger::Log(rbSearchResult, "PhysicsSystem.cpp", 51);
 		PxTransform rbTrasform = rb->getGlobalPose();
 		//std::cout << rbTrasform.p.x << " " << rbTrasform.p.y << " " << rbTrasform.p.z << "\n";
-		trComponent.localPosition = (SyVector3)rbTrasform.p;
+		trComponent.localPosition = rbTrasform.p;
 		trComponent.localRotation = SyVector3::PxQuatToEuler(rbTrasform.q);
 	}
 }

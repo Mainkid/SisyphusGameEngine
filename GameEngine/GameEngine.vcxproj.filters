@@ -51,7 +51,6 @@
     <ClCompile Include="Engine\Components\RBodyComponent.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.cpp" />
-    <ClCompile Include="Engine\Tools\Data\Vector.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
@@ -187,7 +186,7 @@
     <Image Include="Engine\Assets\SkyBox\skybox_6.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-     <None Include="Engine\Assets\Shaders\SpriteBillboardShader.hlsl" />
+    <None Include="Engine\Assets\Shaders\SpriteBillboardShader.hlsl" />
     <None Include="vendor\DirectXTK\Inc\SimpleMath.inl" />
   </ItemGroup>
 </Project>

@@ -111,6 +111,8 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -617,7 +619,6 @@
     <ClCompile Include="Engine\Components\RBodyComponent.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.cpp" />
-    <ClCompile Include="Engine\Tools\Data\Vector.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
