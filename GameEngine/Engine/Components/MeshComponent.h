@@ -7,6 +7,7 @@
 #include "assimp/cimport.h"
 #include "SpriteBatch.h"
 #include "../../vendor/WICTextureLoader.h"
+#include "Material.h"
 #include <iostream>
 #include <wrl.h>
 #include <vector>
@@ -29,7 +30,7 @@ struct MeshComponent
 		this->texturePath = texturePath;
 		this->modelPath = modelPath;
 	};
-
+	//Material* material = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState = nullptr;
 	std::vector<std::shared_ptr<Mesh>> meshes = {};

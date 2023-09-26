@@ -10,9 +10,14 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
     HRESULT res;
     if ((compile_flags & COMPILE_PIXEL) == COMPILE_PIXEL)
     {
-        res = D3DCompileFromFile(shaderPath, nullptr /*macros*/, nullptr /*include*/,
+        res = D3DCompileFromFile(shaderPath, nullptr /*macros*/, D3D_COMPILE_STANDARD_FILE_INCLUDE /*include*/,
             p_entryPoint, "ps_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
             0, pixelBC.GetAddressOf(), errorPixelCode.GetAddressOf());
+        if (FAILED(res))
+        {
+            if (errorPixelCode != nullptr)
+                OutputDebugStringA((char*)errorPixelCode->GetBufferPointer());
+        }
 
         res = hc->device->CreatePixelShader(
             this->pixelBC->GetBufferPointer(),
@@ -22,7 +27,7 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
 
     if ((compile_flags &COMPILE_VERTEX)==COMPILE_VERTEX)
     {
-        res = D3DCompileFromFile(shaderPath, nullptr, nullptr,
+        res = D3DCompileFromFile(shaderPath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE,
             v_entryPoint, "vs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0,
             vertexBC.GetAddressOf(), errorVertexCode.GetAddressOf());
 

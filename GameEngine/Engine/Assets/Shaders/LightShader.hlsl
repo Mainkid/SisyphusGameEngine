@@ -1,3 +1,5 @@
+#include "C:\Users\jdczy\Desktop\GameEngine\GameEngine\GameEngine\Engine\Assets\Shaders\PBR_Functions.hlsli"
+
 
 struct LightData
 {
@@ -22,13 +24,16 @@ cbuffer mycBuffer : register(b0)
 
 
 Texture2D<float4> DiffuseTex : register(t0);
-Texture2D<float4> NormalTex : register(t1);
-Texture2D<float4> WorldPosTex : register(t2);
-Texture2D<float4> DepthTex : register(t3);
-Texture2D<float4> SpecularTex : register(t4);
-Texture2D shadowTexture : register(t5);
-Texture2D skyboxTexture : register(t6);
-Texture2D depthTexture : register(t7);
+Texture2D<float4> MetallicTex : register(t1);
+Texture2D<float4> SpecularTex : register(t2);
+Texture2D<float4> RoughnessTex : register(t3);
+Texture2D<float4> EmissiveTex : register(t4);
+Texture2D<float4> NormalTex : register(t5);
+Texture2D<float4> PositionTex : register(t6);
+Texture2D<float4> InstanceIDTex : register(t7);
+Texture2D shadowTexture : register(t8);
+Texture2D skyboxTexture : register(t9);
+//Texture2D depthTexture : register(t10);
 
 
 SamplerState textureSampler : SAMPLER : register(s0);
@@ -45,6 +50,8 @@ struct PS_IN
     float4 pos :SV_POSITION;
     float4 col :COLOR;
 };
+
+
 
 
 PS_IN VSMain(VS_IN input)
@@ -64,12 +71,14 @@ PS_IN VSMain(VS_IN input)
 float4 PS_Directional(PS_IN input) : SV_Target
 {
     
-    float3 pixelColor =DiffuseTex.Sample(textureSampler, input.col.xy);
-    float3 worldPos = WorldPosTex.Sample(textureSampler, input.col.xy);
+    float3 albedoColor =DiffuseTex.Sample(textureSampler, input.col.xy);
+    //pixelColor = pow(pixelColor, 1.0f / 2.2f);
+    float3 worldPos =PositionTex.Sample(textureSampler, input.col.xy);
     float3 normal = NormalTex.Sample(textureSampler, input.col.xy);
-    //pixelColor = pow(pixelColor, 2.2f);
-    
-    normal = (normal.xyz - float3(0.5f, 0.5f, 0.5f))*2.0f;
+    float3 metallicColor = MetallicTex.Sample(textureSampler, input.col.xy);
+    float3 specularColor = SpecularTex.Sample(textureSampler, input.col.xy);
+    float roughnessColor = RoughnessTex.Sample(textureSampler, input.col.xy).r;
+    float4 emissiveColor = EmissiveTex.Sample(textureSampler, input.col.xy);
     normal = normalize(normal);
     float4 specular = SpecularTex.Sample(textureSampler, input.col.xy);
   
@@ -78,6 +87,7 @@ float4 PS_Directional(PS_IN input) : SV_Target
     float3 toEye = normalize(eyePos.xyz - worldPos.xyz);
     float lightIntesity = lightData.color.w;
     float specularAlpha = 50.0f;
+    float3 H = normalize(toEye + lightVec);
     
     //PCF --->
     
@@ -99,26 +109,28 @@ float4 PS_Directional(PS_IN input) : SV_Target
     
     //<--- PCF
     
-    lightIntesity = lightIntesity * shadowSum;
+    lightIntesity = lightIntesity;
         
     
-    float3 diffuseFactor = lightIntesity * lightData.color.xyz * dot(lightVec, normal.xyz);
+    //float3 diffuseFactor = lightIntesity * lightData.color.xyz * dot(lightVec, normal.xyz);
     
-    diffuseFactor.x = max(diffuseFactor.x, 0);
-    diffuseFactor.y = max(diffuseFactor.y, 0);
-    diffuseFactor.z = max(diffuseFactor.z, 0);
+    //diffuseFactor.x = max(diffuseFactor.x, 0);
+    //diffuseFactor.y = max(diffuseFactor.y, 0);
+    //diffuseFactor.z = max(diffuseFactor.z, 0);
     
-    float3 specFactor = float3(0, 0, 0);
+    //float3 specFactor = float3(0, 0, 0);
     
-    if (length(diffuseFactor.xyz) > 0.0f)
-    {
-        float3 v = reflect(-lightVec, normal.xyz);
-        specFactor = specular.xyz * lightIntesity * lightData.color.xyz * pow(max(dot(v, toEye), 0.0f), specularAlpha);
+    //if (length(diffuseFactor.xyz) > 0.0f)
+    //{
+    //    float3 v = reflect(-lightVec, normal.xyz);
+    //    specFactor = specular.xyz * lightIntesity * lightData.color.xyz * pow(max(dot(v, toEye), 0.0f), specularAlpha);
         
-    }
-    
-
-    float3 resColor = diffuseFactor * pixelColor + specFactor;
+    //}
+    float3 F0 = float3(0.04, 0.04, 0.04);
+    F0 = lerp(F0, albedoColor, (metallicColor.r + metallicColor.g + metallicColor.b) / 3.0f);
+    float3 instanceID = InstanceIDTex.Sample(textureSampler, input.col.xy);
+    float3 resColor = PBR(normal, toEye, lightVec, H,F0,
+    lightData.color.xyz, albedoColor, roughnessColor, metallicColor, emissiveColor, lightIntesity) * (instanceID.x > 0);
     
     
     return float4(resColor, 1.0f);
@@ -129,7 +141,8 @@ float4 PS_Ambient(PS_IN input) : SV_Target
 {
     
     float3 pixelColor = DiffuseTex.Sample(textureSampler, input.col.xy);
-    float3 instanceID = DepthTex.Sample(textureSampler, input.col.xy);
+    //pixelColor = pow(pixelColor, 2.2f);
+    float3 instanceID =InstanceIDTex.Sample(textureSampler, input.col.xy);
     float3 skyBoxColor = skyboxTexture.Sample(textureSampler, input.col.xy);
     float3 resColor;
     resColor = pixelColor * lightData.color.xyz * (instanceID.x > 0) + skyBoxColor*(instanceID.x<0);

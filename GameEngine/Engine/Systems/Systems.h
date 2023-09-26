@@ -8,6 +8,7 @@
 #include "LightSystem.h"
 #include "PhysicsSystem.h"
 #include "HardwareInitSystem.h"
+#include "MaterialUpdateSystem.h"
 #include "Rendering/HUD/HudPropertiesSystem.h"
 #include "Rendering/HUD/HudContentBrowserSystem.h"
 #include "Rendering/HUD/HudHierarchySystem.h"
@@ -22,4 +23,5 @@
 #include "Rendering/RenderPipeline/LightRenderSystem.h"
 #include "Rendering/RenderPipeline/EditorBillboardRenderSystem.h"
 #include "Rendering/RenderPipeline/ShadowMapGenerationSystem.h"
+#include "Rendering/RenderPipeline/ToneMappingRenderSystem.h"
 #include "Rendering/PostViewportRenderSystem.h"

@@ -8,6 +8,12 @@ struct EngineContext;
 struct HardwareContext;
 struct RenderContext;
 
+enum class EShowMode
+{
+    ContentProperties,
+    GameObjectProperties
+};
+
 class HudPropertiesSystem : public ISystem
 {
 public:
@@ -20,6 +26,7 @@ private:
     HardwareContext* hc;
     std::string windowID;
     bool isFocused;
+    EShowMode showMode = EShowMode::GameObjectProperties;
     
     
 };

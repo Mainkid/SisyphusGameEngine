@@ -1,4 +1,5 @@
 
+
 struct LightData
 {
     float4 pos;

@@ -19,7 +19,7 @@ void EditorBillboardSystem::Run()
 		if (ebc.hash != hsh)
 		{
 			ebc.hash = hasher(ebc.texturePath);
-			MeshLoader::LoadTexture(ebc.texturePath, ebc.samplerState.GetAddressOf(), ebc.texture.GetAddressOf());
+			MeshLoader::LoadTexture(ebc.texturePath, ebc.samplerState.GetAddressOf(), ebc.texture.GetAddressOf(),true);
 		}
 	}
 }

@@ -3,6 +3,7 @@
 #include <memory>
 #include "SimpleMath.h"
 #include "../Core/Graphics/Buffer.h"
+#include "Material.h"
 
 class EngineCore;
 
@@ -25,6 +26,7 @@ public:
 	std::vector<int> indices;
 	std::shared_ptr<Buffer> indexBuffer;
 	std::shared_ptr<Buffer> vertexBuffer;
+	Material* material = nullptr;
 };
 
 

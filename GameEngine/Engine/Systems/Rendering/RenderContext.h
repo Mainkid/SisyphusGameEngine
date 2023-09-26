@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <set>
+#include "../../Components/Material.h"
 #include "../../Core/Rendering/GBuffer.h"
 #include "../../Core/Graphics/Shader.h"
 #include "../../Core/IService.h"
@@ -8,7 +10,7 @@
 
 struct RenderContext : public IService
 {
-    ID3D11RenderTargetView* rtvs[5];
+    ID3D11RenderTargetView* rtvs[8];
     ID3D11RenderTargetView* editorBillboardRtvs[2];
 
     std::unique_ptr<Shader> opaqueShader;
@@ -23,6 +25,7 @@ struct RenderContext : public IService
     std::unique_ptr<Shader> shadowMapGenerator;
     std::unique_ptr<Shader> shadowMapPointLightGenerator;
     std::unique_ptr<Shader> skyBoxShader;
+    std::unique_ptr<Shader> toneMapper;
     
 
     std::shared_ptr<Mesh> cubeMesh;
@@ -102,5 +105,7 @@ struct RenderContext : public IService
 
     std::unique_ptr<Buffer> shadowConstBuffer;
     std::unique_ptr<Buffer> shadowPointlightConstBuffer;
+
+    std::set<std::unique_ptr<Material>> materialSet;
 };
 

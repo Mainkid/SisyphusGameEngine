@@ -11,11 +11,23 @@ public:
     DirectX::SimpleMath::Matrix worldViewInverseTranspose;
 };
 
+class CB_MaterialData
+{
+public:
+    DirectX::SimpleMath::Vector4 albedo;
+    DirectX::SimpleMath::Vector4 metallic;
+    DirectX::SimpleMath::Vector4 roughness;
+    DirectX::SimpleMath::Vector4 emissive;
+    DirectX::SimpleMath::Vector4 specular;
+};
+
 class CB_BaseEditorBuffer
 {
 public:
     CB_BaseBuffer baseData;
+    CB_MaterialData materialData;
     uint32_t instanseID;
+    
 };
 
 class CB_LightBuffer

@@ -25,7 +25,7 @@ void MeshSystem::Run()
 			//LoadModel(mesh);
 			//LoadTexture(mesh);
 			MeshLoader::LoadModel(mesh.modelPath, mesh.meshes);
-			MeshLoader::LoadTexture(mesh.texturePath, mesh.samplerState.GetAddressOf(), mesh.texture.GetAddressOf());
+			MeshLoader::LoadTexture(mesh.texturePath, mesh.samplerState.GetAddressOf(), mesh.texture.GetAddressOf(),true);
 		}
 	}
 }

@@ -5,12 +5,21 @@ cbuffer mycBuffer : register(b0)
     row_major float4x4 worldView;
     row_major float4x4 worldViewProj;
     row_major float4x4 worldViewInverseT;
+    float4 albedoVec;
+    float4 metallicVec;
+    float4 roughnessVec;
+    float4 emissiveVec;
+    float4 specularVec;
     uint instanceID;
-
 };
 
-Texture2D objTexture : TEXTURE : register(t0);
-Texture2D objTexture2 : TEXTURE: register(t1);
+Texture2D albedoTex : TEXTURE : register(t0);
+Texture2D specularTex : TEXTURE: register(t1);
+Texture2D roughnessTex : TEXTURE : register(t2);
+Texture2D metallicTex : TEXTURE : register(t3);
+Texture2D emissiveTex : TEXTURE : register(t4);
+Texture2D normalMapTex : TEXTURE : register(t5);
+Texture2D opacityTex : TEXTURE : register(t6);
 SamplerState objSamplerState : SAMPLER : register(s0);
 
 struct VS_IN
@@ -31,11 +40,14 @@ struct PS_IN
 
 struct GBuffer
 {
-    float4 Normals : SV_Target0;
-    float4 DiffuseSpec : SV_Target1;
-    float4 WorldPos : SV_Target2;
-    float4 InstanceIDs : SV_Target3;
-    float4 Specular : SV_Target3;
+    float4 Albedo : SV_Target0;
+    float4 Metallic : SV_Target1;
+    float4 Specular : SV_Target2;
+    float4 Roughness : SV_Target3;
+    float4 Emissive : SV_Target4;
+    float4 Normals : SV_Target5;
+    float4 Position : SV_Target6;
+    float4 InstanceID : SV_Target7;
 };
 
 PS_IN VSMain(VS_IN input)
@@ -60,14 +72,33 @@ PS_IN VSMain(VS_IN input)
 GBuffer PSMain(PS_IN input) : SV_Target
 {
     GBuffer output = (GBuffer) 0;
-    float3 pixelColor = objTexture.Sample(objSamplerState, input.col.xy);
+    float3 pixelColor = albedoTex.Sample(objSamplerState, input.col.xy)*(albedoVec.w<0) + 
+    albedoVec.xyzw*(albedoVec.w>=0);
+    float3 specularColor = specularTex.Sample(objSamplerState, input.col.xy) * (specularVec.w < 0) +
+    specularVec*(specularVec.w>=0);
+    float3 metallicColor = metallicTex.Sample(objSamplerState, input.col.xy) * (metallicVec.w < 0) +
+    metallicVec * (metallicVec.w >= 0);
+    float roughness = roughnessTex.Sample(objSamplerState, input.col.xy).r * (roughnessVec.r < 0) +
+    roughnessVec.r * (roughnessVec.r>=0);
+    float4 emissive = emissiveTex.Sample(objSamplerState, input.col.xy);
     
-    output.Normals = float4(input.normals.xyz/2 + float3(0.5f, 0.5f, 0.5f),1.0f);
-    output.WorldPos = float4(input.posW.xyz, 1.0f);
-    output.DiffuseSpec = float4(pixelColor, 1.0f);
-    output.InstanceIDs = float4(instanceID, instanceID, instanceID, 1.0f);
+    float3 normal = normalMapTex.Sample(objSamplerState, input.col.xy);
+    //normal.x = normal.x * 2.0f - 1.0f;
+    //normal.y = -normal.y * 2.0f + 1.0f;
+    //normal.z = -normal.z;
+    //normal = normalize(mul(normal.xyz, (float3x3)worldViewInverseT));
+    normal = input.normals;
+    
+    output.Normals = float4(normal ,1.0f);
+    output.Position = float4(input.posW.xyz, 1.0f);
+    output.Albedo = float4(pixelColor, 1.0f);
+    output.Specular = float4(specularColor, 1);
+    output.Metallic = float4(metallicColor, 1);
+    output.Roughness = float4(roughness, roughness, roughness, 1);
+    output.Emissive = emissive;
+    output.InstanceID = float4(instanceID, instanceID, instanceID, 1.0f);
     //output.Depth = float4(input.posH.z / input.posH.w, input.posH.z / input.posH.w, input.posH.z / input.posH.w, 1.0f);
-    output.Specular = float4(0.5f, 0.5f, 0.5f, 50.0f);
+    //output.Specular = float4(0.5f, 0.5f, 0.5f, 50.0f);
       
     
     return output;

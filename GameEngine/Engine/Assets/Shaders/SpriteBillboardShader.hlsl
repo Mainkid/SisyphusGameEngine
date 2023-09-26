@@ -4,6 +4,11 @@ cbuffer mycBuffer : register(b0)
     row_major float4x4 worldView;
     row_major float4x4 worldViewProj;
     row_major float4x4 worldViewInverseT;
+    float4 albedoVec;
+    float4 metallicVec;
+    float4 roughnessVec;
+    float4 emissiveVec;
+    float4 specularVec;
     uint instanceID;
 
 };

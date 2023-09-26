@@ -44,7 +44,7 @@ struct PixelInputType
 
 
 [instance(4)]
-[maxvertexcount(3)]
+[maxvertexcount(1)]
 void GSMain(triangle GS_IN p[3], in uint id : SV_GSInstanceID, inout TriangleStream<GS_OUT> stream)
 {
     [unroll]
@@ -54,8 +54,8 @@ void GSMain(triangle GS_IN p[3], in uint id : SV_GSInstanceID, inout TriangleStr
         gs.pos = mul(float4(p[i].pos.xyz, 1.0f), cascData.viewProj[id]);
         gs.arrInd = id;
         stream.Append(gs);
-
     }
+    
     stream.RestartStrip();
     
 }

@@ -6,9 +6,10 @@ struct EngineContext : public IService
 {
 	std::unique_ptr<Scene> scene;
 	entt::entity selectedEntityID=entt::null;
+	uint32_t selectedContentID = 0;
 	float totalTime = 0;
 	unsigned int frameCount = 0;
-	float deltaTime = 0;
+	float deltaTime = 0.01f;
 	//PlayMode states and var for it
 	enum class EPlayModeState
 	{

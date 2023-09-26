@@ -5,6 +5,7 @@
 #include "../../EngineContext.h"
 #include "../RenderContext.h"
 #include "../../HardwareContext.h"
+#include <fstream>
 
 void HudContentBrowserSystem::Init()
 {
@@ -22,8 +23,14 @@ void HudContentBrowserSystem::Destroy()
 void HudContentBrowserSystem::Run()
 {
     ImGui::Begin("Content Browser");
-    //Widget::Render();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImVec2 startCursorPos = ImGui::GetCursorScreenPos();
 	float panelWidth = ImGui::GetContentRegionAvail().x;
+    auto widgetStartPos = ImGui::GetCursorScreenPos();
+    auto widgetEndPos = ImVec2(widgetStartPos.x+ImGui::GetContentRegionMax().x, widgetStartPos.y + ImGui::GetContentRegionMax().y);
+
+
+    bool isHovered = io.MousePos.x > widgetStartPos.x && io.MousePos.x < widgetEndPos.x&& io.MousePos.y>widgetStartPos.y && io.MousePos.y < widgetEndPos.y;
     int columnCount = max((int)panelWidth / cellSize, 1);
     ImGui::Columns(columnCount, 0, false);
 
@@ -65,8 +72,34 @@ void HudContentBrowserSystem::Run()
 
         ImGui::NextColumn();
     }
-
     ImGui::Columns(1);
+
+    
+    //Popups!
+
+    int selected_Popup = -1;
+    const char* names[] = { "New Material"};
+
+    if (io.MouseClicked[1]&&isHovered)
+        ImGui::OpenPopup("my_select_popup");
+    if (ImGui::BeginPopup("my_select_popup"))
+    {
+        ImGui::SeparatorText("Create");
+        for (int i = 0; i < IM_ARRAYSIZE(names); i++)
+            if (ImGui::Selectable(names[i]))
+                selected_Popup = i;
+        ImGui::EndPopup();
+    }
+
+    if (selected_Popup == 0)
+    {
+        std::ofstream file;
+        int fileCtr = 0;
+        while (std::ifstream(curDirectory.string() + "/Material" + std::to_string(fileCtr) + ".mat"))
+            ++fileCtr;
+        file.open(curDirectory.string() + "/Material"+std::to_string(fileCtr)+".mat", std::ios::out);
+    }
+
 
     ImGui::End();
 }

@@ -77,11 +77,16 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<TransformSystem> ts= std::make_unique<TransformSystem>();
 	systems.push_back(std::move(ts));
 
+	
+
 	std::unique_ptr<EditorCameraSystem> ecs = std::make_unique<EditorCameraSystem>();
 	systems.push_back(std::move(ecs));
 
 	std::unique_ptr<MeshSystem> ms = std::make_unique<MeshSystem>();
 	systems.push_back(std::move(ms));
+
+	std::unique_ptr<MaterialUpdateSystem> mus = std::make_unique<MaterialUpdateSystem>();
+	systems.push_back(std::move(mus));
 
 	std::unique_ptr<LightSystem> ls = std::make_unique<LightSystem>();
 	systems.push_back(std::move(ls));
@@ -109,9 +114,11 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<LightRenderSystem> lrs = std::make_unique<LightRenderSystem>();
 	systems.push_back(std::move(lrs));
 
-	
 	std::unique_ptr<EditorBillboardRenderSystem> brs = std::make_unique<EditorBillboardRenderSystem>();
 	systems.push_back(std::move(brs));
+
+	std::unique_ptr<ToneMappingRenderSystem> tmrs = std::make_unique<ToneMappingRenderSystem>();
+	systems.push_back(std::move(tmrs));
 
 	std::unique_ptr<PostViewportRenderSystem> postrs = std::make_unique<PostViewportRenderSystem>();
 	systems.push_back(std::move(postrs));

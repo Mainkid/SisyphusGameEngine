@@ -28,8 +28,9 @@ void SyPhysicsSystem::Init()
 
 void SyPhysicsSystem::Run()
 {
+	float eps = 0.0000001f;
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
-	if (deltaTime == 0)
+	if (deltaTime < eps)
 		return;
 	int simulationResult = scene->simulate(deltaTime) == true 
 		? SY_NO_ERROR : SY_GENERIC_ERROR_CRITICAL;

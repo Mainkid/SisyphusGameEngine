@@ -13,7 +13,7 @@ bool ImageLoader::LoadTextureFromFile(const char* filename, ID3D11ShaderResource
 	// Load from disk into a raw RGBA buffer
 	int image_width = 0;
 	int image_height = 0;
-	unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
+	unsigned char* image_data = stbi_load(filename, &image_width, &image_height,NULL , 4);
 	if (image_data == NULL)
 		return false;
 

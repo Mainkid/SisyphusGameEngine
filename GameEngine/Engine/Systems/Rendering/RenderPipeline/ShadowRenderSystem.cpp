@@ -87,7 +87,7 @@ void ShadowRenderSystem::Run()
                     //    engineActor->model->strides, engineActor->model->offsets);
                     hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                         meshComponent.strides, meshComponent.offsets);
-                    hc->context->DrawInstanced(mesh->indexBuffer->size, 4, 0, 0);
+                    hc->context->DrawIndexedInstanced(mesh->indexBuffer->size, 4, 0, 0,0);
                     
                 }
             }
@@ -101,7 +101,8 @@ void ShadowRenderSystem::Run()
             float bgColor[4] = { 0,0,0,1 };
             hc->context->ClearDepthStencilView(light.shadowMapDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
             hc->context->ClearRenderTargetView(light.shadowMapRTV.Get(),bgColor);
-           
+            
+
             CB_PointlightShadowBuffer dataShadow;
             dataShadow.world = Matrix::CreateTranslation(tc.position);
             
@@ -162,14 +163,12 @@ void ShadowRenderSystem::Run()
                 {
                     UINT offset[1] = { 0 };
                     UINT stride[1] = { 48 };
-
-
                     hc->context->IASetIndexBuffer(mesh->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
                     //!hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                     //    engineActor->model->strides, engineActor->model->offsets);
                     hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                         meshComponent.strides, meshComponent.offsets);
-                    hc->context->DrawInstanced(mesh->indexBuffer->size, 6, 0, 0);
+                    hc->context->DrawIndexedInstanced(mesh->indexBuffer->size, 6, 0, 0,0);
                     
                 }
                
