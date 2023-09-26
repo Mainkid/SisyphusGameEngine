@@ -1,6 +1,9 @@
 #pragma once
 #include "SimpleMath.h"
 #include "../Core/Graphics/Buffer.h"
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <windows.h>
 #include <wrl.h>
 using namespace Microsoft::WRL;
