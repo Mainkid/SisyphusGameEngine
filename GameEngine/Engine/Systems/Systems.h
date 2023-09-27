@@ -9,6 +9,7 @@
 #include "PhysicsSystem.h"
 #include "HardwareInitSystem.h"
 #include "MaterialUpdateSystem.h"
+#include "ResourceSystem.h"
 #include "Rendering/HUD/HudPropertiesSystem.h"
 #include "Rendering/HUD/HudContentBrowserSystem.h"
 #include "Rendering/HUD/HudHierarchySystem.h"

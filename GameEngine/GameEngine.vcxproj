@@ -621,6 +621,8 @@
     <ClCompile Include="Engine\Systems\MaterialUpdateSystem.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ToneMappingRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\ResourceSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\HUD\ResourceHelper.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -704,6 +706,8 @@
     <ClInclude Include="Engine\Systems\MaterialUpdateSystem.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ToneMappingRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\ResourceSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\HUD\ResourceHelper.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />

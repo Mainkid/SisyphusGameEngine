@@ -68,6 +68,8 @@
     <ClCompile Include="vendor\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ToneMappingRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\MaterialUpdateSystem.cpp" />
+    <ClCompile Include="Engine\Systems\ResourceSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\HUD\ResourceHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -157,6 +159,8 @@
     <ClInclude Include="Engine\Components\Material.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ToneMappingRenderSystem.h" />
     <ClInclude Include="Engine\Systems\MaterialUpdateSystem.h" />
+    <ClInclude Include="Engine\Systems\ResourceSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\HUD\ResourceHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

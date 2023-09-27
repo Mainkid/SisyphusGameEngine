@@ -1,6 +1,7 @@
 #pragma once
 #include "../Core/Scene/Scene.h"
 #include "../Core/IService.h"
+#include <unordered_set>
 
 struct EngineContext : public IService
 {
@@ -18,5 +19,9 @@ struct EngineContext : public IService
 		PauseMode
 	};
 	EPlayModeState playModeState = EPlayModeState::EditorMode;
+	
+
+	std::unordered_set<UUID, std::string> resourceDB;
+
 };
 

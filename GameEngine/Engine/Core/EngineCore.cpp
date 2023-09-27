@@ -71,6 +71,9 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<InputSystem> is = std::make_unique < InputSystem>();
 	systems.push_back(std::move(is));
 
+	std::unique_ptr<ResourceSystem> ress= std::make_unique < ResourceSystem>();
+	systems.push_back(std::move(ress));
+
 	std::unique_ptr<SyPhysicsSystem> ps = std::make_unique<SyPhysicsSystem>();
 	systems.push_back(std::move(ps));
 
