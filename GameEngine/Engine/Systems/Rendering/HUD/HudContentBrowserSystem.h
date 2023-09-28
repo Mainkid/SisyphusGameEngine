@@ -1,6 +1,10 @@
 ﻿#pragma once
 #include "../../ISystem.h"
 #include "imgui.h"
+#include "imgui_internal.h"
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include "ContentBrowserTypes.h"
 #include <d3d11.h>
 #include <map>
@@ -25,12 +29,24 @@ private:
     HardwareContext* hc;
     void InitImagesSRV();
     void ProcessPopUp();
+    void DrawTreeFolderWindow();
+    void RenderTree(std::filesystem::path path);
+    bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f);
+    void PrintDirectory();
 
     ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);             // Black background
     ImVec4 bg_col_selected = ImVec4(0.52f, 0.73f, 1.0f, 1.0f);
     ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);           // No tint
 
+    ImVec2 selectionStart;
+    ImVec2 selectionEnd;
+
     bool wasOverPopup = false;
+    bool itemWasHovered = false;
+    bool areaSelected = false;
+    float windowLeftSizeX=0;
+    float windowRightSizeX=0;
+    
     std::filesystem::path renaimingFileName = "";
     char renaimingFileString [64];
 

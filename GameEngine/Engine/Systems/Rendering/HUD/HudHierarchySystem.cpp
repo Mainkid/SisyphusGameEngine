@@ -31,7 +31,6 @@ void HudHierarchySystem::Run()
     {
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENODE"))
         {
-			
             const entt::entity* item = (const entt::entity*)payload->Data;
             ec->scene->SetParent(*item, entt::null);
             ImGui::EndDragDropTarget();

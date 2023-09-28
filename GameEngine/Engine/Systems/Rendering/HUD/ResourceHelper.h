@@ -41,7 +41,7 @@ public:
 		
 		if (newPath.has_extension())
 			return;
-
+		
 		auto filename = oldPath.filename();
 		
 		std::filesystem::rename(oldPath, newPath.string() +"/"+ filename.string());
