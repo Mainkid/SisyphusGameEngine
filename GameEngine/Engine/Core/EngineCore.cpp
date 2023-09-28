@@ -23,6 +23,7 @@ void EngineCore::StartUpdateLoop()
 	while (true) {
 		Update();
 	}
+	
 }
 
 
@@ -150,7 +151,8 @@ void EngineCore::StartUp()
 
 void EngineCore::ShutDown()
 {
-
+	ServiceLocator::instance()->Unregister<EngineContext>();
+	ServiceLocator::instance()->Unregister<SyErrorLogger>();
 	for (auto& system : systems)
 	{
 		system->Destroy();

@@ -9,16 +9,17 @@ SyErrorLogger::SyErrorLogger()
 	{
 	case(SY_SINK_CONSOLE):
 		sinkNames.push_back(L"Console");
-		clientParams = L"/P7.Sink=Console /P7.Format=\"%cn:\t[%ix]\t(%tm)\t%lv\t\%tn\t{File: %fs, Line: %fl, Function: %fn} : %ms\"";
+		clientParams = L"/P7.Sink=Console /P7.Format=\"%cn:\t[%ix]\t(%tm)\t%lv\t{%fs, %fl, %fn} : %ms\"";
+		//clientParams = L"/P7.Sink=Console /P7.Format=\"%cn:\t[%ix]\t(%tm)\t%lv\t\%tn\t{File: %fs, Line: %fl, Function: %fn} : %ms\"";
 		break;
 	//case...
 	}
-	P7_Set_Crash_Handler();
+	//P7_Set_Crash_Handler();
 	channelNames.push_back(L"ERLOG");
 	IP7_Client* client = P7_Create_Client(clientParams.c_str());
 	if (client == nullptr)
 	{
-		std::cout << "FAILED TO COMPLETE ERROR LOGGER CONSTRUCTOR\n";
+		std::cout << "Failed to complete SyErrorLogger constructor.\n";
 		return;
 	}
 	elClients.insert({L"Console", client});
@@ -26,19 +27,43 @@ SyErrorLogger::SyErrorLogger()
 	IP7_Trace* trace = P7_Create_Trace(elClients.at(L"Console"), L"ERLOG");
 	if (trace == nullptr)
 	{
-		std::cout << "FAILED TO COMPLETE ERROR LOGGER CONSTRUCTOR\n";
+		std::cout << "Failed to complete SyErrorLogger constructor.\n";
 		return;
 	}
 	newSinkMap.insert({L"Console", trace});
+	SyResult result = AddChannel(L"PHYS");
+	if (result.code == SY_RESCODE_ERROR)
+	{
+		Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
+		return;
+	}
+	result = AddChannel(L"CORE");
+	if (result.code == SY_RESCODE_ERROR)
+	{
+		Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
+		return;
+	}
+	result = AddChannel(L"REND");
+	if (result.code == SY_RESCODE_ERROR)
+	{
+		Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
+		return;
+	}
+	result = AddChannel(L"HUD");
+	if (result.code == SY_RESCODE_ERROR)
+	{
+		Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
+		return;
+	}
 }
 
 SyErrorLogger::~SyErrorLogger()
 {
-	//for (auto& client : elClients)
-	//	client.second->Release();
-	//for (auto& channelAndSinkMapPair : elTraces)
-	//	for (auto& tracePair : channelAndSinkMapPair.second)
-	//		tracePair.second->Release();
+	for (auto& client : elClients)
+		client.second->Release();
+	for (auto& channelAndSinkMapPair : elTraces)
+		for (auto& tracePair : channelAndSinkMapPair.second)
+			tracePair.second->Release();
 }
 
 SyResult SyErrorLogger::AddChannel(const t_channelName& channelName_)
@@ -104,7 +129,7 @@ SyResult SyErrorLogger::AddSink(const t_sinkName& sinkName_, const std::wstring&
 		IP7_Trace* newTrace = P7_Create_Trace(newClient, channelName.c_str());
 		if (newTrace == nullptr)
 		{
-			SY_LOG_ERLOG(SY_LOGLEVEL_ERROR, L"newTrace == nulptr");
+			Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"newTrace == nulptr");
 			result.code = SY_RESCODE_ERROR;
 			result.message = L"Failed to create new trace.";
 			return result;
@@ -114,7 +139,7 @@ SyResult SyErrorLogger::AddSink(const t_sinkName& sinkName_, const std::wstring&
 	return result;
 }
 
-SyResult SyErrorLogger::Log(const t_channelName& channelName_, LogLevel traceLevel_, const std::wstring& message_)
+SyResult SyErrorLogger::Log(const t_channelName& channelName_, SyElLogLevel traceLevel_, const std::wstring& message_)
 {
 	SyResult result;
 	auto search = elTraces.find(channelName_);
@@ -122,7 +147,7 @@ SyResult SyErrorLogger::Log(const t_channelName& channelName_, LogLevel traceLev
 	{
 		result.code = SY_RESCODE_UNEXPECTED;
 		result.message = channelName_ + L" is an unknown channel name.";
-		SY_LOG_ERLOG(SY_LOGLEVEL_ERROR, result.message);
+		Log(L"ERLOG", SY_LOGLEVEL_ERROR, result.message);
 		return result;
 	}
 
@@ -150,7 +175,7 @@ SyResult SyErrorLogger::Log(const t_channelName& channelName_, LogLevel traceLev
 		default:
 			result.code = SY_RESCODE_UNEXPECTED;
 			result.message = L" Unknown channel name.";
-			SY_LOG_ERLOG(SY_LOGLEVEL_ERROR, result.message);
+			Log(L"ERLOG", SY_LOGLEVEL_ERROR, result.message);
 			return result;
 			break;
 		}

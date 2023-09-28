@@ -15,7 +15,7 @@
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "dxguid.lib")
 
-using namespace Microsoft::WRL;
+//using namespace Microsoft::WRL;
 
 //struct SyErrorLogger : public IService;
 
@@ -26,6 +26,7 @@ public:
     std::vector<std::unique_ptr<ISystem>> systems;
     EngineContext* ec;
     SyErrorLogger* el;
+
     static EngineCore* instance()
     {
         static EngineCore inst;

@@ -12,12 +12,16 @@ SyRBodyComponent::SyRBodyComponent(	const SyRBodyType&			rbType_,
 {	rbType = rbType_;
 	rbShapeType = rbShapeType_;
 	rbMaterial = rbMaterial_;
-	//if (physics == nullptr)
-	//	//SyRbodyComponent::physics has not been initialized
-	//	SyErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 16);
-	//if (scene == nullptr)
-	//	//SyRbodyComponent::scene has not been initialized
-	//	SyErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 16);
+	if (physics == nullptr)
+	{
+		SY_LOG_PHYS(SY_LOGLEVEL_CRITICAL, L"SyRbodyComponent::physics == nullptr");
+		exit(-1);
+	}
+	if (scene == nullptr)
+	{
+		SY_LOG_PHYS(SY_LOGLEVEL_CRITICAL, L"SyRbodyComponent::scene == nullptr");
+		exit(-1);
+	}
 
 	switch (rbType)
 	{
@@ -28,9 +32,8 @@ SyRBodyComponent::SyRBodyComponent(	const SyRBodyType&			rbType_,
 														SyVector3::EulerToPxQuat(rbDefaultShapeDesc_.rotation)));
 		break;
 	default:
-		//Unknown RB_TYPE!;
-		//SyErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 40);
-		break;
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, L"Unknown rigid body type.");
+		return;
 	};
 	switch (rbShapeType)
 	{
@@ -57,13 +60,16 @@ SyRBodyComponent::SyRBodyComponent(	const SyRBodyType&			rbType_,
 	}
 	break;
 	default:
-		//Unknown RB_SHAPE_TYPE!
-		//SyErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 70);
-		break;
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, L"Unknown rigid body shape type.");
+		return;
 	}
 	if (rbType == RB_TYPE_DYNAMIC)
 	{
-		PxRigidBodyExt::updateMassAndInertia(*static_cast<PxRigidBody*>(rbActor), rbMaterial.density);
+		bool updateMassResult = PxRigidBodyExt::updateMassAndInertia(*static_cast<PxRigidBody*>(rbActor), rbMaterial.density);
+		if (updateMassResult == false)
+		{
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, L"PxRigidBodyExt::updateMassAndInertia returned false");
+		}
 	}
 	scene->addActor(*rbActor);
 }
