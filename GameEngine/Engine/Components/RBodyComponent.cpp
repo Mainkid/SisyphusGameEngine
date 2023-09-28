@@ -12,12 +12,12 @@ SyRBodyComponent::SyRBodyComponent(	const SyRBodyType&			rbType_,
 {	rbType = rbType_;
 	rbShapeType = rbShapeType_;
 	rbMaterial = rbMaterial_;
-	if (physics == nullptr)
-		//SyRbodyComponent::physics has not been initialized
-		ErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 16);
-	if (scene == nullptr)
-		//SyRbodyComponent::scene has not been initialized
-		ErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 16);
+	//if (physics == nullptr)
+	//	//SyRbodyComponent::physics has not been initialized
+	//	SyErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 16);
+	//if (scene == nullptr)
+	//	//SyRbodyComponent::scene has not been initialized
+	//	SyErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 16);
 
 	switch (rbType)
 	{
@@ -29,7 +29,7 @@ SyRBodyComponent::SyRBodyComponent(	const SyRBodyType&			rbType_,
 		break;
 	default:
 		//Unknown RB_TYPE!;
-		ErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 40);
+		//SyErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 40);
 		break;
 	};
 	switch (rbShapeType)
@@ -58,7 +58,7 @@ SyRBodyComponent::SyRBodyComponent(	const SyRBodyType&			rbType_,
 	break;
 	default:
 		//Unknown RB_SHAPE_TYPE!
-		ErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 70);
+		//SyErrorLogger::Log(SY_GENERIC_ERROR_CRITICAL, "RBodyComponent.cpp", 70);
 		break;
 	}
 	if (rbType == RB_TYPE_DYNAMIC)

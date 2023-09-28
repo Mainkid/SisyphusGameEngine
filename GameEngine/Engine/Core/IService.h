@@ -2,5 +2,5 @@
 
 class IService
 {
-
+	//virtual ~IService() {};
 };

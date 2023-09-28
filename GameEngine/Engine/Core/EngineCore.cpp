@@ -1,5 +1,6 @@
 #include "EngineCore.h"
 
+
 //EngineCore::EngineCore(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height)
 //{
 //	window = std::make_unique<DisplayWin32>(appName, hInstance, width, height);
@@ -59,9 +60,6 @@ void EngineCore::Update()
 
 void EngineCore::StartUpSystems()
 {
-	ServiceLocator::instance()->Register<EngineContext>();
-	ec = ServiceLocator::instance()->Get<EngineContext>();
-
 	std::unique_ptr<HardwareInitSystem> his = std::make_unique < HardwareInitSystem>();
 	systems.push_back(std::move(his));
 
@@ -143,11 +141,16 @@ void EngineCore::StartUpSystems()
 
 void EngineCore::StartUp()
 {
+	ServiceLocator::instance()->Register<EngineContext>();
+	ec = ServiceLocator::instance()->Get<EngineContext>();
+	ServiceLocator::instance()->Register<SyErrorLogger>();
+	el = ServiceLocator::instance()->Get<SyErrorLogger>();
 	StartUpSystems();
 }
 
 void EngineCore::ShutDown()
 {
+
 	for (auto& system : systems)
 	{
 		system->Destroy();

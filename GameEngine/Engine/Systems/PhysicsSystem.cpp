@@ -31,12 +31,12 @@ void SyPhysicsSystem::Run()
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
 	if (deltaTime == 0)
 		return;
-	int simulationResult = scene->simulate(deltaTime) == true 
-		? SY_NO_ERROR : SY_GENERIC_ERROR_CRITICAL;
-	ErrorLogger::Log(simulationResult, "PhysicsSystem.cpp", 36);
-	int fetchResult = scene->fetchResults(true) == true 
-		? SY_NO_ERROR : SY_GENERIC_ERROR_CRITICAL;
-	ErrorLogger::Log(fetchResult, "PhysicsSystem.cpp", 39);
+	int simulationResult = scene->simulate(deltaTime) /*== true 
+		? SY_NO_ERROR : SY_GENERIC_ERROR_CRITICAL*/;
+	//SyErrorLogger::Log(simulationResult, "PhysicsSystem.cpp", 36);
+	int fetchResult = scene->fetchResults(true) /*== true 
+		? SY_NO_ERROR : SY_GENERIC_ERROR_CRITICAL*/;
+	//SyErrorLogger::Log(fetchResult, "PhysicsSystem.cpp", 39);
 	auto view = ServiceLocator::instance()->Get<EngineContext>()->
 		scene->registry.view<SyRBodyComponent, TransformComponent>();
 	for (auto& entity : view)
@@ -46,9 +46,9 @@ void SyPhysicsSystem::Run()
 		if (rbComponent.rbType == RB_TYPE_STATIC)
 			return;
 		PxRigidDynamic* rb = rbComponent.rbActor->is<PxRigidDynamic>();
-		int rbSearchResult = rb != nullptr ?
+		/*int rbSearchResult = rb != nullptr ?
 			SY_NO_ERROR : SY_GENERIC_ERROR_CRITICAL;
-		ErrorLogger::Log(rbSearchResult, "PhysicsSystem.cpp", 51);
+		SyErrorLogger::Log(rbSearchResult, "PhysicsSystem.cpp", 51);*/
 		PxTransform rbTrasform = rb->getGlobalPose();
 		//std::cout << rbTrasform.p.x << " " << rbTrasform.p.y << " " << rbTrasform.p.z << "\n";
 		trComponent.localPosition = rbTrasform.p;

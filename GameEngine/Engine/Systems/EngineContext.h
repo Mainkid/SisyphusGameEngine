@@ -17,5 +17,6 @@ struct EngineContext : public IService
 		PauseMode
 	};
 	EPlayModeState playModeState = EPlayModeState::EditorMode;
+	
 };
 

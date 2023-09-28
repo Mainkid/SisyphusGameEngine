@@ -5,15 +5,6 @@
 #define SY_PI 3.14f
 #define SY_PI2 SY_PI / 2 
 
-struct S
-{
-    union {
-        DirectX::SimpleMath::Vector3 dxVec;
-        physx::PxVec3 pxVec3;
-    };
-    S() : dxVec() {};
-};
-
 int main()
 {
     //EngineCore* engine = new EngineCore();
