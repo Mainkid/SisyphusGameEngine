@@ -36,8 +36,9 @@
 	SY_LOG_REND(LogLevel SyElLogLevel, const std::wstring& message)
 	SY_LOG_PHYS(LogLevel SyElLogLevel, const std::wstring& message)
 	SY_LOG_HUD (LogLevel SyElLogLevel, const std::wstring& message)
-  соответственно. 
-4. Можно также добавить собственный канал. Для этого используется метод SyErrorLogger::(const t_channelName& channelName_). 
+  соответственно. Если вы планируете использовать функцию Log, вместо макросов, необходимо получить экземпляр класса SyErrorLogger через ServiceLocator:
+  ServiceLocator::instance()->Get<SyErrorLogger>.
+4. Можно также добавить собственный канал. Для этого используется метод SyErrorLogger::AddChannel(const t_channelName& channelName_). 
 
 Известные ошибки:
 1. Имя файла, имя функции и номер строки пока логируются некорректно.
