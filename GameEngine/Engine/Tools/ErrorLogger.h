@@ -6,11 +6,32 @@
 #include <vector>
 #include "../Core/ServiceLocator.h"
 
-#define SY_LOG_ERLOG(logLevel, message)	ServiceLocator::instance()->Get<SyErrorLogger>()->Log(L"ERLOG", logLevel, message)
-#define SY_LOG_PHYS(logLevel, message)	ServiceLocator::instance()->Get<SyErrorLogger>()->Log(L"PHYS", logLevel, message)
-#define SY_LOG_CORE(logLevel, message)	ServiceLocator::instance()->Get<SyErrorLogger>()->Log(L"CORE", logLevel, message)
-#define SY_LOG_REND(logLevel, message)	ServiceLocator::instance()->Get<SyErrorLogger>()->Log(L"REND", logLevel, message)
-#define SY_LOG_HUD(logLevel, message)	ServiceLocator::instance()->Get<SyErrorLogger>()->Log(L"HUD", logLevel, message)
+#pragma region Log_macro
+#define SY_EL ((ServiceLocator::instance() == nullptr) ? nullptr : ServiceLocator::instance()->Get<SyErrorLogger>())		\
+
+#define SY_LOG(channelName_, logLevel_, ...)								\
+if (SY_EL != nullptr)														\
+{																			\
+	std::vector<IP7_Trace*> traces = SY_EL->GetTraces(channelName_);		\
+	for (auto& trace : traces)												\
+		trace->Trace(	0,													\
+						SY_EL->GetP7TraceLevel(logLevel_),					\
+						nullptr,											\
+						(tUINT16)__LINE__,									\
+						__FILE__,											\
+						__FUNCTION__,										\
+						__VA_ARGS__);										\
+}																			\
+else																		\
+	std::cout << "FATAL:  ServiceLocator::instance() or ServiceLocator::instance()->Get<SyErrorLogger>() is nullptr\n"\
+
+#pragma endregion
+
+#define SY_LOG_ERLOG(logLevel, ...)	SY_LOG(L"ERLOG",	logLevel, __VA_ARGS__)
+#define SY_LOG_PHYS(logLevel, ...)	SY_LOG(L"PHYS",		logLevel, __VA_ARGS__)
+#define SY_LOG_CORE(logLevel, ...)	SY_LOG(L"CORE",		logLevel, __VA_ARGS__)
+#define SY_LOG_REND(logLevel, ...)	SY_LOG(L"REND",		logLevel, __VA_ARGS__)
+#define SY_LOG_HUD(logLevel, ...)	SY_LOG(L"HUD",		logLevel, __VA_ARGS__)
 
 #define SY_RESCODE_OK 0
 #define SY_RESCODE_UNEXPECTED 1
@@ -50,10 +71,13 @@ public:
 	SyResult AddChannel(const t_channelName& channelName_);
 	//Add sink to all channels
 	SyResult AddSink(const t_sinkName& sinkName_, const std::wstring& params);
-	//Log message to a channel through all sinks
-	SyResult Log(const t_channelName& channelName_, SyElLogLevel logLevel_, const std::wstring& message_);
+	//Returns vector of traces by the channel and all sinks
+	std::vector<IP7_Trace*> GetTraces(const t_channelName& channelName_);
+	//Converts SyElLogLevel object to eP7Trace_Level object
+	eP7Trace_Level GetP7TraceLevel(SyElLogLevel logLevel);
 	//this sink will be passed to the client in error logger constructor
 	SyElSink defaultSink = SY_SINK_CONSOLE;
+
 private:
 
 	std::vector	<t_sinkName>			sinkNames;

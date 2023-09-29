@@ -40,8 +40,7 @@
   ServiceLocator::instance()->Get<SyErrorLogger>.
 4. Можно также добавить собственный канал. Для этого используется метод SyErrorLogger::AddChannel(const t_channelName& channelName_). 
 
-Известные ошибки:
-1. Имя файла, имя функции и номер строки пока логируются некорректно.
+
 
 Все сообщения пока что выводятся в консоль.
 Примеры использования SyResult и SyErrorLogger можно найти в файлах ErrorLogger.cpp и PhysicsSystem.h

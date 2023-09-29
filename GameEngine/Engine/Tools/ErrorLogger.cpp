@@ -2,6 +2,8 @@
 #include <Windows.h>
 #include <iostream>
 
+
+
 SyErrorLogger::SyErrorLogger()
 {
 	std::wstring clientParams;
@@ -34,25 +36,25 @@ SyErrorLogger::SyErrorLogger()
 	SyResult result = AddChannel(L"PHYS");
 	if (result.code == SY_RESCODE_ERROR)
 	{
-		Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
+		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
 		return;
 	}
 	result = AddChannel(L"CORE");
 	if (result.code == SY_RESCODE_ERROR)
 	{
-		Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
+		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
 		return;
 	}
 	result = AddChannel(L"REND");
 	if (result.code == SY_RESCODE_ERROR)
 	{
-		Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
+		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
 		return;
 	}
 	result = AddChannel(L"HUD");
 	if (result.code == SY_RESCODE_ERROR)
 	{
-		Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
+		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
 		return;
 	}
 }
@@ -74,7 +76,7 @@ SyResult SyErrorLogger::AddChannel(const t_channelName& channelName_)
 		{
 			result.code = SY_RESCODE_UNEXPECTED;
 			result.message = L"Channel " + channelName_ + L" already exists.";
-			Log(L"ERLOG", SY_LOGLEVEL_WARNING, result.message);
+			//Log(L"ERLOG", SY_LOGLEVEL_WARNING, result.message);
 			return result;
 		}
 	channelNames.push_back(channelName_);
@@ -84,7 +86,7 @@ SyResult SyErrorLogger::AddChannel(const t_channelName& channelName_)
 		IP7_Client* client = elClients.find(sinkName)->second;
 		if (client == nullptr)
 		{
-			Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"client == nullptr");
+			//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"client == nullptr");
 			result.code = SY_RESCODE_ERROR;
 			result.message = L"Failed to create new IP7_Trace";
 			return result;
@@ -92,7 +94,7 @@ SyResult SyErrorLogger::AddChannel(const t_channelName& channelName_)
 		IP7_Trace* newTrace = P7_Create_Trace(client, channelName_.c_str());
 		if (client == nullptr)
 		{
-			Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"newTrace == nullptr");
+			//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"newTrace == nullptr");
 			result.code = SY_RESCODE_ERROR;
 			result.message = L"Failed to create new IP7_Trace";
 			return result;
@@ -110,7 +112,7 @@ SyResult SyErrorLogger::AddSink(const t_sinkName& sinkName_, const std::wstring&
 		{
 			result.code = SY_RESCODE_UNEXPECTED;
 			result.message = L"Sink " + sinkName_ + L" already exists.";
-			Log(L"ERLOG", SY_LOGLEVEL_WARNING, result.message);
+			//Log(L"ERLOG", SY_LOGLEVEL_WARNING, result.message);
 			return result;
 		}
 	IP7_Client* newClient = P7_Create_Client(params.c_str());
@@ -129,7 +131,7 @@ SyResult SyErrorLogger::AddSink(const t_sinkName& sinkName_, const std::wstring&
 		IP7_Trace* newTrace = P7_Create_Trace(newClient, channelName.c_str());
 		if (newTrace == nullptr)
 		{
-			Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"newTrace == nulptr");
+			//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"newTrace == nulptr");
 			result.code = SY_RESCODE_ERROR;
 			result.message = L"Failed to create new trace.";
 			return result;
@@ -139,48 +141,43 @@ SyResult SyErrorLogger::AddSink(const t_sinkName& sinkName_, const std::wstring&
 	return result;
 }
 
-SyResult SyErrorLogger::Log(const t_channelName& channelName_, SyElLogLevel traceLevel_, const std::wstring& message_)
+
+std::vector<IP7_Trace*> SyErrorLogger::GetTraces(const t_channelName& channelName_)
 {
-	SyResult result;
+	std::vector<IP7_Trace*> traces;
 	auto search = elTraces.find(channelName_);
 	if (search == elTraces.end())
 	{
-		result.code = SY_RESCODE_UNEXPECTED;
-		result.message = channelName_ + L" is an unknown channel name.";
-		Log(L"ERLOG", SY_LOGLEVEL_ERROR, result.message);
-		return result;
+		std::wstring message = channelName_ + L" is an unknown channel name.";
+		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, message);
 	}
-
-	auto tableLine = search->second;
+	auto& tableLine = search->second;
 	for (auto& tracePair : tableLine)
+		traces.push_back(tracePair.second);
+	return traces;
+}
+
+eP7Trace_Level SyErrorLogger::GetP7TraceLevel(SyElLogLevel logLevel)
+{
+	switch (logLevel)
 	{
-		IP7_Trace* trace = tracePair.second;
-		switch (traceLevel_)
-		{
-		case SY_LOGLEVEL_DEBUG:
-			trace->P7_DEBUG(0, message_.c_str());
-			break;
-		case SY_LOGLEVEL_INFO:
-			trace->P7_INFO(0, message_.c_str());
-			break;
-		case SY_LOGLEVEL_WARNING:
-			trace->P7_WARNING(0, message_.c_str());
-			break;
-		case SY_LOGLEVEL_ERROR:
-			trace->P7_ERROR(0, message_.c_str());
-			break;
-		case SY_LOGLEVEL_CRITICAL:
-			trace->P7_CRITICAL(0, message_.c_str());
-			break;
-		default:
-			result.code = SY_RESCODE_UNEXPECTED;
-			result.message = L" Unknown channel name.";
-			Log(L"ERLOG", SY_LOGLEVEL_ERROR, result.message);
-			return result;
-			break;
-		}
+	case SY_LOGLEVEL_DEBUG:
+		return eP7Trace_Level::EP7TRACE_LEVEL_DEBUG;
+		break;
+	case SY_LOGLEVEL_INFO:
+		return eP7Trace_Level::EP7TRACE_LEVEL_INFO;
+		break;
+	case SY_LOGLEVEL_WARNING:
+		return eP7Trace_Level::EP7TRACE_LEVEL_WARNING;
+		break;
+	case SY_LOGLEVEL_ERROR:
+		return eP7Trace_Level::EP7TRACE_LEVEL_ERROR;
+		break;
+	case SY_LOGLEVEL_CRITICAL:
+		return eP7Trace_Level::EP7TRACE_LEVEL_CRITICAL;
+		break;
 	}
-	return result;
+	return eP7Trace_Level();
 }
 
 

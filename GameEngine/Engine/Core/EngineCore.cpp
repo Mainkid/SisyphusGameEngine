@@ -151,13 +151,12 @@ void EngineCore::StartUp()
 
 void EngineCore::ShutDown()
 {
-	ServiceLocator::instance()->Unregister<EngineContext>();
-	ServiceLocator::instance()->Unregister<SyErrorLogger>();
 	for (auto& system : systems)
 	{
 		system->Destroy();
 	}
-
+	ServiceLocator::instance()->Unregister<EngineContext>();
+	ServiceLocator::instance()->Unregister<SyErrorLogger>();
 	ServiceLocator::instance()->Unregister<EngineCore>();
 	ServiceLocator::instance()->Unregister<RenderContext>();
 	auto hc = ServiceLocator::instance()->Get<HardwareContext>();

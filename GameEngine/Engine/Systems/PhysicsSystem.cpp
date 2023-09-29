@@ -32,7 +32,7 @@ void SyPhysicsSystem::Init()
 	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 	scene = physics->createScene(sceneDesc);
 	SyRBodyComponent::scene = scene;
-	
+	SY_LOG_PHYS(SY_LOGLEVEL_INFO, L"Physics system initialized. ");
 }
 
 void SyPhysicsSystem::Run()
@@ -69,4 +69,5 @@ void SyPhysicsSystem::Destroy()
 	PX_RELEASE(scene);
 	PX_RELEASE(physics);
 	PX_RELEASE(foundation);
+	SY_LOG_PHYS(SY_LOGLEVEL_DEBUG, L"Physics system destroyed.");
 }
