@@ -1,4 +1,4 @@
-#include "C:\Users\jdczy\Desktop\GameEngine\GameEngine\GameEngine\Engine\Assets\Shaders\PBR_Functions.hlsli"
+#include "PBR_Functions.hlsli"
 
 
 struct LightData

@@ -743,7 +743,7 @@
     </FxCompile>
     <None Include="Engine\Assets\Shaders\PBR_Functions.hlsli">
       <FileType>Document</FileType>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DeploymentContent>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
     <FxCompile Include="Engine\Assets\Shaders\PointLightShader.hlsl">
