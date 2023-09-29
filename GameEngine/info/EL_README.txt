@@ -14,33 +14,31 @@
 3. После возврата значения SyResult можно предписать различное поведение в зависимости от того, является ли результат корректным или нет.
 ЛОГИРОВАНИЕ ОШИБОК
 1. Для использования логгера необходимо подключить заголовочный файл ErrorLogger.h. 
-2. Для логирования используется функция SyErrorLogger::Log(const std::wstring& channelName_, SyElLogLevellogLevel_, const std::wstring& message_).
+2. Для логирования используется макрос SY_LOG(channelName_, logLevel_, ...).
 	Входные параметры:
-		channelName_ - имя канала логирования
+		channelName_ - имя канала логирования (формат std::wstring)
 			Канал, в котором логируется сообщение соответствует определяемой пользователем области/ модуле, где произошло логирование.
 			По умолчанию созданы каналы
 				CORE - главные модули движка
 				REND - рендер-система
 				PHYS - физика
 				HUD - интерфейс
-		logLevel_ - уровень логирования, задаваемые перечислением LogLevel
+		logLevel_ - уровень логирования, задаваемые перечислением SyElLogLevel
 			Существует следующие уровни логирования:
 				SY_LOGLEVEL_DEBUG
 				SY_LOGLEVEL_INFO
 				SY_LOGLEVEL_WARNING
 				SY_LOGLEVEL_ERROR
 				SY_LOGLEVEL_CRITICAL
-		message_ - пользовательское сообщение				
+		... - отформатированная строка и набор аргументов (аналогично аргументам printf).				
 3. Для логирования в одном из по умолчанию созданных каналов можно использовать макросы (в них скрыт также и вызов ServiceLocator::instance()->Get<SyErrorLogger>())
-	SY_LOG_CORE(LogLevel SyElLogLevel, const std::wstring& message)
-	SY_LOG_REND(LogLevel SyElLogLevel, const std::wstring& message)
-	SY_LOG_PHYS(LogLevel SyElLogLevel, const std::wstring& message)
-	SY_LOG_HUD (LogLevel SyElLogLevel, const std::wstring& message)
-  соответственно. Если вы планируете использовать функцию Log, вместо макросов, необходимо получить экземпляр класса SyErrorLogger через ServiceLocator:
-  ServiceLocator::instance()->Get<SyErrorLogger>.
+	SY_LOG_CORE(logLevel_, ...)
+	SY_LOG_REND(logLevel_, ...)
+	SY_LOG_PHYS(logLevel_, ...)
+	SY_LOG_HUD (logLevel_, ...)
+  
 4. Можно также добавить собственный канал. Для этого используется метод SyErrorLogger::AddChannel(const t_channelName& channelName_). 
-
-
+   Для получения экземпляра класса SyErrorLogger можно воспользоваться макросом SY_EL
 
 Все сообщения пока что выводятся в консоль.
-Примеры использования SyResult и SyErrorLogger можно найти в файлах ErrorLogger.cpp и PhysicsSystem.h
+Примеры использования SyResult и SyErrorLogger можно найти в файле PhysicsSystem.cpp
