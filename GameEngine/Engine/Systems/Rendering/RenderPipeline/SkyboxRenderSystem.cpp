@@ -5,14 +5,16 @@
 #include "../../Core/ServiceLocator.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
 
-void SkyboxRenderSystem::Init()
+SyResult SkyboxRenderSystem::Init()
 {
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"SkyboxRender system initialization successful. ");
+    return SyResult();
 }
 
-void SkyboxRenderSystem::Run()
+SyResult SkyboxRenderSystem::Run()
 {
     float bgcolor[] = { 0.0f,0.0f,0.0f,0.0f };
     hc->context->RSSetState(rc->cullFrontRS.Get());
@@ -45,8 +47,11 @@ void SkyboxRenderSystem::Run()
     
     hc->context->DrawIndexed(rc->cubeMesh->indexBuffer->size, 0, 0);
     
+    return SyResult();
 }
 
-void SkyboxRenderSystem::Destroy()
+SyResult SkyboxRenderSystem::Destroy()
 {
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"SkyboxRender system destruction successful. ");
+    return SyResult();
 }

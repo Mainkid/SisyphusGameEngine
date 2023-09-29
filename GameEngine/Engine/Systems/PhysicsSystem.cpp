@@ -9,7 +9,7 @@ using namespace physx;
 PxPhysics*	SyRBodyComponent::physics;
 PxScene*	SyRBodyComponent::scene;
 
-void SyPhysicsSystem::Init()
+SyResult SyPhysicsSystem::Init()
 {
 	allocator = std::make_shared<PxDefaultAllocator>();
 	errorCallback = std::make_shared<PxDefaultErrorCallback>();
@@ -32,18 +32,34 @@ void SyPhysicsSystem::Init()
 	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 	scene = physics->createScene(sceneDesc);
 	SyRBodyComponent::scene = scene;
-	SY_LOG_PHYS(SY_LOGLEVEL_INFO, L"Physics system initialized. ");
+	SY_LOG_PHYS(SY_LOGLEVEL_INFO, L"Physics initialization successful. ");
+	return SyResult();
 }
 
-void SyPhysicsSystem::Run()
+SyResult SyPhysicsSystem::Run()
 {
+	SyResult result;
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
 	if (deltaTime == 0)
-		return;
-	if(!scene->simulate(deltaTime))
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, L"Physics simulate function returned false. ");
-	if(!scene->fetchResults(true))
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, L"Physics fetchResult function returned false. ");
+	{
+		result.code = SY_RESCODE_UNEXPECTED;
+		result.message = L"EngineContext.deltaTime == 0";
+		return result;
+	}
+	if (!scene->simulate(deltaTime))
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = L"Physics simulate function returned false.";
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR,  result.message.c_str());
+		return result;
+	}
+	if (!scene->fetchResults(true))
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = L"Physics fetchResult function returned false.";
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.c_str());
+		return result;
+	}
 	auto view = ServiceLocator::instance()->Get<EngineContext>()->
 		scene->registry.view<SyRBodyComponent, TransformComponent>();
 	for (auto& entity : view)
@@ -54,7 +70,9 @@ void SyPhysicsSystem::Run()
 			continue;
 		if (rbComponent.rbActor == nullptr)
 		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, L"rbComponent.rbActor is nullptr.");
+			result.code = SY_RESCODE_ERROR;
+			result.message = L"rbComponent.rbActor is nullptr.";
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.c_str());
 			continue;
 		}
 		PxRigidDynamic* rb = rbComponent.rbActor->is<PxRigidDynamic>();
@@ -62,12 +80,14 @@ void SyPhysicsSystem::Run()
 		trComponent.localPosition = rbTrasform.p;
 		trComponent.localRotation = SyVector3::PxQuatToEuler(rbTrasform.q);
 	}
+	return SyResult();
 }
 
-void SyPhysicsSystem::Destroy()
+SyResult SyPhysicsSystem::Destroy()
 {
 	PX_RELEASE(scene);
 	PX_RELEASE(physics);
 	PX_RELEASE(foundation);
-	SY_LOG_PHYS(SY_LOGLEVEL_DEBUG, L"Physics system destroyed.");
+	SY_LOG_PHYS(SY_LOGLEVEL_INFO, L"Physics system destruction successful. ");
+	return SyResult();
 }

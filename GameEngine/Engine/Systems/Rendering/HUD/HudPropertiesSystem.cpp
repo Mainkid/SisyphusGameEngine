@@ -5,13 +5,15 @@
 #include "../../TransformHelper.h"
 #include "../../Core/ServiceLocator.h"
 
-void HudPropertiesSystem::Init()
+SyResult HudPropertiesSystem::Init()
 {
     this->windowID = "Properties";
     this->ec = ServiceLocator::instance()->Get<EngineContext>();
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudProperties system initialization successful.");
+    return SyResult();
 }
 
-void HudPropertiesSystem::Run()
+SyResult HudPropertiesSystem::Run()
 {
     ImGui::Begin(windowID.c_str());
     //Widget::Render();
@@ -51,11 +53,13 @@ void HudPropertiesSystem::Run()
     }
 
     ImGui::End();
+    return SyResult();
 }
 
-void HudPropertiesSystem::Destroy()
+SyResult HudPropertiesSystem::Destroy()
 {
-    
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudProperties system destruction successful.");
+    return SyResult();
 }
 
 

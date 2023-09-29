@@ -6,20 +6,23 @@
 #include "../RenderContext.h"
 #include "../../HardwareContext.h"
 
-void HudContentBrowserSystem::Init()
+SyResult HudContentBrowserSystem::Init()
 {
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
     InitImagesSRV();
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudContentBrowser system initialization successful.");
+    return SyResult();
 }
 
-void HudContentBrowserSystem::Destroy()
+SyResult HudContentBrowserSystem::Destroy()
 {
-    
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudContentBrowser system destruction successful.");
+    return SyResult();
 }
 
-void HudContentBrowserSystem::Run()
+SyResult HudContentBrowserSystem::Run()
 {
     ImGui::Begin("Content Browser");
     //Widget::Render();
@@ -69,6 +72,7 @@ void HudContentBrowserSystem::Run()
     ImGui::Columns(1);
 
     ImGui::End();
+    return SyResult();
 }
 
 void HudContentBrowserSystem::InitImagesSRV()

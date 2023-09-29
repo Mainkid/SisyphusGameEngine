@@ -8,7 +8,7 @@
 #include "../../../vendor/ImGui/imgui_impl_dx11.h"
 #include "../../../vendor/ImGui/imgui_impl_win32.h"
 
-void EditorCameraSystem::Init()
+SyResult EditorCameraSystem::Init()
 {
     ec = ServiceLocator::instance()->Get<EngineContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
@@ -19,9 +19,11 @@ void EditorCameraSystem::Init()
     ec->scene->camera = &cc;
     ec->scene->cameraTransform = &tc;
     SetLookAtPos(Vector3(-1, 0, 0), tc);
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"EditorBillboard system initialization successful. ");
+    return SyResult();
 }
 
-void EditorCameraSystem::Run()
+SyResult EditorCameraSystem::Run()
 {
 	auto view = ec->scene->registry.view<TransformComponent,CameraComponent>();
 	for (auto& entity : view)
@@ -42,13 +44,13 @@ void EditorCameraSystem::Run()
 		}
         ProcessInput(cc,tc);
 	}
-
-    
-
+    return SyResult();
 }
 
-void EditorCameraSystem::Destroy()
+SyResult EditorCameraSystem::Destroy()
 {
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"EditorCamera system destruction successful. ");
+    return SyResult();
 }
 
 void EditorCameraSystem::UpdateViewMatrix(CameraComponent& cc, TransformComponent& tc)

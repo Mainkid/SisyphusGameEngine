@@ -8,7 +8,7 @@
 #include "../../Tools/ImageLoader.h"
 #include "../MeshLoader.h"
 
-void RenderInitSystem::Init()
+SyResult RenderInitSystem::Init()
 {
 	ServiceLocator::instance()->Register<RenderContext>();
     
@@ -443,15 +443,19 @@ void RenderInitSystem::Init()
     rc->skyBoxShader = std::make_unique<Shader>();
     rc->skyBoxShader->Initialize(L"./Engine/Assets/Shaders/Skybox.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VS", "PS");
-
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"RenderInit system initialization successful. ");
+    return SyResult();
 }
 
-void RenderInitSystem::Run()
+SyResult RenderInitSystem::Run()
 {
+    return SyResult();
 }
 
-void RenderInitSystem::Destroy()
+SyResult RenderInitSystem::Destroy()
 {
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"RenderInit system destruction successful. ");
+    return SyResult();
 }
 
 void RenderInitSystem::InitSkybox()

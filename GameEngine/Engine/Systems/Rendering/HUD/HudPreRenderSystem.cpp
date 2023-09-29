@@ -6,7 +6,7 @@
 #include "../../../Systems/HardwareContext.h"
 #include "../../../Core/ServiceLocator.h"
 
-void HudPreRenderSystem::Init()
+SyResult HudPreRenderSystem::Init()
 {
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     IMGUI_CHECKVERSION();
@@ -31,9 +31,11 @@ void HudPreRenderSystem::Init()
 
     ImGui_ImplWin32_Init(hc->window->GetHWND());
     ImGui_ImplDX11_Init(hc->device.Get(), hc->context.Get());
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudPreRender system initialization successful.");
+    return SyResult();
 }
 
-void HudPreRenderSystem::Run()
+SyResult HudPreRenderSystem::Run()
 {
     hc->context->OMSetRenderTargets(1, hc->rtv.GetAddressOf(), nullptr);
     bool show = true;
@@ -73,13 +75,17 @@ void HudPreRenderSystem::Run()
     //    ImGui::UpdatePlatformWindows();
     //    ImGui::RenderPlatformWindowsDefault();
     //}
+    return SyResult();
 }
 
-void HudPreRenderSystem::Destroy()
+SyResult HudPreRenderSystem::Destroy()
 {
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
+
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudPreRender system destruction successful.");
+    return SyResult();
 }
 
 void HudPreRenderSystem::CleanupRenderTarget()

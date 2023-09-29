@@ -2,7 +2,7 @@
 #include "../Core/DisplayWin32.h"
 #include "../Core/Rendering/RenderTarget.h"
 
-void HardwareInitSystem::Init()
+SyResult HardwareInitSystem::Init()
 {
 	ServiceLocator::instance()->Register<HardwareContext>();
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
@@ -11,16 +11,19 @@ void HardwareInitSystem::Init()
 	InitializeDirectX();
 	hc->renderTarget = std::make_unique<RenderTarget>();
 	hc->renderTarget->Initialize();
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HardwareInit system initialization successful. ");
+	return SyResult();
 }
 
-void HardwareInitSystem::Run()
+SyResult HardwareInitSystem::Run()
 {
-
+	return SyResult();
 }
 
-void HardwareInitSystem::Destroy()
+SyResult HardwareInitSystem::Destroy()
 {
-
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HardwareInit system destruction successful. ");
+	return SyResult();
 }
 
 

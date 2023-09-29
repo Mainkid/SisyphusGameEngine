@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include "../Core/ServiceLocator.h"
+#include <iostream>
 
 #pragma region Log_macro
 #define SY_EL ((ServiceLocator::instance() == nullptr) ? nullptr : ServiceLocator::instance()->Get<SyErrorLogger>())		\

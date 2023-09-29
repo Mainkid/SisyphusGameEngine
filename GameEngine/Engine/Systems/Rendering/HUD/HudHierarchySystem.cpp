@@ -2,13 +2,15 @@
 #include "../../Core/ServiceLocator.h"
 #include "../../EngineContext.h"
 
-void HudHierarchySystem::Init()
+SyResult HudHierarchySystem::Init()
 {
     this->ec = ServiceLocator::instance()->Get<EngineContext>();
     this->windowID = "Hierarchy";
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudHierarchy system initialization successful.");
+    return SyResult();
 }
 
-void HudHierarchySystem::Run()
+SyResult HudHierarchySystem::Run()
 {
     ImGui::Begin(windowID.c_str());
 	
@@ -38,11 +40,13 @@ void HudHierarchySystem::Run()
         }
     }
     ImGui::End();
+    return SyResult();
 }
 
-void HudHierarchySystem::Destroy()
+SyResult HudHierarchySystem::Destroy()
 {
-    
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudHierarchy system destruction successful.");
+    return SyResult();
 }
 
 void HudHierarchySystem::RenderTree(std::set<entt::entity>& gameObjectsVector)

@@ -4,14 +4,17 @@
 #include "../RenderContext.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
 
-void LightRenderSystem::Init()
+SyResult LightRenderSystem::Init()
 {
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"LightRender system initialization successful.");
+    return SyResult();
+
 }
 
-void LightRenderSystem::Run()
+SyResult LightRenderSystem::Run()
 {
 
     CB_LightBuffer lightBuffer;
@@ -239,11 +242,13 @@ void LightRenderSystem::Run()
 
     }
     hc->context->PSSetShaderResources(0, 5, srvNull);
-   
+    return SyResult();
 }
 
-void LightRenderSystem::Destroy()
+SyResult LightRenderSystem::Destroy()
 {
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"LightRender system destruction successful.");
+    return SyResult();
 }
 
 void LightRenderSystem::ShadowMap()
