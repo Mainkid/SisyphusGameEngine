@@ -53,6 +53,4 @@ int main()
     EngineCore::instance()->ShutDown();
     
     std::cout << "Hello World!\n";
-    
-
 }

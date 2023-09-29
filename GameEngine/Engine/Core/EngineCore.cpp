@@ -20,7 +20,7 @@ HWND EngineCore::GetWindowHWND()
 void EngineCore::StartUpdateLoop()
 {
 	PrevTime = std::chrono::steady_clock::now();
-	while (true) {
+	while (!ec->isClosed) {
 		Update();
 	}
 	
@@ -157,4 +157,10 @@ void EngineCore::ShutDown()
 	{
 		system->Destroy();
 	}
+
+	ServiceLocator::instance()->Unregister<EngineCore>();
+	ServiceLocator::instance()->Unregister<RenderContext>();
+	auto hc = ServiceLocator::instance()->Get<HardwareContext>();
+	ServiceLocator::instance()->Unregister<HardwareContext>();
 }
+
