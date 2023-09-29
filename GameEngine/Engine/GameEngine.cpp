@@ -50,7 +50,9 @@ int main()
     ////engine->scene->Initialize();
     
     EngineCore::instance()->StartUpdateLoop();
-
+    //EngineCore::instance()->ShutDown();
     
     std::cout << "Hello World!\n";
+
+    
 }

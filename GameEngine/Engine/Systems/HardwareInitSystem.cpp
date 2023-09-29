@@ -93,7 +93,7 @@ void HardwareInitSystem::CreateDeviceAndSwapChain()
 
 	res = hc->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)hc->backTex.GetAddressOf());	// __uuidof(ID3D11Texture2D)
 	res = hc->device->CreateRenderTargetView(hc->backTex.Get(), nullptr, hc->rtv.GetAddressOf());
-	hc->backTex->Release();
+
 }
 
 void HardwareInitSystem::InitializeDirectX()
