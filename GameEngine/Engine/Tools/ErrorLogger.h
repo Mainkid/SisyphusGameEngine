@@ -10,22 +10,31 @@
 #pragma region Log_macro
 #define SY_EL ((ServiceLocator::instance() == nullptr) ? nullptr : ServiceLocator::instance()->Get<SyErrorLogger>())		\
 
-#define SY_LOG(channelName_, logLevel_, ...)								\
-if (SY_EL != nullptr)														\
-{																			\
-	std::vector<IP7_Trace*> traces = SY_EL->GetTraces(channelName_);		\
-	for (auto& trace : traces)												\
-		trace->Trace(	0,													\
-						SY_EL->GetP7TraceLevel(logLevel_),					\
-						nullptr,											\
-						(tUINT16)__LINE__,									\
-						__FILE__,											\
-						__FUNCTION__,										\
-						__VA_ARGS__);										\
-}																			\
-else																		\
-	std::cout << "FATAL:  ServiceLocator::instance() or ServiceLocator::instance()->Get<SyErrorLogger>() is nullptr\n"\
+#define SY_LOG_NO_CHECK(traces_, logLevel__, ...)	\
+for (auto& trace : traces_)							\
+	trace->Trace(0,									\
+		SY_EL->GetP7TraceLevel(logLevel__),			\
+		nullptr,									\
+		(tUINT16)__LINE__,							\
+		__FILE__,									\
+		__FUNCTION__,								\
+		__VA_ARGS__)								\
 
+#define SY_LOG(channelName_, logLevel_, ...)																			\
+if (SY_EL != nullptr)																									\
+{																														\
+	std::vector<IP7_Trace*> traces = SY_EL->GetTraces(channelName_);													\
+	if (traces.empty() == false)																						\
+		SY_LOG_NO_CHECK(traces, logLevel_, __VA_ARGS__);																\
+	else																												\
+	{																													\
+		traces = SY_EL->GetTraces(L"ERLOG");																			\
+		SY_LOG_NO_CHECK(traces, SY_LOGLEVEL_ERROR, L"Unknown error logging channel: %s", channelName_);					\
+	}																													\
+}																														\
+else																													\
+	std::cout << "FATAL:  ServiceLocator::instance() or ServiceLocator::instance()->Get<SyErrorLogger>() is nullptr\n"	\
+	
 #pragma endregion
 
 #define SY_LOG_ERLOG(logLevel, ...)	SY_LOG(L"ERLOG",	logLevel, __VA_ARGS__)
