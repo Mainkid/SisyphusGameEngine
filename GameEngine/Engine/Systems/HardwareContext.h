@@ -18,7 +18,6 @@ struct HardwareContext : public IService
     ComPtr<ID3D11DeviceContext> context;
     ComPtr <IDXGISwapChain> swapChain;
     ComPtr<ID3D11RenderTargetView> rtv;
-    ComPtr <ID3D11Texture2D> backTex;
     ComPtr <ID3D11RasterizerState> rastState;
     ComPtr <ID3D11Texture2D> depthStencilBuffer;
     ComPtr <ID3D11DepthStencilView> depthStencilView;

@@ -22,10 +22,7 @@ void EngineCore::StartUpdateLoop()
 	while (!ec->isClosed) {
 		Update();
 	}
-	ServiceLocator::instance()->Unregister<EngineCore>();
-	ServiceLocator::instance()->Unregister<RenderContext>();
-	auto hc=ServiceLocator::instance()->Get<HardwareContext>();
-	ServiceLocator::instance()->Unregister<HardwareContext>();
+	
 }
 
 
@@ -156,5 +153,10 @@ void EngineCore::ShutDown()
 	{
 		system->Destroy();
 	}
+
+	ServiceLocator::instance()->Unregister<EngineCore>();
+	ServiceLocator::instance()->Unregister<RenderContext>();
+	auto hc = ServiceLocator::instance()->Get<HardwareContext>();
+	ServiceLocator::instance()->Unregister<HardwareContext>();
 }
 
