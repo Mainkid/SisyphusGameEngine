@@ -46,31 +46,25 @@ void PropertiesWidget::Render()
 		tc->localScale=(Vector3(vec3[0],vec3[1], vec3[2]));
 	}
 
-    // надо удалять в деструкторе?
-    LightComponent* lc = GetScene()->registry.try_get<LightComponent>(hud->selectedEntityID);  
 
+    LightComponent* lc = GetScene()->registry.try_get<LightComponent>(hud->selectedEntityID);  
 
     if (lc)
 	{	
-		//зачем?
-		//auto degToRadians = [](float angle) {return angle * M_PI / 180.0f; };
+		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 		if (ImGui::TreeNode("Light"))
 		{
 			// Picker
 			Vector4 vec4D = lc->color;
 			float vec4[4] = { vec4D.x, vec4D.y, vec4D.z, vec4D.w };
-			//рисуем 
 			ImGui::ColorPicker4("Color", vec4);
-			// соханяем изменения
 			lc->color = Vector4(vec4[0], vec4[1], vec4[2], vec4[3]);
     
  
 			// Attenuation Radius
 			vec4D = lc->paramsRadiusAndAttenuation;
 			float radius = vec4D.x;
-			//рисуем 
 			ImGui::DragScalar("Attenuation Radius", ImGuiDataType_Float, &radius, 1.f);
-			// соханяем изменения
 			lc->paramsRadiusAndAttenuation = (Vector4(radius, vec4D.y, vec4D.z, vec4D.w));
 
 			ImGui::TreePop();
