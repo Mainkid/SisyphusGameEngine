@@ -1042,3 +1042,7 @@ dkms.conf
 *.dis
 GameEngine/vendor/assimp
 GameEngine/vendor/DirectXTK
+GameEngine/vendor/assimp
+GameEngine/vendor/DirectXTK
+GameEngine/vendor/DirectXTK
+GameEngine/vendor/assimp
