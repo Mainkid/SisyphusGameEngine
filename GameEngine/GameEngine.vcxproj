@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Serialization\SerializableTraits.h" />
     <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp" />
     <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp" />
     <ClCompile Include="Engine\Core\DisplayWin32.cpp" />
@@ -639,6 +640,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="Engine\Components\SkyboxComponent.h" />
+    <ClInclude Include="Engine\Serialization\Serializable.h" />
+    <ClInclude Include="Engine\Serialization\Serializer.hpp" />
     <ClInclude Include="Engine\Systems\EngineContext.h" />
     <ClInclude Include="Engine\Core\IService.h" />
     <ClInclude Include="Engine\Systems\EditorBillboardSystem.h" />
@@ -719,6 +722,7 @@
     <ClInclude Include="vendor\ImGui\imstb_textedit.h" />
     <ClInclude Include="vendor\ImGui\imstb_truetype.h" />
     <ClInclude Include="vendor\DirectXTK\Inc\SimpleMath.h" />
+    <ClInclude Include="vendor\nlohmann_json\json.hpp" />
     <ClInclude Include="vendor\stb_image.h" />
     <ClInclude Include="vendor\WICTextureLoader.h" />
   </ItemGroup>

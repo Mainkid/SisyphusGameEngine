@@ -66,6 +66,7 @@
     <ClCompile Include="vendor\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_tables.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Engine\Serialization\SerializableTraits.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -152,6 +153,9 @@
     <ClInclude Include="vendor\DirectXTK\Inc\SimpleMath.h" />
     <ClInclude Include="vendor\stb_image.h" />
     <ClInclude Include="vendor\WICTextureLoader.h" />
+    <ClInclude Include="Engine\Serialization\Serializer.hpp" />
+    <ClInclude Include="Engine\Serialization\Serializable.h" />
+    <ClInclude Include="vendor\nlohmann_json\json.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
@@ -187,7 +191,7 @@
     <Image Include="Engine\Assets\SkyBox\skybox_6.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-     <None Include="Engine\Assets\Shaders\SpriteBillboardShader.hlsl" />
+    <None Include="Engine\Assets\Shaders\SpriteBillboardShader.hlsl" />
     <None Include="vendor\DirectXTK\Inc\SimpleMath.inl" />
   </ItemGroup>
 </Project>
