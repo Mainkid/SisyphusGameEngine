@@ -24,7 +24,10 @@ public:
 	void Close();
 	void SetRenderTarget(ID3D11DepthStencilView* depthStencilView);
 	void ClearRenderTarget(ID3D11DepthStencilView* depthStencilView, D3D11_CLEAR_FLAG flags);
+	~RenderTarget()
+	{
 
+	};
 	ID3D11ShaderResourceView* GetSRV();
 	ID3D11ShaderResourceView* GetImageSRV();
 	ComPtr<ID3D11RenderTargetView> renderTargetView;
