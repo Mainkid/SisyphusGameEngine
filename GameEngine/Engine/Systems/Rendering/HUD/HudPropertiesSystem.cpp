@@ -50,6 +50,30 @@ void HudPropertiesSystem::Run()
         tc->localScale=(Vector3(vec3[0],vec3[1], vec3[2]));
     }
 
+    LightComponent* lc = ec->scene->registry.try_get<LightComponent>(ec->selectedEntityID);
+
+    if (lc)
+    {
+        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+        if (ImGui::TreeNode("Light"))
+        {
+            // Picker
+            Vector4 vec4D = lc->color;
+            float vec4[4] = { vec4D.x, vec4D.y, vec4D.z, vec4D.w };
+            ImGui::ColorPicker4("Color", vec4);
+            lc->color = Vector4(vec4[0], vec4[1], vec4[2], vec4[3]);
+
+
+            // Attenuation Radius
+            vec4D = lc->paramsRadiusAndAttenuation;
+            float radius = vec4D.x;
+            ImGui::DragScalar("Attenuation Radius", ImGuiDataType_Float, &radius, 1.f);
+            lc->paramsRadiusAndAttenuation = (Vector4(radius, vec4D.y, vec4D.z, vec4D.w));
+
+            ImGui::TreePop();
+        }
+    }
+
     ImGui::End();
 }
 
