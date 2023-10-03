@@ -6,6 +6,7 @@
 #include "../../../Systems/HardwareContext.h"
 #include "../../../Core/ServiceLocator.h"
 
+
 void HudPreRenderSystem::Init()
 {
     hc = ServiceLocator::instance()->Get<HardwareContext>();
@@ -42,8 +43,8 @@ void HudPreRenderSystem::Run()
     if (windowHeight != io.DisplaySize.y || windowWidth != io.DisplaySize.x)
     {
         CleanupRenderTarget();
-        windowWidth = max(io.DisplaySize.x, 0);
-        windowHeight = max(io.DisplaySize.y, 0);
+    	windowWidth  = std::max(static_cast<int>(io.DisplaySize.x), 0);
+        windowHeight = std::max(static_cast<int>(io.DisplaySize.y), 0);
         hc->swapChain->ResizeBuffers(0, windowWidth, windowHeight, DXGI_FORMAT_UNKNOWN, 0);
         CreateRenderTarget();
     }

@@ -1,4 +1,7 @@
 #include "ErrorLogger.h"
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <Windows.h>
 
 void ErrorLogger::Log(int errorCode, const std::string& fileName, int lineNum)
