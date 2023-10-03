@@ -24,6 +24,8 @@ void OpaqueRenderSystem::Run()
         
         dataOpaque.baseData.world = transformComp.transformMatrix;
 
+        dataOpaque.baseData.view = ec->scene->camera->view;
+
         dataOpaque.baseData.worldViewProj =
             transformComp.transformMatrix *
             ec->scene->camera->view * ec->scene->camera->projection;

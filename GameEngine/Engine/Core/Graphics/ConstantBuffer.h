@@ -6,6 +6,7 @@ class CB_BaseBuffer
 {
 public:
     DirectX::SimpleMath::Matrix world;
+    DirectX::SimpleMath::Matrix view;
     DirectX::SimpleMath::Matrix worldView;
     DirectX::SimpleMath::Matrix worldViewProj;
     DirectX::SimpleMath::Matrix worldViewInverseTranspose;

@@ -7,6 +7,7 @@ cbuffer mycBuffer : register(b0)
 {
     
     row_major float4x4 world;
+    row_major float4x4 view;
     row_major float4x4 worldView;
     row_major float4x4 worldViewProj;
     row_major float4x4 worldViewInverseT;

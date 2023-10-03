@@ -186,21 +186,28 @@ void HudContentBrowserSystem::Run()
 
         
         
-        if (directoryEntry!=renaimingFileName)
+        if (directoryEntry!=renamingFileName)
             ImGui::Text(fileNameStr.c_str());
         else
         {
 
-            if (ImGui::InputText("RenamingText", renaimingFileString, IM_ARRAYSIZE(renaimingFileString), ImGuiInputTextFlags_EnterReturnsTrue))
+            if (ImGui::InputText("RenamingText", renamingFileString, IM_ARRAYSIZE(renamingFileString), ImGuiInputTextFlags_EnterReturnsTrue))
             {
-                renaimingFileName = (renaimingFileName.remove_filename().string() + renaimingFileString);
-                std::filesystem::rename(directoryEntry, renaimingFileName);
-                renaimingFileName = "";
+                renamingFileName = (renamingFileName.remove_filename().string() + renamingFileString);
+                if (std::filesystem::exists(renamingFileName))
+                {
+                    renamingFileName=directoryEntry;
+                }
+                else
+                {
+                    std::filesystem::rename(directoryEntry, renamingFileName);
+                }
+                renamingFileName = "";
                
             }
             if (!ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
             {
-                renaimingFileName = "";
+                renamingFileName = "";
             }
             
         }
@@ -297,6 +304,7 @@ void HudContentBrowserSystem::ProcessPopUp()
             {
                 case 0:
                     ResourceHelper::ConstructFile(curDirectory.string() + "/NewFolder");
+                    
                     break;
                 case 1:
                     ResourceHelper::ConstructFile(curDirectory.string() + "/Material.mat");
@@ -311,7 +319,7 @@ void HudContentBrowserSystem::ProcessPopUp()
                         ResourceHelper::RemoveFile(selectedFile);
                     break;
                 case 1:
-                    renaimingFileName = *selectedFiles.begin();
+                    renamingFileName = *selectedFiles.begin();
                     break;
                 case 2:
                     std::string resPath = curDirectory.string();

@@ -2,6 +2,7 @@
 cbuffer mycBuffer : register(b0)
 {
     row_major float4x4 world;
+    row_major float4x4 view;
     row_major float4x4 worldView;
     row_major float4x4 worldViewProj;
     row_major float4x4 worldViewInverseT;
@@ -83,11 +84,15 @@ GBuffer PSMain(PS_IN input) : SV_Target
     float4 emissive = emissiveTex.Sample(objSamplerState, input.col.xy);
     
     float3 normal = normalMapTex.Sample(objSamplerState, input.col.xy);
-    //normal.x = normal.x * 2.0f - 1.0f;
-    //normal.y = -normal.y * 2.0f + 1.0f;
-    //normal.z = -normal.z;
-    //normal = normalize(mul(normal.xyz, (float3x3)worldViewInverseT));
-    normal = input.normals;
+    normal.x = normal.x* 2.0f - 1.0f;
+    normal.y = normal.y * 2.0f - 1.0f;
+    normal.z = normal.z;
+    normal = normalize(normal);
+    //normal.y = -normal.y;
+    normal = mul(normal, (float3x3)worldView);
+    
+    
+    //normal = input.normals;
     
     output.Normals = float4(normal ,1.0f);
     output.Position = float4(input.posW.xyz, 1.0f);

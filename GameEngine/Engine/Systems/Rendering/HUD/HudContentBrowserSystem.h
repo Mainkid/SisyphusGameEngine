@@ -47,8 +47,8 @@ private:
     float windowLeftSizeX=0;
     float windowRightSizeX=0;
     
-    std::filesystem::path renaimingFileName = "";
-    char renaimingFileString [64];
+    std::filesystem::path renamingFileName = "";
+    char renamingFileString [64];
 
     const std::string folderIcon = "Engine/Assets/HUD/ContentBrowser/folder.png";
     const std::filesystem::path assetsDirectory = "Game/Assets";

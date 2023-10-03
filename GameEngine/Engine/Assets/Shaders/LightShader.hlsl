@@ -13,6 +13,7 @@ struct LightData
 cbuffer mycBuffer : register(b0)
 {
     row_major float4x4 world;
+    row_major float4x4 view;
     row_major float4x4 worldView;
     row_major float4x4 worldViewProj;
     row_major float4x4 worldViewInverseT;
@@ -133,7 +134,7 @@ float4 PS_Directional(PS_IN input) : SV_Target
     lightData.color.xyz, albedoColor, roughnessColor, metallicColor, emissiveColor, lightIntesity) * (instanceID.x > 0);
     
     
-    return float4(resColor, 1.0f);
+    return float4(resColor*shadowSum, 1.0f);
 
 }
 
