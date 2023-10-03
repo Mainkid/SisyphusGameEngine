@@ -7,11 +7,11 @@
 int main()
 {
     std::unique_ptr<Material> material = std::make_unique<Material>();
-    material->albedoTexturePath = "./Engine/Assets/PBR_test/low_DefaultMaterial_BaseColor.png";
-    material->metallicTexturePath = "./Engine/Assets/PBR_test/low_DefaultMaterial_Metallic.png";
-    material->normalmapTexturePath = "./Engine/Assets/PBR_test/low_DefaultMaterial_Normal.png";
+    material->albedoTexturePath = "./Engine/Assets/PBR_test/sspere_diff.png";
+    material->metallicTexturePath = "./Engine/Assets/PBR_test/SS_LP_metallic.png";
+    material->normalmapTexturePath = "./Engine/Assets/PBR_test/SS_LP_normal.png";
     //material->emissiveTexturePath = "./Engine/Assets/PBR_test/Crystal_stone_emissive.jpg";
-    material->roughnessTexturePath = "./Engine/Assets/PBR_test/low_DefaultMaterial_Roughness.png";
+    material->roughnessTexturePath = "./Engine/Assets/PBR_test/SS_LP_roughness.png";
     //material->roughnessValue = (1, 0, 0, 0);
 
     EngineCore::instance()->StartUp();
@@ -36,7 +36,7 @@ int main()
     //ec->scene->registry.get<MeshComponent>(_go).modelPath = "./Engine/Assets/sphere.fbx";
     //ec->scene->registry.get<MeshComponent>(_go).texturePath = "./Engine/Assets/Textures/black_texture.png";
 
-    ec->scene->registry.get<MeshComponent>(_go1).modelPath = "./Engine/Assets/PBR_test/spheres.fbx";
+    ec->scene->registry.get<MeshComponent>(_go1).modelPath = "./Engine/Assets/PBR_test/ssphere.FBX.fbx";
 
     
     //ec->scene->registry.get<MeshComponent>(_go1).material = rc->materials[0].get();

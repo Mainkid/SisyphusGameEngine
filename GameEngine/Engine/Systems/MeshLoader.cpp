@@ -12,7 +12,9 @@ std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene
 	{
 		DirectX::XMFLOAT4 vertex;
 		DirectX::XMFLOAT4 color;
-		DirectX::XMFLOAT4 normals = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		DirectX::XMFLOAT4 normals = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1);
+		DirectX::XMFLOAT4 tangents = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1);
+		DirectX::XMFLOAT4 bitangents= DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1);
 		vertex.x = mesh->mVertices[i].x;
 		vertex.y = mesh->mVertices[i].y;
 		vertex.z = mesh->mVertices[i].z;
@@ -37,11 +39,27 @@ std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene
 			normals.z = 0;
 		}
 
+		if (mesh->mTangents)
+		{
+			tangents.x = mesh->mTangents[i].x;
+			tangents.y = mesh->mTangents[i].y;
+			tangents.z = mesh->mTangents[i].z;
+		}
+
+		if (mesh->mBitangents)
+		{
+			bitangents.x = mesh->mBitangents[i].x;
+			bitangents.y = mesh->mBitangents[i].y;
+			bitangents.z = mesh->mBitangents[i].z;
+		}
+
 		
 
 		vertices.push_back(vertex);
 		vertices.push_back(DirectX::XMFLOAT4(color.x, color.y, 1.0f, 1));
 		vertices.push_back(normals);
+		vertices.push_back(tangents);
+		vertices.push_back(bitangents);
 
 	}
 

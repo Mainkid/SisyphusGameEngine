@@ -21,7 +21,7 @@ void SkyboxRenderSystem::Run()
     //dataOpaque.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
     dataOpaque.baseData.world = ec->scene->camera->view*ec->scene->camera->projection;
 
-    UINT strides[1] = { 48 };
+    UINT strides[1] = {80 };
     UINT offsets[1] = { 0 };
     ID3D11RenderTargetView* nulls[] = { nullptr };
     

@@ -64,7 +64,7 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
 
     //UNIFORM parameters
 
-    D3D11_INPUT_ELEMENT_DESC inputElements [3];
+    D3D11_INPUT_ELEMENT_DESC inputElements [5];
     int ctr = 0;
 
     if ((uniform_flags & USE_POSITION) == USE_POSITION)
@@ -97,6 +97,29 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
     {
         inputElements[ctr]=D3D11_INPUT_ELEMENT_DESC{
             "NORMAL",
+            0,
+            DXGI_FORMAT_R32G32B32A32_FLOAT,
+            0,
+            D3D11_APPEND_ALIGNED_ELEMENT,
+            D3D11_INPUT_PER_VERTEX_DATA,
+            0 };
+        ctr++;
+    }
+
+    if ((uniform_flags & USE_TANGENT_BITANGENT) == USE_TANGENT_BITANGENT)
+    {
+        inputElements[ctr] = D3D11_INPUT_ELEMENT_DESC{
+            "TANGENT",
+            0,
+            DXGI_FORMAT_R32G32B32A32_FLOAT,
+            0,
+            D3D11_APPEND_ALIGNED_ELEMENT,
+            D3D11_INPUT_PER_VERTEX_DATA,
+            0 };
+        ctr++;
+
+        inputElements[ctr] = D3D11_INPUT_ELEMENT_DESC{
+            "BITANGENT",
             0,
             DXGI_FORMAT_R32G32B32A32_FLOAT,
             0,

@@ -34,7 +34,7 @@ struct MeshComponent
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState = nullptr;
 	std::vector<std::shared_ptr<Mesh>> meshes = {};
-	UINT strides[1] = { 48 };
+	UINT strides[1] = { 80 };
 	UINT offsets[1] = { 0 };
 	std::string texturePath;
 	std::string modelPath;

@@ -34,7 +34,7 @@ void LightRenderSystem::Run()
     UINT strides[1] = { 32 };
     UINT offsets[1] = { 0 };
 
-    UINT stridesLight[1] = { 48 };
+    UINT stridesLight[1] = { 80 };
     UINT offsetsLight[1] = { 0 };
 
     auto view = ec->scene->registry.view<TransformComponent, LightComponent>();

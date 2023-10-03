@@ -28,6 +28,8 @@ struct VS_IN
     float4 pos : POSITION0;
     float4 col : COLOR0;
     float4 normals : NORMAL;
+    float4 tangents : TANGENT;
+    float4 bitangents : BITANGENT;
 };
 
 struct PS_IN
@@ -37,6 +39,7 @@ struct PS_IN
     float4 posWV : POSITION2;
     float4 col : COLOR;
     float4 normals : NORMAL;
+    float3x3 TBN : POSITION3;
 };
 
 struct GBuffer
@@ -62,7 +65,10 @@ PS_IN VSMain(VS_IN input)
     output.posW = mul(input.pos, world);
     output.posWV = mul(input.pos, worldView);
     output.col = input.col;
-    
+    float3 T = normalize(mul(float3(input.tangents.xyz), (float3x3) world));
+    float3 B = normalize(mul(float3(input.bitangents.xyz), (float3x3) world));
+    float3 N = normalize(input.normals);
+    output.TBN = float3x3(T.xyz, B.xyz,N.xyz);
 	
     return output;
 }
@@ -73,6 +79,8 @@ PS_IN VSMain(VS_IN input)
 GBuffer PSMain(PS_IN input) : SV_Target
 {
     GBuffer output = (GBuffer) 0;
+    
+    
     float3 pixelColor = albedoTex.Sample(objSamplerState, input.col.xy)*(albedoVec.w<0) + 
     albedoVec.xyzw*(albedoVec.w>=0);
     float3 specularColor = specularTex.Sample(objSamplerState, input.col.xy) * (specularVec.w < 0) +
@@ -84,12 +92,12 @@ GBuffer PSMain(PS_IN input) : SV_Target
     float4 emissive = emissiveTex.Sample(objSamplerState, input.col.xy);
     
     float3 normal = normalMapTex.Sample(objSamplerState, input.col.xy);
-    normal.x = normal.x* 2.0f - 1.0f;
-    normal.y = normal.y * 2.0f - 1.0f;
-    normal.z = normal.z;
+    normal = normal* 2.0f - 1.0f;
+    
     normal = normalize(normal);
+    normal.y = -normal.y;
     //normal.y = -normal.y;
-    normal = mul(normal, (float3x3)worldView);
+    normal = mul(normal, input.TBN);
     
     
     //normal = input.normals;

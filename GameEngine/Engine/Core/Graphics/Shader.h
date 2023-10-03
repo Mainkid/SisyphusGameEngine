@@ -16,6 +16,7 @@
 #define USE_POSITION 2
 #define USE_COLOR 4
 #define USE_NORMAL 8
+#define USE_TANGENT_BITANGENT 16
 
 struct HardwareContext;
 

@@ -403,7 +403,7 @@ void RenderInitSystem::Init()
 
     rc->opaqueShader = std::make_unique<Shader>();
     rc->opaqueShader->Initialize(L"./Engine/Assets/Shaders/OpaqueShader.hlsl",
-        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_NORMAL | USE_COLOR);
+        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_NORMAL | USE_COLOR | USE_TANGENT_BITANGENT);
 
     rc->dirLightShader = std::make_unique<Shader>();
     rc->dirLightShader->Initialize(L"./Engine/Assets/Shaders/LightShader.hlsl",
@@ -427,7 +427,7 @@ void RenderInitSystem::Init()
 
     rc->shadowShader = std::make_unique<Shader>();
     rc->shadowShader->Initialize(L"./Engine/Assets/Shaders/ShadowShader.hlsl",
-        COMPILE_VERTEX | COMPILE_GEOM, USE_POSITION | USE_COLOR | USE_NORMAL, "DepthVertexShader");
+        COMPILE_VERTEX | COMPILE_GEOM, USE_POSITION | USE_COLOR | USE_NORMAL | USE_TANGENT_BITANGENT, "DepthVertexShader");
 
     rc->shadowPointLightShader = std::make_unique<Shader>();
     rc->shadowPointLightShader->Initialize(L"./Engine/Assets/Shaders/ShadowPointlightShader.hlsl",
