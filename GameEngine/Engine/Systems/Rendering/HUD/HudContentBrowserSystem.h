@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../../ISystem.h"
+#include "../../Core/ECS/SystemBase.h"
 #include "ContentBrowserTypes.h"
 #include <d3d11.h>
 #include <map>
@@ -9,7 +9,7 @@ struct EngineContext;
 struct HardwareContext;
 struct RenderContext;
 
-class HudContentBrowserSystem : public ISystem
+class HudContentBrowserSystem : public SystemBase
 {
 public:
     void Init() override;

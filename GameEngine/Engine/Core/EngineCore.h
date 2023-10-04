@@ -11,7 +11,7 @@
 #include "ServiceLocator.h"
 #include "../Systems/Systems.h"
 #include "../Systems/EngineContext.h"
-
+#include "ECS/SystemsGroup.h"
 
 
 #pragma comment(lib, "d3d11.lib")
@@ -26,8 +26,6 @@ class EngineCore
 {
 public:
     std::chrono::time_point<std::chrono::steady_clock> PrevTime;
-    std::vector<std::unique_ptr<ISystem>> systems;
-    EngineContext* ec;
 
     static EngineCore* instance()
     {
@@ -40,13 +38,16 @@ public:
 
     HWND GetWindowHWND();
     void StartUp();
-    void StartUpSystems();
     void ShutDown();
-    void StartUpdateLoop();
-
-protected:
-    void Render();
     void Update();
 
-    
+protected:
+    void UpdateImpl();
+
+private:
+    SystemsGroup _systems;
+
+    EngineContext* _context;
+
+    void StartUpSystems();
 };

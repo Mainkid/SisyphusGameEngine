@@ -11,7 +11,7 @@ void EditorBillboardSystem::Init()
 
 void EditorBillboardSystem::Run()
 {
-	auto view = ec->scene->registry.view<EditorBillboardComponent>();
+	auto view = ec->ecs.view<EditorBillboardComponent>();
 	for (auto& entity : view)
 	{
 		EditorBillboardComponent& ebc = view.get<EditorBillboardComponent>(entity);

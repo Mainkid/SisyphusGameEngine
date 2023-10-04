@@ -1,12 +1,12 @@
 #pragma once
-#include "../ISystem.h"
+#include "../../Core/ECS/SystemBase.h"
 #include <memory>
 
 struct EngineContext;
 struct HardwareContext;
 struct RenderContext;
 
-class RenderInitSystem : public ISystem
+class RenderInitSystem : public SystemBase
 {
 public:
 	void Init() override;

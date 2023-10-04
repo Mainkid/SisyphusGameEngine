@@ -146,6 +146,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Scene\CameraHelper.cpp" />
+    <ClCompile Include="Engine\Scene\GameObjectHelper.cpp" />
     <ClCompile Include="Engine\Serialization\SerializableTraits.h" />
     <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp" />
     <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp" />
@@ -157,7 +159,6 @@
     <ClCompile Include="Engine\GameEngine.cpp" />
     <ClCompile Include="Engine\Components\Mesh.cpp" />
     <ClCompile Include="Engine\Obsolete\RenderPipeline.cpp" />
-    <ClCompile Include="Engine\Core\Scene\Scene.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudPostRenderSystem.cpp" />
@@ -623,6 +624,7 @@
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.cpp" />
     <ClCompile Include="Engine\Tools\Data\Vector.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
+    <ClCompile Include="Engine\Core\ECS\SystemsGroup.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -639,7 +641,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Scene\CameraHelper.h" />
     <ClInclude Include="Engine\Components\SkyboxComponent.h" />
+    <ClInclude Include="Engine\Scene\GameObjectHelper.h" />
     <ClInclude Include="Engine\Serialization\Serializable.h" />
     <ClInclude Include="Engine\Serialization\Serializer.hpp" />
     <ClInclude Include="Engine\Systems\EngineContext.h" />
@@ -648,7 +652,7 @@
     <ClInclude Include="Engine\Components\EditorBillboardComponent.h" />
     <ClInclude Include="Engine\Systems\EditorCameraSystem.h" />
     <ClInclude Include="Engine\Components\CameraComponent.h" />
-    <ClInclude Include="Engine\Components\DataComponent.h" />
+    <ClInclude Include="Engine\Components\GameObjectComp.h" />
     <ClInclude Include="Engine\Core\DisplayWin32.h" />
     <ClInclude Include="Engine\Core\EngineCore.h" />
     <ClInclude Include="Engine\Components\TransformComponent.h" />
@@ -676,14 +680,13 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowRenderSystem.h" />
     <ClInclude Include="Engine\Systems\Systems.h" />
     <ClInclude Include="Engine\Systems\SystemsEnum.h" />
-    <ClInclude Include="Engine\Core\Scene\Scene.h" />
     <ClInclude Include="Engine\Components\LightComponent.h" />
     <ClInclude Include="Engine\Core\Rendering\RenderTarget.h" />
     <ClInclude Include="Engine\Tools\ErrorLogger.h" />
     <ClInclude Include="Engine\Tools\ImageLoader.h" />
     <ClInclude Include="Engine\Components\ParticleComponent.h" />
     <ClInclude Include="Engine\Components\Particle.h" />
-    <ClInclude Include="Engine\Systems\ISystem.h" />
+    <ClInclude Include="Engine\Core\ECS\SystemBase.h" />
     <ClInclude Include="Engine\Systems\TransformSystem.h" />
     <ClInclude Include="Engine\Systems\TransformHelper.h" />
     <ClInclude Include="Engine\Systems\MeshSystem.h" />
@@ -705,6 +708,7 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.h" />
     <ClInclude Include="Engine\Tools\Data\Vector.h" />
     <ClInclude Include="Matrix4x4.h" />
+    <ClInclude Include="Engine\Core\ECS\SystemsGroup.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />

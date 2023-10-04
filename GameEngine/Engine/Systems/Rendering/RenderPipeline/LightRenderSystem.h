@@ -1,5 +1,5 @@
 #pragma once
-#include "../../ISystem.h"
+#include "../../Core/ECS/SystemBase.h"
 #include "../../Core/ServiceLocator.h"
 
 #include <memory>
@@ -8,7 +8,7 @@ struct RenderContext;
 struct EngineContext;
 struct HardwareContext;
 
-class LightRenderSystem: public ISystem
+class LightRenderSystem: public SystemBase
 {
 public:
 	void Init() override;

@@ -13,7 +13,7 @@ void MeshSystem::Init()
 
 void MeshSystem::Run()
 {
-	auto view = ec->scene->registry.view<MeshComponent>();
+	auto view = _ecs->view<MeshComponent>();
 	for (auto& entity : view)
 	{
 		MeshComponent& mesh =view.get<MeshComponent>(entity);

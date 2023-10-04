@@ -1,5 +1,5 @@
 #pragma once
-#include "ISystem.h"
+#include "../Core/ECS/SystemBase.h"
 #include "SimpleMath.h"
 #include <typeindex>
 #include <typeinfo>
@@ -7,7 +7,7 @@
 
 struct EngineContext;
 
-class EditorBillboardSystem : public ISystem
+class EditorBillboardSystem : public SystemBase
 {
 public:
 	void Init() override;
@@ -17,5 +17,3 @@ private:
 	std::hash<std::string> hasher;
 	EngineContext* ec;
 };
-
-

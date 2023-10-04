@@ -1,5 +1,5 @@
 #pragma once
-#include "../../ISystem.h"
+#include "../../Core/ECS/SystemBase.h"
 #include <wrl.h>
 #include "../../../../vendor/entt/entt.hpp"
 #include "../../../../vendor/ImGui/imgui.h"
@@ -17,7 +17,7 @@ struct HardwareContext;
 struct RenderContext;
 
 
-class HudViewportSystem : public ISystem
+class HudViewportSystem : public SystemBase
 {
 public:
 	void Init() override;

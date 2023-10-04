@@ -7,23 +7,22 @@
 #include "../../../vendor/ImGui/imgui.h"
 #include "../../../vendor/ImGui/imgui_impl_dx11.h"
 #include "../../../vendor/ImGui/imgui_impl_win32.h"
+#include "../Scene/GameObjectHelper.h"
 
 void EditorCameraSystem::Init()
 {
     ec = ServiceLocator::instance()->Get<EngineContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
-    auto id = ec->scene->registry.create();
-    ec->scene->registry.emplace<DataComponent>(id,"Camera");
-    TransformComponent& tc=ec->scene->registry.emplace<TransformComponent>(id);
-    CameraComponent& cc = ec->scene->registry.emplace<CameraComponent>(id);
-    ec->scene->camera = &cc;
-    ec->scene->cameraTransform = &tc;
-    SetLookAtPos(Vector3(-1, 0, 0), tc);
+
+    auto ent = _ecs->create();
+    auto tf = _ecs->emplace<TransformComponent>(ent);
+    auto camera = _ecs->emplace<CameraComponent>(ent);
+    SetLookAtPos(Vector3(-1, 0, 0), tf);
 }
 
 void EditorCameraSystem::Run()
 {
-	auto view = ec->scene->registry.view<TransformComponent,CameraComponent>();
+	auto view = _ecs->view<TransformComponent,CameraComponent>();
 	for (auto& entity : view)
 	{
 		TransformComponent& tc = view.get<TransformComponent>(entity);
@@ -76,7 +75,7 @@ void EditorCameraSystem::UpdateProjectionMatrix(CameraComponent& cc)
 	cc.projection = DirectX::XMMatrixPerspectiveFovLH(fovRadians, cc.aspectRatio, cc.nearPlane, cc.farPlane);
 }
 
-void EditorCameraSystem::SetLookAtPos(Vector3 lookAtPos,TransformComponent& tc)
+void EditorCameraSystem::SetLookAtPos(Vector3 lookAtPos, TransformComponent& tc)
 {
     if (lookAtPos.x == tc.localPosition.x && lookAtPos.y == tc.localPosition.y && lookAtPos.z == tc.localPosition.z)
         return;

@@ -1,8 +1,10 @@
 #include "LightSystem.h"
 #include "HardwareContext.h"
 #include "EngineContext.h"
+#include "../Components/CameraComponent.h"
 #include "Rendering\RenderContext.h"
 #include "../Core/ServiceLocator.h"
+#include "../Components/TransformComponent.h"
 
 void LightSystem::Init()
 {
@@ -13,22 +15,25 @@ void LightSystem::Init()
 
 void LightSystem::Run()
 {
-    auto view = ec->scene->registry.view<TransformComponent,LightComponent>();
-	for (auto& entity : view)
+    auto viewCamera = _ecs->view<TransformComponent, CameraComponent>();
+    auto [cameraTf, camera] = viewCamera.get(viewCamera.front());
+
+    auto viewLights = _ecs->view<TransformComponent, LightComponent>();
+	for (auto& ent : viewLights)
 	{
-		LightComponent& lc = view.get<LightComponent>(entity);
-        TransformComponent& tc = view.get<TransformComponent>(entity);
+		LightComponent& lc = viewLights.get<LightComponent>(ent);
+        TransformComponent& tc = viewLights.get<TransformComponent>(ent);
         if (lc.lightType != LightType::Ambient)
         {
-            GenerateViewMatrix(lc,
-                Vector3(ec->scene->cameraTransform->localPosition));
+            GenerateViewMatrix(Vector3(camera.forward), lc, Vector3(cameraTf.localPosition));
               //GenerateOrthoFromFrustum(lc, Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
               //    ec->scene->camera->view,
               //    ec->scene->camera->projection);
-            GenerateOrthosFromFrustum(lc, Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
-                ec->scene->camera->view,
-                ec->scene ->camera->projection,
-                ec->scene->camera->farPlane);
+            GenerateOrthosFromFrustum(lc, 
+                Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
+                camera.view,
+                camera.projection,
+                camera.farPlane);
         }
 
         if (!lc.aabb)
@@ -145,10 +150,9 @@ void LightSystem::GenerateOrthoMatrix(LightComponent& lc,float width, float dept
     lc.orthoMatrix = DirectX::XMMatrixOrthographicLH(width, width, nearPlane, depthPlane);
 }
 
-void LightSystem::GenerateViewMatrix(LightComponent& lc, Vector3 pos)
+void LightSystem::GenerateViewMatrix(Vector3 cameraForward, LightComponent& lc, Vector3 pos)
 {
-    Vector3 tmp = Vector3(ec->scene->camera->forward);
-    Vector4 lookAt = pos + Vector4(tmp.x, tmp.y, tmp.z, 1.0f);
+    Vector4 lookAt = pos + Vector4(cameraForward.x, cameraForward.y, cameraForward.z, 1.0f);
     Vector4 up = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
     lc.viewMatrix = DirectX::XMMatrixLookAtLH(pos, lookAt, up);
 }

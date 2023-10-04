@@ -14,11 +14,12 @@ Matrix TransformHelper::ConstructLocalTransformMatrix(TransformComponent& tc)
 Matrix TransformHelper::ConstructInverseParentTransform(TransformComponent& tc)
 {
 	Matrix resultMat = Matrix::Identity;
-	EngineContext* ec = ServiceLocator::instance()->Get<EngineContext>();
+	EngineContext* context = ServiceLocator::instance()->Get<EngineContext>();
 	entt::entity curID = tc.parent;
 
-	while (curID != entt::null) {
-		TransformComponent& curTc = ec->scene->registry.get<TransformComponent>(curID);
+	while (curID != entt::null) 
+	{
+		TransformComponent& curTc = context->ecs.get<TransformComponent>(curID);
 		resultMat = resultMat * (Matrix::CreateScale(curTc.localScale)* Matrix::CreateFromYawPitchRoll(curTc.localRotation) * Matrix::CreateTranslation(curTc.localPosition));
 		curID = curTc.parent;
 	}
@@ -27,18 +28,18 @@ Matrix TransformHelper::ConstructInverseParentTransform(TransformComponent& tc)
 
 void TransformHelper::UpdateTransformMatrix(TransformComponent& tc)
 {
-	EngineContext* ec = ServiceLocator::instance()->Get<EngineContext>();
+	EngineContext* context = ServiceLocator::instance()->Get<EngineContext>();
 	tc.transformMatrix = Matrix::CreateScale(tc.localScale) * Matrix::CreateFromYawPitchRoll(tc.localRotation) * Matrix::CreateTranslation(tc.localPosition);
 	entt::entity curID = tc.parent;
 	if (curID!=entt::null)
 	{
-		TransformComponent& curTc = ec->scene->registry.get<TransformComponent>(curID);
+		TransformComponent& curTc = context->ecs.get<TransformComponent>(curID);
 		tc.transformMatrix = tc.transformMatrix * curTc.transformMatrix;
 	}
 
 	for (auto& child : tc.children)
 	{
-		UpdateTransformMatrix(ec->scene->registry.get<TransformComponent>(child));
+		UpdateTransformMatrix(context->ecs.get<TransformComponent>(child));
 	}
 	Quaternion q;
 	Vector3 scaleNew = tc.scale;

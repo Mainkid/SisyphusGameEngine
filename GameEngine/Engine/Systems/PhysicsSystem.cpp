@@ -4,6 +4,7 @@
 #include "EngineContext.h"
 #include "../Components/RBodyComponent.h"
 #include "../Tools/ErrorLogger.h"
+#include "../Components/TransformComponent.h"
 
 using namespace physx;
 
@@ -37,9 +38,9 @@ void SyPhysicsSystem::Run()
 	int fetchResult = scene->fetchResults(true) == true 
 		? SY_NO_ERROR : SY_GENERIC_ERROR_CRITICAL;
 	ErrorLogger::Log(fetchResult, "PhysicsSystem.cpp", 39);
-	auto view = ServiceLocator::instance()->Get<EngineContext>()->
-		scene->registry.view<SyRBodyComponent, TransformComponent>();
-	for (auto& entity : view)
+
+	auto view = _ecs->view<SyRBodyComponent, TransformComponent>();
+	for (auto entity : view)
 	{
 		SyRBodyComponent& rbComponent = view.get<SyRBodyComponent>(entity);
 		TransformComponent& trComponent = view.get<TransformComponent>(entity);

@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include "Core/EngineCore.h"
+#include "Scene/GameObjectHelper.h"
 
 #define SY_PI 3.14f
 #define SY_PI2 SY_PI / 2 
@@ -9,9 +10,9 @@ int main()
 
     //EngineCore* engine = new EngineCore();
     EngineCore::instance()->StartUp();
-    EngineContext* ec = EngineCore::instance()->ec;
-    auto box1 = ec->scene->AddStaticBox({ -5.0f, -5.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 3.0f, 1.0f, 3.0f });
-    auto box2 = ec->scene->AddDynamicBox({ -5.0f, 10.0f, 0.0f }, { SY_PI2 / 2, 0.0f, SY_PI2 / 2 });
+    entt::registry* ecs = &ServiceLocator::instance()->Get<EngineContext>()->ecs;
+    auto box1 = GameObjectHelper::CreateStaticBox(ecs, { -5.0f, -5.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 3.0f, 1.0f, 3.0f });
+    auto box2 = GameObjectHelper::CreateDynamicBox(ecs, { -5.0f, 10.0f, 0.0f }, { SY_PI2 / 2, 0.0f, SY_PI2 / 2 });
     //auto _go = EngineCore::instance()->ec->scene->AddGameObject();
     //auto _go1 = EngineCore::instance()->ec->scene->AddGameObject();
     //auto _go2 = EngineCore::instance()->ec->scene->AddGameObject();
@@ -26,21 +27,22 @@ int main()
     //
     ////_go3->GetComponent<TransformComponent>().SetPosition(Vector3(-3, 0, 0));
     //_go3->GetComponent<MeshComponent>().UpdateMesh("./Game/Assets/DefaultModel.obj");
-    auto _lightDir = EngineCore::instance()->ec->scene->AddLight(LightType::Directional);
-    auto light = EngineCore::instance()->ec->scene->AddLight(LightType::Ambient);
-    EngineCore::instance()->ec->scene->registry.get<LightComponent>(light).color = Vector4(0.15f, 0.15f, 0.15f, 0.15f);
-    auto _lightPoint = EngineCore::instance()->ec->scene->AddLight(LightType::PointLight);
+    auto lightDir = GameObjectHelper::CreateLight(ecs, LightType::Directional);
 
-    EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint).paramsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
-    EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint).color = Vector4(1, 1, 0.0f, 3.0f);
-    EngineCore::instance()->ec->scene->registry.get<TransformComponent>(_lightPoint).position = Vector3(3, 0, 0);
+    auto light = GameObjectHelper::CreateLight(ecs, LightType::Ambient);
+    ecs->get<LightComponent>(light).color = Vector4(0.15f, 0.15f, 0.15f, 0.15f);
 
-    auto _lightPoint2 = EngineCore::instance()->ec->scene->AddLight(LightType::PointLight);
+    auto lightPoint = GameObjectHelper::CreateLight(ecs, LightType::PointLight);
+    ecs->get<LightComponent>(lightPoint).paramsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
+    ecs->get<LightComponent>(lightPoint).color = Vector4(1, 1, 0.0f, 3.0f);
+    ecs->get<TransformComponent>(lightPoint).position = Vector3(3, 0, 0);
 
-    EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint2).paramsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
-    EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint2).color = Vector4(1, 0, 0.0f, 3.0f);
-    EngineCore::instance()->ec->scene->registry.get<TransformComponent>(_lightPoint2).position = Vector3(3, 0, 0);
-    EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint2).lightBehavior = LightBehavior::Static;
+    auto lightPoint2 = GameObjectHelper::CreateLight(ecs, LightType::PointLight);
+
+    ecs->get<LightComponent>(lightPoint2).paramsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
+    ecs->get<LightComponent>(lightPoint2).color = Vector4(1, 0, 0.0f, 3.0f);
+    ecs->get<TransformComponent>(lightPoint2).position = Vector3(3, 0, 0);
+    ecs->get<LightComponent>(lightPoint2).lightBehavior = LightBehavior::Static;
     //_go3->SetParent(_go);
 
     ////GameObject* particles = EngineCore::instance()->scene->AddParticleSystem();
@@ -49,7 +51,7 @@ int main()
     ////_go2 = EngineCore::instance()->scene->AddGameObject();
     ////engine->scene->Initialize();
     
-    EngineCore::instance()->StartUpdateLoop();
+    EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();
     
     std::cout << "Hello World!\n";

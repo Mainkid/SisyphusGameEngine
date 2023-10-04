@@ -2,8 +2,12 @@
 #include "../RenderContext.h"
 #include "../../HardwareContext.h"
 #include "../../EngineContext.h"
+#include "../../../Components/CameraComponent.h"
 #include "../../../Core/Graphics/ConstantBuffer.h"
 #include "../../../Core/ServiceLocator.h"
+#include "../../../Scene/CameraHelper.h"
+#include "../../Components/TransformComponent.h"
+#include "../../Components/LightComponent.h"
 
 void ShadowMapGenerationSystem::Init()
 {
@@ -30,11 +34,13 @@ void ShadowMapGenerationSystem::Run()
     UINT stridesLight[1] = { 48 };
     UINT offsetsLight[1] = { 0 };
 
-    auto view = ec->scene->registry.view<TransformComponent, LightComponent>();
     hc->context->OMSetBlendState(rc->lightBlendState.Get(), nullptr, 0xffffffff);
+
+    auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+
+    auto view = _ecs->view<TransformComponent, LightComponent>();
     for (auto& entity : view)
     {
-        
         LightComponent& light = view.get<LightComponent>(entity);
         TransformComponent& tc = view.get<TransformComponent>(entity);
         if (light.lightType == LightType::Directional)
@@ -43,19 +49,20 @@ void ShadowMapGenerationSystem::Run()
             lightBuffer.lightData.Color = light.color;
             lightBuffer.lightData.Dir = Vector4::Transform(Vector4::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation));
             lightBuffer.lightData.additiveParams = light.paramsRadiusAndAttenuation;
-            lightBuffer.eyePos = DirectX::SimpleMath::Vector4(ec->scene->cameraTransform->position.x,
-                ec->scene->cameraTransform->position.y,
-                ec->scene->cameraTransform->position.z,
+            lightBuffer.eyePos = Vector4(
+                cameraTf.position.x,
+                cameraTf.position.y,
+                cameraTf.position.z,
                 1.0f);
 
             hc->context->ClearDepthStencilView(hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1, 0);
 
             if (light.lightType == LightType::Directional || light.lightType == LightType::Ambient)
             {
-                lightBuffer.baseData.world = DirectX::SimpleMath::Matrix::Identity;
-                lightBuffer.baseData.worldView = DirectX::SimpleMath::Matrix::Identity * ec->scene->camera->view;
-                lightBuffer.baseData.worldViewProj = DirectX::SimpleMath::Matrix::Identity * ec->scene->camera->view * ec->scene->camera->projection;
-                lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
+                lightBuffer.baseData.world = Matrix::Identity;
+                lightBuffer.baseData.worldView = Matrix::Identity * camera.view;
+                lightBuffer.baseData.worldViewProj = Matrix::Identity * camera.view * camera.projection;
+                lightBuffer.baseData.worldViewInverseTranspose = Matrix::Identity;
 
                 if (light.lightType == LightType::Directional)
                     for (int i = 0; i < 4; i++)

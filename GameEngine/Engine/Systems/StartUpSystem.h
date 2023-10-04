@@ -1,8 +1,8 @@
 #pragma once
-#include "ISystem.h"
+#include "../Core/ECS/SystemBase.h"
 #include "SimpleMath.h"
 
-class StartUpSystem : public ISystem
+class StartUpSystem : public SystemBase
 {
 public:
 	void Init() override;

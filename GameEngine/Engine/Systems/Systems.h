@@ -1,5 +1,5 @@
 #pragma once
-#include "ISystem.h"
+#include "../Core/ECS/SystemBase.h"
 #include "InputSystem.h"
 #include "EditorCameraSystem.h"
 #include "EditorBillboardSystem.h"

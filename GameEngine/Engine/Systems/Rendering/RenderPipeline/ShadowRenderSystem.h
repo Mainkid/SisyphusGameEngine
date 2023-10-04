@@ -1,5 +1,5 @@
 #pragma once
-#include "../../ISystem.h"
+#include "../../Core/ECS/SystemBase.h"
 #include "SimpleMath.h"
 
 struct EngineContext;
@@ -7,7 +7,7 @@ struct HardwareContext;
 struct RenderContext;
 
 using namespace DirectX::SimpleMath;
-class ShadowRenderSystem : public ISystem
+class ShadowRenderSystem : public SystemBase
 {
 public:
 	void Init() override;

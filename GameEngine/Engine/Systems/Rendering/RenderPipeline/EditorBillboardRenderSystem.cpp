@@ -2,6 +2,7 @@
 #include "../RenderContext.h"
 #include "../../HardwareContext.h"
 #include "../../EngineContext.h"
+#include "../../../Scene/CameraHelper.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Components/CameraComponent.h"
@@ -22,11 +23,10 @@ void EditorBillboardRenderSystem::Run()
     hc->context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
     UINT strides[1] = { 32 };
     UINT offsets[1] = { 0 };
-    auto view = ec->scene->registry.view<TransformComponent, CameraComponent>();
-    CameraComponent& ecs = ec->scene->registry.get<CameraComponent>(view.front());
-    TransformComponent& camTransform = ec->scene->registry.get<TransformComponent>(view.front());
 
-    auto view2 = ec->scene->registry.view<TransformComponent, EditorBillboardComponent>();
+    auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+
+    auto viewBb = _ecs->view<TransformComponent, EditorBillboardComponent>();
 
     hc->context->OMSetDepthStencilState(hc->depthStencilState.Get(), 0);
     hc->context->VSSetShader(rc->billboardShader->vertexShader.Get(), nullptr, 0); //
@@ -38,34 +38,30 @@ void EditorBillboardRenderSystem::Run()
         strides, offsets);
     hc->context->OMSetRenderTargets(2, rc->editorBillboardRtvs, hc->depthStencilView.Get());
 
-    for (auto& entity : view2)
+    for (auto& ent : viewBb)
     {
         CB_BaseEditorBuffer dataOpaque;
-        TransformComponent& transformComp = ec->scene->registry.get<TransformComponent>(entity);
-        EditorBillboardComponent& billboardComp = ec->scene->registry.get<EditorBillboardComponent>(entity);
+        TransformComponent& transformComp = viewBb.get<TransformComponent>(ent);
+        EditorBillboardComponent& billboardComp = viewBb.get<EditorBillboardComponent>(ent);
 
+        Vector3 tmp = Vector3(camera.forward.x, camera.forward.y, camera.forward.z);
 
-        Vector3 tmp = Vector3(ecs.forward.x, ecs.forward.y, ecs.forward.z);
-
-        auto billboardMat = Matrix::CreateConstrainedBillboard(transformComp.position, camTransform.position,
-            Vector3(ecs.up), &tmp);
+        auto billboardMat = Matrix::CreateConstrainedBillboard(transformComp.position, cameraTf.position,
+            Vector3(camera.up), &tmp);
         billboardMat = Matrix::CreateScale(0.25f) * billboardMat;
 
         dataOpaque.baseData.world = billboardMat;
 
-        dataOpaque.baseData.worldViewProj =
-            billboardMat *
-            ec->scene->camera->view * ec->scene->camera->projection;
+        dataOpaque.baseData.worldViewProj = billboardMat * camera.view * camera.projection;
 
-        dataOpaque.baseData.worldView = billboardMat *
-            ec->scene->camera->view;
+        dataOpaque.baseData.worldView = billboardMat * camera.view;
 
         dataOpaque.baseData.worldViewInverseTranspose =
             DirectX::XMMatrixTranspose(
                 DirectX::XMMatrixInverse(nullptr,
                     billboardMat));
 
-        dataOpaque.instanseID = (uint32_t)entity;
+        dataOpaque.instanseID = (uint32_t)ent;
 
         D3D11_MAPPED_SUBRESOURCE mappedResource;
         HRESULT res = hc->context->Map(rc->opaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

@@ -1,12 +1,12 @@
 #pragma once
-#include "ISystem.h"
+#include "../Core/ECS/SystemBase.h"
 #include "SimpleMath.h"
 
 
 
 struct InputComponent;
 
-class InputSystem : public ISystem
+class InputSystem : public SystemBase
 {
 public:
 	void Init() override;
