@@ -6,9 +6,6 @@ struct EngineContext : public IService
 {
 	std::unique_ptr<Scene> scene;
 	entt::entity selectedEntityID=entt::null;
-	float totalTime = 0;
-	unsigned int frameCount = 0;
-	float deltaTime = 0;
 	bool isClosed = false;
 	//PlayMode states and var for it
 	enum class EPlayModeState
@@ -17,6 +14,13 @@ struct EngineContext : public IService
 		PlayMode,
 		PauseMode
 	};
+
+	struct TimerData
+	{
+		float totalTime = 0;
+		unsigned int frameCount = 0;
+		float deltaTime = 0;
+	} timerData;
 	EPlayModeState playModeState = EPlayModeState::EditorMode;
 	
 };

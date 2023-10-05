@@ -37,17 +37,17 @@ void EngineCore::Render()
 void EngineCore::Update()
 {
 	auto	curTime = std::chrono::steady_clock::now();
-	ec->deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
+	ec->timerData.deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
 	PrevTime = curTime;
 
-	ec->totalTime += ec->deltaTime;
-	ec->frameCount++;
+	ec->timerData.totalTime += ec->timerData.deltaTime;
+	ec->timerData.frameCount++;
 
-	if (ec->totalTime > 1.0f) {
-		float fps = ec->frameCount / ec->totalTime;
+	if (ec->timerData.totalTime > 1.0f) {
+		float fps = ec->timerData.frameCount / ec->timerData.totalTime;
 
-		ec->totalTime -= 1.0f;
-		ec->frameCount = 0;
+		ec->timerData.totalTime -= 1.0f;
+		ec->timerData.frameCount = 0;
 	}
 
 	for (auto& system : systems)
@@ -56,7 +56,7 @@ void EngineCore::Update()
 	}
 	HardwareContext* hc=ServiceLocator::instance()->Get<HardwareContext>();
 	hc->swapChain->Present(1, 0);
-	ec->scene->Update(ec->deltaTime);
+	ec->scene->Update(ec->timerData.deltaTime);
 }
 
 void EngineCore::StartUpSystems()

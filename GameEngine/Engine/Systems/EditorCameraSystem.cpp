@@ -111,34 +111,34 @@ void EditorCameraSystem::ProcessInput(CameraComponent& cc, TransformComponent& t
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         if (ImGui::IsMouseDown(ImGuiMouseButton_Right))
         {
-            tc.localRotation += SyVector3(io.MouseDelta.y * ec->deltaTime, io.MouseDelta.x * ec->deltaTime, 0.0f);
+            tc.localRotation += SyVector3(io.MouseDelta.y * ec->timerData.deltaTime, io.MouseDelta.x * ec->timerData.deltaTime, 0.0f);
         }
         if (ImGui::IsKeyDown(ImGuiKey_W))
         {
-            tc.localPosition += Vector3(cc.forward) * cc.cameraSpeed * ec->deltaTime;
+            tc.localPosition += Vector3(cc.forward) * cc.cameraSpeed * ec->timerData.deltaTime;
             
         }
         if (ImGui::IsKeyDown(ImGuiKey_A))
         {
-            tc.localPosition += Vector3(cc.left) * cc.cameraSpeed * ec->deltaTime;
+            tc.localPosition += Vector3(cc.left) * cc.cameraSpeed * ec->timerData.deltaTime;
             
         }
         if (ImGui::IsKeyDown(ImGuiKey_S))
         {
-            tc.localPosition += Vector3(cc.back) * cc.cameraSpeed * ec->deltaTime;
+            tc.localPosition += Vector3(cc.back) * cc.cameraSpeed * ec->timerData.deltaTime;
         }
         if (ImGui::IsKeyDown(ImGuiKey_D))
         {
-            tc.localPosition += Vector3(cc.right) * cc.cameraSpeed * ec->deltaTime;
+            tc.localPosition += Vector3(cc.right) * cc.cameraSpeed * ec->timerData.deltaTime;
         }
         if (ImGui::IsKeyDown(ImGuiKey_Space))
         {
-            tc.localPosition += Vector3(0, cc.cameraSpeed*ec->deltaTime,0.0f);
+            tc.localPosition += Vector3(0, cc.cameraSpeed*ec->timerData.deltaTime,0.0f);
 
         }
         if (ImGui::IsKeyDown(ImGuiKey_LeftShift))
         {
-            tc.localPosition += Vector3(0, -cc.cameraSpeed * ec->deltaTime, 0.0f);
+            tc.localPosition += Vector3(0, -cc.cameraSpeed * ec->timerData.deltaTime, 0.0f);
                       
         }
         tc.localPosition += Vector3(cc.forward) * cc.mouseWheel*0.25f;

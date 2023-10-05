@@ -39,7 +39,7 @@ SyResult SyPhysicsSystem::Init()
 SyResult SyPhysicsSystem::Run()
 {
 	SyResult result;
-	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
+	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->timerData.deltaTime;
 	if (deltaTime == 0)
 	{
 		result.code = SY_RESCODE_UNEXPECTED;

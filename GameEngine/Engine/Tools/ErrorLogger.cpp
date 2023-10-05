@@ -33,30 +33,10 @@ SyErrorLogger::SyErrorLogger()
 		return;
 	}
 	newSinkMap.insert({L"Console", trace});
-	SyResult result = AddChannel(L"PHYS");
-	if (result.code == SY_RESCODE_ERROR)
-	{
-		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
-		return;
-	}
-	result = AddChannel(L"CORE");
-	if (result.code == SY_RESCODE_ERROR)
-	{
-		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
-		return;
-	}
-	result = AddChannel(L"REND");
-	if (result.code == SY_RESCODE_ERROR)
-	{
-		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
-		return;
-	}
-	result = AddChannel(L"HUD");
-	if (result.code == SY_RESCODE_ERROR)
-	{
-		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
-		return;
-	}
+	AddChannel(L"PHYS");
+	AddChannel(L"CORE");
+	AddChannel(L"REND");
+	AddChannel(L"HUD");
 }
 
 SyErrorLogger::~SyErrorLogger()
