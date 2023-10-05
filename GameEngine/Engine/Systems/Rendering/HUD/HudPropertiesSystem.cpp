@@ -5,14 +5,18 @@
 #include "../../TransformHelper.h"
 #include "../../Core/ServiceLocator.h"
 
+#include "GUI.h"
+
 void HudPropertiesSystem::Init()
 {
     this->windowID = "Properties";
     this->ec = ServiceLocator::instance()->Get<EngineContext>();
+   
 }
 
 void HudPropertiesSystem::Run()
 {
+    // This should also be in GUI?
     ImGui::Begin(windowID.c_str());
     //Widget::Render();
 
@@ -21,36 +25,65 @@ void HudPropertiesSystem::Run()
     if (io.MouseWheel > 0.0f)
         std::cout << "";
 
-    TransformComponent* tc = ec->scene->registry.try_get<TransformComponent>(ec->selectedEntityID);
 
+    TransformComponent* tc = ec->scene->registry.try_get<TransformComponent>(ec->selectedEntityID);
     if (tc)
     {
         auto degToRadians = [](float angle) {return angle * M_PI / 180.0f; };
-        ImGui::Text("Transform");
-        Vector3 vec3Dx = tc->localPosition;
-        float vec3[3]{ vec3Dx.x, vec3Dx.y, vec3Dx.z };
-        ImGui::DragFloat3("Translation", vec3,0.1f);
-        tc->localPosition=(Vector3(vec3[0], vec3[1], vec3[2]));
+       
+        if (GUI::CreateNewChapter("Transform", 1))
+        {
+            GUI::DrawInputField(tc->localPosition, "Translation");
+            GUI::DrawInputField(tc->localRotation, "Rotation");
+            GUI::DrawInputField(tc->localScale, "Scale");
+            GUI::EndChapter();
+        }
 
-        vec3Dx =TransformHelper::GetRotationDegrees(*tc);
-        vec3[0] = vec3Dx.x;
-        vec3[1] = vec3Dx.y;
-        vec3[2] = vec3Dx.z;
+        //TODO: to take a quick look
+        //if (GUI::CreateNewChapter("Demo Chapter", 1))
+        //{
+        //    const char* itemsName[] = { "Item 1", "Item 2", "Item 3", "Item 4" };
+        //    
+        //    float f = 0.1f ;
+        //    GUI::DrawInputField(&f, "float f");
+        //    GUI::Separate("");
+        //    float F[4] = { 1.1f, 2.2f, 3.3f, 4.4f };
+        //    GUI::DrawInputField(F, itemsName,4);
+        //    GUI::Separate("");
 
-        ImGui::DragFloat3("Rotation", vec3, 1.0f);
-        auto vec = Vector3(vec3[0], vec3[1], vec3[2]);
-        TransformHelper::DegreesToRad(vec);
-        tc->localRotation = vec;
+        //    bool b = true;
+        //    GUI::DrawCheckbox(&b,"bool b"); 
+        //        GUI::HelpMarker("this is Help Marker");
+        //    GUI::Separate("");
+        //    bool B[] = { 0, 1, 1, 0 };    
+        //    GUI::DrawCheckbox(B, itemsName, sizeof(B));
+        //    GUI::Separate("this is Separate");
 
-        vec3Dx = tc->localScale;
-        vec3[0] = vec3Dx.x;
-        vec3[1] = vec3Dx.y;
-        vec3[2] = vec3Dx.z;
-        ImGui::DragFloat3("Scale", vec3, 0.1f);
-        tc->localScale=(Vector3(vec3[0],vec3[1], vec3[2]));
+        //    GUI::DrawSlider(f,"Slider float 1", 0.0f, 1.0f); 
+        //    f = +0.7F;
+        //    GUI::DrawSlider(f,"Slider float 2", 0.0f, 1.0f); 
+        //    GUI::Separate("");
+
+
+        //    GUI::DrawDropDown( itemsName,"this is a Slider", 4);
+
+        //    GUI::EndChapter();
+        //} 
     }
 
-    ImGui::End();
+    LightComponent* lc = ec->scene->registry.try_get<LightComponent>(ec->selectedEntityID);
+    if (lc)
+    {
+        if (GUI::CreateNewChapter("Light", 1))
+        {
+            GUI::DrawColorPicker(lc->color, "Color");
+            Vector4 *vec4D = &lc->paramsRadiusAndAttenuation;
+            GUI::DrawInputField(&(vec4D->x), "Attenuation Radius");
+            GUI::EndChapter();
+        }
+    }
+
+   GUI::End();
 }
 
 void HudPropertiesSystem::Destroy()
