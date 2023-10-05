@@ -16,7 +16,7 @@ SyErrorLogger::SyErrorLogger()
 		break;
 	//case...
 	}
-	//P7_Set_Crash_Handler();
+	P7_Set_Crash_Handler();
 	channelNames.push_back(L"ERLOG");
 	IP7_Client* client = P7_Create_Client(clientParams.c_str());
 	if (client == nullptr)
@@ -33,30 +33,10 @@ SyErrorLogger::SyErrorLogger()
 		return;
 	}
 	newSinkMap.insert({L"Console", trace});
-	SyResult result = AddChannel(L"PHYS");
-	if (result.code == SY_RESCODE_ERROR)
-	{
-		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
-		return;
-	}
-	result = AddChannel(L"CORE");
-	if (result.code == SY_RESCODE_ERROR)
-	{
-		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
-		return;
-	}
-	result = AddChannel(L"REND");
-	if (result.code == SY_RESCODE_ERROR)
-	{
-		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
-		return;
-	}
-	result = AddChannel(L"HUD");
-	if (result.code == SY_RESCODE_ERROR)
-	{
-		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"Failed to complete SyErrorLogger constructor.");
-		return;
-	}
+	AddChannel(L"PHYS");
+	AddChannel(L"CORE");
+	AddChannel(L"REND");
+	AddChannel(L"HUD");
 }
 
 SyErrorLogger::~SyErrorLogger()
@@ -75,8 +55,8 @@ SyResult SyErrorLogger::AddChannel(const t_channelName& channelName_)
 		if (channelName == channelName_)
 		{
 			result.code = SY_RESCODE_UNEXPECTED;
-			result.message = L"Channel " + channelName_ + L" already exists.";
-			//Log(L"ERLOG", SY_LOGLEVEL_WARNING, result.message);
+			result.message = L"Channel already exists. ";
+			SY_LOG_ERLOG(SY_LOGLEVEL_WARNING, L"Trace with channel %%s already exists. ", channelName_.c_str());
 			return result;
 		}
 	channelNames.push_back(channelName_);
@@ -86,17 +66,17 @@ SyResult SyErrorLogger::AddChannel(const t_channelName& channelName_)
 		IP7_Client* client = elClients.find(sinkName)->second;
 		if (client == nullptr)
 		{
-			//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"client == nullptr");
 			result.code = SY_RESCODE_ERROR;
 			result.message = L"Failed to create new IP7_Trace";
+			SY_LOG_ERLOG(SY_LOGLEVEL_ERROR, L"client == nullptr");
 			return result;
 		}
 		IP7_Trace* newTrace = P7_Create_Trace(client, channelName_.c_str());
-		if (client == nullptr)
+		if (newTrace == nullptr)
 		{
-			//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"newTrace == nullptr");
 			result.code = SY_RESCODE_ERROR;
 			result.message = L"Failed to create new IP7_Trace";
+			SY_LOG_ERLOG(SY_LOGLEVEL_ERROR, L"newTrace == nullptr");
 			return result;
 		}
 		newSinkMap.insert({ sinkName,  newTrace});
@@ -112,15 +92,15 @@ SyResult SyErrorLogger::AddSink(const t_sinkName& sinkName_, const std::wstring&
 		{
 			result.code = SY_RESCODE_UNEXPECTED;
 			result.message = L"Sink " + sinkName_ + L" already exists.";
-			//Log(L"ERLOG", SY_LOGLEVEL_WARNING, result.message);
+			SY_LOG_ERLOG(SY_LOGLEVEL_WARNING, L"Client with %%s sink already exists. ", sinkName_);
 			return result;
 		}
 	IP7_Client* newClient = P7_Create_Client(params.c_str());
 	if (newClient == nullptr)
 	{
-		SY_LOG_ERLOG(SY_LOGLEVEL_ERROR, L"newClient == nulptr");
 		result.code = SY_RESCODE_ERROR;
 		result.message = L"Failed to create new client.";
+		SY_LOG_ERLOG(SY_LOGLEVEL_ERROR, L"Failed to create new client. Possible params wrong formatting.");
 		return result;
 	}
 	elClients.insert({ sinkName_,  newClient});
@@ -129,13 +109,6 @@ SyResult SyErrorLogger::AddSink(const t_sinkName& sinkName_, const std::wstring&
 		auto& sinkMap = channelSinkMapPair.second;
 		auto& channelName = channelSinkMapPair.first;
 		IP7_Trace* newTrace = P7_Create_Trace(newClient, channelName.c_str());
-		if (newTrace == nullptr)
-		{
-			//Log(L"ERLOG", SY_LOGLEVEL_ERROR, L"newTrace == nulptr");
-			result.code = SY_RESCODE_ERROR;
-			result.message = L"Failed to create new trace.";
-			return result;
-		}
 		sinkMap.insert({sinkName_, newTrace});
 	}
 	return result;
@@ -148,8 +121,8 @@ std::vector<IP7_Trace*> SyErrorLogger::GetTraces(const t_channelName& channelNam
 	auto search = elTraces.find(channelName_);
 	if (search == elTraces.end())
 	{
-		std::wstring message = channelName_ + L" is an unknown channel name.";
-		//Log(L"ERLOG", SY_LOGLEVEL_ERROR, message);
+		SY_LOG_ERLOG(SY_LOGLEVEL_ERROR, L"%%s is an unknown channel name.", channelName_.c_str());
+		return traces;
 	}
 	auto& tableLine = search->second;
 	for (auto& tracePair : tableLine)
@@ -182,24 +155,3 @@ eP7Trace_Level SyErrorLogger::GetP7TraceLevel(SyElLogLevel logLevel)
 
 
 
-//void ErrorLogger::Log(int errorCode, const std::string& fileName, int lineNum)
-//{
-//	std::string message =	"File: " + fileName + "\n" +
-//							"Line: " + std::to_string(lineNum) + "\n";
-//	switch (errorCode)
-//	{
-//	case SY_NO_ERROR:
-//		break;
-//	case SY_GENERIC_ERROR:
-//		message = "A non-critical error occured!\n" + message;
-//		MessageBoxA(NULL, message.c_str(), "Error", MB_ICONERROR);
-//		break;
-//	case SY_GENERIC_ERROR_CRITICAL :
-//		message = "A critical error occured!\n" + message;
-//		MessageBoxA(NULL, message.c_str(), "Error", MB_ICONERROR);
-//		exit(-1);
-//		break;
-//	default:
-//		break;
-//	}
-//}
