@@ -14,6 +14,7 @@
 #include "Rendering/HUD/HudPostRenderSystem.h"
 #include "Rendering/HUD/HudViewportSystem.h"
 #include "Rendering/HUD/HudPreRenderSystem.h"
+#include "Rendering/HUD/HudConsoleSystem.h"
 #include "Rendering/RenderPipeline/ShadowRenderSystem.h"
 #include "Rendering/PreRenderSystem.h"
 #include "Rendering/RenderInitSystem.h"

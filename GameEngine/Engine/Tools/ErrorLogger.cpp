@@ -11,8 +11,11 @@ SyErrorLogger::SyErrorLogger()
 	{
 	case(SY_SINK_CONSOLE):
 		sinkNames.push_back(L"Console");
-		clientParams = L"/P7.Sink=Console /P7.Format=\"%cn:\t[%ix]\t(%tm)\t%lv\t{%fs, %fl, %fn} : %ms\"";
-		//clientParams = L"/P7.Sink=Console /P7.Format=\"%cn:\t[%ix]\t(%tm)\t%lv\t\%tn\t{File: %fs, Line: %fl, Function: %fn} : %ms\"";
+		clientParams = L"/P7.Sink=Console /P7.Format=" + defaultMessageFormat;
+		break;
+	case(SY_SINK_TXT):
+		sinkNames.push_back(L"FileTxt");
+		clientParams =	L"/P7.Sink=FileTxt /P7.Format=" + defaultMessageFormat + L" /P7.Dir=" + logFileDir + L"\\";
 		break;
 	//case...
 	}
@@ -24,15 +27,15 @@ SyErrorLogger::SyErrorLogger()
 		std::cout << "Failed to complete SyErrorLogger constructor.\n";
 		return;
 	}
-	elClients.insert({L"Console", client});
+	elClients.insert({sinkNames[0], client});
 	auto& newSinkMap = elTraces.insert({ L"ERLOG", t_sinkMap() }).first->second;
-	IP7_Trace* trace = P7_Create_Trace(elClients.at(L"Console"), L"ERLOG");
+	IP7_Trace* trace = P7_Create_Trace(elClients.at(sinkNames[0]), L"ERLOG");
 	if (trace == nullptr)
 	{
 		std::cout << "Failed to complete SyErrorLogger constructor.\n";
 		return;
 	}
-	newSinkMap.insert({L"Console", trace});
+	newSinkMap.insert({ sinkNames[0], trace});
 	AddChannel(L"PHYS");
 	AddChannel(L"CORE");
 	AddChannel(L"REND");

@@ -51,7 +51,8 @@ typedef std::map<t_sinkName, IP7_Trace*> t_sinkMap;
 
 enum SyElSink
 {
-	SY_SINK_CONSOLE
+	SY_SINK_CONSOLE,
+	SY_SINK_TXT
 	//...
 };
 enum SyElLogLevel
@@ -77,8 +78,9 @@ public:
 	//Converts SyElLogLevel object to eP7Trace_Level object
 	eP7Trace_Level GetP7TraceLevel(SyElLogLevel logLevel);
 	//this sink will be passed to the client in error logger constructor
-	SyElSink defaultSink = SY_SINK_CONSOLE;
-
+	SyElSink defaultSink = SY_SINK_TXT;
+	std::wstring defaultMessageFormat = L"%cn:\t[%ix]\t(%tm)\t%lv\t{%fs, %fl, %fn} : %ms";
+	std::wstring logFileDir = L"logs";
 private:
 
 	std::vector	<t_sinkName>			sinkNames;
