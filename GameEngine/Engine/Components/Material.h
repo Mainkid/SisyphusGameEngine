@@ -1,4 +1,5 @@
 #pragma once
+#include "ResourceBase.h"
 #include "string"
 #include "SimpleMath.h"
 #include <d3d11.h>
@@ -10,7 +11,7 @@ enum  class EMaterialBlendMode
 	Translucent
 };
 
-struct Material
+struct Material : public ResourceBase
 {
 	Material() {};
 	Material(std::string albedo, std::string specular="", std::string roughness="", std::string metallic="", std::string emissive="", std::string normalMap="", std::string opacity="")

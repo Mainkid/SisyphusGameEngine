@@ -57,7 +57,10 @@ void HudHierarchySystem::RenderTree(std::set<entt::entity>& gameObjectsVector)
         bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)gameObjectID, treeFlags,
             dc.name.c_str());
         if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
-            ec->selectedEntityID=gameObjectID;
+        {
+            ec->selectedEntityID = gameObjectID;
+            ec->selectedContent.assetType = EAssetType::ASSET_NONE;
+        }
 
         if (ImGui::BeginDragDropSource())
         {

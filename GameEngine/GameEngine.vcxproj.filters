@@ -70,6 +70,7 @@
     <ClCompile Include="Engine\Systems\MaterialUpdateSystem.cpp" />
     <ClCompile Include="Engine\Systems\ResourceSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\ResourceHelper.cpp" />
+    <ClCompile Include="Engine\Systems\ResourceService.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -161,6 +162,9 @@
     <ClInclude Include="Engine\Systems\MaterialUpdateSystem.h" />
     <ClInclude Include="Engine\Systems\ResourceSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\ResourceHelper.h" />
+    <ClInclude Include="Engine\Systems\ResourceInfo.h" />
+    <ClInclude Include="Engine\Systems\ResourceService.h" />
+    <ClInclude Include="Engine\Components\ResourceBase.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

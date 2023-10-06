@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
   </PropertyGroup>
@@ -623,6 +623,7 @@
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ToneMappingRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\ResourceSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\ResourceHelper.cpp" />
+    <ClCompile Include="Engine\Systems\ResourceService.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -673,6 +674,7 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\LightRenderSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\OpaqueRenderSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\ResourceInfo.h" />
     <ClInclude Include="Engine\Systems\Systems.h" />
     <ClInclude Include="Engine\Systems\SystemsEnum.h" />
     <ClInclude Include="Engine\Core\Scene\Scene.h" />
@@ -708,6 +710,8 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ToneMappingRenderSystem.h" />
     <ClInclude Include="Engine\Systems\ResourceSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\ResourceHelper.h" />
+    <ClInclude Include="Engine\Systems\ResourceService.h" />
+    <ClInclude Include="Engine\Components\ResourceBase.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />

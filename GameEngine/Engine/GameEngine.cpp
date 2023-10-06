@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <uuid.hpp>
 #include "Core/EngineCore.h"
 
 #define SY_PI 3.14f
@@ -41,7 +42,7 @@ int main()
     
     //ec->scene->registry.get<MeshComponent>(_go1).material = rc->materials[0].get();
     //ec->scene->registry.get<MeshComponent>(_go1).texturePath = "./Engine/Assets/PBR_test/Crystal_stone_baseColor.jpg";
-    //ec->scene->registry.get<TransformComponent>(_go1).localScale = Vector3(0.05f, 0.05f, 0.05f);
+    ec->scene->registry.get<TransformComponent>(_go1).localScale = Vector3(0.05f, 0.05f, 0.05f);
     //auto mesh = _go->GetComponent<MeshComponent>();
     //GameObject* _go3 = EngineCore::instance()->scene->AddGameObject();
     //

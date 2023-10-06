@@ -60,6 +60,7 @@ void EngineCore::Update()
 void EngineCore::StartUpSystems()
 {
 	ServiceLocator::instance()->Register<EngineContext>();
+	ServiceLocator::instance()->Register<ResourceService>();
 	ec = ServiceLocator::instance()->Get<EngineContext>();
 
 	std::unique_ptr<HardwareInitSystem> his = std::make_unique < HardwareInitSystem>();

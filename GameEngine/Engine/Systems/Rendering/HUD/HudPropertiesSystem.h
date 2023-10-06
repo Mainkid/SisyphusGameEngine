@@ -7,12 +7,9 @@
 struct EngineContext;
 struct HardwareContext;
 struct RenderContext;
+class ResourceService;
 
-enum class EShowMode
-{
-    ContentProperties,
-    GameObjectProperties
-};
+
 
 class HudPropertiesSystem : public ISystem
 {
@@ -24,9 +21,9 @@ private:
     EngineContext* ec;
     RenderContext* rc;
     HardwareContext* hc;
+    ResourceService* rs;
     std::string windowID;
     bool isFocused;
-    EShowMode showMode = EShowMode::GameObjectProperties;
     
-    
+    void DrawMaterialProperties();
 };

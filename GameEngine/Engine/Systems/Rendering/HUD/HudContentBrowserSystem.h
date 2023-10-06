@@ -6,14 +6,17 @@
 #define NOMINMAX
 #endif
 #include "ContentBrowserTypes.h"
+#include "ResourceHelper.h"
 #include <d3d11.h>
 #include <map>
+#include <unordered_map>
 #include <set>
 #include <filesystem>
 
 struct EngineContext;
 struct HardwareContext;
 struct RenderContext;
+class ResourceService;
 
 
 
@@ -27,7 +30,9 @@ private:
     EngineContext* ec;
     RenderContext* rc;
     HardwareContext* hc;
+    ResourceService* rs;
     void InitImagesSRV();
+    void FillPathToAssetMap(std::filesystem::path path);
     void ProcessPopUp();
     void DrawTreeFolderWindow();
     void RenderTree(std::filesystem::path path);
@@ -51,13 +56,14 @@ private:
     char renamingFileString [64];
 
     const std::string folderIcon = "Engine/Assets/HUD/ContentBrowser/folder.png";
-    const std::filesystem::path assetsDirectory = "Game/Assets";
+    const std::filesystem::path assetsDirectory = ".\\Game\\Assets";
     const float padding = 16.0;
     const float thumbnailSize = 128;
     const float cellSize = padding + thumbnailSize;
     std::filesystem::path curDirectory = assetsDirectory;
     ID3D11ShaderResourceView* folderImageSRV;
-    std::map<EContent, ID3D11ShaderResourceView*> iconSRV;
+    std::map<EAssetType, ID3D11ShaderResourceView*> iconSRV;
+    std::unordered_map<std::string, EAssetType> pathToAssetTypeMap;
     std::set<std::filesystem::path> selectedFiles;
     std::filesystem::path selectedFile;
 };

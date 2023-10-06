@@ -1,5 +1,6 @@
 #include "HudViewportSystem.h"
 #include "../../../Core/ServiceLocator.h"
+#include "../../ResourceService.h"
 #include "../RenderHelper.h"
 #include "../../Core/Rendering/RenderTarget.h"
 #include "../../EngineContext.h"
@@ -9,6 +10,7 @@ void HudViewportSystem::Init()
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
 	rc = ServiceLocator::instance()->Get<RenderContext>();
 	ec = ServiceLocator::instance()->Get<EngineContext>();
+	rs = ServiceLocator::instance()->Get<ResourceService>();
 	windowID = "Viewport";
 	InitSRV();
 }
@@ -48,8 +50,32 @@ void HudViewportSystem::Run()
 		if (pixelColorR != -1)
 		{
 			ec->selectedEntityID=entt::entity(pixelColorR);
+			ec->selectedContent.assetType = EAssetType::ASSET_NONE;
 		}
 
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_CONTENTBROWSER"))
+		{
+			std::string uuid;
+			uuid = static_cast<char*>(payload->Data);
+			uuid.resize(36);
+
+			if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_MESH)
+			{
+				auto go = ec->scene->AddGameObject();
+				auto camera = ec->scene->registry.view<CameraComponent, TransformComponent>();
+
+
+				ec->scene->registry.get<MeshComponent>(go).modelPath = rs->FindFilePathByUUID(uuid);
+				auto pos = camera.get<TransformComponent>(camera.front()).localPosition + Vector3(camera.get<CameraComponent>(camera.front()).forward * 5.0f);
+				ec->scene->registry.get<TransformComponent>(go).localPosition = pos;
+			}
+		}
+		ImGui::EndDragDropTarget();
 	}
 
 	ImGuiIO& io = ImGui::GetIO(); (void)io;

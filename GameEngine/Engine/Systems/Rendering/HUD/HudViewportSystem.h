@@ -15,6 +15,7 @@
 struct EngineContext;
 struct HardwareContext;
 struct RenderContext;
+class ResourceService;
 
 
 class HudViewportSystem : public ISystem
@@ -27,6 +28,7 @@ private:
 	EngineContext* ec;
 	RenderContext* rc;
 	HardwareContext* hc;
+	ResourceService* rs;
 
 	void InitSRV();
 	void HandleResize();

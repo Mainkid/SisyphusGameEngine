@@ -8,7 +8,7 @@
 #include "ServiceLocator.h"
 #include "../Systems/Systems.h"
 #include "../Systems/EngineContext.h"
-
+#include "../Systems/ResourceService.h"
 
 
 #pragma comment(lib, "d3d11.lib")
