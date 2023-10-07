@@ -18,6 +18,7 @@ struct SyComplexString
 	{
 		mainString = mainString_;
 		length = mainString_.length();
+		std::vector <ArgType> argTypes;
 		argTypes.reserve(6);
 		int argNum = 0;
 		for (auto c = mainString_.c_str(); *c != '\0'; c++)
@@ -49,7 +50,7 @@ struct SyComplexString
 				c++;
 			}
 		}
-		ParseArguments(argNum, args...);
+		ParseArguments(argTypes, argNum, args...);
 	}
 	std::string& ToString()
 	{
@@ -79,14 +80,13 @@ struct SyComplexString
 		}
 		return asString;
 	}
-
 	size_t GetLength() { return length; };
 private:
-	void ParseArguments(int count_, ...)
+	void ParseArguments(const std::vector <ArgType>& argTypes_, int count_, ...)
 	{
 		std::va_list args;
 		va_start(args, count_);
-		for (auto& argType : argTypes)
+		for (auto& argType : argTypes_)
 		{
 			std::string argStr;
 			switch (argType)
@@ -112,7 +112,6 @@ private:
 	}
 
 	std::string mainString;
-	std::vector <ArgType> argTypes;
 	std::vector<std::string> inserts;
 	size_t length = 0;
 	std::string asString;
