@@ -124,11 +124,11 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc,Ve
             const auto trf = Vector4::Transform(v, viewMatrix2);
 
             minX = std::min(minX, trf.x);
-            maxX = max(maxX, trf.x);
+            maxX = std::max(maxX, trf.x);
             minY = std::min(minY, trf.y);
-            maxY = max(maxY, trf.y);
+            maxY = std::max(maxY, trf.y);
             minZ = std::min(minZ, trf.z);
-            maxZ = max(maxZ, trf.z);
+            maxZ = std::max(maxZ, trf.z);
         }
 
         constexpr float zMult = 5.0f;
@@ -184,11 +184,11 @@ void LightSystem::GenerateOrthoFromFrustum(LightComponent& lc,Vector3 direction,
         const Vector4 trf = Vector4::Transform(v, lc.viewMatrix);
 
         minX = std::min(minX, trf.x);
-        maxX = max(maxX, trf.x);
+        maxX = std::max(maxX, trf.x);
         minY = std::min(minY, trf.y);
-        maxY = max(maxY, trf.y);
+        maxY = std::max(maxY, trf.y);
         minZ = std::min(minZ, trf.z);
-        maxZ = max(maxZ, trf.z);
+        maxZ = std::max(maxZ, trf.z);
     }
 
     constexpr float zMult = 10.0f;

@@ -29,6 +29,8 @@ SyResult HardwareInitSystem::Destroy()
 
 void HardwareInitSystem::CreateDeviceAndSwapChain()
 {
+	ID3D11Texture2D* backTex;
+
 	DXGI_SWAP_CHAIN_DESC swapDesc;
 	swapDesc = {};
 	swapDesc.BufferCount = 2; 
@@ -94,8 +96,11 @@ void HardwareInitSystem::CreateDeviceAndSwapChain()
 
 	
 
-	res = hc->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)hc->backTex.GetAddressOf());	// __uuidof(ID3D11Texture2D)
-	res = hc->device->CreateRenderTargetView(hc->backTex.Get(), nullptr, hc->rtv.GetAddressOf());
+	res = hc->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backTex);	// __uuidof(ID3D11Texture2D)
+	res = hc->device->CreateRenderTargetView(backTex, nullptr, hc->rtv.GetAddressOf());
+
+	
+	backTex->Release();
 
 }
 

@@ -1,6 +1,9 @@
 #pragma once
 
 #include <chrono>
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <windows.h>
 #include <wrl.h>
 #include <vector>

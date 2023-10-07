@@ -27,7 +27,7 @@ SyResult HudContentBrowserSystem::Run()
     ImGui::Begin("Content Browser");
     //Widget::Render();
 	float panelWidth = ImGui::GetContentRegionAvail().x;
-    int columnCount = max((int)panelWidth / cellSize, 1);
+    int columnCount = std::max(static_cast<int>(panelWidth / cellSize), 1);
     ImGui::Columns(columnCount, 0, false);
 
     if (curDirectory != std::filesystem::path(assetsDirectory))
@@ -84,6 +84,3 @@ void HudContentBrowserSystem::InitImagesSRV()
         ImageLoader::LoadTextureFromFile(keyVal.second.string().c_str(), &iconSRV[keyVal.first], &size, &size);
     }
 }
-
-
-
