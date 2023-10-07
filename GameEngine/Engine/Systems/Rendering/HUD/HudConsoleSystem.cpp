@@ -1,5 +1,5 @@
 #include "HudConsoleSystem.h"
-
+#include <filesystem>
 #include "../../../Tools/ErrorLogger.h"
 #include "../../../Core/ServiceLocator.h"
 SyResult SyHudConsoleSystem::Init()
@@ -9,12 +9,25 @@ SyResult SyHudConsoleSystem::Init()
 	ec = ServiceLocator::instance()->Get<EngineContext>();
 
 	messages = { "a", "ERROR", "WARNING" };
+	std::filesystem::path logDir_ = SY_EL->logFileDir;
+	for (auto& file : std::filesystem::directory_iterator(logDir_))
+		logDir = file.path();
+	fin = std::ifstream(logDir);
+	if (!fin.is_open())
+		SY_LOG_CORE(SY_LOGLEVEL_ERROR, L"Failed to open log file. ");
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HUD console system initialization successful. ");
     return SyResult();
 }
 
 SyResult SyHudConsoleSystem::Run()
 {
 	SyResult result;
+	while (!fin.eof())
+	{
+		std::string message;
+		fin >> message;
+		messages.push_back(message);
+	}
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 	if (!ImGui::Begin("Console Output"))
 	{
@@ -47,10 +60,13 @@ SyResult SyHudConsoleSystem::Run()
 	}
 	ImGui::EndChild();
 	ImGui::End();
+	fin.seekg(0);
+	messages.clear();
 	return result;
 }
 
 SyResult SyHudConsoleSystem::Destroy()
 {
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HUD console system destruction successful. ");
 	return SyResult();
 }

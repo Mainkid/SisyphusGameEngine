@@ -79,7 +79,7 @@ public:
 	eP7Trace_Level GetP7TraceLevel(SyElLogLevel logLevel);
 	//this sink will be passed to the client in error logger constructor
 	SyElSink defaultSink = SY_SINK_TXT;
-	std::wstring defaultMessageFormat = L"%cn:\t[%ix]\t(%tm)\t%lv\t{%fs, %fl, %fn} : %ms";
+	std::wstring defaultMessageFormat;
 	std::wstring logFileDir = L"logs";
 private:
 

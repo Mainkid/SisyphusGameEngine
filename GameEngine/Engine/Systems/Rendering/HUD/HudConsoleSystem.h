@@ -1,6 +1,7 @@
 #pragma once
 #include "../../ISystem.h"
 #include <filesystem>
+#include <fstream>
 #include "../RenderContext.h"
 #include "../../EngineContext.h"
 class SyHudConsoleSystem : public ISystem
@@ -16,6 +17,7 @@ private:
     HardwareContext* hc;
 
     std::vector<std::string> messages;
-    std::filesystem::path logDir = "P7logs";
+    std::filesystem::path logDir;
+    std::ifstream fin;
 };
 

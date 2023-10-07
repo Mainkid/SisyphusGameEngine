@@ -6,6 +6,7 @@
 
 SyErrorLogger::SyErrorLogger()
 {
+	defaultMessageFormat = L"%cn:\t[%ix]\t(%tm)\t%lv\t{%fs|%fl|%fn}::%ms";
 	std::wstring clientParams;
 	switch (defaultSink)
 	{
