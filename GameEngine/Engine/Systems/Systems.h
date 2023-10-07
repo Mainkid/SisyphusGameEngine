@@ -8,6 +8,7 @@
 #include "LightSystem.h"
 #include "PhysicsSystem.h"
 #include "HardwareInitSystem.h"
+#include "ErrorLoggingSystem.h"
 #include "Rendering/HUD/HudPropertiesSystem.h"
 #include "Rendering/HUD/HudContentBrowserSystem.h"
 #include "Rendering/HUD/HudHierarchySystem.h"

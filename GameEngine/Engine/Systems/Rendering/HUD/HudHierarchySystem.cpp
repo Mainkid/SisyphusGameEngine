@@ -6,7 +6,7 @@ SyResult HudHierarchySystem::Init()
 {
     this->ec = ServiceLocator::instance()->Get<EngineContext>();
     this->windowID = "Hierarchy";
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudHierarchy system initialization successful.");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudHierarchy system initialization successful.");
     return SyResult();
 }
 
@@ -45,7 +45,7 @@ SyResult HudHierarchySystem::Run()
 
 SyResult HudHierarchySystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudHierarchy system destruction successful.");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudHierarchy system destruction successful.");
     return SyResult();
 }
 

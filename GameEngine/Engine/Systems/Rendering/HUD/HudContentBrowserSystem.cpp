@@ -12,13 +12,13 @@ SyResult HudContentBrowserSystem::Init()
     rc = ServiceLocator::instance()->Get<RenderContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
     InitImagesSRV();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudContentBrowser system initialization successful.");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudContentBrowser system initialization successful.");
     return SyResult();
 }
 
 SyResult HudContentBrowserSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudContentBrowser system destruction successful.");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudContentBrowser system destruction successful.");
     return SyResult();
 }
 

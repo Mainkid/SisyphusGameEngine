@@ -7,7 +7,7 @@ SyResult TransformSystem::Init()
 {
 	SyResult result;
 	ec = ServiceLocator::instance()->Get<EngineContext>();
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, L"Transform system initialization successful. ");
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Transform system initialization successful. ");
 	return result;
 }
 
@@ -31,7 +31,7 @@ SyResult TransformSystem::Run()
 
 SyResult TransformSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, L"Transform system destruction successful. ");
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Transform system destruction successful. ");
 	return SyResult();
 }
 

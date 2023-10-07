@@ -19,7 +19,7 @@ SyResult EditorCameraSystem::Init()
     ec->scene->camera = &cc;
     ec->scene->cameraTransform = &tc;
     SetLookAtPos(Vector3(-1, 0, 0), tc);
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"EditorBillboard system initialization successful. ");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboard system initialization successful. ");
     return SyResult();
 }
 
@@ -49,7 +49,7 @@ SyResult EditorCameraSystem::Run()
 
 SyResult EditorCameraSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"EditorCamera system destruction successful. ");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorCamera system destruction successful. ");
     return SyResult();
 }
 

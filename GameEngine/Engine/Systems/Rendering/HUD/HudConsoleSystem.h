@@ -17,7 +17,6 @@ private:
     HardwareContext* hc;
 
     std::vector<std::string> messages;
-    std::filesystem::path logDir;
-    std::ifstream fin;
+
 };
 

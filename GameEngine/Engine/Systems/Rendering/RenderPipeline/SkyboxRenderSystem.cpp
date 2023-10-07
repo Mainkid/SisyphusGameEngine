@@ -10,7 +10,7 @@ SyResult SkyboxRenderSystem::Init()
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"SkyboxRender system initialization successful. ");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "SkyboxRender system initialization successful. ");
     return SyResult();
 }
 
@@ -52,6 +52,6 @@ SyResult SkyboxRenderSystem::Run()
 
 SyResult SkyboxRenderSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"SkyboxRender system destruction successful. ");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "SkyboxRender system destruction successful. ");
     return SyResult();
 }

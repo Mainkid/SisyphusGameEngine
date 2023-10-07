@@ -443,7 +443,7 @@ SyResult RenderInitSystem::Init()
     rc->skyBoxShader = std::make_unique<Shader>();
     rc->skyBoxShader->Initialize(L"./Engine/Assets/Shaders/Skybox.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VS", "PS");
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"RenderInit system initialization successful. ");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "RenderInit system initialization successful. ");
     return SyResult();
 }
 
@@ -454,7 +454,7 @@ SyResult RenderInitSystem::Run()
 
 SyResult RenderInitSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"RenderInit system destruction successful. ");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "RenderInit system destruction successful. ");
     return SyResult();
 }
 

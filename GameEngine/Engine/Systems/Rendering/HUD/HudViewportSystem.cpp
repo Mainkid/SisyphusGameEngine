@@ -11,7 +11,7 @@ SyResult HudViewportSystem::Init()
 	ec = ServiceLocator::instance()->Get<EngineContext>();
 	windowID = "Viewport";
 	InitSRV();
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudViewport system initialization successful.");
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudViewport system initialization successful.");
 	return SyResult();
 
 }
@@ -154,7 +154,7 @@ SyResult HudViewportSystem::Run()
 SyResult HudViewportSystem::Destroy()
 {
 
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, L" HudViewport system destruction successful.");
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, " HudViewport system destruction successful.");
 	return SyResult();
 }
 

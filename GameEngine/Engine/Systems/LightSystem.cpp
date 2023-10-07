@@ -9,7 +9,7 @@ SyResult LightSystem::Init()
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"Light system initialization successful. ");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "Light system initialization successful. ");
     return SyResult();
 }
 
@@ -46,7 +46,7 @@ SyResult LightSystem::Run()
 
 SyResult LightSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"Light system destruction successful. ");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "Light system destruction successful. ");
     return SyResult();
 }
 

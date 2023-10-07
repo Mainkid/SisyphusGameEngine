@@ -14,7 +14,7 @@ struct SyComplexString
 		UNKNOWN
 	};
 	template<typename... Args>
-	SyComplexString(std::string mainString_ = std::string(), Args... args)
+	SyComplexString(std::string mainString_ = std::string(), Args... args_)
 	{
 		mainString = mainString_;
 		length = mainString_.length();
@@ -50,7 +50,12 @@ struct SyComplexString
 				c++;
 			}
 		}
-		ParseArguments(argTypes, argNum, args...);
+		ParseArguments(argTypes, argNum, args_...);
+	}
+	template<typename... Args>
+	SyComplexString(const char* mainString_ = "", Args... args_)
+	{
+		*this = SyComplexString(std::string(mainString_), args_...);
 	}
 	std::string& ToString()
 	{
@@ -59,7 +64,6 @@ struct SyComplexString
 			asString.reserve(length);
 			size_t insCtr = 0;
 			for (auto c = mainString.c_str(); *c != '\0'; c++)
-			{
 				if (*c == '%' && *(c + 1) != '\0')
 				{
 					if (*(c + 1) == '%')
@@ -76,7 +80,6 @@ struct SyComplexString
 				}
 				else
 					asString += *c;
-			}
 		}
 		return asString;
 	}

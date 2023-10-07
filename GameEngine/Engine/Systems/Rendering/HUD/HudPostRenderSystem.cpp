@@ -10,7 +10,7 @@ SyResult HudPostRenderSystem::Init()
 {
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudPostRender system initialization successful.");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudPostRender system initialization successful.");
     return SyResult();
 }
 
@@ -36,7 +36,7 @@ SyResult HudPostRenderSystem::Run()
 SyResult HudPostRenderSystem::Destroy()
 {
 
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudPostRender system destruction successful.");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudPostRender system destruction successful.");
     return SyResult();
 }
 

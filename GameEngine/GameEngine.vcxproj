@@ -620,6 +620,7 @@
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.cpp" />
+    <ClCompile Include="Engine\Systems\ErrorLoggingSystem.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -701,6 +702,7 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.h" />
     <ClInclude Include="Engine\Tools\Data\Vector.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.h" />
+    <ClInclude Include="Engine\Systems\ErrorLoggingSystem.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />

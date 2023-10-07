@@ -9,7 +9,7 @@ SyResult HudPropertiesSystem::Init()
 {
     this->windowID = "Properties";
     this->ec = ServiceLocator::instance()->Get<EngineContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudProperties system initialization successful.");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudProperties system initialization successful.");
     return SyResult();
 }
 
@@ -58,7 +58,7 @@ SyResult HudPropertiesSystem::Run()
 
 SyResult HudPropertiesSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"HudProperties system destruction successful.");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudProperties system destruction successful.");
     return SyResult();
 }
 

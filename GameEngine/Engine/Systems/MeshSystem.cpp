@@ -9,7 +9,7 @@ SyResult MeshSystem::Init()
 {
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
 	ec = ServiceLocator::instance()->Get<EngineContext>();
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, L"Mesh system initialization successful.");
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Mesh system initialization successful.");
 	return SyResult();
 }
 
@@ -35,7 +35,7 @@ SyResult MeshSystem::Run()
 
 SyResult MeshSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, L"Mesh system destruction successful.");
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Mesh system destruction successful.");
 	return SyResult();
 }
 

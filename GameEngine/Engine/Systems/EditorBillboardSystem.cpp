@@ -7,7 +7,7 @@
 SyResult EditorBillboardSystem::Init()
 {
 	ec = ServiceLocator::instance()->Get<EngineContext>();
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, L"EditorBillboard system initialization successful. ");
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboard system initialization successful. ");
 	return SyResult();
 }
 
@@ -29,6 +29,6 @@ SyResult EditorBillboardSystem::Run()
 
 SyResult EditorBillboardSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, L"EditorBillboard system destruction successful. ");
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboard system destruction successful. ");
 	return SyResult();
 }

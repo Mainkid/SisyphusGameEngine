@@ -128,8 +128,11 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<HudViewportSystem> hvs= std::make_unique<HudViewportSystem>();
 	systems.push_back(std::move(hvs));
 
-	std::unique_ptr<SyHudConsoleSystem> hConsole = std::make_unique<SyHudConsoleSystem>();
-	systems.push_back(std::move(hConsole));
+	std::unique_ptr<SyHudConsoleSystem> hcs = std::make_unique<SyHudConsoleSystem>();
+	systems.push_back(std::move(hcs));
+
+	std::unique_ptr<SyErrorLoggingSystem> els = std::make_unique<SyErrorLoggingSystem>();
+	systems.push_back(std::move(els));
 	
 	std::unique_ptr<HudPostRenderSystem> hpostrs= std::make_unique<HudPostRenderSystem>();
 	systems.push_back(std::move(hpostrs));

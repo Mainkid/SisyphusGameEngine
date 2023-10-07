@@ -16,13 +16,13 @@ SyResult SyPhysicsSystem::Init()
 	foundation = PxCreateFoundation(PX_PHYSICS_VERSION, *allocator, *errorCallback);
 	if (foundation == nullptr)
 	{
-		SY_LOG_PHYS(SY_LOGLEVEL_CRITICAL, L"PxCreateFoundation returned nullptr. ");
+		SY_LOG_PHYS(SY_LOGLEVEL_CRITICAL, "PxCreateFoundation returned nullptr. ");
 		exit(-1);
 	}
 	physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, PxTolerancesScale(), true, nullptr);
 	if (physics == nullptr)
 	{
-		SY_LOG_PHYS(SY_LOGLEVEL_CRITICAL, L"PxCreatePhysics returned nullptr. ");
+		SY_LOG_PHYS(SY_LOGLEVEL_CRITICAL, "PxCreatePhysics returned nullptr. ");
 		exit(-1);
 	}
 	SyRBodyComponent::physics = physics;
@@ -32,7 +32,7 @@ SyResult SyPhysicsSystem::Init()
 	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 	scene = physics->createScene(sceneDesc);
 	SyRBodyComponent::scene = scene;
-	SY_LOG_PHYS(SY_LOGLEVEL_INFO, L"Physics initialization successful. ");
+	SY_LOG_PHYS(SY_LOGLEVEL_INFO, "Physics initialization successful. ");
 	return SyResult();
 }
 
@@ -43,21 +43,21 @@ SyResult SyPhysicsSystem::Run()
 	if (deltaTime == 0)
 	{
 		result.code = SY_RESCODE_UNEXPECTED;
-		result.message = L"EngineContext.deltaTime == 0";
+		result.message = "EngineContext.deltaTime == 0";
 		return result;
 	}
 	if (!scene->simulate(deltaTime))
 	{
 		result.code = SY_RESCODE_ERROR;
-		result.message = L"Physics simulate function returned false.";
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR,  result.message.c_str());
+		result.message = "Physics simulate function returned false.";
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR,  result.message.ToString());
 		return result;
 	}
 	if (!scene->fetchResults(true))
 	{
 		result.code = SY_RESCODE_ERROR;
-		result.message = L"Physics fetchResult function returned false.";
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.c_str());
+		result.message = "Physics fetchResult function returned false.";
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
 		return result;
 	}
 	auto view = ServiceLocator::instance()->Get<EngineContext>()->
@@ -71,8 +71,8 @@ SyResult SyPhysicsSystem::Run()
 		if (rbComponent.rbActor == nullptr)
 		{
 			result.code = SY_RESCODE_ERROR;
-			result.message = L"rbComponent.rbActor is nullptr.";
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.c_str());
+			result.message = "rbComponent.rbActor is nullptr.";
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
 			continue;
 		}
 		PxRigidDynamic* rb = rbComponent.rbActor->is<PxRigidDynamic>();
@@ -88,6 +88,6 @@ SyResult SyPhysicsSystem::Destroy()
 	PX_RELEASE(scene);
 	PX_RELEASE(physics);
 	PX_RELEASE(foundation);
-	SY_LOG_PHYS(SY_LOGLEVEL_INFO, L"Physics system destruction successful. ");
+	SY_LOG_PHYS(SY_LOGLEVEL_INFO, "Physics system destruction successful. ");
 	return SyResult();
 }

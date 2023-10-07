@@ -12,7 +12,7 @@ SyResult ShadowRenderSystem::Init()
     rc = ServiceLocator::instance()->Get<RenderContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     pointlightShadowProjectionMat = DirectX::XMMatrixPerspectiveFovLH(1.5708f, rc->SHADOWMAP_WIDTH * 1.0f / rc->SHADOWMAP_HEIGHT, 0.01f, 3.0f);
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"ShadowRender system initialization successful. ");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowRender system initialization successful. ");
     return SyResult();
 }
 
@@ -196,6 +196,6 @@ SyResult ShadowRenderSystem::Run()
 
 SyResult ShadowRenderSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"ShadowRender system destruction successful. ");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowRender system destruction successful. ");
     return SyResult();
 }

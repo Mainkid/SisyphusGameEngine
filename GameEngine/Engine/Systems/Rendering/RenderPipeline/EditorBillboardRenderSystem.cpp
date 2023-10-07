@@ -12,7 +12,7 @@ SyResult EditorBillboardRenderSystem::Init()
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
 	rc = ServiceLocator::instance()->Get<RenderContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"EditorBillboardRender system initialization successful.");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboardRender system initialization successful.");
     return SyResult();
 
 }
@@ -92,6 +92,6 @@ SyResult EditorBillboardRenderSystem::Run()
 SyResult EditorBillboardRenderSystem::Destroy()
 {
 
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, L"EditorBillboardRender system destruction successful.");
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboardRender system destruction successful.");
     return SyResult();
 }
