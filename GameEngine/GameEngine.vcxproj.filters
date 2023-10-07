@@ -151,6 +151,7 @@
     <ClInclude Include="vendor\stb_image.h" />
     <ClInclude Include="vendor\WICTextureLoader.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.h" />
+    <ClInclude Include="Engine\Tools\ComplexString.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
