@@ -1,4 +1,7 @@
 #pragma once
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <windows.h>
 #include <WinUser.h>
 #include <wrl.h>
@@ -13,16 +16,17 @@
 using namespace Microsoft::WRL;
 struct HardwareContext : public IService
 {
+
     ComPtr<ID3D11Device> device;
     ComPtr<ID3D11DeviceContext> context;
     ComPtr <IDXGISwapChain> swapChain;
     ComPtr<ID3D11RenderTargetView> rtv;
-    ComPtr <ID3D11Texture2D> backTex;
     ComPtr <ID3D11RasterizerState> rastState;
     ComPtr <ID3D11Texture2D> depthStencilBuffer;
     ComPtr <ID3D11DepthStencilView> depthStencilView;
     ComPtr <ID3D11DepthStencilState> depthStencilState;
-    std::unique_ptr<RenderTarget> renderTarget;
+
     std::unique_ptr<DisplayWin32> window;
+    std::unique_ptr<RenderTarget> renderTarget;
 };
 

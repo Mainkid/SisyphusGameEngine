@@ -71,7 +71,5 @@ SyRBodyComponent::SyRBodyComponent(	const SyRBodyType&			rbType_,
 
 SyRBodyComponent::~SyRBodyComponent()
 {
-	PX_RELEASE(rbActor);
-	PX_RELEASE(rbShape);
 }
 

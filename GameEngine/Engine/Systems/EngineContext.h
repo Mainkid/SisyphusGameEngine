@@ -20,7 +20,8 @@ struct EngineContext : public IService
 	uint32_t selectedContentID = 0;
 	float totalTime = 0;
 	unsigned int frameCount = 0;
-	float deltaTime = 0.01f;
+	float deltaTime = 0;
+	bool isClosed = false;
 	//PlayMode states and var for it
 	enum class EPlayModeState
 	{

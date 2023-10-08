@@ -1,5 +1,6 @@
 #include "DisplayWin32.h"
 #include "EngineCore.h"
+#include "ServiceLocator.h"
 
 static bool isInitialized = false;
 
@@ -32,6 +33,7 @@ LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT umessage, WPARAM wparam, LPA
 			return 0;
 		break;
 	case WM_DESTROY:
+		ServiceLocator::instance()->Get<EngineContext>()->isClosed = true;
 		::PostQuitMessage(0);
 		return 0;
 	case WM_DPICHANGED:

@@ -75,7 +75,9 @@ int main()
     
     
     EngineCore::instance()->StartUpdateLoop();
-
+    EngineCore::instance()->ShutDown();
     
     std::cout << "Hello World!\n";
+
+    
 }
