@@ -78,146 +78,147 @@ void HudContentBrowserSystem::Run()
     
 
     int columnCount = std::max((int)(panelWidth / cellSize), 1);
-    ImGui::BeginTable("ContentTable",columnCount);
-
-    ImGuiListClipper clipper;
-    if (fileViewsVec.size() / columnCount == 0)
-        std::cout << "OK";
-    auto res = int(((int)fileViewsVec.size() % columnCount) != 0);
-    clipper.Begin((int)fileViewsVec.size() / columnCount + res);
-
-    while (clipper.Step())
+    if (ImGui::BeginTable("ContentTable", columnCount))
     {
-        for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++)
+        ImGuiListClipper clipper;
+        if (fileViewsVec.size() / columnCount == 0)
+            std::cout << "OK";
+        auto res = int(((int)fileViewsVec.size() % columnCount) != 0);
+        clipper.Begin((int)fileViewsVec.size() / columnCount + res);
+
+        while (clipper.Step())
         {
-            ImGui::TableNextRow();
-
-
-            int columnsInRow = columnCount;
-           
-            if ((int)fileViewsVec.size() - (row + 1) * columnCount< 0)
-                columnsInRow = fileViewsVec.size() % columnCount;
-                
-            for (int column = 0; column < columnsInRow; column++)
+            for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++)
             {
-                ImGui::TableSetColumnIndex(column);
-                auto directoryEntry = fileViewsVec[row * columnCount + column];
-                const auto& path = directoryEntry.path();
-                auto relativePath = std::filesystem::relative(directoryEntry.path(), assetsDirectory);
-                std::string  fileNameStr = relativePath.filename().string();
-                std::string fileExtension = relativePath.extension().string();
-
-                if (fileExtension == ".meta")
-                    continue;
-
-                ImVec2 uv0 = ImVec2(0.0f, 0.0f);                            // UV coordinates for lower-left
-                ImVec2 uv1 = ImVec2(128.0f / 128.0f, 128.0f / 128.0f);    // UV coordinates for (32,32) in our texture
-                ImVec4 bg = bg_col;
-                if (selectedFiles.count(directoryEntry) > 0)
-                    bg = bg_col_selected;
-
-                ImGui::ImageButton(directoryEntry.path().string().data(), iconSRV[pathToAssetTypeMap[directoryEntry.path().string()]],
-                    ImVec2(thumbnailSize, thumbnailSize), ImVec2(0, 0), ImVec2(1, 1), bg, tint_col);
+                ImGui::TableNextRow();
 
 
-                if (ImGui::BeginDragDropSource())
+                int columnsInRow = columnCount;
+
+                if ((int)fileViewsVec.size() - (row + 1) * columnCount < 0)
+                    columnsInRow = fileViewsVec.size() % columnCount;
+
+                for (int column = 0; column < columnsInRow; column++)
                 {
-                    std::string uuid = rs->GetUUIDFromPath(directoryEntry);
-                    uuid.shrink_to_fit();
-                    ImGui::SetDragDropPayload("_CONTENTBROWSER", (uuid.data()), uuid.size());
-                    selectedFiles.insert(directoryEntry);
-                    ImGui::EndDragDropSource();
-                }
+                    ImGui::TableSetColumnIndex(column);
+                    auto directoryEntry = fileViewsVec[row * columnCount + column];
+                    const auto& path = directoryEntry.path();
+                    auto relativePath = std::filesystem::relative(directoryEntry.path(), assetsDirectory);
+                    std::string  fileNameStr = relativePath.filename().string();
+                    std::string fileExtension = relativePath.extension().string();
 
-                if (ImGui::BeginDragDropTarget())
-                {
+                    if (fileExtension == ".meta")
+                        continue;
 
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_CONTENTBROWSER"))
+                    ImVec2 uv0 = ImVec2(0.0f, 0.0f);                            // UV coordinates for lower-left
+                    ImVec2 uv1 = ImVec2(128.0f / 128.0f, 128.0f / 128.0f);    // UV coordinates for (32,32) in our texture
+                    ImVec4 bg = bg_col;
+                    if (selectedFiles.count(directoryEntry) > 0)
+                        bg = bg_col_selected;
+
+                    ImGui::ImageButton(directoryEntry.path().string().data(), iconSRV[pathToAssetTypeMap[directoryEntry.path().string()]],
+                        ImVec2(thumbnailSize, thumbnailSize), ImVec2(0, 0), ImVec2(1, 1), bg, tint_col);
+
+
+                    if (ImGui::BeginDragDropSource())
                     {
-
-                        for (auto& item : selectedFiles)
-                        {
-                            ResourceHelper::MoveFile_(item, directoryEntry, pathToAssetTypeMap);
-                           
-                        }
-                        selectedFiles.clear();
-                        InitializePathFileViews(curDirectory);
-                    }
-                    ImGui::EndDragDropTarget();
-                }
-
-
-
-                if (ImGui::IsItemHovered())
-                {
-                    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-                    {
-
-                        if (directoryEntry.is_directory())
-                        {
-                            curDirectory /= path.filename();
-                            selectedFiles.clear();
-                        }
-                    }
-                    else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
-                    {
-                        if (!io.KeyCtrl)
-                            selectedFiles.clear();
-                        if (selectedFiles.count(directoryEntry) == 0)
-                        {
-                            auto uuid = rs->GetUUIDFromPath(directoryEntry);
-                            ec->selectedContent = { uuid, rs->resourceLibrary[uuid].assetType };
-                            ec->selectedEntityID = entt::null;
-                            selectedFiles.insert(directoryEntry);
-
-                        }
-                        else
-                            selectedFiles.erase(directoryEntry);
-
-
-                    }
-                    else if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
-                    {
-
+                        std::string uuid = rs->GetUUIDFromPath(directoryEntry);
+                        uuid.shrink_to_fit();
+                        ImGui::SetDragDropPayload("_CONTENTBROWSER", (uuid.data()), uuid.size());
                         selectedFiles.insert(directoryEntry);
-                        ImGui::OpenPopup("ContentPopUp");
-                        ProcessPopUp();
+                        ImGui::EndDragDropSource();
                     }
 
-                    itemWasHovered = true;
-                }
-
-
-
-                if (directoryEntry != renamingFileName)
-                    ImGui::Text(fileNameStr.c_str());
-                else
-                {
-
-                    if (ImGui::InputText("RenamingText", renamingFileString, IM_ARRAYSIZE(renamingFileString), ImGuiInputTextFlags_EnterReturnsTrue))
+                    if (ImGui::BeginDragDropTarget())
                     {
-                        renamingFileName = (renamingFileName.remove_filename().string() + renamingFileString);
-                        if (std::filesystem::exists(renamingFileName))
+
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_CONTENTBROWSER"))
                         {
-                            renamingFileName = directoryEntry;
-                        }
-                        else
-                        {
-                            ResourceHelper::RenameFile(directoryEntry, renamingFileName, pathToAssetTypeMap);
+
+                            for (auto& item : selectedFiles)
+                            {
+                                ResourceHelper::MoveFile_(item, directoryEntry, pathToAssetTypeMap);
+
+                            }
+                            selectedFiles.clear();
                             InitializePathFileViews(curDirectory);
                         }
-                        renamingFileName = "";
-
+                        ImGui::EndDragDropTarget();
                     }
-                    if (!ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+
+
+
+                    if (ImGui::IsItemHovered())
                     {
-                        renamingFileName = "";
+                        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+                        {
+
+                            if (directoryEntry.is_directory())
+                            {
+                                curDirectory /= path.filename();
+                                selectedFiles.clear();
+                            }
+                        }
+                        else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+                        {
+                            if (!io.KeyCtrl)
+                                selectedFiles.clear();
+                            if (selectedFiles.count(directoryEntry) == 0)
+                            {
+                                auto uuid = rs->GetUUIDFromPath(directoryEntry);
+                                ec->selectedContent = { uuid, rs->resourceLibrary[uuid].assetType };
+                                ec->selectedEntityID = entt::null;
+                                selectedFiles.insert(directoryEntry);
+
+                            }
+                            else
+                                selectedFiles.erase(directoryEntry);
+
+
+                        }
+                        else if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
+                        {
+
+                            selectedFiles.insert(directoryEntry);
+                            ImGui::OpenPopup("ContentPopUp");
+                            ProcessPopUp();
+                        }
+
+                        itemWasHovered = true;
+                    }
+
+
+
+                    if (directoryEntry != renamingFileName)
+                        ImGui::Text(fileNameStr.c_str());
+                    else
+                    {
+
+                        if (ImGui::InputText("RenamingText", renamingFileString, IM_ARRAYSIZE(renamingFileString), ImGuiInputTextFlags_EnterReturnsTrue))
+                        {
+                            renamingFileName = (renamingFileName.remove_filename().string() + renamingFileString);
+                            if (std::filesystem::exists(renamingFileName))
+                            {
+                                renamingFileName = directoryEntry;
+                            }
+                            else
+                            {
+                                ResourceHelper::RenameFile(directoryEntry, renamingFileName, pathToAssetTypeMap);
+                                InitializePathFileViews(curDirectory);
+                            }
+                            renamingFileName = "";
+
+                        }
+                        if (!ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+                        {
+                            renamingFileName = "";
+                        }
                     }
                 }
             }
         }
+        ImGui::EndTable();
     }
-    ImGui::EndTable();
 
     if (!itemWasHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !wasOverPopup)
     {
