@@ -18,7 +18,7 @@ namespace ser
          * \brief Allow T comp serialization.
          */
         template<typename T>
-        void AddMeta();
+        void AddEcsCompMeta();
 
         /**
          * \brief Takes all entities with comp T and serialize all of them + all their comps.
@@ -26,15 +26,33 @@ namespace ser
         template<typename T>
         nlohmann::json Serialize(entt::registry& ecs);
 
-        
         /**
          * \brief Re-creates entities and their comps from json.
          */
         void Deserialize(const nlohmann::json& json, entt::registry& ecs);
 
+        
+	    /**
+         * \brief Serialize class/struct with SER_DATA macro.
+         */
+        template<typename T>
+        nlohmann::json Serialize(const T& data);
+
+        /**
+		 * \brief Deserialize class/struct with SER_DATA macro.
+		 */
+        template<typename T>
+        void Deserialize(const nlohmann::json& json, T& outData);
+        
+	    /**
+         * \brief Only for internal usage.
+         */
         template<typename T>
         void SerializeField(const char* key, const T& val, nlohmann::json& outJson);
 
+        /**
+         * \brief Only for internal usage.
+         */
         template<typename T>
         void DeserializeField(const nlohmann::json& json, const char* key, T& outVal);
 
@@ -53,10 +71,10 @@ namespace ser
 
 
         template<typename T>
-        inline constexpr void SerializeVal(const T& val, nlohmann::json& outJson);
+        constexpr void SerializeVal(const T& val, nlohmann::json& outJson);
 
         template<typename T>
-        inline constexpr void DeserializeVal(const nlohmann::json& json, T& outVal);
+        constexpr void DeserializeVal(const nlohmann::json& json, T& outVal);
 
         template<typename T>
         void SerializeVector(const std::vector<T>& vec, nlohmann::json& outJson);
@@ -77,7 +95,7 @@ namespace ser
 
 
     template<typename T>
-    void Serializer::AddMeta()
+    void Serializer::AddEcsCompMeta()
     {
         CompMeta meta;
         meta.Name = typeid(T).name();
@@ -105,7 +123,21 @@ namespace ser
         return result;
     }
 
-    void Serializer::SerializeEntity(entt::registry& ecs, entt::entity ent, nlohmann::json& outJson)
+    template <typename T>
+    nlohmann::json Serializer::Serialize(const T& data)
+    {
+        nlohmann::json json;
+        T::Serialize(this, data, json);
+        return json;
+    }
+
+    template <typename T>
+    void Serializer::Deserialize(const nlohmann::json& json, T& outData)
+    {
+        T::Deserialize(this, json, outData);
+    }
+
+    inline void Serializer::SerializeEntity(entt::registry& ecs, entt::entity ent, nlohmann::json& outJson)
     {
         outJson["id"] = static_cast<unsigned int>(ent);
 
@@ -126,7 +158,7 @@ namespace ser
         }
     }
 
-    void Serializer::Deserialize(const nlohmann::json& json, entt::registry& ecs)
+    inline void Serializer::Deserialize(const nlohmann::json& json, entt::registry& ecs)
     {
         _contextEntityIdToEntity.clear();
 
@@ -145,7 +177,7 @@ namespace ser
         }
     }
 
-    void Serializer::DeserializeEntity(const nlohmann::json& json, entt::registry& ecs)
+    inline void Serializer::DeserializeEntity(const nlohmann::json& json, entt::registry& ecs)
     {
         auto entityId = json.at("id").get<unsigned int>();
         auto ent = _contextEntityIdToEntity[entityId];
