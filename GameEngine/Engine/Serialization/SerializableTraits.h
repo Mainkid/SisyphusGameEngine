@@ -8,11 +8,45 @@
 namespace ser
 {
 	template<typename T, typename = int>
-	struct HasSerializableFunc : std::false_type
+	struct HasSerializeFunc : std::false_type
 	{
 	};
 	template<typename T>
-	struct HasSerializableFunc<T, decltype(&T::Serialize, 0)> : std::true_type
+	struct HasSerializeFunc<T, decltype(&T::Serialize, 0)> : std::true_type
+	{
+	};
+
+	template<typename T, typename = int>
+	struct HasSerializeOuterFunc : std::false_type
+	{
+	};
+	template<typename T>
+	struct HasSerializeOuterFunc<T, decltype(SerializableOuter(std::declval<T>()), 0)> : std::true_type
+	{
+	};
+
+	template<typename T>
+	struct IsNativeSerializable : std::false_type
+	{
+	};
+	template<>
+	struct IsNativeSerializable<int> : std::true_type
+	{
+	};
+	template<>
+	struct IsNativeSerializable<float> : std::true_type
+	{
+	};
+	template<>
+	struct IsNativeSerializable<double> : std::true_type
+	{
+	};
+	template<>
+	struct IsNativeSerializable<bool> : std::true_type
+	{
+	};
+	template<>
+	struct IsNativeSerializable<std::string> : std::true_type
 	{
 	};
 

@@ -115,6 +115,7 @@ namespace ser
         _compNameToMeta[meta.Name] = meta;
     }
 
+
     template<typename T>
     nlohmann::json Serializer::Serialize(entt::registry& ecs)
     {
@@ -130,20 +131,6 @@ namespace ser
         nlohmann::json result;
         result["entities"] = jsEntities;
         return result;
-    }
-
-    template <typename T>
-    nlohmann::json Serializer::Serialize(const T& data)
-    {
-        nlohmann::json json;
-        T::Serialize(this, data, json);
-        return json;
-    }
-
-    template <typename T>
-    void Serializer::Deserialize(const nlohmann::json& json, T& outData)
-    {
-        T::Deserialize(this, json, outData);
     }
 
     inline void Serializer::SerializeEntity(entt::registry& ecs, entt::entity ent, nlohmann::json& outJson)
@@ -208,6 +195,21 @@ namespace ser
 
 
     template<typename T>
+    nlohmann::json Serializer::Serialize(const T& data)
+    {
+        nlohmann::json json;
+        SerializeVal(data, json);
+        return json;
+    }
+
+    template<typename T>
+    void Serializer::Deserialize(const nlohmann::json& json, T& outData)
+    {
+        DeserializeVal(json, outData);
+    }
+
+
+    template<typename T>
     void Serializer::SerializeField(const char* key, const T& val, nlohmann::json& outJson)
     {
         SerializeVal(val, outJson[key]);
@@ -223,9 +225,13 @@ namespace ser
     template<typename T>
     constexpr void Serializer::SerializeVal(const T& val, nlohmann::json& outJson)
     {
-        if constexpr (HasSerializableFunc<T>::value)
+        if constexpr (HasSerializeFunc<T>::value)
         {
             T::Serialize(this, val, outJson);
+        }
+        else if constexpr (HasSerializeOuterFunc<T>::value)
+        {
+            SerializeOuter(this, val, outJson);
         }
         else if constexpr (IsCollection<T, std::vector>::value)
         {
@@ -249,9 +255,13 @@ namespace ser
     template<typename T>
     constexpr void Serializer::DeserializeVal(const nlohmann::json& json, T& outVal)
     {
-        if constexpr (HasSerializableFunc<T>::value)
+        if constexpr (HasSerializeFunc<T>::value)
         {
             T::Deserialize(this, json, outVal);
+        }
+        else if constexpr (HasSerializeOuterFunc<T>::value)
+        {
+            DeserializeOuter(this, json, outVal);
         }
         else if constexpr (IsEntity<T>::value)
         {
