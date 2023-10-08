@@ -8,13 +8,13 @@
 
 namespace ser
 {
-	/**
+    /**
      * \brief Works together with SER_COMP or SER_DATA macro.
      */
     class Serializer
     {
     public:
-	    /**
+        /**
          * \brief Allow T comp serialization.
          */
         template<typename T>
@@ -31,20 +31,20 @@ namespace ser
          */
         void Deserialize(const nlohmann::json& json, entt::registry& ecs);
 
-        
-	    /**
+
+        /**
          * \brief Serialize class/struct with SER_DATA macro.
          */
         template<typename T>
         nlohmann::json Serialize(const T& data);
 
         /**
-		 * \brief Deserialize class/struct with SER_DATA macro.
-		 */
+         * \brief Deserialize class/struct with SER_DATA macro.
+         */
         template<typename T>
         void Deserialize(const nlohmann::json& json, T& outData);
-        
-	    /**
+
+        /**
          * \brief Only for internal usage.
          */
         template<typename T>
@@ -78,9 +78,18 @@ namespace ser
 
         template<typename T>
         void SerializeVector(const std::vector<T>& vec, nlohmann::json& outJson);
+        template<typename T>
+        void DeserializeVector(const nlohmann::json& json, std::vector<T>& outVec);
+
+        template<typename TKey, typename TValue>
+        void SerializeMap(const std::unordered_map<TKey, TValue>& map, nlohmann::json& outJson);
+        template<typename TKey, typename TValue>
+        void DeserializeMap(const nlohmann::json& json, std::unordered_map<TKey, TValue>& outMap);
 
         template<typename T>
-        void DeserializeVector(const nlohmann::json& json, T& outVec);
+        void SerializeSet(const std::unordered_set<T>& set, nlohmann::json& outJson);
+        template<typename T>
+        void DeserializeSet(const nlohmann::json& json, std::unordered_set<T>& outSet);
 
 
         struct CompMeta
@@ -222,6 +231,14 @@ namespace ser
         {
             SerializeVector(val, outJson);
         }
+        else if constexpr (IsCollection<T, std::unordered_map>::value)
+        {
+            SerializeMap(val, outJson);
+        }
+        else if constexpr (IsCollection<T, std::unordered_set>::value)
+        {
+            SerializeSet(val, outJson);
+        }
         else
         {
             outJson = val;
@@ -243,7 +260,15 @@ namespace ser
         }
         else if constexpr (IsCollection<T, std::vector>::value)
         {
-            DeserializeVector<T>(json, outVal);
+            DeserializeVector(json, outVal);
+        }
+        else if constexpr (IsCollection<T, std::unordered_map>::value)
+        {
+            DeserializeMap(json, outVal);
+        }
+        else if constexpr (IsCollection<T, std::unordered_set>::value)
+        {
+            DeserializeSet(json, outVal);
         }
         else
             outVal = json.get<T>();
@@ -254,18 +279,70 @@ namespace ser
     {
         for (int i = 0; i < vec.size(); i++)
         {
-            outJson.emplace_back();
-            SerializeVal(vec[i], outJson.back());
+            auto& jsonValue = outJson.emplace_back();
+            SerializeVal(vec[i], jsonValue);
         }
     }
 
     template<typename T>
-    void Serializer::DeserializeVector(const nlohmann::json& json, T& outVec)
+    void Serializer::DeserializeVector(const nlohmann::json& json, std::vector<T>& outVec)
     {
         for (int i = 0; i < json.size(); i++)
         {
-            outVec.emplace_back();
-            DeserializeVal(json[i], outVec.back());
+            T value;
+            DeserializeVal(json[i], value);
+
+            outVec.push_back(value);
+        }
+    }
+
+
+    template<typename TKey, typename TValue>
+    void Serializer::SerializeMap(const std::unordered_map<TKey, TValue>& map, nlohmann::json& outJson)
+    {
+        for (auto& pair : map)
+        {
+            auto& jsonPair = outJson.emplace_back();
+            SerializeVal(pair.first, jsonPair["key"]);
+            SerializeVal(pair.second, jsonPair["value"]);
+        }
+    }
+
+
+    template<typename TKey, typename TValue>
+    void Serializer::DeserializeMap(const nlohmann::json& json, std::unordered_map<TKey, TValue>& outMap)
+    {
+        for (int i = 0; i < json.size(); i++)
+        {
+            TKey key;
+            TValue value;
+
+            const auto& jsonPair = json[i];
+            DeserializeVal(jsonPair.at("key"), key);
+            DeserializeVal(jsonPair.at("value"), value);
+
+            outMap[key] = value;
+        }
+    }
+
+    template<typename T>
+    void Serializer::SerializeSet(const std::unordered_set<T>& set, nlohmann::json& outJson)
+    {
+        for (auto& value : set)
+        {
+            auto& jsonValue = outJson.emplace_back();
+            SerializeVal(value, jsonValue);
+        }
+    }
+
+    template<typename T>
+    void Serializer::DeserializeSet(const nlohmann::json& json, std::unordered_set<T>& outSet)
+    {
+        for (int i = 0; i < json.size(); i++)
+        {
+            T value;
+            DeserializeVal(json[i], value);
+            outSet.insert(value);
         }
     }
 }
