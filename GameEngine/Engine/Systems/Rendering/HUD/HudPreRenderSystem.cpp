@@ -6,7 +6,7 @@
 #include "../../../Systems/HardwareContext.h"
 #include "../../../Core/ServiceLocator.h"
 
-void HudPreRenderSystem::Init()
+SyResult HudPreRenderSystem::Init()
 {
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     IMGUI_CHECKVERSION();

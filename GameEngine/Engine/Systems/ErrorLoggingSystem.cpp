@@ -35,10 +35,10 @@ SyResult SyErrorLoggingSystem::Run()
 			switch (sink)
 			{
 			case SY_SINK_CONSOLE:
-				std::cout << message;
+				std::cout << message.ToString();
 				break;
 			case SY_SINK_TXT:
-				fout << message;
+				fout << message.ToString();
 				break;
 			default:
 				break;

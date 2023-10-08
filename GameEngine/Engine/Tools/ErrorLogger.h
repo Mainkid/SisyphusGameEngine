@@ -20,7 +20,7 @@ else																					\
 
 #pragma endregion
 
-#define SY_LOG_ERLOG(logLevel, ...)	SY_LOG("ERLG",	logLevel, __VA_ARGS__)
+#define SY_LOG_ERLG(logLevel, ...)	SY_LOG("ERLG",	logLevel, __VA_ARGS__)
 #define SY_LOG_PHYS(logLevel, ...)	SY_LOG("PHYS",	logLevel, __VA_ARGS__)
 #define SY_LOG_CORE(logLevel, ...)	SY_LOG("CORE",	logLevel, __VA_ARGS__)
 #define SY_LOG_REND(logLevel, ...)	SY_LOG("REND",	logLevel, __VA_ARGS__)
@@ -98,7 +98,7 @@ struct SyErrorLogger : IService
 								funName_.c_str(),
 								line_,
 								smessage.c_str());
-			messagePool.push_back(newMessage.ToString());
+			messagePool.push_back(newMessage);
 			counter++;
 		}
 		return SyResult();
@@ -116,7 +116,7 @@ struct SyErrorLogger : IService
 		return result;
 	}
 private:
-	std::vector<std::string> messagePool;
+	std::vector<xstring> messagePool;
 	std::vector<SyElSink> sinks;
 	std::unordered_map<SyElLogLevel, std::string> logLevelMap;
 	std::unordered_map<std::string, int> channelNameMap;

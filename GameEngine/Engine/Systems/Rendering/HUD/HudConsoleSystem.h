@@ -16,7 +16,7 @@ private:
     RenderContext* rc;
     HardwareContext* hc;
 
-    std::vector<std::string> messages;
-
+    std::vector<xstring> messages;
+    std::map<char, bool> filters; //if filters['i']==true, info messages are show and so on
 };
 

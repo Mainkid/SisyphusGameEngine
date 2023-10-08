@@ -84,6 +84,7 @@ struct SyComplexString
 		return asString;
 	}
 	size_t GetLength() { return length; };
+	std::string& GetInsertion(int num_) { return inserts[num_]; }
 private:
 	void ParseArguments(const std::vector <ArgType>& argTypes_, int count_, ...)
 	{
