@@ -3,6 +3,8 @@
 #include "../../vendor/entt/entt.hpp"
 #include "../Tools/Data/Vector.h"
 
+#include "../Serialization/Serializable.h"
+
 using namespace DirectX::SimpleMath;
 struct TransformComponent
 {
@@ -23,6 +25,12 @@ struct TransformComponent
 	uint32_t hash =				0;
 	entt::entity parent =		entt::null;
 	std::set<entt::entity> children = {};
+
+
+	SER_COMP(TransformComponent, 
+		position, 
+		rotation, 
+		scale)
 };
 
 namespace std

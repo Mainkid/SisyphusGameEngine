@@ -3,10 +3,13 @@
 
 #include "../../vendor/entt/entt.hpp"
 #include "../Core/IService.h"
+#include "../Serialization/Serializer.hpp"
 
 struct EngineContext : public IService
 {
 	entt::registry ecs;
+
+	ser::Serializer serializer;
 
 	entt::entity selectedEntityID=entt::null;
 	float totalTime = 0;

@@ -1,0 +1,5 @@
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define SER_COMP(Type, __VA_ARGS__) static void Serialize( ser::Serializer* sr, void* raw, nlohmann::json& outJson) { auto& data = *reinterpret_cast<Type*>(raw); SER_EXPAND(SER_FUNC(SER_SER_FIELD, __VA_ARGS__)) } static void Deserialize( ser::Serializer* sr, const nlohmann::json& json, entt::registry& ecs, entt::entity ent) { auto& data = ecs.emplace<Type>(ent); SER_EXPAND(SER_FUNC(SER_DES_FIELD, __VA_ARGS__)) }
+#define SER_DATA(Type, __VA_ARGS__) static void Serialize( ser::Serializer* sr, const Type& data, nlohmann::json& outJson) { SER_EXPAND(SER_FUNC(SER_SER_FIELD, __VA_ARGS__)) } static void Deserialize( ser::Serializer* sr, const nlohmann::json& json, Type& data) { SER_EXPAND(SER_FUNC(SER_DES_FIELD, __VA_ARGS__)) }

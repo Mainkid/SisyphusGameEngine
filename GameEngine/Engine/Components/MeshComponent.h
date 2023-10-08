@@ -13,6 +13,8 @@
 #include <string>
 #include <wtypes.h>
 
+#include "../Serialization/Serializable.h"
+
 using namespace DirectX::SimpleMath;
 
 class EngineCore;
@@ -38,6 +40,9 @@ struct MeshComponent
 	std::string texturePath;
 	std::string modelPath;
 	uint32_t hash = 0;
-	
+
+	SER_COMP(MeshComponent,
+		texturePath,
+		modelPath)
 };
 

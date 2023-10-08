@@ -1,15 +1,25 @@
 ﻿#include <iostream>
+#include <fstream>
+
+#include "Components/EditorBillboardComponent.h"
+#include "Components/GameObjectComp.h"
+#include "Components/MeshComponent.h"
+#include "Components/TransformComponent.h"
 #include "Core/EngineCore.h"
 #include "Scene/GameObjectHelper.h"
 
+#include "SimpleMath.h"
+#include "Serialization/Serializable.h"
+
 #define SY_PI 3.14f
-#define SY_PI2 SY_PI / 2 
+#define SY_PI2 SY_PI / 2
+
 
 int main()
 {
-
     //EngineCore* engine = new EngineCore();
     EngineCore::instance()->StartUp();
+
     entt::registry* ecs = &ServiceLocator::instance()->Get<EngineContext>()->ecs;
     auto box1 = GameObjectHelper::CreateStaticBox(ecs, { -5.0f, -5.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 3.0f, 1.0f, 3.0f });
     auto box2 = GameObjectHelper::CreateDynamicBox(ecs, { -5.0f, 10.0f, 0.0f }, { SY_PI2 / 2, 0.0f, SY_PI2 / 2 });
@@ -50,7 +60,30 @@ int main()
     ////auto res= EngineCore::instance()->scene->DestroyGameObject(_go2);
     ////_go2 = EngineCore::instance()->scene->AddGameObject();
     ////engine->scene->Initialize();
-    
+
+
+    //---------- Serialization test ----------------
+    //ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+    //ser.AddEcsCompMeta<GameObjectComp>();
+    //ser.AddEcsCompMeta<TransformComponent>();
+    //ser.AddEcsCompMeta<MeshComponent>();
+    //ser.AddEcsCompMeta<LightComponent>();
+    //ser.AddEcsCompMeta<EditorBillboardComponent>();
+    //
+    //auto json = ser.Serialize<GameObjectComp>(*ecs);
+    //std::ofstream file;
+    //file.open("scene.json", std::ios::trunc);
+    //file << std::setw(1) << json;
+    //file.close();
+    //
+    //auto view = ecs->view<GameObjectComp>();
+    //for (auto ent : view)
+    //    ecs->destroy(ent);
+    //
+    //ser.Deserialize(json, *ecs);
+    //---------------------------------------------
+
+
     EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();
     

@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="Engine\Scene\CameraHelper.cpp" />
     <ClCompile Include="Engine\Scene\GameObjectHelper.cpp" />
+    <ClCompile Include="Engine\Serialization\SerializableOuters.h" />
     <ClCompile Include="Engine\Serialization\SerializableTraits.h" />
     <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp" />
     <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp" />
@@ -645,6 +646,7 @@
     <ClInclude Include="Engine\Components\SkyboxComponent.h" />
     <ClInclude Include="Engine\Scene\GameObjectHelper.h" />
     <ClInclude Include="Engine\Serialization\Serializable.h" />
+    <ClInclude Include="Engine\Serialization\SerializableMacros.h" />
     <ClInclude Include="Engine\Serialization\Serializer.hpp" />
     <ClInclude Include="Engine\Systems\EngineContext.h" />
     <ClInclude Include="Engine\Core\IService.h" />
@@ -731,6 +733,7 @@
     <ClInclude Include="vendor\WICTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="Engine\Assets\Shaders\LightShader.hlsl">
       <FileType>Document</FileType>
     </None>

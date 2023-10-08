@@ -1,4 +1,6 @@
 #pragma once
+#include "../../Serialization/Serializable.h"
+
 namespace DirectX
 {
 	namespace SimpleMath
@@ -41,6 +43,8 @@ struct SyVector3
 	//friend SyVector3 operator+(const SyVector3& left_, const SyVector3& right_);
 	//friend SyVector3 operator-(const SyVector3& left_, const SyVector3& right_);
 	//friend SyVector3 operator*(const SyVector3& vec_, float factor_);
+
+	SER_DATA(SyVector3, x, y, z)
 };
 
 //SyVector3 operator+(const SyVector3& left_, const SyVector3& right_);

@@ -69,6 +69,7 @@
     <ClCompile Include="Engine\Scene\GameObjectHelper.cpp" />
     <ClCompile Include="Engine\Core\ECS\SystemsGroup.cpp" />
     <ClCompile Include="Engine\Scene\CameraHelper.cpp" />
+    <ClCompile Include="Engine\Serialization\SerializableOuters.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -155,11 +156,12 @@
     <ClInclude Include="vendor\stb_image.h" />
     <ClInclude Include="vendor\WICTextureLoader.h" />
     <ClInclude Include="Engine\Serialization\Serializer.hpp" />
-    <ClInclude Include="Engine\Serialization\Serializable.h" />
+    <ClInclude Include="Engine\Serialization\SerializableMacros.h" />
     <ClInclude Include="vendor\nlohmann_json\json.hpp" />
     <ClInclude Include="Engine\Scene\GameObjectHelper.h" />
     <ClInclude Include="Engine\Core\ECS\SystemsGroup.h" />
     <ClInclude Include="Engine\Scene\CameraHelper.h" />
+    <ClInclude Include="Engine\Serialization\Serializable.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
@@ -175,6 +177,7 @@
     <None Include="Engine\Assets\Shaders\Skybox.hlsl" />
     <None Include="Engine\Assets\Shaders\ShadowPointlightShader.hlsl" />
     <None Include="Engine\Assets\Shaders\ShadowPointLightGenerator.hlsl" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png">
