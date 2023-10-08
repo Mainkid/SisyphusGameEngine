@@ -26,7 +26,6 @@ public:
 	std::vector<int> indices;
 	std::shared_ptr<Buffer> indexBuffer;
 	std::shared_ptr<Buffer> vertexBuffer;
-	Material* material = nullptr;
 };
 
 

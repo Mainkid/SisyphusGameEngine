@@ -18,7 +18,7 @@ void RenderInitSystem::Init()
 
     ec->scene=std::make_unique<Scene>();
 
-    rc->cubeMesh = MeshLoader::LoadSimpleMesh("./Engine/Assets/Cube.fbx");
+    rc->cubeMesh = MeshLoader::LoadSimpleMesh("./Engine/Assets/Resources/Cube.fbx");
 
     using namespace DirectX::SimpleMath;
     {
@@ -427,7 +427,7 @@ void RenderInitSystem::Init()
 
     rc->shadowShader = std::make_unique<Shader>();
     rc->shadowShader->Initialize(L"./Engine/Assets/Shaders/ShadowShader.hlsl",
-        COMPILE_VERTEX | COMPILE_GEOM, USE_POSITION | USE_COLOR | USE_NORMAL | USE_TANGENT_BITANGENT, "DepthVertexShader");
+        COMPILE_VERTEX | COMPILE_GEOM | COMPILE_PIXEL, USE_POSITION | USE_COLOR | USE_NORMAL, "DepthVertexShader","PS_Main");
 
     rc->shadowPointLightShader = std::make_unique<Shader>();
     rc->shadowPointLightShader->Initialize(L"./Engine/Assets/Shaders/ShadowPointlightShader.hlsl",

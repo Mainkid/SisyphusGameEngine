@@ -125,12 +125,18 @@ void HudPropertiesSystem::DrawMaterialProperties()
 
     std::vector<Vector4> vecs = { albedoVec,specularVec,roughnessVec,metallicVec,emissiveVec};
     std::vector<std::string> textureUUIDvec = { fileData["albedoTextureUUID"], fileData["specularTextureUUID"], fileData["roughnessTextureUUID"],
+    
     fileData["metallicTextureUUID"],fileData["emissiveTextureUUID"], fileData["normalmapTextureUUID"], fileData["opacityTextureUUID"] };
 
-    //std::sort(textureUUIDvec.begin(), textureUUIDvec.end());
+    
 
     std::vector<const char*> items = rs->GetAllResourcesOfType(EAssetType::ASSET_TEXTURE);
+    std::vector<std::string> filePathsStr = rs->GetAllResourcesFilePaths(EAssetType::ASSET_TEXTURE);
+    std::vector<const char*> filePaths;
 
+    for (int i = 0; i < filePathsStr.size(); i++) {
+        filePaths.push_back(filePathsStr[i].c_str());
+    }
    
 
 
@@ -141,7 +147,7 @@ void HudPropertiesSystem::DrawMaterialProperties()
 
     float vec4[4]{ albedoVec.x,albedoVec.y,albedoVec.z,albedoVec.w};
     static int texture_current[7] = {-1,-1,-1,-1,-1,-1,-1};
-    static bool params[7] = {false,false,false,false,false,false,false};
+    static bool params[7] = {true,true,true,true,true,true,true};
     static float col2[7][4] = { 
      {0.0f, 0.0f, 0.0f, 0.0f},
     {0.0f, 0.0f, 0.0f, 0.0f},
@@ -173,9 +179,11 @@ void HudPropertiesSystem::DrawMaterialProperties()
             col2[i][1] = vecs[i].y;
             col2[i][2] = vecs[i].z;
             col2[i][3] = vecs[i].w;
-
+            col2[i][3] = 1.0f;
             params[i] = vecs[i].w < 0;
         }
+
+        params[5] = vecs[2].y < 0;
 
         for (int i = 0; i < textureUUIDvec.size(); i++)
         {
@@ -187,6 +195,23 @@ void HudPropertiesSystem::DrawMaterialProperties()
 
     }
 
+    auto dragDropFunc = [&](int i) {
+        if (ImGui::BeginDragDropTarget())
+        {
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_CONTENTBROWSER"))
+            {
+                std::string uuid;
+                uuid = static_cast<char*>(payload->Data);
+                uuid.resize(36);
+                if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_TEXTURE)
+                {
+                    setTextureByUUID(uuid, i, texture_current, items, textureUUIDvec);
+                }
+            }
+            ImGui::EndDragDropTarget();
+        }
+    };
 
     for (int i = 0; i < 5; i++)
     {
@@ -195,23 +220,8 @@ void HudPropertiesSystem::DrawMaterialProperties()
         ImGui::SameLine();
         ImGui::BeginDisabled(!params[i]);
         ImGui::PushItemWidth(comboWidth);
-        ImGui::Combo(comboBoxLabels[i], &texture_current[i], items.data(), items.size());
-        if (ImGui::BeginDragDropTarget())
-        {
-
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_CONTENTBROWSER"))
-            {
-                std::string uuid;
-                uuid=static_cast<char*>(payload->Data);
-                uuid.resize(36);
-                
-                if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_TEXTURE)
-                {
-                    setTextureByUUID(uuid, i, texture_current, items, textureUUIDvec);
-                }
-            }
-            ImGui::EndDragDropTarget();
-        }
+        ImGui::Combo(comboBoxLabels[i], &texture_current[i], filePaths.data(), filePaths.size());
+        dragDropFunc(i);
         ImGui::PopItemWidth();
         ImGui::EndDisabled();
 
@@ -227,10 +237,15 @@ void HudPropertiesSystem::DrawMaterialProperties()
     for (int i = 5; i < 7; i++)
     {
         ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(10, 10));
+        ImGui::Checkbox(checkBoxLabels[i], &params[i]);
+        ImGui::SameLine();
+        ImGui::BeginDisabled(!params[i]);
         ImGui::PushItemWidth(comboWidth);
-        ImGui::Combo(comboBoxLabels[i], &texture_current[i], items.data(), items.size());
+        ImGui::Combo(comboBoxLabels[i], &texture_current[i], filePaths.data(), filePaths.size());
+        dragDropFunc(i);
         ImGui::PopItemWidth();
         ImGui::PopStyleVar();
+        ImGui::EndDisabled();
     }
 
     
@@ -247,10 +262,10 @@ void HudPropertiesSystem::DrawMaterialProperties()
                 {"normalmapTextureUUID",items[texture_current[5]]},
                 {"opacityTextureUUID",items[texture_current[6]]},
                 {"albedoVec",std::vector<float>{col2[0][0],col2[0][1],col2[0][2],1.f * (!params[0]) -1* (params[0])}},
-                {"specularVec",std::vector<float>{col2[1][0],col2[1][1],col2[1][2],1.f * (!params[0]) - 1 * (params[1])}},
-                {"roughnessVec",std::vector<float>{col2[2][0],col2[2][1],col2[2][2],1.f * (!params[0]) - 1 * (params[2])}},
-                {"metallicVec",std::vector<float>{col2[3][0],col2[3][1],col2[3][2],1.f * (!params[0]) - 1 * (params[3])}},
-                {"emissiveVec",std::vector<float>{col2[4][0],col2[4][1],col2[4][2],1.f * (!params[0]) - 1 * (params[4])}}
+                {"specularVec",std::vector<float>{col2[1][0],col2[1][1],col2[1][2],1.f * (!params[1]) - 1 * (params[1])}},
+                {"roughnessVec",std::vector<float>{col2[2][0],1.f * (!params[5]) - 1 * (params[5]),col2[2][2],1.f * (!params[2]) - 1 * (params[2])}},
+                {"metallicVec",std::vector<float>{col2[3][0],col2[3][1],col2[3][2],1.f * (!params[3]) - 1 * (params[3])}},
+                {"emissiveVec",std::vector<float>{col2[4][0],col2[4][1],col2[4][2],0.01f * (!params[4]) - 1 * (params[4])}}
         };
             
         std::ofstream out_file;
@@ -258,10 +273,14 @@ void HudPropertiesSystem::DrawMaterialProperties()
         out_file << outputData;
         out_file.close();
 
+        rs->LoadResource(rs->GetUUIDFromPath(filePath),true);
     }
     prevSelectedUUID = ec->selectedContent.uuid;
 }
 
-//TODO: Зарефакторить код после изменений Дмитрия
 //TODO: Нужно избежать открытия файлов каждый фрейм
-//TODO: Добавить ивент для пегезагрузки материала после обновления
+
+//TODO: Тестовые кейсы:
+// 1) Переименовать файл текстуры
+// 2) Переместить файл текстуры
+// 3) Удалить файл с ресурсом (текстура)

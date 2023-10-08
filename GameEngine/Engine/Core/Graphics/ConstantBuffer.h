@@ -27,7 +27,7 @@ class CB_BaseEditorBuffer
 public:
     CB_BaseBuffer baseData;
     CB_MaterialData materialData;
-    uint32_t instanseID;
+    DirectX::SimpleMath::Vector4 instanseID;
     
 };
 

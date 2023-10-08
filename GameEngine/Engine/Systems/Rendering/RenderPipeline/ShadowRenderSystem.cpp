@@ -61,7 +61,7 @@ void ShadowRenderSystem::Run()
                 hc->context->PSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
                 hc->context->GSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
 
-                for (auto& mesh : meshComponent.meshes)
+                for (auto& mesh : meshComponent.model->meshes)
                 {
                     UINT offset[1] = { 0 };
                     UINT stride[1] = { 48 };
@@ -91,7 +91,7 @@ void ShadowRenderSystem::Run()
                     
                 }
             }
-            hc->context->GSSetShader(nullptr, nullptr, 0);
+            //hc->context->GSSetShader(nullptr, nullptr, 0);
         }
         else if (light.lightType == LightType::PointLight && (light.lightBehavior==LightBehavior::Movable ||
             (light.lightBehavior==LightBehavior::Static && light.shouldBakeShadows)))
@@ -159,7 +159,7 @@ void ShadowRenderSystem::Run()
                 hc->context->VSSetShader(rc->shadowPointLightShader->vertexShader.Get(), nullptr, 0);
                 hc->context->GSSetShader(rc->shadowPointLightShader->geomShader.Get(), nullptr, 0);
 
-                for (auto& mesh : meshComponent.meshes)
+                for (auto& mesh : meshComponent.model->meshes)
                 {
                     UINT offset[1] = { 0 };
                     UINT stride[1] = { 48 };
@@ -178,7 +178,7 @@ void ShadowRenderSystem::Run()
         }
     }
 
-
+    hc->context->GSSetShader(nullptr, nullptr, 0);
 
     rc->viewport.Width = static_cast<float>(hc->window->GetWidth());
     rc->viewport.Height = static_cast<float>(hc->window->GetHeight());

@@ -10,7 +10,7 @@ cbuffer mycBuffer : register(b0)
     float4 roughnessVec;
     float4 emissiveVec;
     float4 specularVec;
-    uint instanceID;
+    float4 instanceID;
 
 };
 
@@ -67,7 +67,7 @@ GBuffer PSMain(PS_IN input) : SV_Target
 
     clip(pixelColor.a - 1.0f);
     output.Diffuse = pixelColor;
-    output.InstanceIDs = float4(instanceID, 4, 5, 1.0f);
+    output.InstanceIDs = float4(instanceID.x, 0, 0, 1.0f);
     
     return output;
 }

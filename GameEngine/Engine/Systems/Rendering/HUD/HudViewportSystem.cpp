@@ -32,21 +32,25 @@ void HudViewportSystem::Run()
 	ImVec2 r = ImGui::GetItemRectSize();
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();
+
+	ImVec2 pos2 = ImGui::GetMousePos();
+	ImVec2 pos = ImGui::GetCursorScreenPos();
+	pos = ImVec2(pos2.x - pos.x, pos2.y - pos.y + imgSize.y);
+	auto textureSize = RenderHelper::GetRtvResolution();
+	x = std::clamp((int)(pos.x * textureSize.x / imgSize.x), 0, (int)textureSize.x - 1);
+	y = std::clamp((int)(pos.y * textureSize.y / imgSize.y), 0, (int)textureSize.y - 1);
 	
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)&& !ImGuizmo::IsOver()&& hoverState==EHoveringState::Viewport)
 	{
 		
-		ImVec2 pos2 = ImGui::GetMousePos();
-		ImVec2 pos = ImGui::GetCursorScreenPos();
-		//std::cout << "Is over" << std::endl;
-		auto textureSize = RenderHelper::GetRtvResolution();
-
-
-		pos = ImVec2(pos2.x- pos.x, pos2.y - pos.y+imgSize.y);
-	    x = std::clamp((int)(pos.x * textureSize.x / imgSize.x),0, (int)textureSize.x-1);
-		y = std::clamp((int)(pos.y * textureSize.y / imgSize.y),0, (int)textureSize.y-1);
 		
-		int pixelColorR =RenderHelper::GetPixelValue(x, y);
+		//std::cout << "Is over" << std::endl;
+		
+
+
+		
+		
+		int pixelColorR =RenderHelper::GetPixelValue(x, y).x;
 		if (pixelColorR != -1)
 		{
 			ec->selectedEntityID=entt::entity(pixelColorR);
@@ -70,9 +74,19 @@ void HudViewportSystem::Run()
 				auto camera = ec->scene->registry.view<CameraComponent, TransformComponent>();
 
 
-				ec->scene->registry.get<MeshComponent>(go).modelPath = rs->FindFilePathByUUID(uuid);
+				ec->scene->registry.get<MeshComponent>(go).modelUUID = uuid;
 				auto pos = camera.get<TransformComponent>(camera.front()).localPosition + Vector3(camera.get<CameraComponent>(camera.front()).forward * 5.0f);
 				ec->scene->registry.get<TransformComponent>(go).localPosition = pos;
+			}
+			else if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_MATERIAL)
+			{
+				auto enttID = RenderHelper::GetPixelValue(x, y);
+				if (enttID.z == int(EAssetType::ASSET_MESH))
+				{
+					MeshComponent& meshComp = ec->scene->registry.get<MeshComponent>(static_cast<entt::entity>(enttID.x));
+					meshComp.materials[enttID.y] = static_cast<Material*>(rs->LoadResource(uuid));
+					std::cout << " ";
+				}
 			}
 		}
 		ImGui::EndDragDropTarget();

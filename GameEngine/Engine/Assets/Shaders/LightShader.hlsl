@@ -34,6 +34,7 @@ Texture2D<float4> PositionTex : register(t6);
 Texture2D<float4> InstanceIDTex : register(t7);
 Texture2D shadowTexture : register(t8);
 Texture2D skyboxTexture : register(t9);
+Texture2DArray depthMapTexture : register(t10);
 //Texture2D depthTexture : register(t10);
 
 
@@ -92,41 +93,51 @@ float4 PS_Directional(PS_IN input) : SV_Target
     
     //PCF --->
     
+    float bias = 0.001f;
+    float3 projectTexCoord;
+    float depthValue;
+    float lightDepthValue;
+    int layer = 3;
+    float depthVal = abs(mul(float4(worldPos, 1), worldView).z);
+    for (int i = 0; i < 4; i++)
+        if (depthVal < distances[i].x)
+        {
+            layer = i;
+            break;
+        }
+    
     float texelWidth = 1.0 / 1280.0f;
     float texelHeight = 1.0 / 720.0f;
-    float texelOffset = 3;
+    float texelOffset = 1;
     float2 texelSize = float2(texelWidth, texelHeight)*texelOffset;
     float shadowSum = 0.0f;
     
-    for (int y = -3; y <= 3; y++)
+    float4 posLight = float4(worldPos, 1);
+    posLight = mul(posLight, viewProj[layer]);
+    
+    
+    projectTexCoord.x = posLight.x / posLight.w / 2.0f + 0.5f;
+    projectTexCoord.y = -posLight.y / posLight.w / 2.0f + 0.5f;
+    projectTexCoord.z = layer;
+    lightDepthValue = posLight.z / posLight.w - bias;
+    
+    for (int y = -2; y <= 2; y++)
     {
-        for (int x = -3; x <= 3; x++)
+        for (int x = -2; x <= 2; x++)
         {
-            float2 offset = float2(x, y) * texelSize;
-            shadowSum = shadowSum + clamp(shadowTexture.Sample(textureSampler, input.col.xy + offset), 0, 1);
+            float3 offset = float3(float2(x, y) * texelSize, 0);
+            depthValue = depthMapTexture.Sample(textureSampler, projectTexCoord+offset).r;
+            shadowSum += lightDepthValue > depthValue;
+            //shadowSum = shadowSum + clamp(shadowTexture.Sample(textureSampler, input.col.xy + offset), 0, 1);
         }
     }
-    shadowSum = shadowSum / 49.0f;
     
+    shadowSum = shadowSum / 25.0f;
+    //shadowSum = shadowSum * depthMapTexture.Sample(textureSampler, projectTexCoord).r > depthValue;
+    //shadowSum = lightDepthValue>depthMapTexture.Sample(textureSampler, projectTexCoord).r;
     //<--- PCF
     
     lightIntesity = lightIntesity;
-        
-    
-    //float3 diffuseFactor = lightIntesity * lightData.color.xyz * dot(lightVec, normal.xyz);
-    
-    //diffuseFactor.x = max(diffuseFactor.x, 0);
-    //diffuseFactor.y = max(diffuseFactor.y, 0);
-    //diffuseFactor.z = max(diffuseFactor.z, 0);
-    
-    //float3 specFactor = float3(0, 0, 0);
-    
-    //if (length(diffuseFactor.xyz) > 0.0f)
-    //{
-    //    float3 v = reflect(-lightVec, normal.xyz);
-    //    specFactor = specular.xyz * lightIntesity * lightData.color.xyz * pow(max(dot(v, toEye), 0.0f), specularAlpha);
-        
-    //}
     float3 F0 = float3(0.04, 0.04, 0.04);
     F0 = lerp(F0, albedoColor, (metallicColor.r + metallicColor.g + metallicColor.b) / 3.0f);
     float3 instanceID = InstanceIDTex.Sample(textureSampler, input.col.xy);
@@ -134,7 +145,7 @@ float4 PS_Directional(PS_IN input) : SV_Target
     lightData.color.xyz, albedoColor, roughnessColor, metallicColor, emissiveColor, lightIntesity) * (instanceID.x > 0);
     
     
-    return float4(resColor*shadowSum, 1.0f);
+    return float4(resColor * (1 - shadowSum), 1.0f);
 
 }
 

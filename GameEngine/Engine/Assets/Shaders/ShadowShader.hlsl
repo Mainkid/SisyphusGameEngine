@@ -45,7 +45,7 @@ struct PixelInputType
 
 
 [instance(4)]
-[maxvertexcount(1)]
+[maxvertexcount(3)]
 void GSMain(triangle GS_IN p[3], in uint id : SV_GSInstanceID, inout TriangleStream<GS_OUT> stream)
 {
     [unroll]
@@ -76,4 +76,10 @@ GS_IN
     output.pos.w = 1.0f;
 	
     return output;
+}
+
+float4 PS_Main(GS_OUT output) :SV_Target
+{
+    return float4(1, 0, 0, 1);
+
 }

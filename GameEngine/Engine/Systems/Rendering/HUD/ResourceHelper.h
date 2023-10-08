@@ -62,6 +62,9 @@ public:
 		
 		if (!std::filesystem::is_directory(newPath))
 			return;
+
+		if (std::filesystem::is_directory(oldPath) && newPath.string().find(oldPath.string()) != std::string::npos)
+			return;
 		
 		auto filename = oldPath.filename();
 		if (std::filesystem::exists(newPath.string() + "\\" + filename.string()))
@@ -96,80 +99,14 @@ public:
 		map.erase(oldPath.string());
 		std::filesystem::rename(oldPath, newPath);
 		map[newPath.string()] = val;
-
 		
 		if (!std::filesystem::is_directory(newPath))
 			std::filesystem::rename(oldPath.string() + ".meta", newPath.string() + ".meta");
 
 		rs->LoadResourceLibrary(".\\Game\\Assets", true);
+		rs->LoadResourceLibrary(".\\Engine\\Assets\\Resources", false);
 	}
 
-	//static void LoadResourceLibrary(std::filesystem::path path, std::unordered_map<std::string, ResourceInfo>& resourceLibrary, bool reloadNeeded=false)
-	//{
-	//	using json = nlohmann::json;
-
-	//	if (reloadNeeded)
-	//		resourceLibrary.clear();
-
-
-	//	for (auto& directoryEntry : std::filesystem::directory_iterator(path))
-	//	{
-	//		if (directoryEntry.is_directory())
-	//			LoadResourceLibrary(directoryEntry,resourceLibrary);
-	//		else
-	//		{
-	//			if (directoryEntry.path().filename().extension() != ".meta")
-	//			{
-	//				boost::uuids::uuid uuid;
-	//				EAssetType assetType;
-	//				int assetTypeInt;
-	//				std::ifstream filei;
-	//				std::ofstream fileo;
-	//				filei.open(directoryEntry.path().string() + ".meta");
-	//				json fileData;
-	//				filei >> fileData;
-	//				filei.close();
-
-	//				assetType = static_cast<EAssetType>(fileData["AssetType"]);
-	//				std::string uuidStr = fileData["uuid"];
-	//				auto extension = directoryEntry.path().filename().extension().string();
-	//				resourceLibrary[uuidStr] = { assetType,directoryEntry.path() };
-
-	//			}
-	//		}
-	//		std::cout << directoryEntry.path() << std::endl;
-	//	}
-	//}
-
-	//static std::string GetUUIDFromPath(std::filesystem::path path)
-	//{
-	//	using json = nlohmann::json;
-
-	//	if (std::filesystem::is_directory(path))
-	//		return "";
-	//	std::ifstream file;
-	//	std::string uuid;
-
-	//	file.open(path.string() + ".meta");
-	//	json fileData;
-	//	file >> fileData;
-	//	file.close();
-	//	uuid = fileData["uuid"];
-	//	return uuid;
-
-	//	
-	//}
-
-	//static std::string FindFilePathByUUID(const std::string& uuid)
-	//{
-	//	std::filesystem::path filePath=ServiceLocator::instance()->Get<EngineContext>()->resourceLibrary.at(uuid).path;
-	//	if (std::filesystem::exists(filePath))
-	//		return filePath.string();
-	//	else
-	//	{
-	//		//TODO: Добавить вывод ошибки, если файл отсутствует с ID
-	//	}
-	//}
 
 	static void FillFileWithBaseData(const std::filesystem::path& path, EAssetType assetType)
 	{
@@ -184,13 +121,13 @@ public:
 
 			json fileData = {
 
-				{"albedoTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Textures\\black_texture.png")},
-				{"specularTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Textures\\white_texture.png")},
-				{"roughnessTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Textures\\white_texture.png")},
-				{"metallicTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Textures\\white_texture.png")},
-				{"emissiveTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Textures\\alpha-transparent.png")},
-				{"normalmapTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Textures\\default_normalmap.jpg")},
-				{"opacityTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Textures\\alpha-transparent.png")},
+				{"albedoTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\black_texture.png")},
+				{"specularTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\white_texture.png")},
+				{"roughnessTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\white_texture.png")},
+				{"metallicTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\white_texture.png")},
+				{"emissiveTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\alpha-transparent.png")},
+				{"normalmapTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\normal_map.jpg")},
+				{"opacityTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\alpha-transparent.png")},
 				{"albedoVec",std::vector<float>{0,0,0,-1}},
 				{"specularVec",std::vector<float>{0,0,0,-1}},
 				{"roughnessVec",std::vector<float>{-1,0,0,-1}},

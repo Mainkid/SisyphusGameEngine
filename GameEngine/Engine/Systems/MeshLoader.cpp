@@ -74,35 +74,6 @@ std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene
 	
 	auto msh = std::make_shared<Mesh>(vertices, indices);
 	
-	
-	/*aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
-		aiString Path;
-		if (mat->GetTexture(aiTextureType_DIFFUSE, 0, &Path, nullptr, nullptr, nullptr, nullptr, nullptr) == AI_SUCCESS)
-		{
-			std::filesystem::path path(Path.data);
-			msh->material->albedoTexturePath=path.filename().string();
-		}
-		if (mat->GetTexture(aiTextureType_METALNESS, 0, &Path, nullptr, nullptr, nullptr, nullptr, nullptr) == AI_SUCCESS)
-		{
-			std::filesystem::path path(Path.data);
-			msh->material->metallicTexturePath = path.filename().string();
-		}
-		if (mat->GetTexture(aiTextureType_NORMALS, 0, &Path, nullptr, nullptr, nullptr, nullptr, nullptr) == AI_SUCCESS)
-		{
-			std::filesystem::path path(Path.data);
-			msh->material->normalmapTexturePath= path.filename().string();
-		}
-		if (mat->GetTexture(aiTextureType_EMISSIVE, 0, &Path, nullptr, nullptr, nullptr, nullptr, nullptr) == AI_SUCCESS)
-		{
-			std::filesystem::path path(Path.data);
-			msh->material->emissiveTexturePath = path.filename().string();
-		}
-		if (mat->GetTexture(aiTextureType_SHININESS, 0, &Path, nullptr, nullptr, nullptr, nullptr, nullptr) == AI_SUCCESS)
-		{
-			std::filesystem::path path(Path.data);
-			msh->material->roughnessTexturePath = path.filename().string();
-		}*/
-	
 	return  msh;
 }
 

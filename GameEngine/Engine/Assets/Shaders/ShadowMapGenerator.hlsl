@@ -65,7 +65,7 @@ float4 PS_ShadowMapGenerator(PS_IN input) : SV_Target
     float3 worldPos = WorldPosTex.Sample(textureSampler, input.col.xy);
     float3 normal = NormalTex.Sample(textureSampler, input.col.xy);
     float lightIntesity = 1.0f;
-    normal = (normal.xyz - float3(0.5f, 0.5f, 0.5f)) * 2.0f;
+    //normal = (normal.xyz - float3(0.5f, 0.5f, 0.5f)) * 2.0f;
     normal = normalize(normal);
     
     //www

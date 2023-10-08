@@ -641,7 +641,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="Engine\Components\Material.h" />
+    <ClInclude Include="Engine\Components\Model.h" />
     <ClInclude Include="Engine\Components\SkyboxComponent.h" />
+    <ClInclude Include="Engine\Components\Texture.h" />
     <ClInclude Include="Engine\Systems\EngineContext.h" />
     <ClInclude Include="Engine\Core\IService.h" />
     <ClInclude Include="Engine\Systems\EditorBillboardSystem.h" />

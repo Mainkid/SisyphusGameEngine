@@ -165,6 +165,8 @@
     <ClInclude Include="Engine\Systems\ResourceInfo.h" />
     <ClInclude Include="Engine\Systems\ResourceService.h" />
     <ClInclude Include="Engine\Components\ResourceBase.h" />
+    <ClInclude Include="Engine\Components\Texture.h" />
+    <ClInclude Include="Engine\Components\Model.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

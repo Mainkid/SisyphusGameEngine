@@ -16,9 +16,10 @@ void ResourceSystem::Init()
 	ec=ServiceLocator::instance()->Get<EngineContext>();
 	rs = ServiceLocator::instance()->Get<ResourceService>();
 	GenerateMetaFiles("./Game/Assets");
-	GenerateMetaFiles("./Engine/Assets/Textures");
+	GenerateMetaFiles("./Engine/Assets/Resources");
 	rs->LoadResourceLibrary("./Game/Assets");
-	rs->LoadResourceLibrary("./Engine/Assets/Textures");
+	rs->LoadResourceLibrary("./Engine/Assets/Resources");
+	rs->LoadBaseAssets();
 }
 
 void ResourceSystem::Run()

@@ -17,7 +17,7 @@ void LightRenderSystem::Run()
     CB_LightBuffer lightBuffer;
 
     float bgColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    ID3D11ShaderResourceView* srvNull[] = { nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr };
+    ID3D11ShaderResourceView* srvNull[] = { nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr };
 
     ID3D11ShaderResourceView* resources[] = 
     { rc->gBuffer->diffuseSRV.Get(),
@@ -130,6 +130,7 @@ void LightRenderSystem::Run()
             {
                 hc->context->PSSetShader(rc->dirLightShader->pixelShader.Get(), nullptr, 0);
                 hc->context->PSSetShaderResources(8, 1, &rc->shadowMapResourceView);
+                hc->context->PSSetShaderResources(10, 1, &rc->shadowResourceView);
             }
             else
             {
@@ -243,7 +244,7 @@ void LightRenderSystem::Run()
             hc->context->DrawIndexed(6, 0, 0);
         }
     }
-    hc->context->PSSetShaderResources(0, 9, srvNull);
+    hc->context->PSSetShaderResources(0, 10, srvNull);
    
 }
 

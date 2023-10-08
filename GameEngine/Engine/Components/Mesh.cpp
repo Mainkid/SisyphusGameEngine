@@ -23,7 +23,6 @@ Mesh::Mesh(const Mesh& mesh)
     this->indices = mesh.indices;
     this->vertexBuffer = mesh.vertexBuffer;
     this->indexBuffer = mesh.indexBuffer;
-	this->material = mesh.material;
 }
 
 const std::vector<int> CubeMesh::indices = {

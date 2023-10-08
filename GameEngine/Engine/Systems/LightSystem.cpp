@@ -33,7 +33,7 @@ void LightSystem::Run()
 
         if (!lc.aabb)
         {
-            lc.aabb = MeshLoader::LoadSimpleMesh("Engine/Assets/Cube.fbx");
+            lc.aabb = MeshLoader::LoadSimpleMesh("Engine/Assets/Resources/Cube.fbx");
         }
         
         if (lc.lightType == LightType::PointLight && lc.shadowMapTexture==nullptr)

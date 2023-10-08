@@ -38,18 +38,18 @@ void OpaqueRenderSystem::Run()
                 DirectX::XMMatrixInverse(nullptr,
                     transformComp.transformMatrix));
 
-        dataOpaque.instanseID = (uint32_t)entity;
-        
+        dataOpaque.instanseID.x = (uint32_t)entity;
+        dataOpaque.instanseID.z = (uint32_t)EAssetType::ASSET_MESH;
 
-        for (int i = 0; i < meshComp.meshes.size(); i++)
+        for (int i = 0; i < meshComp.model->meshes.size(); i++)
         {
             
-            dataOpaque.materialData.albedo = meshComp.meshes[i]->material->albedoValue;
-            dataOpaque.materialData.emissive = meshComp.meshes[i]->material->emissiveValue;
-            dataOpaque.materialData.metallic = meshComp.meshes[i]->material->metallicValue;
-            dataOpaque.materialData.roughness = Vector4(meshComp.meshes[i]->material->roughnessValue,0,0,0);
-            dataOpaque.materialData.specular = meshComp.meshes[i]->material->specularValue;
-
+            dataOpaque.materialData.albedo = meshComp.materials[i]->albedoValue;
+            dataOpaque.materialData.emissive = meshComp.materials[i]->emissiveValue;
+            dataOpaque.materialData.metallic = meshComp.materials[i]->metallicValue;
+            dataOpaque.materialData.roughness = meshComp.materials[i]->roughnessValue;
+            dataOpaque.materialData.specular = meshComp.materials[i]->specularValue;
+            dataOpaque.instanseID.y = i;
 
             D3D11_MAPPED_SUBRESOURCE mappedResource;
             HRESULT res = hc->context->Map(rc->opaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -61,15 +61,15 @@ void OpaqueRenderSystem::Run()
             hc->context->OMSetRenderTargets(8, rc->rtvs, hc->depthStencilView.Get());
             hc->context->IASetInputLayout(rc->opaqueShader->layout.Get());
             hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-            hc->context->IASetIndexBuffer(meshComp.meshes[i]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-            hc->context->IASetVertexBuffers(0, 1, meshComp.meshes[i]->vertexBuffer->buffer.GetAddressOf(),
+            hc->context->IASetIndexBuffer(meshComp.model->meshes[i]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+            hc->context->IASetVertexBuffers(0, 1, meshComp.model->meshes[i]->vertexBuffer->buffer.GetAddressOf(),
                 meshComp.strides, meshComp.offsets);
-            hc->context->PSSetSamplers(0, 1, meshComp.samplerState.GetAddressOf());
+            hc->context->PSSetSamplers(0, 1, meshComp.materials[i]->albedoSRV->textureSamplerState.GetAddressOf());
             hc->context->OMSetDepthStencilState(hc->depthStencilState.Get(), 0);
             hc->context->VSSetShader(rc->opaqueShader->vertexShader.Get(), nullptr, 0);
             hc->context->PSSetShader(rc->opaqueShader->pixelShader.Get(), nullptr, 0);
-            hc->context->PSSetShaderResources(0, 7, meshComp.meshes[i]->material->resources);
-            hc->context->DrawIndexed(meshComp.meshes[i]->indexBuffer->size, 0, 0);
+            hc->context->PSSetShaderResources(0, 7, meshComp.materials[i]->resources);
+            hc->context->DrawIndexed(meshComp.model->meshes[i]->indexBuffer->size, 0, 0);
         }
     }
 }

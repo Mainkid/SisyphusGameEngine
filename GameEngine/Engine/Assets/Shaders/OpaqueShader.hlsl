@@ -11,7 +11,8 @@ cbuffer mycBuffer : register(b0)
     float4 roughnessVec;
     float4 emissiveVec;
     float4 specularVec;
-    uint instanceID;
+    
+    float4 instanceID;
 };
 
 Texture2D albedoTex : TEXTURE : register(t0);
@@ -67,7 +68,7 @@ PS_IN VSMain(VS_IN input)
     output.col = input.col;
     float3 T = normalize(mul(float3(input.tangents.xyz), (float3x3) world));
     float3 B = normalize(mul(float3(input.bitangents.xyz), (float3x3) world));
-    float3 N = normalize(input.normals);
+    float3 N = normalize(mul(float3(input.normals.xyz), (float3x3) world));
     output.TBN = float3x3(T.xyz, B.xyz,N.xyz);
 	
     return output;
@@ -81,35 +82,30 @@ GBuffer PSMain(PS_IN input) : SV_Target
     GBuffer output = (GBuffer) 0;
     
     
-    float3 pixelColor = albedoTex.Sample(objSamplerState, input.col.xy)*(albedoVec.w<0) + 
-    albedoVec.xyzw*(albedoVec.w>=0);
-    float3 specularColor = specularTex.Sample(objSamplerState, input.col.xy) * (specularVec.w < 0) +
-    specularVec*(specularVec.w>=0);
-    float3 metallicColor = metallicTex.Sample(objSamplerState, input.col.xy) * (metallicVec.w < 0) +
-    metallicVec * (metallicVec.w >= 0);
-    float roughness = roughnessTex.Sample(objSamplerState, input.col.xy).r * (roughnessVec.r < 0) +
-    roughnessVec.r * (roughnessVec.r>=0);
-    float4 emissive = emissiveTex.Sample(objSamplerState, input.col.xy);
-    
+    float3 pixelColor = albedoTex.Sample(objSamplerState, input.col.xy).xyz * (albedoVec.w < 0) + albedoVec.xyz * (albedoVec.w >= 0);
+    float3 specularColor = specularTex.Sample(objSamplerState, input.col.xy).xyz * (specularVec.w < 0) + specularVec.xyz * (specularVec.w >= 0);
+    float3 metallicColor = metallicTex.Sample(objSamplerState, input.col.xy).xyz * (metallicVec.w < 0) + metallicVec.xyz * (metallicVec.w >= 0);
+    float roughness = roughnessTex.Sample(objSamplerState, input.col.xy).r * (roughnessVec.w < 0) + roughnessVec.xyz * (roughnessVec.w >= 0);
+    float4 emissive = emissiveTex.Sample(objSamplerState, input.col.xy) * (emissiveVec.w < 0) + emissiveVec.xyzw * (emissiveVec.w >= 0);
     float3 normal = normalMapTex.Sample(objSamplerState, input.col.xy);
     normal = normal* 2.0f - 1.0f;
     
     normal = normalize(normal);
-    normal.y = -normal.y;
     //normal.y = -normal.y;
-    normal = mul(normal, input.TBN);
-    
+    //normal.y = -normal.y;
+    normal = normalize(mul(normal, input.TBN));
     
     //normal = input.normals;
+    //normal = input.normals;
     
-    output.Normals = float4(normal ,1.0f);
+    output.Normals = float4(normal * (roughnessVec.g < 0) + input.normals.xyz * (roughnessVec.g >= 0), 1.0f);
     output.Position = float4(input.posW.xyz, 1.0f);
     output.Albedo = float4(pixelColor, 1.0f);
     output.Specular = float4(specularColor, 1);
     output.Metallic = float4(metallicColor, 1);
     output.Roughness = float4(roughness, roughness, roughness, 1);
     output.Emissive = emissive;
-    output.InstanceID = float4(instanceID, instanceID, instanceID, 1.0f);
+    output.InstanceID = instanceID;
     //output.Depth = float4(input.posH.z / input.posH.w, input.posH.z / input.posH.w, input.posH.z / input.posH.w, 1.0f);
     //output.Specular = float4(0.5f, 0.5f, 0.5f, 50.0f);
       

@@ -13,6 +13,7 @@
 struct MeshComponent;
 struct HardwareContext;
 struct EngineContext;
+class ResourceService;
 
 class MeshSystem : public ISystem
 {
@@ -21,11 +22,9 @@ public:
 	void Run() override;
 	void Destroy() override;
 private:
-	bool LoadModel(MeshComponent& mesh);
-	void LoadTexture(MeshComponent& mesh);
-	void ProcessNode(MeshComponent& meshComp, aiNode* node, const aiScene* scene);
 	std::hash<std::string> hasher;
 	HardwareContext* hc;
 	EngineContext* ec;
+	ResourceService* rs;
 };
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "Mesh.h"
+#include "Model.h"
 #include "SimpleMath.h"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
@@ -22,22 +23,20 @@ struct MeshComponent
 {
 	MeshComponent()
 	{
-		this->texturePath = "Engine/Assets/DefaultTexture.png";
-		this->modelPath = "Engine/Assets/Cube.fbx";
+		//this->modelPath = "Engine/Assets/Cube.fbx";
 	};
-	MeshComponent(std::string& modelPath, std::string& texturePath)
+	MeshComponent(std::string modelUUID)
 	{
-		this->texturePath = texturePath;
-		this->modelPath = modelPath;
+		this->modelUUID = modelUUID;
 	};
 	//Material* material = nullptr;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture = nullptr;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState = nullptr;
-	std::vector<std::shared_ptr<Mesh>> meshes = {};
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture = nullptr;
+	//Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState = nullptr;
+	Model* model = nullptr;
+	std::vector<Material*> materials = {};
+	std::string modelUUID;
 	UINT strides[1] = { 80 };
 	UINT offsets[1] = { 0 };
-	std::string texturePath;
-	std::string modelPath;
 	uint32_t hash = 0;
 	
 };

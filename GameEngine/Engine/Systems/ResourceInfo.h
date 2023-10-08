@@ -19,6 +19,7 @@ struct ResourceInfo
 {
 	EAssetType assetType;
 	std::filesystem::path path;
+	std::string filename;
 };
 
 const std::unordered_map<std::string, EAssetType> extensionToAssetTypeMap =

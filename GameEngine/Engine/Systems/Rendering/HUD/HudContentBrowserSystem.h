@@ -37,6 +37,7 @@ private:
     void DrawTreeFolderWindow();
     void RenderTree(std::filesystem::path path);
     bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f);
+    void InitializePathFileViews(const std::filesystem::path& path);
     void PrintDirectory();
 
     ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);             // Black background
@@ -65,5 +66,6 @@ private:
     std::map<EAssetType, ID3D11ShaderResourceView*> iconSRV;
     std::unordered_map<std::string, EAssetType> pathToAssetTypeMap;
     std::set<std::filesystem::path> selectedFiles;
+    std::vector<std::filesystem::directory_entry> fileViewsVec;
     std::filesystem::path selectedFile;
 };
