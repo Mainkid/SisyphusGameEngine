@@ -3,6 +3,17 @@
 #include <string>
 #include "Serializer.hpp"
 
+/* Put SER_COMP inside component and enumerate component Type and Field Names to serialize.
+ * Ex. SER_COMP(CompType, FieldA, FieldB...)
+ * 
+ * Put SER_DATA inside class/struct and enumerate its Type and Field Names as in example above.
+ *
+ * In case third-party structs such as DirectX::XMVECTOR, put SER_DATA_OUTER in any header outside namespace,
+ * and enumerate Type and Field Names.
+ * Ex. SER_DATA_OUTER(DirectX::XMVECTOR, m128_f32[0], m128_f32[1], m128_f32[2], m128_f32[3])
+ */
+
+
 #define SER_SER_FIELD(val) sr->SerializeField(#val, data.val, outJson);
 
 #define SER_DES_FIELD(val) sr->DeserializeField(json, #val, data.val);
