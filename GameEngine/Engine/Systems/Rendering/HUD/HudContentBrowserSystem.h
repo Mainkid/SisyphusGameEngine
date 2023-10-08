@@ -34,7 +34,7 @@ private:
     void InitImagesSRV();
     void FillPathToAssetMap(std::filesystem::path path);
     void ProcessPopUp();
-    void DrawTreeFolderWindow();
+    void DrawTreeFolderWindow(float windowLeftSizeX);
     void RenderTree(std::filesystem::path path);
     bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f);
     void InitializePathFileViews(const std::filesystem::path& path);
@@ -50,8 +50,6 @@ private:
     bool wasOverPopup = false;
     bool itemWasHovered = false;
     bool areaSelected = false;
-    float windowLeftSizeX=0;
-    float windowRightSizeX=0;
     
     std::filesystem::path renamingFileName = "";
     char renamingFileString [64];
@@ -61,6 +59,7 @@ private:
     const float padding = 16.0;
     const float thumbnailSize = 128;
     const float cellSize = padding + thumbnailSize;
+    const float startLeftWindowWidth = 150;
     std::filesystem::path curDirectory = assetsDirectory;
     ID3D11ShaderResourceView* folderImageSRV;
     std::map<EAssetType, ID3D11ShaderResourceView*> iconSRV;

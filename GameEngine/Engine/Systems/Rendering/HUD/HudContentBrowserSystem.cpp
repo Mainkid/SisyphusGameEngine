@@ -28,9 +28,9 @@ void HudContentBrowserSystem::Destroy()
 
 void HudContentBrowserSystem::Run()
 {
-    static bool initialized = false;
-    static std::filesystem::path previousFrameDirectory = "";
     
+    static std::filesystem::path previousFrameDirectory = "";
+    static bool initialized = false;
     if (!initialized)
     {
         initialized = true;
@@ -48,31 +48,26 @@ void HudContentBrowserSystem::Run()
         InitializePathFileViews(curDirectory);
 
     previousFrameDirectory = curDirectory;
-    auto content = ImGui::GetContentRegionAvail();
+
+    auto contentAreaAvailable = ImGui::GetContentRegionAvail();
    
-    if (windowLeftSizeX==0)
-        windowLeftSizeX = 150;
-    if (windowRightSizeX==0)
-        windowRightSizeX = content.x-150;
+
+    static float windowLeftSizeX = startLeftWindowWidth;
+    static float windowRightSizeX = contentAreaAvailable.x-startLeftWindowWidth;
 
    
     itemWasHovered = false;
-    
-    Splitter(true, 4.0f, &windowLeftSizeX, &windowRightSizeX, 8, 8, content.y);
-   
-    DrawTreeFolderWindow();
+    Splitter(true, 4.0f, &windowLeftSizeX, &windowRightSizeX, 8, 8, contentAreaAvailable.y);
+    DrawTreeFolderWindow(windowLeftSizeX);
 
     
     ImGui::SameLine();
-
     ImGui::BeginChild("child2");
-
     ImGui::Text(curDirectory.string().c_str());
-
     ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y));
     ImVec2 startCursorPos = ImGui::GetCursorScreenPos();
     float panelWidth = ImGui::GetContentRegionAvail().x;
-    auto widgetStartPos = ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
+    auto widgetStartPos = ImVec2(startCursorPos.x, startCursorPos.y);
     widgetStartPos.y += ImGui::GetScrollY();
 
     
@@ -81,8 +76,6 @@ void HudContentBrowserSystem::Run()
     if (ImGui::BeginTable("ContentTable", columnCount))
     {
         ImGuiListClipper clipper;
-        if (fileViewsVec.size() / columnCount == 0)
-            std::cout << "OK";
         auto res = int(((int)fileViewsVec.size() % columnCount) != 0);
         clipper.Begin((int)fileViewsVec.size() / columnCount + res);
 
@@ -110,8 +103,6 @@ void HudContentBrowserSystem::Run()
                     if (fileExtension == ".meta")
                         continue;
 
-                    ImVec2 uv0 = ImVec2(0.0f, 0.0f);                            // UV coordinates for lower-left
-                    ImVec2 uv1 = ImVec2(128.0f / 128.0f, 128.0f / 128.0f);    // UV coordinates for (32,32) in our texture
                     ImVec4 bg = bg_col;
                     if (selectedFiles.count(directoryEntry) > 0)
                         bg = bg_col_selected;
@@ -374,7 +365,7 @@ void HudContentBrowserSystem::ProcessPopUp()
    
 }
 
-void HudContentBrowserSystem::DrawTreeFolderWindow()
+void HudContentBrowserSystem::DrawTreeFolderWindow(float windowLeftSizeX)
 {
     ImGui::BeginChild("child", ImVec2(windowLeftSizeX, ImGui::GetContentRegionAvail().y));
     RenderTree(".\\Game");

@@ -85,7 +85,6 @@ void HudViewportSystem::Run()
 				{
 					MeshComponent& meshComp = ec->scene->registry.get<MeshComponent>(static_cast<entt::entity>(enttID.x));
 					meshComp.materials[enttID.y] = static_cast<Material*>(rs->LoadResource(uuid));
-					std::cout << " ";
 				}
 			}
 		}
