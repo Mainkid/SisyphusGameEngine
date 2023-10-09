@@ -1,13 +1,18 @@
 #include "StartUpSystem.h"
 
-void StartUpSystem::Init()
+SyResult StartUpSystem::Init()
 {
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "StartUp system initialization successful. ");
+	return SyResult();
 }
 
-void StartUpSystem::Run()
+SyResult StartUpSystem::Run()
 {
+	return SyResult();
 }
 
-void StartUpSystem::Destroy()
+SyResult StartUpSystem::Destroy()
 {
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "StartUp system destruction successful. ");
+	return SyResult();
 }

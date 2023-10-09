@@ -8,9 +8,9 @@ struct RenderContext;
 class HudPreRenderSystem : public ISystem
 {
 public:
-	void Init() override;
-	void Run() override;
-	void Destroy() override;
+	SyResult Init() override;
+	SyResult Run() override;
+	SyResult Destroy() override;
 private:
 	void CleanupRenderTarget();
 	void CreateRenderTarget();

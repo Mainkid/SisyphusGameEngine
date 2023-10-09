@@ -8,7 +8,7 @@
 #include "../../../vendor/ImGui/imgui_impl_dx11.h"
 #include "../../../vendor/ImGui/imgui_impl_win32.h"
 
-void EditorCameraSystem::Init()
+SyResult EditorCameraSystem::Init()
 {
     ec = ServiceLocator::instance()->Get<EngineContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
@@ -19,9 +19,11 @@ void EditorCameraSystem::Init()
     ec->scene->camera = &cc;
     ec->scene->cameraTransform = &tc;
     SetLookAtPos(Vector3(-1, 0, 0), tc);
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboard system initialization successful. ");
+    return SyResult();
 }
 
-void EditorCameraSystem::Run()
+SyResult EditorCameraSystem::Run()
 {
 	auto view = ec->scene->registry.view<TransformComponent,CameraComponent>();
 	for (auto& entity : view)
@@ -42,13 +44,13 @@ void EditorCameraSystem::Run()
 		}
         ProcessInput(cc,tc);
 	}
-
-    
-
+    return SyResult();
 }
 
-void EditorCameraSystem::Destroy()
+SyResult EditorCameraSystem::Destroy()
 {
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorCamera system destruction successful. ");
+    return SyResult();
 }
 
 void EditorCameraSystem::UpdateViewMatrix(CameraComponent& cc, TransformComponent& tc)
@@ -62,7 +64,7 @@ void EditorCameraSystem::UpdateViewMatrix(CameraComponent& cc, TransformComponen
     camTarget += tc.localPosition;
 
     DirectX::XMVECTOR upDir = DirectX::XMVector3TransformCoord(cc.UP_VECTOR, camRotationMatrix);
-    cc.view = DirectX::XMMatrixLookAtLH((DirectX::SimpleMath::Vector3)tc.localPosition, camTarget, upDir);
+    cc.view = DirectX::XMMatrixLookAtLH(tc.localPosition, camTarget, upDir);
     cc.forward = Vector4::Transform(cc.FORWARD_VECTOR, camRotationMatrix);
     cc.up = Vector4::Transform(cc.UP_VECTOR, camRotationMatrix);
     cc.back = Vector4::Transform(cc.BACKWARD_VECTOR, camRotationMatrix);

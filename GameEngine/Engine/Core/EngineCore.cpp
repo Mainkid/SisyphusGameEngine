@@ -1,5 +1,6 @@
 #include "EngineCore.h"
 
+
 //EngineCore::EngineCore(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height)
 //{
 //	window = std::make_unique<DisplayWin32>(appName, hInstance, width, height);
@@ -60,9 +61,6 @@ void EngineCore::Update()
 
 void EngineCore::StartUpSystems()
 {
-	ServiceLocator::instance()->Register<EngineContext>();
-	ec = ServiceLocator::instance()->Get<EngineContext>();
-
 	std::unique_ptr<HardwareInitSystem> his = std::make_unique < HardwareInitSystem>();
 	systems.push_back(std::move(his));
 
@@ -93,8 +91,6 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<PreRenderSystem> prs = std::make_unique<PreRenderSystem>();
 	systems.push_back(std::move(prs));
 
-	
-
 	std::unique_ptr<ShadowRenderSystem> srs = std::make_unique<ShadowRenderSystem>();
 	systems.push_back(std::move(srs));
 
@@ -110,7 +106,6 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<LightRenderSystem> lrs = std::make_unique<LightRenderSystem>();
 	systems.push_back(std::move(lrs));
 
-	
 	std::unique_ptr<EditorBillboardRenderSystem> brs = std::make_unique<EditorBillboardRenderSystem>();
 	systems.push_back(std::move(brs));
 
@@ -132,10 +127,18 @@ void EngineCore::StartUpSystems()
 
 	std::unique_ptr<HudViewportSystem> hvs= std::make_unique<HudViewportSystem>();
 	systems.push_back(std::move(hvs));
+
+	std::unique_ptr<SyHudConsoleSystem> hcs = std::make_unique<SyHudConsoleSystem>();
+	systems.push_back(std::move(hcs));
+
+	std::unique_ptr<SyErrorLoggingSystem> els = std::make_unique<SyErrorLoggingSystem>();
+	systems.push_back(std::move(els));
 	
 	std::unique_ptr<HudPostRenderSystem> hpostrs= std::make_unique<HudPostRenderSystem>();
 	systems.push_back(std::move(hpostrs));
 	
+
+
 	for (const auto& system : systems)
 	{
 		system->Init();
@@ -144,6 +147,10 @@ void EngineCore::StartUpSystems()
 
 void EngineCore::StartUp()
 {
+	ServiceLocator::instance()->Register<EngineContext>();
+	ec = ServiceLocator::instance()->Get<EngineContext>();
+	ServiceLocator::instance()->Register<SyErrorLogger>();
+	el = ServiceLocator::instance()->Get<SyErrorLogger>();
 	StartUpSystems();
 }
 
@@ -153,7 +160,8 @@ void EngineCore::ShutDown()
 	{
 		system->Destroy();
 	}
-
+	ServiceLocator::instance()->Unregister<EngineContext>();
+	ServiceLocator::instance()->Unregister<SyErrorLogger>();
 	ServiceLocator::instance()->Unregister<EngineCore>();
 	ServiceLocator::instance()->Unregister<RenderContext>();
 	auto hc = ServiceLocator::instance()->Get<HardwareContext>();

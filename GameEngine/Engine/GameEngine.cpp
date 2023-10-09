@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+
 #include "Core/EngineCore.h"
 
 #define SY_PI 3.14f
@@ -6,7 +7,6 @@
 
 int main()
 {
-
     //EngineCore* engine = new EngineCore();
     EngineCore::instance()->StartUp();
     EngineContext* ec = EngineCore::instance()->ec;
@@ -52,7 +52,5 @@ int main()
     EngineCore::instance()->StartUpdateLoop();
     EngineCore::instance()->ShutDown();
     
-    std::cout << "Hello World!\n";
-
-    
+    std::cout << "Good-bye!\n";
 }

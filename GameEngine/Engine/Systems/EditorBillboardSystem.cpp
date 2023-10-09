@@ -4,12 +4,14 @@
 #include "MeshLoader.h"
 #include "EngineContext.h"
 
-void EditorBillboardSystem::Init()
+SyResult EditorBillboardSystem::Init()
 {
 	ec = ServiceLocator::instance()->Get<EngineContext>();
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboard system initialization successful. ");
+	return SyResult();
 }
 
-void EditorBillboardSystem::Run()
+SyResult EditorBillboardSystem::Run()
 {
 	auto view = ec->scene->registry.view<EditorBillboardComponent>();
 	for (auto& entity : view)
@@ -22,8 +24,11 @@ void EditorBillboardSystem::Run()
 			MeshLoader::LoadTexture(ebc.texturePath, ebc.samplerState.GetAddressOf(), ebc.texture.GetAddressOf());
 		}
 	}
+	return SyResult();
 }
 
-void EditorBillboardSystem::Destroy()
+SyResult EditorBillboardSystem::Destroy()
 {
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboard system destruction successful. ");
+	return SyResult();
 }
