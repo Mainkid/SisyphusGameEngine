@@ -28,12 +28,12 @@ class ResourceService : public IService
 public:
 	std::unordered_map<boost::uuids::uuid, ResourceInfo, uuid_hash> resourceLibrary;           // uuid: assetType, path, resourceBase
 	std::unordered_map<EAssetType, std::set<boost::uuids::uuid>> resourceGroups;               // assetType: set<uuid>
-	std::unordered_map<EAssetType, boost::uuids::uuid> baseResourceDB;//assetType : Resource*  
+	std::unordered_map<EAssetType, boost::uuids::uuid> baseResourceDB;                         //assetType : Resource*  
 
 	ResourceService();
 	void LoadBaseAssets();
 	std::shared_ptr<ResourceBase> LoadResource(const boost::uuids::uuid& uuid, bool reloadNeeded = false);
-	void UnloadResource(const boost::uuids::uuid& uuid);
+	/*void UnloadResource(const boost::uuids::uuid& uuid);*/
 	std::string FindFilePathByUUID(const boost::uuids::uuid& uuid, bool getFileName = false);
 	boost::uuids::uuid GetUUIDFromPath(const std::filesystem::path& path);
 	void LoadResourceLibrary(std::filesystem::path path, bool reloadNeeded = false, bool isLoadingBaseResources=false);

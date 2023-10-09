@@ -28,64 +28,43 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 	using json = nlohmann::json;
 	if (resourceLibrary[uuid].resource.lock() != nullptr && !reloadNeeded)
 	{
-		resourceLibrary[uuid].referenceCounter += 1;
 		return resourceLibrary[uuid].resource.lock();
 	}
 	else
 	{
 		if (resourceLibrary[uuid].assetType == EAssetType::ASSET_MATERIAL)
 		{
-			std::shared_ptr<Material> mat;
+			std::shared_ptr<Material> mat = nullptr;
 			if (!reloadNeeded || resourceLibrary[uuid].resource.lock() == nullptr)
 				mat = std::make_shared<Material>();
 			else
-				mat = std::static_pointer_cast<std::shared_ptr<Material>>(resourceLibrary[uuid].resource.lock());
+				mat = std::static_pointer_cast<Material>(resourceLibrary[uuid].resource.lock());
 			std::ifstream file;
 			file.open(FindFilePathByUUID(uuid));
 			json fileData;
 			file >> fileData;
 			file.close();
-			mat->albedoTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["albedoTextureUUID"]);
-			if (resourceLibrary[mat->albedoTextureUUID].resource == nullptr)
-				LoadResource(mat->albedoTextureUUID);
 
-			mat->albedoSRV = static_cast<Texture*>(resourceLibrary[mat->albedoTextureUUID].resource);
+			mat->albedoTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["albedoTextureUUID"]);
+			mat->albedoSRV = std::static_pointer_cast<Texture>(LoadResource(mat->albedoTextureUUID));
 
 			mat->emissiveTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["emissiveTextureUUID"]);
-			if (resourceLibrary[mat->emissiveTextureUUID].resource == nullptr)
-				LoadResource(mat->emissiveTextureUUID);
-
-			mat->emissiveSRV = static_cast<Texture*>(resourceLibrary[mat->emissiveTextureUUID].resource);
+			mat->emissiveSRV = std::static_pointer_cast<Texture>(LoadResource(mat->emissiveTextureUUID));
 
 			mat->metallicTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["metallicTextureUUID"]);
-			if (resourceLibrary[mat->metallicTextureUUID].resource == nullptr)
-				LoadResource(mat->metallicTextureUUID);
-
-			mat->metallicSRV = static_cast<Texture*>(resourceLibrary[mat->metallicTextureUUID].resource);
+			mat->metallicSRV = std::static_pointer_cast<Texture>(LoadResource(mat->metallicTextureUUID));
 
 			mat->opacityTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["opacityTextureUUID"]);
-			if (resourceLibrary[mat->opacityTextureUUID].resource == nullptr)
-				LoadResource(mat->opacityTextureUUID);
-
-			mat->opacitySRV = static_cast<Texture*>(resourceLibrary[mat->opacityTextureUUID].resource);
+			mat->opacitySRV = std::static_pointer_cast<Texture>(LoadResource(mat->opacityTextureUUID));
 
 			mat->roughnessTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["roughnessTextureUUID"]);
-			if (resourceLibrary[mat->roughnessTextureUUID].resource == nullptr)
-				LoadResource(mat->roughnessTextureUUID);
-
-			mat->roughnessSRV = static_cast<Texture*>(resourceLibrary[mat->roughnessTextureUUID].resource);
+			mat->roughnessSRV = std::static_pointer_cast<Texture>(LoadResource(mat->roughnessTextureUUID));
 
 			mat->specularTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["specularTextureUUID"]);
-			if (resourceLibrary[mat->specularTextureUUID].resource == nullptr)
-				LoadResource(mat->specularTextureUUID);
-
-			mat->specularSRV = static_cast<Texture*>(resourceLibrary[mat->specularTextureUUID].resource);
+			mat->specularSRV = std::static_pointer_cast<Texture>(LoadResource(mat->specularTextureUUID));
 
 			mat->normalmapTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["normalmapTextureUUID"]);
-			if (resourceLibrary[mat->normalmapTextureUUID].resource == nullptr)
-				LoadResource(mat->normalmapTextureUUID);
-
-			mat->normalmapSRV = static_cast<Texture*>(resourceLibrary[mat->normalmapTextureUUID].resource);
+			mat->normalmapSRV = std::static_pointer_cast<Texture>(LoadResource(mat->normalmapTextureUUID));
 
 			mat->albedoValue = Vector4(fileData["albedoVec"][0], fileData["albedoVec"][1], fileData["albedoVec"][2], fileData["albedoVec"][3]);
 			mat->emissiveValue = Vector4(fileData["emissiveVec"][0], fileData["emissiveVec"][1], fileData["emissiveVec"][2], fileData["emissiveVec"][3]);
@@ -102,48 +81,26 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			mat->resources[6] = mat->opacitySRV->textureSRV.Get();
 
 
-			resourceLibrary[uuid].resource = mat;
+			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(mat);
+			return mat;
 		}
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_TEXTURE)
 		{
 			//TODO: Поддержка sRGB;
-			auto texture = new Texture();
+			auto texture = std::make_shared<Texture>();
 			MeshLoader::LoadTexture(FindFilePathByUUID(uuid), texture->textureSamplerState.GetAddressOf(), texture->textureSRV.GetAddressOf());
-			resourceLibrary[uuid].resource = texture;
+			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(texture);
+			return texture;
 		}
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_MESH)
 		{
-			auto model = new Model();
+			auto model = std::make_shared<Model>();
 			MeshLoader::LoadModel(FindFilePathByUUID(uuid), model->meshes);
-			resourceLibrary[uuid].resource = model;
-		}
-
-		resourceLibrary[uuid].referenceCounter = 1;
-	}
-
-	return resourceLibrary[uuid].resource;
-}
-
-void ResourceService::UnloadResource(const boost::uuids::uuid& uuid) 
-{ 
-	if (resourceLibrary[uuid].resource != nullptr)
-	{
-		auto resource = resourceLibrary[uuid].resource;
-		//Check if unloading base resource;
-		if (resourceLibrary[uuid].isBaseResource)
-			return;
-
-		resourceLibrary[uuid].referenceCounter--;
-		if (resourceLibrary[uuid].referenceCounter == 0)
-		{
-			resourceLibrary[uuid].resource = nullptr;
-			delete resource;
+			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>( model);
+			return model;
 		}
 	}
-	else
-	{
-		//TODO: Ошибка, ресурсов не осталось для выгрузки
-	}
+	return resourceLibrary[uuid].resource.lock();
 }
 
 std::string ResourceService::FindFilePathByUUID(const boost::uuids::uuid& uuid, bool getFileName)

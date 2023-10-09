@@ -7,6 +7,7 @@
 #include <wrl.h>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
+#include <memory>
 
 enum  class EMaterialBlendMode
 {
@@ -29,13 +30,13 @@ struct Material : public ResourceBase
 	boost::uuids::uuid normalmapTextureUUID = boost::uuids::nil_uuid();
 	boost::uuids::uuid opacityTextureUUID = boost::uuids::nil_uuid();
 
-	Texture* albedoSRV;
-	Texture* specularSRV;
-	Texture* roughnessSRV;
-	Texture* metallicSRV;
-	Texture* emissiveSRV;
-	Texture* normalmapSRV;
-	Texture* opacitySRV;
+	std::shared_ptr<Texture> albedoSRV;
+	std::shared_ptr<Texture> specularSRV;
+	std::shared_ptr<Texture> roughnessSRV;
+	std::shared_ptr<Texture> metallicSRV;
+	std::shared_ptr<Texture> emissiveSRV;
+	std::shared_ptr<Texture> normalmapSRV;
+	std::shared_ptr<Texture> opacitySRV;
 
 	DirectX::SimpleMath::Vector4 albedoValue = DirectX::SimpleMath::Vector4(0,0,0,-1);
 	DirectX::SimpleMath::Vector4 specularValue  = DirectX::SimpleMath::Vector4(0, 0, 0, -1);

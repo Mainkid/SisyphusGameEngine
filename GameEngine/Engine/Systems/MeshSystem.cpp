@@ -23,13 +23,13 @@ void MeshSystem::Run()
 		if (mesh.hashModel != hsh)
 		{
 			mesh.hashModel = hasherModel(mesh.modelUUID);
-			mesh.model=static_cast<Model*>( rs->LoadResource(mesh.modelUUID));
+			mesh.model=std::static_pointer_cast<Model>( rs->LoadResource(mesh.modelUUID));
 			mesh.materials.resize(mesh.model->meshes.size());
 			mesh.materialUUIDs.resize(mesh.model->meshes.size());
 			
 			for (int i = 0; i < mesh.materials.size(); i++)
 			{
-				mesh.materialUUIDs[i] = (rs->baseResourceDB[EAssetType::ASSET_MATERIAL].second);
+				mesh.materialUUIDs[i] = (rs->baseResourceDB[EAssetType::ASSET_MATERIAL]);
 			}
 		}
 
@@ -40,7 +40,7 @@ void MeshSystem::Run()
 			for (int i = 0; i < mesh.materialUUIDs.size(); i++)
 			{
 				//rs->UnloadResource(mesh.materials[i]);
-				mesh.materials[i] = static_cast<Material*>(rs->LoadResource(mesh.materialUUIDs[i]));
+				mesh.materials[i] = std::static_pointer_cast<Material>(rs->LoadResource(mesh.materialUUIDs[i]));
 			}
 		}
 

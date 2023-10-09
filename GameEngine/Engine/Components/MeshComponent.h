@@ -33,9 +33,9 @@ struct MeshComponent
 	//Material* material = nullptr;
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture = nullptr;
 	//Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState = nullptr;
-	Model* model = nullptr;
+	std::shared_ptr<Model> model = nullptr;
 	std::vector<boost::uuids::uuid> materialUUIDs = {};
-	std::vector<Material*> materials = {};
+	std::vector<std::shared_ptr<Material>> materials = {};
 	boost::uuids::uuid modelUUID;
 	UINT strides[1] = { 80 };
 	UINT offsets[1] = { 0 };

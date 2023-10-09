@@ -22,7 +22,6 @@ struct ResourceInfo
 	std::filesystem::path path;
 	std::string filename;
 	bool isBaseResource;
-	uint32_t referenceCounter = 0;
 	std::weak_ptr<ResourceBase> resource;
 };
 
