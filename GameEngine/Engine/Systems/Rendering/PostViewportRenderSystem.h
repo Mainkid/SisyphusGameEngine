@@ -7,9 +7,9 @@ struct HardwareContext;
 class PostViewportRenderSystem : public ISystem
 {
 public:
-	void Init() override;
-	void Run() override;
-	void Destroy() override;
+	SyResult Init() override;
+	SyResult Run() override;
+	SyResult Destroy() override;
 private:
 	HardwareContext* hc;
 };

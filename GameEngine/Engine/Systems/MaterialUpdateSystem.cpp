@@ -6,20 +6,24 @@
 #include "MeshLoader.h"
 
 
-void MaterialUpdateSystem::Init()
+SyResult MaterialUpdateSystem::Init()
 {
 	ec = ServiceLocator::instance()->Get<EngineContext>();
 	rc = ServiceLocator::instance()->Get<RenderContext>();
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
 
-	//rc->materialSet.insert(std::make_unique<Material>());
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "MaterialUpdateSystem system initialization successful.");
+	return SyResult();
 }
 
-void MaterialUpdateSystem::Run()
+SyResult MaterialUpdateSystem::Run()
 {
 
+	return SyResult();
 }
 
-void MaterialUpdateSystem::Destroy()
+SyResult MaterialUpdateSystem::Destroy()
 {
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "MaterialUpdateSystem system destruction successful.");
+	return SyResult();
 }

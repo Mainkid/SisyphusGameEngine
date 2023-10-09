@@ -11,7 +11,7 @@
 #include <boost/uuid/uuid_io.hpp>
 
 
-void ResourceSystem::Init()
+SyResult ResourceSystem::Init()
 {
 	ec=ServiceLocator::instance()->Get<EngineContext>();
 	rs = ServiceLocator::instance()->Get<ResourceService>();
@@ -20,15 +20,17 @@ void ResourceSystem::Init()
 	rs->LoadResourceLibrary("./Game/Assets");
 	rs->LoadResourceLibrary("./Engine/Assets/Resources",false,true);
 	rs->LoadBaseAssets();
+	return SyResult();
 }
 
-void ResourceSystem::Run()
+SyResult ResourceSystem::Run()
 {
-
+	return SyResult();
 }
 
-void ResourceSystem::Destroy()
+SyResult ResourceSystem::Destroy()
 {
+	return SyResult();
 }
 
 void ResourceSystem::GenerateMetaFiles(std::filesystem::path currentDirectory)

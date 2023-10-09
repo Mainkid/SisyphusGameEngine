@@ -3,13 +3,17 @@
 #include "../Core/ServiceLocator.h"
 #include "TransformHelper.h"
 
-void TransformSystem::Init()
+SyResult TransformSystem::Init()
 {
+	SyResult result;
 	ec = ServiceLocator::instance()->Get<EngineContext>();
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Transform system initialization successful. ");
+	return result;
 }
 
-void TransformSystem::Run()
+SyResult TransformSystem::Run()
 {
+	SyResult result;
 	auto view = ec->scene->registry.view<TransformComponent>();
 	for (auto& entity :view)
 	{
@@ -22,11 +26,13 @@ void TransformSystem::Run()
 			tc.hash = hsh;
 		}
 	}
+	return result;
 }
 
-void TransformSystem::Destroy()
+SyResult TransformSystem::Destroy()
 {
-
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Transform system destruction successful. ");
+	return SyResult();
 }
 
 

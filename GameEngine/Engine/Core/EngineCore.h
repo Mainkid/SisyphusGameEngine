@@ -11,6 +11,8 @@
 #include "ServiceLocator.h"
 #include "../Systems/Systems.h"
 #include "../Systems/EngineContext.h"
+#include "../Tools/ErrorLogger.h"
+
 #include "../Systems/ResourceService.h"
 
 
@@ -19,8 +21,9 @@
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "dxguid.lib")
 
-using namespace Microsoft::WRL;
+//using namespace Microsoft::WRL;
 
+//struct SyErrorLogger : public IService;
 
 class EngineCore
 {
@@ -28,6 +31,7 @@ public:
     std::chrono::time_point<std::chrono::steady_clock> PrevTime;
     std::vector<std::unique_ptr<ISystem>> systems;
     EngineContext* ec;
+    SyErrorLogger* el;
 
     static EngineCore* instance()
     {

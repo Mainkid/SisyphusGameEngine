@@ -3,14 +3,17 @@
 #include "../../HardwareContext.h"
 #include "../RenderContext.h"
 
-void ToneMappingRenderSystem::Init()
+SyResult ToneMappingRenderSystem::Init()
 {
 	ec = ServiceLocator::instance()->Get<EngineContext>();
 	rc = ServiceLocator::instance()->Get<RenderContext>();
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
+
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "ToneMappingSystem system initialization successful.");
+	return SyResult();
 }
 
-void ToneMappingRenderSystem::Run()
+SyResult ToneMappingRenderSystem::Run()
 {
 	UINT strides[1] = { 32 };
 	UINT offsets[1] = { 0 };
@@ -26,8 +29,12 @@ void ToneMappingRenderSystem::Run()
 		strides, offsets);
 	hc->context->DrawIndexed(6, 0, 0);
 
+	return SyResult();
+
 }
 
-void ToneMappingRenderSystem::Destroy()
+SyResult ToneMappingRenderSystem::Destroy()
 {
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "ToneMappingSystem system destroyed successful.");
+	return SyResult();
 }

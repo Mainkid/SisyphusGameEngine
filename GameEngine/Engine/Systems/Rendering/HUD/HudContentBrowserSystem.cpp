@@ -7,10 +7,9 @@
 #include "../../ResourceService.h"
 #include "../../HardwareContext.h"
 #include <uuid.hpp>
-
 #include <fstream>
 
-void HudContentBrowserSystem::Init()
+SyResult HudContentBrowserSystem::Init()
 {
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
@@ -18,15 +17,17 @@ void HudContentBrowserSystem::Init()
     rs = ServiceLocator::instance()->Get<ResourceService>();
     //FillPathToAssetMap(assetsDirectory);
     InitImagesSRV();
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudContentBrowser system initialization successful.");
+    return SyResult();
 }
 
-void HudContentBrowserSystem::Destroy()
+SyResult HudContentBrowserSystem::Destroy()
 {
-    
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudContentBrowser system destruction successful.");
+    return SyResult();
 }
 
-
-void HudContentBrowserSystem::Run()
+SyResult HudContentBrowserSystem::Run()
 {
     
     static std::filesystem::path previousFrameDirectory = "";
@@ -34,7 +35,7 @@ void HudContentBrowserSystem::Run()
     if (!initialized)
     {
         initialized = true;
-        return;
+        return SyResult();
     }
 
 
@@ -236,8 +237,7 @@ void HudContentBrowserSystem::Run()
     
     ImGui::EndChild();
     ImGui::End();
-
-    
+    return SyResult();
 }
 
 void HudContentBrowserSystem::InitImagesSRV()

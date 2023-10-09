@@ -12,14 +12,17 @@
 #include <boost/lexical_cast.hpp>
 #include <fstream>
 
-void HudPropertiesSystem::Init()
+SyResult HudPropertiesSystem::Init()
 {
     this->windowID = "Properties";
     this->ec = ServiceLocator::instance()->Get<EngineContext>();
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudProperties system initialization successful.");
     this->rs = ServiceLocator::instance()->Get<ResourceService>();
+    return SyResult();
+    
 }
 
-void HudPropertiesSystem::Run()
+SyResult HudPropertiesSystem::Run()
 {
     ImGui::Begin(windowID.c_str());
     //Widget::Render();
@@ -88,11 +91,12 @@ void HudPropertiesSystem::Run()
 
 
     ImGui::End();
+    return SyResult();
 }
 
-void HudPropertiesSystem::Destroy()
+SyResult HudPropertiesSystem::Destroy()
 {
-    
+    return SyResult();
 }
 
 void HudPropertiesSystem::DrawMaterialProperties()

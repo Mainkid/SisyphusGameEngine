@@ -51,8 +51,6 @@
     <ClCompile Include="Engine\Components\RBodyComponent.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.cpp" />
-    <ClCompile Include="Engine\Tools\Data\Vector.cpp" />
-    <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -71,6 +69,8 @@
     <ClCompile Include="Engine\Systems\ResourceSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\ResourceHelper.cpp" />
     <ClCompile Include="Engine\Systems\ResourceService.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.cpp" />
+    <ClCompile Include="Engine\Systems\ErrorLoggingSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -137,7 +137,6 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.h" />
     <ClInclude Include="Engine\Tools\Data\Vector.h" />
-    <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
@@ -167,6 +166,10 @@
     <ClInclude Include="Engine\Components\ResourceBase.h" />
     <ClInclude Include="Engine\Components\Texture.h" />
     <ClInclude Include="Engine\Components\Model.h" />
+    <ClInclude Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.h" />
+    <ClInclude Include="Engine\Tools\ComplexString.h" />
+    <ClInclude Include="Engine\Systems\ErrorLoggingSystem.h" />
+    <ClInclude Include="Matrix4x4.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

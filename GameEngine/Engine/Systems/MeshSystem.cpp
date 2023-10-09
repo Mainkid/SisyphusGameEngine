@@ -6,14 +6,16 @@
 #include "../Systems/ResourceService.h"
 #include "MeshLoader.h"
 
-void MeshSystem::Init()
+SyResult MeshSystem::Init()
 {
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
 	ec = ServiceLocator::instance()->Get<EngineContext>();
 	rs = ServiceLocator::instance()->Get<ResourceService>();
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Mesh system initialization successful.");
+	return SyResult();
 }
 
-void MeshSystem::Run()
+SyResult MeshSystem::Run()
 {
 	auto view = ec->scene->registry.view<MeshComponent>();
 	for (auto& entity : view)
@@ -45,9 +47,13 @@ void MeshSystem::Run()
 		}
 
 	}
+
+	return SyResult();
 }
 
-void MeshSystem::Destroy()
+SyResult MeshSystem::Destroy()
 {
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "MeshSystem system destruction successful.");
+	return SyResult();
 }
 

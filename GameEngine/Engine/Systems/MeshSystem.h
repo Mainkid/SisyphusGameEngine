@@ -19,9 +19,9 @@ class ResourceService;
 class MeshSystem : public ISystem
 {
 public:
-	void Init() override;
-	void Run() override;
-	void Destroy() override;
+	SyResult Init() override;
+	SyResult Run() override;
+	SyResult Destroy() override;
 private:
 	boost::hash<boost::uuids::uuid> hasherModel;
 	boost::hash<std::vector<boost::uuids::uuid>> hasherMaterial;

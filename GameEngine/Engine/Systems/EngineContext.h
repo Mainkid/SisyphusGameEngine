@@ -31,9 +31,7 @@ struct EngineContext : public IService
 		PauseMode
 	};
 	EPlayModeState playModeState = EPlayModeState::EditorMode;
-
 	
-
 };
 
 //TODO: Перенести resourceLibrary в ResourceService;
