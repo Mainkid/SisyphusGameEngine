@@ -9,8 +9,8 @@
 			SY_RESCODE_UNEXPECTED - в случае приемлемого, но неожиданного результата
 			SY_RESCODE_ERROR - в случае ошибки в выполнении функции.
 		Также можно определить свои коды в виде макроса. Желательно, чтобы их имя было таким: SY_RESCODE_ + (модуль, где определяется) + (имя)
-	std::wstring message - сообщение пользователя
-		Сообщение удобно просмотреть в debug через breakpoint. Чтобы перевести литерал из типа std::string в тип std::wstring, нужно дописать L перед кавычками.
+	xstring message - сообщение пользователя (см. ниже)
+		Сообщение удобно просмотреть в debug через breakpoint. 
 3. После возврата значения SyResult можно предписать различное поведение в зависимости от того, является ли результат корректным или нет.
 ЛОГИРОВАНИЕ ОШИБОК
 1. Для использования логгера необходимо подключить заголовочный файл ErrorLogger.h. 
@@ -30,15 +30,31 @@
 				SY_LOGLEVEL_WARNING
 				SY_LOGLEVEL_ERROR
 				SY_LOGLEVEL_CRITICAL
-		... - отформатированная строка и набор аргументов (аналогично аргументам printf).				
+		... - отформатированная строка и набор аргументов (см. ниже).				
 3. Для логирования в одном из по умолчанию созданных каналов можно использовать макросы (в них скрыт также и вызов ServiceLocator::instance()->Get<SyErrorLogger>())
 	SY_LOG_CORE(logLevel_, ...)
 	SY_LOG_REND(logLevel_, ...)
 	SY_LOG_PHYS(logLevel_, ...)
 	SY_LOG_HUD (logLevel_, ...)
   
-4. Можно также добавить собственный канал. Для этого используется метод SyErrorLogger::AddChannel(const t_channelName& channelName_). 
+4. Можно также добавить собственный канал. Для этого используется метод SyErrorLogger::AddChannel(const std::string& channelName_). 
    Для получения экземпляра класса SyErrorLogger можно воспользоваться макросом SY_EL
 
-Все сообщения пока что выводятся в консоль.
+Все сообщения выводятся в текстовый файл в папке logs/, а также печатаются в консоль движка. 
+В консоли движка можно использовать фильтры для отображения сообщения определенных уровней, а также очищать буфер сообщений (панель справа).
 Примеры использования SyResult и SyErrorLogger можно найти в файле PhysicsSystem.cpp
+
+ФОРМАТИРОВАННАЯ СТРОКА xstring (SyComplexString)
+SyComplexString(std::string mainString_, Args... args_)
+Передаете базовую строку в стиле printf/scanf, за тем любое число (нолль и больше) подставляемых значений. Доступные флаги:
+	- %d - int
+	- %s - char*
+	- %f - double
+	- %% - '%'
+Для преобразования xstring в std::string используйте метод ToString().
+Пример:
+int i = 100;
+char* str = "Hello!";
+double d = 3.14;
+SyComplexString xstr("Int: %d, String: %s, Double: %f, Percent: %%, i, str, d");
+str::string str = xstr.ToString(); // Int: 100, String: Hello, Double: 3.14, Percent: %
