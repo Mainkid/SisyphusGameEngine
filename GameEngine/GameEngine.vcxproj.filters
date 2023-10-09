@@ -154,6 +154,7 @@
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.h" />
     <ClInclude Include="Engine\Tools\ComplexString.h" />
     <ClInclude Include="Engine\Systems\ErrorLoggingSystem.h" />
+    <ClInclude Include="Engine\Tools\Data\RingBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

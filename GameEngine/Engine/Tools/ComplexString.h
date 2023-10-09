@@ -13,8 +13,12 @@ struct SyComplexString
 		DOUBLE,
 		UNKNOWN
 	};
+	SyComplexString()
+	{
+		*this = SyComplexString("");
+	}
 	template<typename... Args>
-	SyComplexString(std::string mainString_ = std::string(), Args... args_)
+	SyComplexString(std::string mainString_, Args... args_)
 	{
 		mainString = mainString_;
 		length = mainString_.length();

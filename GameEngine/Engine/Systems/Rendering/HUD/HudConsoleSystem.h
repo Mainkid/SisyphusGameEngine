@@ -4,6 +4,7 @@
 #include <fstream>
 #include "../RenderContext.h"
 #include "../../EngineContext.h"
+#include "../../../Tools/Data/RingBuffer.h"
 class SyHudConsoleSystem : public ISystem
 {
 public:
@@ -16,7 +17,9 @@ private:
     RenderContext* rc;
     HardwareContext* hc;
 
-    std::vector<xstring> messages;
-    std::map<char, bool> filters; //if filters['i']==true, info messages are show and so on
+
+    const int MAX_MESSAGES = 1000;
+    SyRingBuffer<xstring> messageBuffer = SyRingBuffer<xstring>(MAX_MESSAGES);
+    std::map<char, bool> filters; //if filters['i']==true, info messages are shown and so on
 };
 
