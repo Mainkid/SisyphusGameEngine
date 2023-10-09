@@ -82,16 +82,11 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<TransformSystem> ts= std::make_unique<TransformSystem>();
 	systems.push_back(std::move(ts));
 
-	
-
 	std::unique_ptr<EditorCameraSystem> ecs = std::make_unique<EditorCameraSystem>();
 	systems.push_back(std::move(ecs));
 
 	std::unique_ptr<MeshSystem> ms = std::make_unique<MeshSystem>();
 	systems.push_back(std::move(ms));
-
-	std::unique_ptr<MaterialUpdateSystem> mus = std::make_unique<MaterialUpdateSystem>();
-	systems.push_back(std::move(mus));
 
 	std::unique_ptr<LightSystem> ls = std::make_unique<LightSystem>();
 	systems.push_back(std::move(ls));
@@ -101,8 +96,6 @@ void EngineCore::StartUpSystems()
 
 	std::unique_ptr<PreRenderSystem> prs = std::make_unique<PreRenderSystem>();
 	systems.push_back(std::move(prs));
-
-	
 
 	std::unique_ptr<ShadowRenderSystem> srs = std::make_unique<ShadowRenderSystem>();
 	systems.push_back(std::move(srs));

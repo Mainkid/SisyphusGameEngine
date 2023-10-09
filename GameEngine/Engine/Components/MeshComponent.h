@@ -8,6 +8,7 @@
 #include "assimp/cimport.h"
 #include "SpriteBatch.h"
 #include "../../vendor/WICTextureLoader.h"
+#include <boost/uuid/uuid.hpp>
 #include "Material.h"
 #include <iostream>
 #include <wrl.h>
@@ -25,7 +26,7 @@ struct MeshComponent
 	{
 		//this->modelPath = "Engine/Assets/Cube.fbx";
 	};
-	MeshComponent(std::string modelUUID)
+	MeshComponent(boost::uuids::uuid modelUUID)
 	{
 		this->modelUUID = modelUUID;
 	};
@@ -33,11 +34,13 @@ struct MeshComponent
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture = nullptr;
 	//Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState = nullptr;
 	Model* model = nullptr;
+	std::vector<boost::uuids::uuid> materialUUIDs = {};
 	std::vector<Material*> materials = {};
-	std::string modelUUID;
+	boost::uuids::uuid modelUUID;
 	UINT strides[1] = { 80 };
 	UINT offsets[1] = { 0 };
-	uint32_t hash = 0;
+	uint32_t hashMaterial = 0;
+	uint32_t hashModel = 0;
 	
 };
 

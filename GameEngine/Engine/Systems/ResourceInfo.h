@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <unordered_map>
 #include "../Components/ResourceBase.h"
+#include <memory>
 
 enum class EAssetType
 {
@@ -20,6 +21,9 @@ struct ResourceInfo
 	EAssetType assetType;
 	std::filesystem::path path;
 	std::string filename;
+	bool isBaseResource;
+	uint32_t referenceCounter = 0;
+	std::weak_ptr<ResourceBase> resource;
 };
 
 const std::unordered_map<std::string, EAssetType> extensionToAssetTypeMap =
@@ -33,8 +37,3 @@ const std::unordered_map<std::string, EAssetType> extensionToAssetTypeMap =
 	{".hdr",EAssetType::ASSET_TEXTURE},
 	{".jpg",EAssetType::ASSET_TEXTURE}
 };
-
-//class ResourceLibrary
-//{
-//	std::unordered_map<
-//};

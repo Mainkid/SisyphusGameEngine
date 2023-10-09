@@ -11,72 +11,81 @@ ResourceService::ResourceService()
 
 void ResourceService::LoadBaseAssets()
 {
-	baseResourceDB[EAssetType::ASSET_TEXTURE] = LoadResource(GetUUIDFromPath(baseTexture));
-	baseResourceDB[EAssetType::ASSET_MATERIAL] = LoadResource(GetUUIDFromPath(baseMaterial));
-	baseResourceDB[EAssetType::ASSET_MESH] = LoadResource(GetUUIDFromPath(baseModel));
+	baseResourceDB[EAssetType::ASSET_TEXTURE] = GetUUIDFromPath(baseTexture);
+	resourceLibrary[GetUUIDFromPath(baseTexture)].resource = LoadResource(GetUUIDFromPath(baseTexture));
+
+	baseResourceDB[EAssetType::ASSET_MATERIAL] = GetUUIDFromPath(baseMaterial);
+	resourceLibrary[GetUUIDFromPath(baseMaterial)].resource = LoadResource(GetUUIDFromPath(baseMaterial));
+
+	baseResourceDB[EAssetType::ASSET_MESH] =  GetUUIDFromPath(baseModel);
+	resourceLibrary[GetUUIDFromPath(baseModel)].resource = LoadResource(GetUUIDFromPath(baseModel));
 }
 
-ResourceBase* ResourceService::LoadResource(const std::string& uuid, bool reloadNeeded )
+std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::uuid& uuid, bool reloadNeeded )
 {
-	using json = nlohmann::json;
+	std::shared_ptr<std::string> strPtr;
 
-	if (loadedResourceDB.find(uuid) != loadedResourceDB.end() && !reloadNeeded)
-		return loadedResourceDB.at(uuid);
+	using json = nlohmann::json;
+	if (resourceLibrary[uuid].resource.lock() != nullptr && !reloadNeeded)
+	{
+		resourceLibrary[uuid].referenceCounter += 1;
+		return resourceLibrary[uuid].resource.lock();
+	}
 	else
 	{
 		if (resourceLibrary[uuid].assetType == EAssetType::ASSET_MATERIAL)
 		{
-			Material* mat;
-			if (!reloadNeeded || loadedResourceDB.find(uuid) == loadedResourceDB.end())
-				mat = new Material();
+			std::shared_ptr<Material> mat;
+			if (!reloadNeeded || resourceLibrary[uuid].resource.lock() == nullptr)
+				mat = std::make_shared<Material>();
 			else
-				mat = static_cast<Material*>(loadedResourceDB.at(uuid));
+				mat = std::static_pointer_cast<std::shared_ptr<Material>>(resourceLibrary[uuid].resource.lock());
 			std::ifstream file;
 			file.open(FindFilePathByUUID(uuid));
 			json fileData;
 			file >> fileData;
 			file.close();
-			mat->albedoTextureUUID = fileData["albedoTextureUUID"];
-			if (loadedResourceDB.find(mat->albedoTextureUUID) == loadedResourceDB.end())
+			mat->albedoTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["albedoTextureUUID"]);
+			if (resourceLibrary[mat->albedoTextureUUID].resource == nullptr)
 				LoadResource(mat->albedoTextureUUID);
 
-			mat->albedoSRV = static_cast<Texture*>(loadedResourceDB[mat->albedoTextureUUID]);
+			mat->albedoSRV = static_cast<Texture*>(resourceLibrary[mat->albedoTextureUUID].resource);
 
-			mat->emissiveTextureUUID = fileData["emissiveTextureUUID"];
-			if (loadedResourceDB.find(mat->emissiveTextureUUID) == loadedResourceDB.end())
+			mat->emissiveTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["emissiveTextureUUID"]);
+			if (resourceLibrary[mat->emissiveTextureUUID].resource == nullptr)
 				LoadResource(mat->emissiveTextureUUID);
 
-			mat->emissiveSRV = static_cast<Texture*>(loadedResourceDB[mat->emissiveTextureUUID]);
+			mat->emissiveSRV = static_cast<Texture*>(resourceLibrary[mat->emissiveTextureUUID].resource);
 
-			mat->metallicTextureUUID = fileData["metallicTextureUUID"];
-			if (loadedResourceDB.find(mat->metallicTextureUUID) == loadedResourceDB.end())
+			mat->metallicTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["metallicTextureUUID"]);
+			if (resourceLibrary[mat->metallicTextureUUID].resource == nullptr)
 				LoadResource(mat->metallicTextureUUID);
 
-			mat->metallicSRV = static_cast<Texture*>(loadedResourceDB[mat->metallicTextureUUID]);
+			mat->metallicSRV = static_cast<Texture*>(resourceLibrary[mat->metallicTextureUUID].resource);
 
-			mat->opacityTextureUUID = fileData["opacityTextureUUID"];
-			if (loadedResourceDB.find(mat->opacityTextureUUID) == loadedResourceDB.end())
+			mat->opacityTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["opacityTextureUUID"]);
+			if (resourceLibrary[mat->opacityTextureUUID].resource == nullptr)
 				LoadResource(mat->opacityTextureUUID);
 
-			mat->opacitySRV = static_cast<Texture*>(loadedResourceDB[mat->opacityTextureUUID]);
+			mat->opacitySRV = static_cast<Texture*>(resourceLibrary[mat->opacityTextureUUID].resource);
 
-			mat->roughnessTextureUUID = fileData["roughnessTextureUUID"];
-			if (loadedResourceDB.find(mat->roughnessTextureUUID) == loadedResourceDB.end())
+			mat->roughnessTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["roughnessTextureUUID"]);
+			if (resourceLibrary[mat->roughnessTextureUUID].resource == nullptr)
 				LoadResource(mat->roughnessTextureUUID);
 
-			mat->roughnessSRV = static_cast<Texture*>(loadedResourceDB[mat->roughnessTextureUUID]);
+			mat->roughnessSRV = static_cast<Texture*>(resourceLibrary[mat->roughnessTextureUUID].resource);
 
-			mat->specularTextureUUID = fileData["specularTextureUUID"];
-			if (loadedResourceDB.find(mat->specularTextureUUID) == loadedResourceDB.end())
+			mat->specularTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["specularTextureUUID"]);
+			if (resourceLibrary[mat->specularTextureUUID].resource == nullptr)
 				LoadResource(mat->specularTextureUUID);
 
-			mat->specularSRV = static_cast<Texture*>(loadedResourceDB[mat->specularTextureUUID]);
+			mat->specularSRV = static_cast<Texture*>(resourceLibrary[mat->specularTextureUUID].resource);
 
-			mat->normalmapTextureUUID = fileData["normalmapTextureUUID"];
-			if (loadedResourceDB.find(mat->normalmapTextureUUID) == loadedResourceDB.end())
+			mat->normalmapTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["normalmapTextureUUID"]);
+			if (resourceLibrary[mat->normalmapTextureUUID].resource == nullptr)
 				LoadResource(mat->normalmapTextureUUID);
 
-			mat->normalmapSRV = static_cast<Texture*>(loadedResourceDB[mat->normalmapTextureUUID]);
+			mat->normalmapSRV = static_cast<Texture*>(resourceLibrary[mat->normalmapTextureUUID].resource);
 
 			mat->albedoValue = Vector4(fileData["albedoVec"][0], fileData["albedoVec"][1], fileData["albedoVec"][2], fileData["albedoVec"][3]);
 			mat->emissiveValue = Vector4(fileData["emissiveVec"][0], fileData["emissiveVec"][1], fileData["emissiveVec"][2], fileData["emissiveVec"][3]);
@@ -93,27 +102,51 @@ ResourceBase* ResourceService::LoadResource(const std::string& uuid, bool reload
 			mat->resources[6] = mat->opacitySRV->textureSRV.Get();
 
 
-			loadedResourceDB[uuid] = mat;
+			resourceLibrary[uuid].resource = mat;
 		}
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_TEXTURE)
 		{
 			//TODO: Поддержка sRGB;
 			auto texture = new Texture();
 			MeshLoader::LoadTexture(FindFilePathByUUID(uuid), texture->textureSamplerState.GetAddressOf(), texture->textureSRV.GetAddressOf());
-			loadedResourceDB[uuid] = texture;
+			resourceLibrary[uuid].resource = texture;
 		}
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_MESH)
 		{
 			auto model = new Model();
 			MeshLoader::LoadModel(FindFilePathByUUID(uuid), model->meshes);
-			loadedResourceDB[uuid] = model;
+			resourceLibrary[uuid].resource = model;
 		}
+
+		resourceLibrary[uuid].referenceCounter = 1;
 	}
 
-	return loadedResourceDB.at(uuid);
+	return resourceLibrary[uuid].resource;
 }
 
-std::string ResourceService::FindFilePathByUUID(const std::string& uuid, bool getFileName)
+void ResourceService::UnloadResource(const boost::uuids::uuid& uuid) 
+{ 
+	if (resourceLibrary[uuid].resource != nullptr)
+	{
+		auto resource = resourceLibrary[uuid].resource;
+		//Check if unloading base resource;
+		if (resourceLibrary[uuid].isBaseResource)
+			return;
+
+		resourceLibrary[uuid].referenceCounter--;
+		if (resourceLibrary[uuid].referenceCounter == 0)
+		{
+			resourceLibrary[uuid].resource = nullptr;
+			delete resource;
+		}
+	}
+	else
+	{
+		//TODO: Ошибка, ресурсов не осталось для выгрузки
+	}
+}
+
+std::string ResourceService::FindFilePathByUUID(const boost::uuids::uuid& uuid, bool getFileName)
 {
 	std::filesystem::path filePath = resourceLibrary.at(uuid).path;
 	std::filesystem::path fileName = resourceLibrary.at(uuid).filename;
@@ -130,12 +163,12 @@ std::string ResourceService::FindFilePathByUUID(const std::string& uuid, bool ge
 	}
 }
 
-std::string ResourceService::GetUUIDFromPath(const std::filesystem::path& path)
+boost::uuids::uuid ResourceService::GetUUIDFromPath(const std::filesystem::path& path)
 {
 	using json = nlohmann::json;
 
 	if (std::filesystem::is_directory(path))
-		return "";
+		return boost::uuids::nil_uuid();
 	std::ifstream file;
 	std::string uuid;
 
@@ -144,14 +177,14 @@ std::string ResourceService::GetUUIDFromPath(const std::filesystem::path& path)
 	file >> fileData;
 	file.close();
 	uuid = fileData["uuid"];
-	return uuid;
+	return boost::lexical_cast<boost::uuids::uuid>(uuid);
 }
 
-void ResourceService::LoadResourceLibrary(std::filesystem::path path, bool reloadNeeded)
+void ResourceService::LoadResourceLibrary(std::filesystem::path path, bool isReloading, bool isLoadingBaseResources)
 {
 	using json = nlohmann::json;
 
-	if (reloadNeeded)
+	if (isReloading)
 	{
 		resourceLibrary.clear();
 		resourceGroups.clear();
@@ -177,10 +210,11 @@ void ResourceService::LoadResourceLibrary(std::filesystem::path path, bool reloa
 				filei.close();
 
 				assetType = static_cast<EAssetType>(fileData["AssetType"]);
-				std::string uuidStr = fileData["uuid"];
+				auto uuidValue = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["uuid"]);
 				auto extension = directoryEntry.path().filename().extension().string();
-				resourceGroups[assetType].insert(uuidStr);
-				resourceLibrary[uuidStr] = { assetType,directoryEntry.path(),directoryEntry.path().filename().string() };
+				resourceGroups[assetType].insert(uuidValue);
+				resourceLibrary[uuidValue] = { assetType,directoryEntry.path(),directoryEntry.path().filename().string(),isLoadingBaseResources };
+				
 			}
 		}
 	}
@@ -193,17 +227,16 @@ void ResourceService::ClearResourceGroups()
 
 void ResourceService::UnloadResourceDB()
 {
-	loadedResourceDB.clear();
+	/*loadedResourceDB.clear();*/
 }
 
-std::vector<const char*> ResourceService::GetAllResourcesOfType(EAssetType assetType)
+std::vector<boost::uuids::uuid> ResourceService::GetAllResourcesOfType(EAssetType assetType)
 {
-	std::vector<const char*> uuids;
+	std::vector<boost::uuids::uuid> uuids;
 	for (auto& uuid : resourceGroups.at(assetType))
 	{
-		uuids.push_back(uuid.c_str());
+		uuids.push_back(uuid);
 	}
-
 	return uuids;
 }
 

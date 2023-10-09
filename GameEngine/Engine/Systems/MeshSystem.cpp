@@ -19,22 +19,31 @@ void MeshSystem::Run()
 	for (auto& entity : view)
 	{
 		MeshComponent& mesh =view.get<MeshComponent>(entity);
-		uint32_t hsh = hasher(mesh.modelUUID);
-		if (mesh.hash != hsh)
+		uint32_t hsh = hasherModel(mesh.modelUUID);
+		if (mesh.hashModel != hsh)
 		{
-			mesh.hash = hasher(mesh.modelUUID);
+			mesh.hashModel = hasherModel(mesh.modelUUID);
 			mesh.model=static_cast<Model*>( rs->LoadResource(mesh.modelUUID));
 			mesh.materials.resize(mesh.model->meshes.size());
-
+			mesh.materialUUIDs.resize(mesh.model->meshes.size());
+			
 			for (int i = 0; i < mesh.materials.size(); i++)
 			{
-				if (mesh.materials[i] == nullptr)
-				{
-					mesh.materials[i] = static_cast<Material*>(rs->baseResourceDB[EAssetType::ASSET_MATERIAL]);
-				}
+				mesh.materialUUIDs[i] = (rs->baseResourceDB[EAssetType::ASSET_MATERIAL].second);
 			}
-
 		}
+
+		hsh = hasherMaterial(mesh.materialUUIDs);
+		if (mesh.hashMaterial != hsh)
+		{
+			mesh.hashMaterial = hasherMaterial(mesh.materialUUIDs);
+			for (int i = 0; i < mesh.materialUUIDs.size(); i++)
+			{
+				//rs->UnloadResource(mesh.materials[i]);
+				mesh.materials[i] = static_cast<Material*>(rs->LoadResource(mesh.materialUUIDs[i]));
+			}
+		}
+
 	}
 }
 

@@ -7,7 +7,8 @@
 #include "assimp/cimport.h"
 #include "../Components/Mesh.h"
 #include "SpriteBatch.h"
-
+#include <boost/uuid/uuid.hpp>
+#include <boost/functional/hash.hpp>
 
 
 struct MeshComponent;
@@ -22,7 +23,8 @@ public:
 	void Run() override;
 	void Destroy() override;
 private:
-	std::hash<std::string> hasher;
+	boost::hash<boost::uuids::uuid> hasherModel;
+	boost::hash<std::vector<boost::uuids::uuid>> hasherMaterial;
 	HardwareContext* hc;
 	EngineContext* ec;
 	ResourceService* rs;

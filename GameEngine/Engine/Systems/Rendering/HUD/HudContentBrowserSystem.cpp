@@ -16,7 +16,7 @@ void HudContentBrowserSystem::Init()
     rc = ServiceLocator::instance()->Get<RenderContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rs = ServiceLocator::instance()->Get<ResourceService>();
-    FillPathToAssetMap(assetsDirectory);
+    //FillPathToAssetMap(assetsDirectory);
     InitImagesSRV();
 }
 
@@ -50,8 +50,6 @@ void HudContentBrowserSystem::Run()
     previousFrameDirectory = curDirectory;
 
     auto contentAreaAvailable = ImGui::GetContentRegionAvail();
-   
-
     static float windowLeftSizeX = startLeftWindowWidth;
     static float windowRightSizeX = contentAreaAvailable.x-startLeftWindowWidth;
 
@@ -76,8 +74,7 @@ void HudContentBrowserSystem::Run()
     if (ImGui::BeginTable("ContentTable", columnCount))
     {
         ImGuiListClipper clipper;
-        auto res = int(((int)fileViewsVec.size() % columnCount) != 0);
-        clipper.Begin((int)fileViewsVec.size() / columnCount + res);
+        clipper.Begin((int)fileViewsVec.size() / columnCount + int(((int)fileViewsVec.size() % columnCount) != 0));
 
         while (clipper.Step())
         {
@@ -93,8 +90,10 @@ void HudContentBrowserSystem::Run()
 
                 for (int column = 0; column < columnsInRow; column++)
                 {
+                    int index = row * columnCount + column;
+
                     ImGui::TableSetColumnIndex(column);
-                    auto directoryEntry = fileViewsVec[row * columnCount + column];
+                    auto directoryEntry = fileViewsVec[index];
                     const auto& path = directoryEntry.path();
                     auto relativePath = std::filesystem::relative(directoryEntry.path(), assetsDirectory);
                     std::string  fileNameStr = relativePath.filename().string();
@@ -107,13 +106,15 @@ void HudContentBrowserSystem::Run()
                     if (selectedFiles.count(directoryEntry) > 0)
                         bg = bg_col_selected;
 
-                    ImGui::ImageButton(directoryEntry.path().string().data(), iconSRV[pathToAssetTypeMap[directoryEntry.path().string()]],
+                    ImGui::ImageButton(directoryEntry.path().string().data(), iconSRV[fileAssetTypeVec[index]],
                         ImVec2(thumbnailSize, thumbnailSize), ImVec2(0, 0), ImVec2(1, 1), bg, tint_col);
 
 
                     if (ImGui::BeginDragDropSource())
                     {
-                        std::string uuid = rs->GetUUIDFromPath(directoryEntry);
+                        auto uuidTemp = rs->GetUUIDFromPath(directoryEntry);
+                        std::string uuid = boost::lexical_cast<std::string>(uuidTemp);
+
                         uuid.shrink_to_fit();
                         ImGui::SetDragDropPayload("_CONTENTBROWSER", (uuid.data()), uuid.size());
                         selectedFiles.insert(directoryEntry);
@@ -128,7 +129,7 @@ void HudContentBrowserSystem::Run()
 
                             for (auto& item : selectedFiles)
                             {
-                                ResourceHelper::MoveFile_(item, directoryEntry, pathToAssetTypeMap);
+                                ResourceHelper::MoveFile_(item, directoryEntry);
 
                             }
                             selectedFiles.clear();
@@ -194,7 +195,7 @@ void HudContentBrowserSystem::Run()
                             }
                             else
                             {
-                                ResourceHelper::RenameFile(directoryEntry, renamingFileName, pathToAssetTypeMap);
+                                ResourceHelper::RenameFile(directoryEntry, renamingFileName);
                                 InitializePathFileViews(curDirectory);
                             }
                             renamingFileName = "";
@@ -219,8 +220,8 @@ void HudContentBrowserSystem::Run()
     auto end = ImGui::GetContentRegionMax().y;
     auto scrll = ImGui::GetScrollY();
     auto widgetEndPos = ImVec2(widgetStartPos.x + ImGui::GetContentRegionMax().x, widgetStartPos.y + ImGui::GetContentRegionMax().y+ ImGui::GetScrollY());
-
-    bool isWidgetHovered = io.MousePos.x > widgetStartPos.x && io.MousePos.x < widgetEndPos.x&& io.MousePos.y>widgetStartPos.y-20 && io.MousePos.y < widgetEndPos.y;
+    int gap = 20;
+    bool isWidgetHovered = io.MousePos.x > widgetStartPos.x && io.MousePos.x < widgetEndPos.x&& io.MousePos.y>widgetStartPos.y-gap && io.MousePos.y < widgetEndPos.y;
 
     //Popups!
 
@@ -246,32 +247,6 @@ void HudContentBrowserSystem::InitImagesSRV()
     {
         iconSRV[keyVal.first] = nullptr;
         ImageLoader::LoadTextureFromFile(keyVal.second.string().c_str(), &iconSRV[keyVal.first], &size, &size);
-    }
-}
-
-void HudContentBrowserSystem::FillPathToAssetMap(std::filesystem::path path)
-{
-    using json = nlohmann::json;
-
-    for (auto& directoryEntry : std::filesystem::directory_iterator(path))
-    {
-        if (std::filesystem::is_directory(directoryEntry))
-        {
-            pathToAssetTypeMap[directoryEntry.path().string()] = EAssetType::ASSET_FOLDER;
-            FillPathToAssetMap(directoryEntry);
-        }
-        else if (directoryEntry.path().extension()!=".meta")
-        {
-            json fileData;
-            std::ifstream file;
-            std::string uuid;
-            int assetType;
-            file.open(directoryEntry.path().string() + ".meta");
-            file >> fileData;
-            pathToAssetTypeMap[directoryEntry.path().string()] = static_cast<EAssetType>(fileData["AssetType"]);
-            file.close();
-        }
-        
     }
 }
 
@@ -327,16 +302,15 @@ void HudContentBrowserSystem::ProcessPopUp()
             switch (selected_Popup)
             {
                 case 0:
-                    pathToAssetTypeMap[ResourceHelper::ConstructFile(curDirectory.string() + "\\NewFolder").string()] = EAssetType::ASSET_FOLDER;
+                    ResourceHelper::ConstructFile(curDirectory.string() + "\\NewFolder");
                     break;
                 case 1:
                     auto createdFile = ResourceHelper::ConstructFile(curDirectory.string() + "\\Material.mat");
                     ResourceHelper::CreateMetaFile_(createdFile, EAssetType::ASSET_MATERIAL);
                     ResourceHelper::FillFileWithBaseData(createdFile, EAssetType::ASSET_MATERIAL);
                     rs->resourceLibrary[rs->GetUUIDFromPath(createdFile)] = { EAssetType::ASSET_MATERIAL,createdFile.string() };
-                    pathToAssetTypeMap[createdFile.string()] = EAssetType::ASSET_MATERIAL;
                     break;
-                }
+            }
             InitializePathFileViews(curDirectory);
             break;
         case MainPopup:
@@ -349,20 +323,15 @@ void HudContentBrowserSystem::ProcessPopUp()
                     break;
                 case 1:
                     renamingFileName = *selectedFiles.begin();
-                    
                     break;
                 case 2:
                     std::string resPath = curDirectory.string();
                     std::replace(resPath.begin(), resPath.end(),'/','\\');
                     std::string command = "explorer /select," + resPath ;
                     system(command.c_str());
-
             }
             break;
-
     }
-
-   
 }
 
 void HudContentBrowserSystem::DrawTreeFolderWindow(float windowLeftSizeX)
@@ -391,10 +360,6 @@ void HudContentBrowserSystem::RenderTree(std::filesystem::path path)
             continue;
         }
         
-
-        //if (directoryEntry==curDirectory)
-        //    treeFlags |= ImGuiTreeNodeFlags_Selected;
-        
         bool opened = ImGui::TreeNodeEx(directoryEntry.path().filename().string().c_str(), treeFlags);
 
         if (ImGui::IsItemHovered())
@@ -416,7 +381,7 @@ void HudContentBrowserSystem::RenderTree(std::filesystem::path path)
 
                 for (auto& item : selectedFiles)
                 {
-                    ResourceHelper::MoveFile_(item, directoryEntry,pathToAssetTypeMap);
+                    ResourceHelper::MoveFile_(item, directoryEntry);
                 }
                 if (!std::filesystem::exists(curDirectory))
                     curDirectory = assetsDirectory;
@@ -432,9 +397,6 @@ void HudContentBrowserSystem::RenderTree(std::filesystem::path path)
             curDirectory = directoryEntry;
             selectedFiles.clear();
         }
-
-
-       
 
         if(opened)
         {
@@ -467,6 +429,7 @@ bool HudContentBrowserSystem::Splitter(bool split_vertically, float thickness, f
 void HudContentBrowserSystem::InitializePathFileViews(const std::filesystem::path& path)
 {
     fileViewsVec.clear();
+    fileAssetTypeVec.clear();
 
     for (auto& directoryEntry : std::filesystem::directory_iterator(path))
     {
@@ -477,6 +440,10 @@ void HudContentBrowserSystem::InitializePathFileViews(const std::filesystem::pat
             continue;
         
         fileViewsVec.push_back(directoryEntry);
+        if (!directoryEntry.is_directory())
+            fileAssetTypeVec.push_back(rs->resourceLibrary[rs->GetUUIDFromPath(directoryEntry.path())].assetType);
+        else
+            fileAssetTypeVec.push_back(EAssetType::ASSET_FOLDER);
     }
 
 

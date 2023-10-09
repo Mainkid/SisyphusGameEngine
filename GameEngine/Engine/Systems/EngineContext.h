@@ -4,11 +4,12 @@
 #include "../Systems/ResourceInfo.h"
 #include "ResourceInfo.h"
 #include <string>
+#include <boost/uuid/uuid.hpp>
 
 
 struct SelectedContent
 {
-	std::string uuid;
+	boost::uuids::uuid uuid;
 	EAssetType assetType;
 };
 

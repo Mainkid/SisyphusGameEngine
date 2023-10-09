@@ -11,6 +11,8 @@
 #include <string>
 #include <map>
 #include <filesystem>
+#include <boost/uuid/uuid.hpp>
+#include <boost/lexical_cast.hpp>
 
 struct EngineContext;
 struct HardwareContext;

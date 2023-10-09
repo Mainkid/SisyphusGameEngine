@@ -7,6 +7,9 @@
 #include "../../TransformHelper.h"
 #include "../../Core/ServiceLocator.h"
 #include "json.hpp"
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/nil_generator.hpp>
+#include <boost/lexical_cast.hpp>
 #include <fstream>
 
 void HudPropertiesSystem::Init()
@@ -54,7 +57,7 @@ void HudPropertiesSystem::Run()
             tc->localScale = (Vector3(vec3[0], vec3[1], vec3[2]));
         }
     }
-    else if (ec->selectedContent.uuid!="")
+    else if (ec->selectedContent.uuid!=boost::uuids::nil_uuid())
     {
         if (std::filesystem::exists(rs->resourceLibrary[ec->selectedContent.uuid].path))
         {
@@ -78,7 +81,7 @@ void HudPropertiesSystem::Run()
         else
         {
             ec->selectedContent.assetType = EAssetType::ASSET_NONE;
-            ec->selectedContent.uuid = "";
+            ec->selectedContent.uuid = boost::uuids::nil_uuid();
         }
     }
 
@@ -96,7 +99,7 @@ void HudPropertiesSystem::DrawMaterialProperties()
 {
     const int comboWidth = 100;
     const int dragFloatWidth = 100;
-    static std::string prevSelectedUUID = "";
+    static boost::uuids::uuid prevSelectedUUID = boost::uuids::nil_uuid();
     using json = nlohmann::json;
     ImGui::Text("Material");
     std::string filePath=rs->FindFilePathByUUID(ec->selectedContent.uuid);
@@ -124,13 +127,18 @@ void HudPropertiesSystem::DrawMaterialProperties()
     roughnessVec = Vector4(fileData["roughnessVec"][0], fileData["roughnessVec"][1], fileData["roughnessVec"][2], fileData["roughnessVec"][3]);
 
     std::vector<Vector4> vecs = { albedoVec,specularVec,roughnessVec,metallicVec,emissiveVec};
-    std::vector<std::string> textureUUIDvec = { fileData["albedoTextureUUID"], fileData["specularTextureUUID"], fileData["roughnessTextureUUID"],
-    
-    fileData["metallicTextureUUID"],fileData["emissiveTextureUUID"], fileData["normalmapTextureUUID"], fileData["opacityTextureUUID"] };
+    std::vector<boost::uuids::uuid> textureUUIDvec = {
+        boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["albedoTextureUUID"]),
+        boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["specularTextureUUID"]),
+        boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["roughnessTextureUUID"]),
+        boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["metallicTextureUUID"]),
+        boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["emissiveTextureUUID"]),
+        boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["normalmapTextureUUID"]),
+        boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["opacityTextureUUID"]) };
 
     
 
-    std::vector<const char*> items = rs->GetAllResourcesOfType(EAssetType::ASSET_TEXTURE);
+    std::vector<boost::uuids::uuid> items = rs->GetAllResourcesOfType(EAssetType::ASSET_TEXTURE);
     std::vector<std::string> filePathsStr = rs->GetAllResourcesFilePaths(EAssetType::ASSET_TEXTURE);
     std::vector<const char*> filePaths;
 
@@ -157,7 +165,7 @@ void HudPropertiesSystem::DrawMaterialProperties()
     {0.0f, 0.0f, 0.0f, 0.0f},
     {0.0f, 0.0f, 0.0f, 0.0f}};
 
-    auto setTextureByUUID = [](std::string& uuid, int i, int* texture_cur, std::vector<const char*>& items, std::vector<std::string>& textureUUIDvec) {
+    auto setTextureByUUID = [](boost::uuids::uuid uuid, int i, int* texture_cur, std::vector<boost::uuids::uuid>& items, std::vector<boost::uuids::uuid>& textureUUIDvec) {
         auto index = std::find(items.begin(), items.end(), uuid);
         if (index != items.end())
         {
@@ -204,11 +212,12 @@ void HudPropertiesSystem::DrawMaterialProperties()
                 std::string uuid;
                 uuid = static_cast<char*>(payload->Data);
                 uuid.resize(36);
-                if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_TEXTURE)
+                if (rs->resourceLibrary[boost::lexical_cast<boost::uuids::uuid>(uuid)].assetType == EAssetType::ASSET_TEXTURE)
                 {
-                    setTextureByUUID(uuid, i, texture_current, items, textureUUIDvec);
+                    setTextureByUUID(boost::lexical_cast<boost::uuids::uuid>(uuid), i, texture_current, items, textureUUIDvec);
                 }
             }
+
             ImGui::EndDragDropTarget();
         }
     };
@@ -254,13 +263,13 @@ void HudPropertiesSystem::DrawMaterialProperties()
     {
         json outputData = {
 
-                {"albedoTextureUUID",items[texture_current[0]]},
-                {"specularTextureUUID",items[texture_current[1]]},
-                {"roughnessTextureUUID",items[texture_current[2]]},
-                {"metallicTextureUUID",items[texture_current[3]]},
-                {"emissiveTextureUUID",items[texture_current[4]]},
-                {"normalmapTextureUUID",items[texture_current[5]]},
-                {"opacityTextureUUID",items[texture_current[6]]},
+                {"albedoTextureUUID",boost::lexical_cast<std::string>(items[texture_current[0]])},
+                {"specularTextureUUID",boost::lexical_cast<std::string>(items[texture_current[1]])},
+                {"roughnessTextureUUID",boost::lexical_cast<std::string>(items[texture_current[2]])},
+                {"metallicTextureUUID",boost::lexical_cast<std::string>(items[texture_current[3]])},
+                {"emissiveTextureUUID",boost::lexical_cast<std::string>(items[texture_current[4]])},
+                {"normalmapTextureUUID",boost::lexical_cast<std::string>(items[texture_current[5]])},
+                {"opacityTextureUUID",boost::lexical_cast<std::string>(items[texture_current[6]])},
                 {"albedoVec",std::vector<float>{col2[0][0],col2[0][1],col2[0][2],1.f * (!params[0]) -1* (params[0])}},
                 {"specularVec",std::vector<float>{col2[1][0],col2[1][1],col2[1][2],1.f * (!params[1]) - 1 * (params[1])}},
                 {"roughnessVec",std::vector<float>{col2[2][0],1.f * (!params[5]) - 1 * (params[5]),col2[2][2],1.f * (!params[2]) - 1 * (params[2])}},

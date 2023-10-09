@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include <set>
 #include <filesystem>
+#include <boost/lexical_cast.hpp>
+#include <boost/uuid/uuid.hpp>
 
 struct EngineContext;
 struct HardwareContext;
@@ -32,7 +34,6 @@ private:
     HardwareContext* hc;
     ResourceService* rs;
     void InitImagesSRV();
-    void FillPathToAssetMap(std::filesystem::path path);
     void ProcessPopUp();
     void DrawTreeFolderWindow(float windowLeftSizeX);
     void RenderTree(std::filesystem::path path);
@@ -63,8 +64,10 @@ private:
     std::filesystem::path curDirectory = assetsDirectory;
     ID3D11ShaderResourceView* folderImageSRV;
     std::map<EAssetType, ID3D11ShaderResourceView*> iconSRV;
-    std::unordered_map<std::string, EAssetType> pathToAssetTypeMap;
+    //std::unordered_map<std::string, EAssetType> pathToAssetTypeMap;
     std::set<std::filesystem::path> selectedFiles;
-    std::vector<std::filesystem::directory_entry> fileViewsVec;
     std::filesystem::path selectedFile;
+
+    std::vector<std::filesystem::directory_entry> fileViewsVec;
+    std::vector<EAssetType> fileAssetTypeVec;
 };

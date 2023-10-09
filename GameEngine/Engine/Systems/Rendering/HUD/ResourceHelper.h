@@ -8,6 +8,8 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/nil_generator.hpp>
+#include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <regex>
 #include <string>
@@ -48,7 +50,7 @@ public:
 		auto rs = ServiceLocator::instance()->Get<ResourceService>();
 		if (ec->selectedContent.uuid == rs->GetUUIDFromPath(path))
 		{
-			ec->selectedContent.uuid = "";
+			ec->selectedContent.uuid = boost::uuids::nil_uuid();
 			ec->selectedContent.assetType = EAssetType::ASSET_NONE;
 		}
 		std::filesystem::remove_all(path);
@@ -57,7 +59,7 @@ public:
 			std::filesystem::remove_all(path.string() + ".meta");
 	}
 
-	static void MoveFile_(std::filesystem::path oldPath, std::filesystem::path newPath, std::unordered_map<std::string, EAssetType>& map)
+	static void MoveFile_(std::filesystem::path oldPath, std::filesystem::path newPath)
 	{
 		
 		if (!std::filesystem::is_directory(newPath))
@@ -69,7 +71,7 @@ public:
 		auto filename = oldPath.filename();
 		if (std::filesystem::exists(newPath.string() + "\\" + filename.string()))
 			return;
-		RenameFile(oldPath, newPath.string() + "\\" + filename.string(),map);
+		RenameFile(oldPath, newPath.string() + "\\" + filename.string());
 	}
 
 	static void CreateMetaFile_(std::filesystem::path metaPath, EAssetType assetType)
@@ -89,16 +91,12 @@ public:
 		file.close();
 	}
 
-	static void RenameFile(std::filesystem::path oldPath, std::filesystem::path newPath, std::unordered_map<std::string, EAssetType>& map)
+	static void RenameFile(std::filesystem::path oldPath, std::filesystem::path newPath)
 	{
 		auto ec = ServiceLocator::instance()->Get<EngineContext>();
 		auto rs = ServiceLocator::instance()->Get<ResourceService>();
 		auto uuid = rs->GetUUIDFromPath(oldPath);
-		auto val = map[oldPath.string()];
-
-		map.erase(oldPath.string());
 		std::filesystem::rename(oldPath, newPath);
-		map[newPath.string()] = val;
 		
 		if (!std::filesystem::is_directory(newPath))
 			std::filesystem::rename(oldPath.string() + ".meta", newPath.string() + ".meta");
@@ -121,13 +119,13 @@ public:
 
 			json fileData = {
 
-				{"albedoTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\black_texture.png")},
-				{"specularTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\white_texture.png")},
-				{"roughnessTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\white_texture.png")},
-				{"metallicTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\white_texture.png")},
-				{"emissiveTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\alpha-transparent.png")},
-				{"normalmapTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\normal_map.jpg")},
-				{"opacityTextureUUID",rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\alpha-transparent.png")},
+				{"albedoTextureUUID",boost::lexical_cast<std::string>(rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\black_texture.png"))},
+				{"specularTextureUUID",boost::lexical_cast<std::string>(rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\white_texture.png"))},
+				{"roughnessTextureUUID",boost::lexical_cast<std::string>(rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\white_texture.png"))},
+				{"metallicTextureUUID",boost::lexical_cast<std::string>(rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\white_texture.png"))},
+				{"emissiveTextureUUID",boost::lexical_cast<std::string>(rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\alpha-transparent.png"))},
+				{"normalmapTextureUUID",boost::lexical_cast<std::string>(rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\normal_map.jpg"))},
+				{"opacityTextureUUID",boost::lexical_cast<std::string>(rs->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Textures\\alpha-transparent.png"))},
 				{"albedoVec",std::vector<float>{0,0,0,-1}},
 				{"specularVec",std::vector<float>{0,0,0,-1}},
 				{"roughnessVec",std::vector<float>{-1,0,0,-1}},

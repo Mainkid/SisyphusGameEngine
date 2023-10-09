@@ -43,13 +43,6 @@ void HudViewportSystem::Run()
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)&& !ImGuizmo::IsOver()&& hoverState==EHoveringState::Viewport)
 	{
 		
-		
-		//std::cout << "Is over" << std::endl;
-		
-
-
-		
-		
 		int pixelColorR =RenderHelper::GetPixelValue(x, y).x;
 		if (pixelColorR != -1)
 		{
@@ -64,9 +57,11 @@ void HudViewportSystem::Run()
 
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_CONTENTBROWSER"))
 		{
-			std::string uuid;
-			uuid = static_cast<char*>(payload->Data);
-			uuid.resize(36);
+			std::string uuidStr;
+			uuidStr = static_cast<char*>(payload->Data);
+			uuidStr.resize(36);
+
+			auto uuid = boost::lexical_cast<boost::uuids::uuid>(uuidStr);
 
 			if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_MESH)
 			{
@@ -84,7 +79,8 @@ void HudViewportSystem::Run()
 				if (enttID.z == int(EAssetType::ASSET_MESH))
 				{
 					MeshComponent& meshComp = ec->scene->registry.get<MeshComponent>(static_cast<entt::entity>(enttID.x));
-					meshComp.materials[enttID.y] = static_cast<Material*>(rs->LoadResource(uuid));
+					meshComp.materialUUIDs[enttID.y] = uuid;
+					//meshComp.materials[enttID.y] = static_cast<Material*>(rs->LoadResource(uuid));
 				}
 			}
 		}

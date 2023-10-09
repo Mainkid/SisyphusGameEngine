@@ -9,28 +9,37 @@
 #include <string>
 #include <set>
 #include <unordered_map>
+#include <unordered_set>
 #include <queue>
 #include <fstream>
 #include "json.hpp"
 #include <uuid.hpp>
+#include <boost/functional/hash.hpp>
+#include <boost/uuid/nil_generator.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
+
 
 class ResourceService : public IService
 {
+	using uuid_hash = boost::hash<boost::uuids::uuid>;
 public:
-	std::unordered_map<std::string, ResourceInfo> resourceLibrary;           // uuid: assetType, path, resourceBase
-	std::unordered_map<EAssetType, std::set<std::string>> resourceGroups;    // assetType: set<uuid>
-	std::unordered_map<std::string, ResourceBase*> loadedResourceDB;          //uuid : Resources*
-	std::unordered_map<EAssetType, ResourceBase*> baseResourceDB;
+	std::unordered_map<boost::uuids::uuid, ResourceInfo, uuid_hash> resourceLibrary;           // uuid: assetType, path, resourceBase
+	std::unordered_map<EAssetType, std::set<boost::uuids::uuid>> resourceGroups;               // assetType: set<uuid>
+	std::unordered_map<EAssetType, boost::uuids::uuid> baseResourceDB;//assetType : Resource*  
 
 	ResourceService();
 	void LoadBaseAssets();
-	ResourceBase* LoadResource(const std::string& uuid, bool reloadNeeded = false);
-	std::string FindFilePathByUUID(const std::string& uuid, bool getFileName = false);
-	std::string GetUUIDFromPath(const std::filesystem::path& path);
-	void LoadResourceLibrary(std::filesystem::path path, bool reloadNeeded = false);
+	std::shared_ptr<ResourceBase> LoadResource(const boost::uuids::uuid& uuid, bool reloadNeeded = false);
+	void UnloadResource(const boost::uuids::uuid& uuid);
+	std::string FindFilePathByUUID(const boost::uuids::uuid& uuid, bool getFileName = false);
+	boost::uuids::uuid GetUUIDFromPath(const std::filesystem::path& path);
+	void LoadResourceLibrary(std::filesystem::path path, bool reloadNeeded = false, bool isLoadingBaseResources=false);
 	void ClearResourceGroups();
 	void UnloadResourceDB();
-	std::vector<const char*> GetAllResourcesOfType(EAssetType assetType);
+	std::vector<boost::uuids::uuid> GetAllResourcesOfType(EAssetType assetType);
 	std::vector<std::string> GetAllResourcesFilePaths(EAssetType assetType, bool findFullPath = false);
 
 	

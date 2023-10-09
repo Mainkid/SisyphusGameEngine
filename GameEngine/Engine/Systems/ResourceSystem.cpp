@@ -18,7 +18,7 @@ void ResourceSystem::Init()
 	GenerateMetaFiles("./Game/Assets");
 	GenerateMetaFiles("./Engine/Assets/Resources");
 	rs->LoadResourceLibrary("./Game/Assets");
-	rs->LoadResourceLibrary("./Engine/Assets/Resources");
+	rs->LoadResourceLibrary("./Engine/Assets/Resources",false,true);
 	rs->LoadBaseAssets();
 }
 
