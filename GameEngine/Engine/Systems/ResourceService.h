@@ -19,7 +19,18 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/string_generator.hpp>
+#include "../../vendor/Delegates.h"
+#include "../Tools/ErrorLogger.h"
 
+struct BaseResourceInfo
+{
+	using uuid_hash = boost::hash<boost::uuids::uuid>;
+	boost::uuids::uuid uuid;
+	std::shared_ptr<ResourceBase> resource;
+
+};
 
 
 class ResourceService : public IService
@@ -28,7 +39,8 @@ class ResourceService : public IService
 public:
 	std::unordered_map<boost::uuids::uuid, ResourceInfo, uuid_hash> resourceLibrary;           // uuid: assetType, path, resourceBase
 	std::unordered_map<EAssetType, std::set<boost::uuids::uuid>> resourceGroups;               // assetType: set<uuid>
-	std::unordered_map<EAssetType, boost::uuids::uuid> baseResourceDB;                         //assetType : Resource*  
+	std::unordered_map<EAssetType, BaseResourceInfo> baseResourceDB;                         //assetType : Resource*  
+	
 
 	ResourceService();
 	void LoadBaseAssets();
@@ -37,18 +49,18 @@ public:
 	std::string FindFilePathByUUID(const boost::uuids::uuid& uuid, bool getFileName = false);
 	boost::uuids::uuid GetUUIDFromPath(const std::filesystem::path& path);
 	void LoadResourceLibrary(std::filesystem::path path, bool reloadNeeded = false, bool isLoadingBaseResources=false);
-	void ClearResourceGroups();
-	void UnloadResourceDB();
+	void GenerateMetaFiles(std::filesystem::path currentDirectory);
 	std::vector<boost::uuids::uuid> GetAllResourcesOfType(EAssetType assetType);
 	std::vector<std::string> GetAllResourcesFilePaths(EAssetType assetType, bool findFullPath = false);
 
+	SyDelegates::MulticastDelegate<bool> updateContentBrowser;
 	
 
 private:
 	const std::string baseTexture = ".\\Engine\\Assets\\Resources\\Textures\\default_albedo.png";
 	const std::string baseMaterial = ".\\Engine\\Assets\\Resources\\Materials\\baseMaterial.mat";
 	const std::string baseModel = ".\\Engine\\Assets\\Resources\\Cube.fbx";
-
+	
 	
 };
 

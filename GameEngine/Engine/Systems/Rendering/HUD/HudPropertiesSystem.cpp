@@ -7,9 +7,7 @@
 #include "../../TransformHelper.h"
 #include "../../Core/ServiceLocator.h"
 #include "json.hpp"
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/nil_generator.hpp>
-#include <boost/lexical_cast.hpp>
+
 #include <fstream>
 
 SyResult HudPropertiesSystem::Init()
@@ -18,6 +16,7 @@ SyResult HudPropertiesSystem::Init()
     this->ec = ServiceLocator::instance()->Get<EngineContext>();
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudProperties system initialization successful.");
     this->rs = ServiceLocator::instance()->Get<ResourceService>();
+    rs->updateContentBrowser.AddRaw(this, &HudPropertiesSystem::UpdateHudProperties);
     return SyResult();
     
 }
@@ -103,7 +102,7 @@ void HudPropertiesSystem::DrawMaterialProperties()
 {
     const int comboWidth = 100;
     const int dragFloatWidth = 100;
-    static boost::uuids::uuid prevSelectedUUID = boost::uuids::nil_uuid();
+    
     using json = nlohmann::json;
     ImGui::Text("Material");
     std::string filePath=rs->FindFilePathByUUID(ec->selectedContent.uuid);
@@ -147,7 +146,8 @@ void HudPropertiesSystem::DrawMaterialProperties()
     std::vector<const char*> filePaths;
 
     for (int i = 0; i < filePathsStr.size(); i++) {
-        filePaths.push_back(filePathsStr[i].c_str());
+        if (filePathsStr[i]!="")
+            filePaths.push_back(filePathsStr[i].c_str());
     }
    
 
@@ -200,8 +200,6 @@ void HudPropertiesSystem::DrawMaterialProperties()
         for (int i = 0; i < textureUUIDvec.size(); i++)
         {
             setTextureByUUID(textureUUIDvec[i], i, texture_current,items,textureUUIDvec );
-
-           
         }
 
 
@@ -233,6 +231,11 @@ void HudPropertiesSystem::DrawMaterialProperties()
         ImGui::SameLine();
         ImGui::BeginDisabled(!params[i]);
         ImGui::PushItemWidth(comboWidth);
+        if (texture_current[i] >= items.size())
+        {
+            SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Selected asset is deleted from project. Assigning default asset to this resource");
+            setTextureByUUID(rs->baseResourceDB[EAssetType::ASSET_TEXTURE].uuid, i, texture_current, items, textureUUIDvec);
+        }
         ImGui::Combo(comboBoxLabels[i], &texture_current[i], filePaths.data(), filePaths.size());
         dragDropFunc(i);
         ImGui::PopItemWidth();
@@ -254,6 +257,11 @@ void HudPropertiesSystem::DrawMaterialProperties()
         ImGui::SameLine();
         ImGui::BeginDisabled(!params[i]);
         ImGui::PushItemWidth(comboWidth);
+        if (texture_current[i] >= items.size())
+        {
+            SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Selected asset is deleted from project. Assigning default asset to this resource");
+            setTextureByUUID(rs->baseResourceDB[EAssetType::ASSET_TEXTURE].uuid, i, texture_current, items, textureUUIDvec);
+        }
         ImGui::Combo(comboBoxLabels[i], &texture_current[i], filePaths.data(), filePaths.size());
         dragDropFunc(i);
         ImGui::PopItemWidth();
@@ -262,9 +270,19 @@ void HudPropertiesSystem::DrawMaterialProperties()
     }
 
     
+    
     ImGui::Button("APPLY");
     if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
     {
+        for (int i = 0; i < 7; i++)
+        {
+            if (texture_current[i] >= items.size())
+            {
+                SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Selected asset is deleted from project. Assigning default asset to this resource");
+                setTextureByUUID(rs->baseResourceDB[EAssetType::ASSET_TEXTURE].uuid, i, texture_current, items, textureUUIDvec);
+            }
+        }
+
         json outputData = {
 
                 {"albedoTextureUUID",boost::lexical_cast<std::string>(items[texture_current[0]])},
@@ -289,6 +307,12 @@ void HudPropertiesSystem::DrawMaterialProperties()
         rs->LoadResource(rs->GetUUIDFromPath(filePath),true);
     }
     prevSelectedUUID = ec->selectedContent.uuid;
+}
+
+void HudPropertiesSystem::UpdateHudProperties(bool)
+{
+    prevSelectedUUID = boost::uuids::nil_uuid();
+    std::cout << "OK";
 }
 
 //TODO: Нужно избежать открытия файлов каждый фрейм

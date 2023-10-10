@@ -1,6 +1,7 @@
 #include "DisplayWin32.h"
 #include "EngineCore.h"
 #include "ServiceLocator.h"
+#include "../../vendor/Delegates.h"
 
 static bool isInitialized = false;
 
@@ -25,9 +26,19 @@ LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT umessage, WPARAM wparam, LPA
 		//}
 		//else
 		//	isInitialized = true;
-		
-		
 		return 0;
+	case WM_ACTIVATEAPP:
+		std::cout << "Activated! " << wparam;
+		if (wparam)
+		{
+			ServiceLocator::instance()->Get<ResourceService>()->GenerateMetaFiles(".\\Game\\Assets");
+			ServiceLocator::instance()->Get<ResourceService>()->LoadResourceLibrary(".\\Game\\Assets", true);
+			ServiceLocator::instance()->Get<ResourceService>()->LoadResourceLibrary(".\\Engine\\Assets\\Resources",false,true);
+			//ServiceLocator::instance()->Get < ResourceService>()->updateContentBrowser.Broadcast(wparam);
+			//TODO: Вызов ивента обновления Content Browser'a
+		}
+		return 0;
+
 	case WM_SYSCOMMAND:
 		if ((wparam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
 			return 0;

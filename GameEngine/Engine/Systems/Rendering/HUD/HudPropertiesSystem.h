@@ -3,6 +3,9 @@
 #include <string>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/nil_generator.hpp>
+#include <boost/lexical_cast.hpp>
 
 struct EngineContext;
 struct HardwareContext;
@@ -23,7 +26,9 @@ private:
     HardwareContext* hc;
     ResourceService* rs;
     std::string windowID;
+    boost::uuids::uuid prevSelectedUUID = boost::uuids::nil_uuid();
     bool isFocused;
     
     void DrawMaterialProperties();
+    void UpdateHudProperties(bool);
 };

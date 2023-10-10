@@ -15,7 +15,8 @@ SyResult HudContentBrowserSystem::Init()
     rc = ServiceLocator::instance()->Get<RenderContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rs = ServiceLocator::instance()->Get<ResourceService>();
-    //FillPathToAssetMap(assetsDirectory);
+
+    rs->updateContentBrowser.AddRaw(this, &HudContentBrowserSystem::UpdatePathFileViewsEvent);
     InitImagesSRV();
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudContentBrowser system initialization successful.");
     return SyResult();
@@ -37,6 +38,8 @@ SyResult HudContentBrowserSystem::Run()
         initialized = true;
         return SyResult();
     }
+    
+    
 
 
     ImGui::Begin("Content Browser");
@@ -68,6 +71,7 @@ SyResult HudContentBrowserSystem::Run()
     float panelWidth = ImGui::GetContentRegionAvail().x;
     auto widgetStartPos = ImVec2(startCursorPos.x, startCursorPos.y);
     widgetStartPos.y += ImGui::GetScrollY();
+
 
     
 
@@ -317,9 +321,13 @@ void HudContentBrowserSystem::ProcessPopUp()
             switch (selected_Popup)
             {
                 case 0:
-                    for(auto& selectedFile : selectedFiles)
+                    for (auto& selectedFile : selectedFiles)
+                    {
+                        
+                        CheckRemovingResourceReferences(selectedFile);
                         ResourceHelper::RemoveFile(selectedFile);
-                    InitializePathFileViews(curDirectory);
+                    }
+                    rs->updateContentBrowser.Broadcast(true);
                     break;
                 case 1:
                     renamingFileName = *selectedFiles.begin();
@@ -449,10 +457,19 @@ void HudContentBrowserSystem::InitializePathFileViews(const std::filesystem::pat
 
 }
 
-void HudContentBrowserSystem::PrintDirectory()
+void HudContentBrowserSystem::UpdatePathFileViewsEvent(bool shouldUpdate)
 {
-    
+    if (shouldUpdate)
+        InitializePathFileViews(curDirectory);
 }
 
-
-//TODO: PathToAssetTypemap такое себе... Переделать
+bool HudContentBrowserSystem::CheckRemovingResourceReferences(const std::filesystem::path& path)
+{
+   /* auto uuid=rs->GetUUIDFromPath(path);
+    if (rs->resourceLibrary[uuid].resource.use_count() > 0)
+    {
+        ImGui::OpenPopup("RemoveResource");
+    }
+    return false;*/
+    return false;
+}

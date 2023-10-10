@@ -31,7 +31,7 @@ SyResult MeshSystem::Run()
 			
 			for (int i = 0; i < mesh.materials.size(); i++)
 			{
-				mesh.materialUUIDs[i] = (rs->baseResourceDB[EAssetType::ASSET_MATERIAL]);
+				mesh.materialUUIDs[i] = (rs->baseResourceDB[EAssetType::ASSET_MATERIAL].uuid);
 			}
 		}
 

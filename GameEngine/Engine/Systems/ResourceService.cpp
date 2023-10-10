@@ -11,18 +11,28 @@ ResourceService::ResourceService()
 
 void ResourceService::LoadBaseAssets()
 {
-	baseResourceDB[EAssetType::ASSET_TEXTURE] = GetUUIDFromPath(baseTexture);
-	resourceLibrary[GetUUIDFromPath(baseTexture)].resource = LoadResource(GetUUIDFromPath(baseTexture));
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Loading base assets...");
 
-	baseResourceDB[EAssetType::ASSET_MATERIAL] = GetUUIDFromPath(baseMaterial);
-	resourceLibrary[GetUUIDFromPath(baseMaterial)].resource = LoadResource(GetUUIDFromPath(baseMaterial));
+	baseResourceDB[EAssetType::ASSET_TEXTURE].uuid = GetUUIDFromPath(baseTexture);
+	baseResourceDB[EAssetType::ASSET_TEXTURE].resource = LoadResource(GetUUIDFromPath(baseTexture));
+	resourceLibrary[GetUUIDFromPath(baseTexture)].resource = baseResourceDB[EAssetType::ASSET_TEXTURE].resource;
 
-	baseResourceDB[EAssetType::ASSET_MESH] =  GetUUIDFromPath(baseModel);
-	resourceLibrary[GetUUIDFromPath(baseModel)].resource = LoadResource(GetUUIDFromPath(baseModel));
+	baseResourceDB[EAssetType::ASSET_MATERIAL].uuid = GetUUIDFromPath(baseMaterial);
+	baseResourceDB[EAssetType::ASSET_MATERIAL].resource = LoadResource(GetUUIDFromPath(baseMaterial));
+	resourceLibrary[GetUUIDFromPath(baseMaterial)].resource = baseResourceDB[EAssetType::ASSET_MATERIAL].resource;
+
+	baseResourceDB[EAssetType::ASSET_MESH].uuid =  GetUUIDFromPath(baseModel);
+	baseResourceDB[EAssetType::ASSET_MESH].resource = LoadResource(GetUUIDFromPath(baseModel));
+	resourceLibrary[GetUUIDFromPath(baseModel)].resource = baseResourceDB[EAssetType::ASSET_MESH].resource;
+
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Base assets loaded successfuly!");
 }
 
 std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::uuid& uuid, bool reloadNeeded )
 {
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Loading resource with "+boost::lexical_cast<std::string>(uuid) + " uuid and "
+		+ std::to_string(resourceLibrary[uuid].resource.use_count()) + " refs");
+
 	std::shared_ptr<std::string> strPtr;
 
 	using json = nlohmann::json;
@@ -39,32 +49,54 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 				mat = std::make_shared<Material>();
 			else
 				mat = std::static_pointer_cast<Material>(resourceLibrary[uuid].resource.lock());
+
+			std::string filePath = FindFilePathByUUID(uuid);
+			if (filePath == "")
+			{
+				SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with " + boost::lexical_cast<std::string>(uuid) + " uuid! Loading base asset...");
+				filePath = FindFilePathByUUID(baseResourceDB[EAssetType::ASSET_MATERIAL].uuid);
+			}
+
 			std::ifstream file;
-			file.open(FindFilePathByUUID(uuid));
+			file.open(filePath);
 			json fileData;
 			file >> fileData;
 			file.close();
 
 			mat->albedoTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["albedoTextureUUID"]);
 			mat->albedoSRV = std::static_pointer_cast<Texture>(LoadResource(mat->albedoTextureUUID));
+			if (!mat->albedoSRV)
+				return baseResourceDB[EAssetType::ASSET_MATERIAL].resource;
 
 			mat->emissiveTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["emissiveTextureUUID"]);
 			mat->emissiveSRV = std::static_pointer_cast<Texture>(LoadResource(mat->emissiveTextureUUID));
+			if (!mat->emissiveSRV)
+				return baseResourceDB[EAssetType::ASSET_MATERIAL].resource;
 
 			mat->metallicTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["metallicTextureUUID"]);
 			mat->metallicSRV = std::static_pointer_cast<Texture>(LoadResource(mat->metallicTextureUUID));
+			if (!mat->metallicSRV)
+				return baseResourceDB[EAssetType::ASSET_MATERIAL].resource;
 
 			mat->opacityTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["opacityTextureUUID"]);
 			mat->opacitySRV = std::static_pointer_cast<Texture>(LoadResource(mat->opacityTextureUUID));
+			if (!mat->opacitySRV)
+				return baseResourceDB[EAssetType::ASSET_MATERIAL].resource;
 
 			mat->roughnessTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["roughnessTextureUUID"]);
 			mat->roughnessSRV = std::static_pointer_cast<Texture>(LoadResource(mat->roughnessTextureUUID));
+			if (!mat->roughnessSRV)
+				return baseResourceDB[EAssetType::ASSET_MATERIAL].resource;
 
 			mat->specularTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["specularTextureUUID"]);
 			mat->specularSRV = std::static_pointer_cast<Texture>(LoadResource(mat->specularTextureUUID));
+			if (!mat->specularSRV)
+				return baseResourceDB[EAssetType::ASSET_MATERIAL].resource;
 
 			mat->normalmapTextureUUID = boost::lexical_cast<boost::uuids::uuid>((std::string)fileData["normalmapTextureUUID"]);
 			mat->normalmapSRV = std::static_pointer_cast<Texture>(LoadResource(mat->normalmapTextureUUID));
+			if (!mat->normalmapSRV)
+				return baseResourceDB[EAssetType::ASSET_MATERIAL].resource;
 
 			mat->albedoValue = Vector4(fileData["albedoVec"][0], fileData["albedoVec"][1], fileData["albedoVec"][2], fileData["albedoVec"][3]);
 			mat->emissiveValue = Vector4(fileData["emissiveVec"][0], fileData["emissiveVec"][1], fileData["emissiveVec"][2], fileData["emissiveVec"][3]);
@@ -88,18 +120,38 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 		{
 			//TODO: Поддержка sRGB;
 			auto texture = std::make_shared<Texture>();
-			MeshLoader::LoadTexture(FindFilePathByUUID(uuid), texture->textureSamplerState.GetAddressOf(), texture->textureSRV.GetAddressOf());
+			std::string filePath = FindFilePathByUUID(uuid);
+			if (filePath == "")
+			{
+				SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with " + boost::lexical_cast<std::string>(uuid) + " uuid! Loading base asset...");
+				filePath = FindFilePathByUUID(baseResourceDB[EAssetType::ASSET_TEXTURE].uuid);
+			}
+
+			MeshLoader::LoadTexture(filePath, texture->textureSamplerState.GetAddressOf(), texture->textureSRV.GetAddressOf());
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(texture);
 			return texture;
 		}
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_MESH)
 		{
 			auto model = std::make_shared<Model>();
-			MeshLoader::LoadModel(FindFilePathByUUID(uuid), model->meshes);
+			std::string filePath = FindFilePathByUUID(uuid);
+			if (filePath == "")
+			{
+				SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with " + boost::lexical_cast<std::string>(uuid) + " uuid! Loading base asset...");
+				filePath = FindFilePathByUUID(baseResourceDB[EAssetType::ASSET_MESH].uuid);
+			}
+			MeshLoader::LoadModel(filePath, model->meshes);
+
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>( model);
 			return model;
 		}
+		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_NONE)
+		{
+			SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with " + boost::lexical_cast<std::string>(uuid) + " uuid! Loading base asset...");
+			return resourceLibrary[uuid].resource.lock();
+		}
 	}
+
 	return resourceLibrary[uuid].resource.lock();
 }
 
@@ -116,6 +168,8 @@ std::string ResourceService::FindFilePathByUUID(const boost::uuids::uuid& uuid, 
 	}
 	else
 	{
+		SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't find file path with current UUID. Returning NONE");
+		return "";
 		//TODO: Добавить вывод ошибки, если файл отсутствует с ID
 	}
 }
@@ -125,9 +179,17 @@ boost::uuids::uuid ResourceService::GetUUIDFromPath(const std::filesystem::path&
 	using json = nlohmann::json;
 
 	if (std::filesystem::is_directory(path))
+	{
 		return boost::uuids::nil_uuid();
+	}
 	std::ifstream file;
 	std::string uuid;
+
+	if (!std::filesystem::exists(path.string() + ".meta"))
+	{
+		SY_LOG_CORE(SY_LOGLEVEL_WARNING, "File with current path doesn't have generated metafile. Returning uuid_null");
+		return boost::uuids::nil_uuid();
+	}
 
 	file.open(path.string() + ".meta");
 	json fileData;
@@ -177,16 +239,6 @@ void ResourceService::LoadResourceLibrary(std::filesystem::path path, bool isRel
 	}
 }
 
-void ResourceService::ClearResourceGroups()
-{
-	resourceGroups.clear();
-}
-
-void ResourceService::UnloadResourceDB()
-{
-	/*loadedResourceDB.clear();*/
-}
-
 std::vector<boost::uuids::uuid> ResourceService::GetAllResourcesOfType(EAssetType assetType)
 {
 	std::vector<boost::uuids::uuid> uuids;
@@ -200,12 +252,56 @@ std::vector<boost::uuids::uuid> ResourceService::GetAllResourcesOfType(EAssetTyp
 std::vector<std::string> ResourceService::GetAllResourcesFilePaths(EAssetType assetType, bool findFullPath)
 {
 	std::vector<std::string> filePaths;
+	std::vector<boost::uuids::uuid> uuidsToDeleteFromResourceGroups;
 	for (auto& uuid : resourceGroups.at(assetType))
 	{
 		std::filesystem::path filePath;
-		std::string result;
-		filePaths.push_back(FindFilePathByUUID(uuid, !findFullPath));
-
+		std::string result = FindFilePathByUUID(uuid, !findFullPath);
+		if (result != "")
+			filePaths.push_back(result);
+		else
+			uuidsToDeleteFromResourceGroups.push_back(uuid);
 	}
+
+	for (auto& uuid : uuidsToDeleteFromResourceGroups)
+	{
+		resourceGroups.at(assetType).erase(uuid);
+	}
+
 	return filePaths;
+}
+
+void ResourceService::GenerateMetaFiles(std::filesystem::path currentDirectory)
+{
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Generating metafiles in " + currentDirectory.string() + " folder");
+
+	using json = nlohmann::json;
+	for (auto& directoryEntry : std::filesystem::directory_iterator(currentDirectory))
+	{
+		if (directoryEntry.is_directory())
+			GenerateMetaFiles(directoryEntry);
+		else
+		{
+			if (directoryEntry.path().filename().extension() != ".meta" && !std::ifstream(directoryEntry.path().string() + ".meta"))
+			{
+				boost::uuids::uuid uuid = boost::uuids::random_generator()();
+				std::string extension = directoryEntry.path().filename().extension().string();
+				std::ofstream file;
+				json fileData = {
+					{"uuid",boost::uuids::to_string(uuid)}
+				};
+
+				file.open(directoryEntry.path().string() + ".meta");
+
+				if (extensionToAssetTypeMap.count(extension) > 0)
+					fileData["AssetType"] = static_cast<int>(extensionToAssetTypeMap.at(extension));
+				else
+					fileData["AssetType"] = static_cast<int>(EAssetType::ASSET_NONE);
+
+				file << fileData;
+				file.close();
+			}
+		}
+		
+	}
 }

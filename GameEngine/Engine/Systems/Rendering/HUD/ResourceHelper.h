@@ -46,6 +46,7 @@ public:
 	
 	static void RemoveFile(std::filesystem::path path)
 	{
+
 		auto ec=ServiceLocator::instance()->Get<EngineContext>();
 		auto rs = ServiceLocator::instance()->Get<ResourceService>();
 		if (ec->selectedContent.uuid == rs->GetUUIDFromPath(path))
@@ -136,23 +137,8 @@ public:
 			file << fileData;
 			break;
 		}
-
 		file.close();
 	}
-
-	//static std::vector<const char*> GetAllResourcesOfType(EAssetType assetType, std::unordered_map<std::string, ResourceInfo>& resourceLibrary)
-	//{
-	//	std::vector<const char*> uuids;
-
-	//	for (auto& asset : resourceLibrary)
-	//	{
-	//		if (asset.second.assetType == assetType)
-	//			uuids.push_back(asset.first.c_str());
-	//	}
-
-	//	return uuids;
-	//}
 };
 
-//TODO: GetAllResourcesOfType - переделать! сделать отдельную map вида <AssetType,set<uuids>>
 

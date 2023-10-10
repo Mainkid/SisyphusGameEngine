@@ -141,7 +141,7 @@ private: \
 #define NO_DISCARD		
 #endif
 
-namespace CustomDelegates {
+namespace SyDelegates {
 	namespace _DelegatesInteral
 	{
 		template<bool IsConst, typename Object, typename RetVal, typename ...Args>
