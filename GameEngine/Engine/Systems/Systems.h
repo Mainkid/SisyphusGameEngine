@@ -28,3 +28,4 @@
 #include "Rendering/RenderPipeline/ShadowMapGenerationSystem.h"
 #include "Rendering/RenderPipeline/ToneMappingRenderSystem.h"
 #include "Rendering/PostViewportRenderSystem.h"
+#include "Rendering/RenderPipeline/EditorGridRenderSystem.h"

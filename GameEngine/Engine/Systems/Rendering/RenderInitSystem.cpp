@@ -454,6 +454,10 @@ SyResult RenderInitSystem::Init()
     rc->toneMapper->Initialize(L"./Engine/Assets/Shaders/ToneMapping.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VSMain", "PSMain");
 
+    rc->editorGridRenderer = std::make_unique<Shader>();
+    rc->editorGridRenderer->Initialize(L"./Engine/Assets/Shaders/EditorGridShader.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL,USE_POSITION,"VSMain");
+
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "RenderInit system initialization successful. ");
     return SyResult();
 }

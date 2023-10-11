@@ -94,11 +94,11 @@ SyResult HudViewportSystem::Run()
 	ec->scene->camera->mouseWheel = io.MouseWheel;
 
 	//Gizmos
+	
 	if (ec->selectedEntityID!=entt::null)
 	{
 		ImGuizmo::SetOrthographic(false);
 		ImGuizmo::SetDrawlist();
-
 		float windowWidth = (float)ImGui::GetWindowWidth();
 		float windowHeight = (float)ImGui::GetWindowHeight();
 		ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);

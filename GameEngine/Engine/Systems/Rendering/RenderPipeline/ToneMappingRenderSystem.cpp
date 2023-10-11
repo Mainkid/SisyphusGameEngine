@@ -18,7 +18,7 @@ SyResult ToneMappingRenderSystem::Run()
 	UINT strides[1] = { 32 };
 	UINT offsets[1] = { 0 };
 	hc->context->PSSetSamplers(0, 1, rc->samplerState.GetAddressOf());
-	hc->renderTarget->SetRenderTarget(hc->depthStencilView.Get());
+	hc->renderTarget->SetRenderTarget(nullptr);
 	hc->context->PSSetShaderResources(0, 1, rc->gBuffer->HDRBufferSRV.GetAddressOf());
 	hc->context->VSSetShader(rc->toneMapper->vertexShader.Get(), nullptr, 0);
 	hc->context->PSSetShader(rc->toneMapper->pixelShader.Get(), nullptr, 0);

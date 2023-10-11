@@ -94,11 +94,15 @@ void EngineCore::StartUpSystems()
 	std::unique_ptr<PreRenderSystem> prs = std::make_unique<PreRenderSystem>();
 	systems.push_back(std::move(prs));
 
+
+
 	std::unique_ptr<ShadowRenderSystem> srs = std::make_unique<ShadowRenderSystem>();
 	systems.push_back(std::move(srs));
 
 	std::unique_ptr<SkyboxRenderSystem> srs2 = std::make_unique<SkyboxRenderSystem>();
 	systems.push_back(std::move(srs2));
+
+
 
 	std::unique_ptr<OpaqueRenderSystem> ors = std::make_unique<OpaqueRenderSystem>();
 	systems.push_back(std::move(ors));
@@ -114,6 +118,9 @@ void EngineCore::StartUpSystems()
 
 	std::unique_ptr<ToneMappingRenderSystem> tmrs = std::make_unique<ToneMappingRenderSystem>();
 	systems.push_back(std::move(tmrs));
+
+	std::unique_ptr<EditorGridRenderSystem> egrs3 = std::make_unique<EditorGridRenderSystem>();
+	systems.push_back(std::move(egrs3));
 
 	std::unique_ptr<PostViewportRenderSystem> postrs = std::make_unique<PostViewportRenderSystem>();
 	systems.push_back(std::move(postrs));

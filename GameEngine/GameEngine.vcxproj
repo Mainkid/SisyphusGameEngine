@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp" />
     <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp" />
     <ClCompile Include="Engine\Core\DisplayWin32.cpp" />
@@ -645,6 +646,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.h" />
     <ClInclude Include="Engine\Components\Material.h" />
     <ClInclude Include="Engine\Components\Model.h" />
     <ClInclude Include="Engine\Components\SkyboxComponent.h" />
@@ -747,6 +749,9 @@
       <FileType>Document</FileType>
     </None>
     <None Include="Engine\Assets\Shaders\LightShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Engine\Assets\Shaders\EditorGridShader.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="Engine\Assets\Shaders\OpaqueShader.hlsl">

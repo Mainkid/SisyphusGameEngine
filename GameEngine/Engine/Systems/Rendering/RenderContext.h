@@ -26,6 +26,7 @@ struct RenderContext : public IService
     std::unique_ptr<Shader> shadowMapPointLightGenerator;
     std::unique_ptr<Shader> skyBoxShader;
     std::unique_ptr<Shader> toneMapper;
+    std::unique_ptr<Shader> editorGridRenderer;
     
 
     std::shared_ptr<Mesh> cubeMesh;

@@ -4,6 +4,7 @@
 #include "../../HardwareContext.h"
 #include "../RenderContext.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
+#include "../../../../vendor/ImGuizmo/ImGuizmo.h"
 
 SyResult OpaqueRenderSystem::Init()
 {
@@ -17,7 +18,9 @@ SyResult OpaqueRenderSystem::Init()
 SyResult OpaqueRenderSystem::Run()
 {
     hc->context->RSSetState(rc->cullBackRS.Get());
+
     auto view = ec->scene->registry.view<TransformComponent, MeshComponent>();
+   
     for (auto& entity : view)
     {
         CB_BaseEditorBuffer dataOpaque;

@@ -31,6 +31,12 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
             v_entryPoint, "vs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0,
             vertexBC.GetAddressOf(), errorVertexCode.GetAddressOf());
 
+        if (FAILED(res))
+        {
+            if (errorVertexCode != nullptr)
+                OutputDebugStringA((char*)errorVertexCode->GetBufferPointer());
+        }
+
         res = hc->device->CreateVertexShader(
             this->vertexBC->GetBufferPointer(),
             this->vertexBC->GetBufferSize(),
