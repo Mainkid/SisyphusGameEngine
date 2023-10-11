@@ -30,8 +30,9 @@ void ResourceService::LoadBaseAssets()
 
 std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::uuid& uuid, bool reloadNeeded )
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Loading resource with "+boost::lexical_cast<std::string>(uuid) + " uuid and "
-		+ std::to_string(resourceLibrary[uuid].resource.use_count()) + " refs");
+
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Loading resource with %s uuid and %s refs",
+		boost::lexical_cast<std::string>(uuid).c_str(), std::to_string(resourceLibrary[uuid].resource.use_count()).c_str());
 
 	std::shared_ptr<std::string> strPtr;
 
@@ -53,7 +54,9 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			std::string filePath = FindFilePathByUUID(uuid);
 			if (filePath == "")
 			{
-				SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with " + boost::lexical_cast<std::string>(uuid) + " uuid! Loading base asset...");
+
+				SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with %s uuid! Loading base asset...",
+					boost::lexical_cast<std::string>(uuid).c_str());
 				filePath = FindFilePathByUUID(baseResourceDB[EAssetType::ASSET_MATERIAL].uuid);
 			}
 
@@ -123,7 +126,8 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			std::string filePath = FindFilePathByUUID(uuid);
 			if (filePath == "")
 			{
-				SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with " + boost::lexical_cast<std::string>(uuid) + " uuid! Loading base asset...");
+				SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with %s uuid! Loading base asset...",
+					boost::lexical_cast<std::string>(uuid).c_str());
 				filePath = FindFilePathByUUID(baseResourceDB[EAssetType::ASSET_TEXTURE].uuid);
 			}
 
@@ -137,7 +141,8 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			std::string filePath = FindFilePathByUUID(uuid);
 			if (filePath == "")
 			{
-				SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with " + boost::lexical_cast<std::string>(uuid) + " uuid! Loading base asset...");
+				SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with %s uuid! Loading base asset...",
+					boost::lexical_cast<std::string>(uuid).c_str());
 				filePath = FindFilePathByUUID(baseResourceDB[EAssetType::ASSET_MESH].uuid);
 			}
 			MeshLoader::LoadModel(filePath, model->meshes);
@@ -147,7 +152,8 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 		}
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_NONE)
 		{
-			SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with " + boost::lexical_cast<std::string>(uuid) + " uuid! Loading base asset...");
+			SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with %s uuid! Loading base asset...",
+				boost::lexical_cast<std::string>(uuid).c_str());
 			return resourceLibrary[uuid].resource.lock();
 		}
 	}
@@ -273,7 +279,7 @@ std::vector<std::string> ResourceService::GetAllResourcesFilePaths(EAssetType as
 
 void ResourceService::GenerateMetaFiles(std::filesystem::path currentDirectory)
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Generating metafiles in " + currentDirectory.string() + " folder");
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Generating metafiles in %s folder",currentDirectory.string().c_str());
 
 	using json = nlohmann::json;
 	for (auto& directoryEntry : std::filesystem::directory_iterator(currentDirectory))
