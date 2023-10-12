@@ -22,12 +22,15 @@ SyResult HudViewportSystem::Run()
 {
 	ImGui::Begin(windowID.c_str());
 
-	//Widget::Render();
-	ImVec2 imgSize = ImGui::GetContentRegionAvail();
+	ImGui::BeginChild("ViewportTools",ImVec2(ImGui::GetContentRegionAvail().x,26));
 	ImVec2 startCursorPos = ImGui::GetCursorScreenPos();
-	//ImGui::SameLine();
-	//ImGui::ImageButton((void*)EngineCore::instance()->renderTarget->GetImageSRV(), { 20,20 });
-	//ImGui::ImageButton((void*)EngineCore::instance()->renderTarget->GetImageSRV(), { 20,20 });
+	drawPlayMode(startCursorPos);
+	drawViewportTools(startCursorPos);
+	ImGui::EndChild();
+	ImGui::BeginChild("ViewportChild");
+	ImVec2 imgSize = ImGui::GetContentRegionAvail();
+	startCursorPos = ImGui::GetCursorScreenPos();
+	
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0,0));
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
@@ -43,6 +46,8 @@ SyResult HudViewportSystem::Run()
 	x = std::clamp((int)(pos.x * textureSize.x / imgSize.x), 0, (int)textureSize.x - 1);
 	y = std::clamp((int)(pos.y * textureSize.y / imgSize.y), 0, (int)textureSize.y - 1);
 	
+	std::cout << (int)hoverState << std::endl;
+
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)&& !ImGuizmo::IsOver()&& hoverState==EHoveringState::Viewport)
 	{
 		
@@ -94,7 +99,6 @@ SyResult HudViewportSystem::Run()
 	ec->scene->camera->mouseWheel = io.MouseWheel;
 
 	//Gizmos
-	
 	if (ec->selectedEntityID!=entt::null)
 	{
 		ImGuizmo::SetOrthographic(false);
@@ -110,8 +114,14 @@ SyResult HudViewportSystem::Run()
 		auto& tc = ec->scene->registry.get<TransformComponent>(ec->selectedEntityID);
 		auto transformMat = tc.transformMatrix;
 
-		auto res=ImGuizmo::Manipulate(&viewMat._11, &projMat._11, guizmoType, ImGuizmo::LOCAL, &transformMat._11);
+		ImGuizmo::MODE mode = ImGuizmo::LOCAL;
+		if (isWorldSpace)
+			mode = ImGuizmo::WORLD;
 		
+		for (int i = 0; i < 3; i++)
+			snap[i] = snap_values[gridSnapParam];
+		
+		auto res=ImGuizmo::Manipulate(&viewMat._11, &projMat._11, guizmoType, mode, &transformMat._11,nullptr,mode==ImGuizmo::WORLD? snap : NULL);
 		if (ImGuizmo::IsUsing())	
 		{
 			Vector3 translation, scale,translationL,scaleL;
@@ -124,7 +134,7 @@ SyResult HudViewportSystem::Run()
 			tc.localScale = scale;
 		}
 	}
-
+	
 	if (ImGui::IsKeyDown(ImGuiKey_R))
 		guizmoType = ImGuizmo::OPERATION::ROTATE;
 	if (ImGui::IsKeyDown(ImGuiKey_T))
@@ -133,62 +143,20 @@ SyResult HudViewportSystem::Run()
 		guizmoType = ImGuizmo::OPERATION::SCALE;
 
 	
-	drawPlayMode(startCursorPos);
+	
 	hoverState = EHoveringState::Viewport;
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
-	ImGui::SetNextItemAllowOverlap();
-	ImGui::SetCursorScreenPos(startCursorPos);
-	ImGui::ImageButton((void*)guizmoIconSRV[ImGuizmo::OPERATION::TRANSLATE], { 20,20 });
-	if (ImGui::IsItemHovered())
-	{
-		hoverState = EHoveringState::TransformGizmo;
-		
-	}
-	if (ImGui::IsItemClicked())
-	{
-		guizmoType = ImGuizmo::OPERATION::TRANSLATE;
-	}
-	ImGui::SameLine();
-	ImGui::SetNextItemAllowOverlap();
-	ImGui::ImageButton((void*)guizmoIconSRV[ImGuizmo::OPERATION::ROTATE], { 20,20 });
-	if (ImGui::IsItemHovered())
-	{
-		hoverState = EHoveringState::RotateGizmo;
-
-	}
-	if (ImGui::IsItemClicked())
-	{
-		guizmoType = ImGuizmo::OPERATION::ROTATE;
-	}
-
-	ImGui::SameLine();
-	ImGui::SetNextItemAllowOverlap();
-	ImGui::ImageButton((void*)guizmoIconSRV[ImGuizmo::OPERATION::SCALE], { 20,20 });
-	if (ImGui::IsItemHovered())
-	{
-		hoverState = EHoveringState::ScaleGizmo;
-
-	}
-	if (ImGui::IsItemClicked())
-	{
-		guizmoType = ImGuizmo::OPERATION::SCALE;
-	}
-
-	ImGui::PopStyleVar();
-	ImGui::PopStyleVar();
+	
 
 	
-	//std::cout <<(int) hoverState << std::endl;
 
 	HandleResize();
+	ImGui::EndChild();
 	ImGui::End();
 	return SyResult();
 }
 
 SyResult HudViewportSystem::Destroy()
 {
-
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, " HudViewport system destruction successful.");
 	return SyResult();
 }
@@ -204,6 +172,15 @@ void HudViewportSystem::InitSRV()
 
 	ImageLoader::LoadTextureFromFile(scaleIconPath.string().c_str(), scaleSRV.GetAddressOf(), &width, &height);
 	guizmoIconSRV[ImGuizmo::OPERATION::SCALE] =scaleSRV.Get();
+
+	ImageLoader::LoadTextureFromFile(worldIconPath.string().c_str(), worldSRV.GetAddressOf(), &width, &height);
+	viewportIconSRV[EViewportTool::WorldSpace] = worldSRV.Get();
+
+	ImageLoader::LoadTextureFromFile(localIconPath.string().c_str(), localSRV.GetAddressOf(), &width, &height);
+	viewportIconSRV[EViewportTool::LocalSpace] = localSRV.Get();
+
+	ImageLoader::LoadTextureFromFile(gridIconPath.string().c_str(), gridSRV.GetAddressOf(), &width, &height);
+	viewportIconSRV[EViewportTool::Grid] = gridSRV.Get();
 
 	ImageLoader::LoadTextureFromFile(
 		playButtonPath.string().c_str(), 
@@ -240,7 +217,8 @@ void HudViewportSystem::HandleResize()
 
 void HudViewportSystem::drawPlayMode(ImVec2 cursorStartPostion)
 {
-	hoverState = EHoveringState::PlayMode;
+	if (ImGui::IsItemHovered())
+		hoverState = EHoveringState::PlayMode;
 	int offset = ImGui::GetContentRegionAvail().x / 2;
 	int dtOffset = 24;
 	
@@ -278,5 +256,96 @@ void HudViewportSystem::drawPlayMode(ImVec2 cursorStartPostion)
 	}
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();
+}
+
+void HudViewportSystem::drawViewportTools(ImVec2 startCursorPos)
+{
+	
+
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+	ImGui::SetNextItemAllowOverlap();
+	ImGui::SetCursorScreenPos(startCursorPos);
+	ImGui::ImageButton((void*)guizmoIconSRV[ImGuizmo::OPERATION::TRANSLATE], { 20,20 });
+	if (ImGui::IsItemHovered())
+	{
+		hoverState = EHoveringState::TransformGizmo;
+	}
+	if (ImGui::IsItemClicked())
+	{
+		guizmoType = ImGuizmo::OPERATION::TRANSLATE;
+	}
+	ImGui::SameLine();
+	ImGui::SetNextItemAllowOverlap();
+	ImGui::ImageButton((void*)guizmoIconSRV[ImGuizmo::OPERATION::ROTATE], { 20,20 });
+	if (ImGui::IsItemHovered())
+	{
+		hoverState = EHoveringState::RotateGizmo;
+
+	}
+	if (ImGui::IsItemClicked())
+	{
+		guizmoType = ImGuizmo::OPERATION::ROTATE;
+	}
+
+	ImGui::SameLine();
+	ImGui::SetNextItemAllowOverlap();
+	ImGui::ImageButton((void*)guizmoIconSRV[ImGuizmo::OPERATION::SCALE], { 20,20 });
+	if (ImGui::IsItemHovered())
+	{
+		hoverState = EHoveringState::ScaleGizmo;
+
+	}
+	if (ImGui::IsItemClicked())
+	{
+		guizmoType = ImGuizmo::OPERATION::SCALE;
+	}
+
+
+	ImGui::SameLine(0,12);
+	ImGui::SetNextItemAllowOverlap();
+	ID3D11ShaderResourceView* srv;
+	if (isWorldSpace)
+		srv = viewportIconSRV[EViewportTool::WorldSpace];
+	else
+		srv = viewportIconSRV[EViewportTool::LocalSpace];
+	
+	ImGui::ImageButton((void*)srv, {20,20});
+	if (ImGui::IsItemHovered())
+	{
+		hoverState = EHoveringState::None;
+
+	}
+	if (ImGui::IsItemClicked())
+	{
+		isWorldSpace = !isWorldSpace;
+	}
+
+
+	ImGui::SameLine();
+	ImGui::SetNextItemAllowOverlap();
+	ImGui::ImageButton((void*)viewportIconSRV[EViewportTool::Grid], { 20,20 });
+	if (ImGui::IsItemHovered())
+	{
+		hoverState = EHoveringState::None;
+
+	}
+	if (ImGui::IsItemClicked())
+	{
+		ImGui::OpenPopup("Grid settings");
+	}
+
+	if (ImGui::BeginPopupContextItem("Grid settings"))
+	{
+		static float value = 0;
+		ImGui::Text("Grid snapping");
+		const char* elem_name = (gridSnapParam >= 0 && gridSnapParam < 6) ? elems_names[gridSnapParam] : "Unknown";
+		ImGui::SliderInt("step", &gridSnapParam, 0, 6 - 1, elem_name); // Use ImGuiSliderFlags_NoInput flag to disable CTRL+Click here.
+		ImGui::EndPopup();
+	}
+
+	ImGui::PopStyleVar();
+	ImGui::PopStyleVar();
+
 }
 

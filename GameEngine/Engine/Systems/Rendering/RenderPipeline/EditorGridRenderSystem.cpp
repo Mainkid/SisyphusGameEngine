@@ -4,52 +4,81 @@
 #include "../../HardwareContext.h"
 #include "../../Rendering/RenderContext.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
+#include "../../../../vendor/ImGui/imgui.h"
+#include "../../../../vendor/ImGuizmo/ImGuizmo.h"
 
 SyResult EditorGridRenderSystem::Init()
 {
 	ec = ServiceLocator::instance()->Get<EngineContext>();
 	rc = ServiceLocator::instance()->Get<RenderContext>();
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
-
-	grid=CreateGrid(1, 16);
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorGridRender system initialization successful.");
+	grid1M = CreateGrid(1, minGridSize);
+	grid10M = CreateGrid(10, maxGridSize);
 	return SyResult();
 }
 
 SyResult EditorGridRenderSystem::Run()
 {
+	
+	CB_GridEditorBuffer dataOpaque;
 	UINT strides[1] = { 16 };
 	UINT offsets[1] = { 0 };
 
+	hc->context->OMSetBlendState(rc->gridBlendState.Get(), nullptr, 0xffffffff);
 
-	hc->context->RSSetState(rc->cullBackRS.Get());
-	auto ettID = ec->scene->registry.view<CameraComponent>().front();
-	CB_BaseEditorBuffer data;
-	data.baseData.world = Matrix::Identity;
-	data.baseData.view = ec->scene->camera->view;
-	data.baseData.worldView = ec->scene->camera->view;
-	data.baseData.worldViewProj = ec->scene->camera->view * ec->scene->camera->projection;
+	dataOpaque.baseData.worldViewProj =
+		ec->scene->camera->view * ec->scene->camera->projection;
+	hc->context->OMSetDepthStencilState(rc->offStencilState.Get(),0);
+	
 
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	HRESULT res = hc->context->Map(rc->opaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	CopyMemory(mappedResource.pData, &data, sizeof(CB_BaseEditorBuffer));
-	hc->context->Unmap(rc->opaqueConstBuffer->buffer.Get(), 0);
-	hc->context->VSSetConstantBuffers(0, 1, rc->opaqueConstBuffer->buffer.GetAddressOf());
-	hc->renderTarget->SetRenderTarget(hc->depthStencilView.Get());
-	hc->context->IASetInputLayout(rc->editorGridRenderer->layout.Get());
-	hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-	hc->context->IASetIndexBuffer(grid->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-	hc->context->IASetVertexBuffers(0, 1, grid->vertexBuffer->buffer.GetAddressOf(),
-		strides, offsets);
-	hc->renderTarget->SetRenderTarget(hc->depthStencilView.Get());
-	hc->context->VSSetShader(rc->editorGridRenderer->vertexShader.Get(), nullptr, 0);
-	hc->context->PSSetShader(rc->editorGridRenderer->pixelShader.Get(), nullptr, 0);
-	hc->context->DrawIndexed(grid->indexBuffer->size, 0, 0);
+	dataOpaque.eyePos = Vector4(ec->scene->cameraTransform->position.x, ec->scene->cameraTransform->position.y, ec->scene->cameraTransform->position.z,10);
+	Vector3 vec3 = Vector3((int)dataOpaque.eyePos.x- minGridSize / 2, 0, (int)dataOpaque.eyePos.z-minGridSize/2);
+	dataOpaque.baseData.worldView = Matrix::CreateTranslation(vec3);
+	dataOpaque.baseData.worldViewProj = Matrix::CreateTranslation(vec3) *
+		ec->scene->camera->view*ec->scene->camera->projection;
+	
+	
 
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		
+		HRESULT res = hc->context->Map(rc->shadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_GridEditorBuffer));
+		hc->context->Unmap(rc->shadowConstBuffer->buffer.Get(), 0);
+		hc->context->VSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
+		hc->context->PSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
+		hc->renderTarget->SetRenderTarget( hc->depthStencilView.Get());
+		hc->context->IASetInputLayout(rc->editorGridRenderer->layout.Get());
+		hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+		hc->context->IASetIndexBuffer(grid1M->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+		hc->context->IASetVertexBuffers(0, 1, grid1M->vertexBuffer->buffer.GetAddressOf(),
+			strides, offsets);
+	
+		
+		hc->context->VSSetShader(rc->editorGridRenderer->vertexShader.Get(), nullptr, 0);
+		hc->context->PSSetShader(rc->editorGridRenderer->pixelShader.Get(), nullptr, 0);
+		hc->context->DrawIndexed(grid1M->indexBuffer->size, 0, 0);
 
+		dataOpaque.eyePos.w = 10000000;
+		vec3 = Vector3(((int)(dataOpaque.eyePos.x/10))*10 - maxGridSize*10 / 2, 0, ((int)(dataOpaque.eyePos.z/10))*10 - maxGridSize*10 / 2);
+		dataOpaque.baseData.worldView = Matrix::CreateTranslation(vec3);
+		dataOpaque.baseData.worldViewProj = Matrix::CreateTranslation(vec3) *
+			ec->scene->camera->view * ec->scene->camera->projection;
 
-	return SyResult();
+		res = hc->context->Map(rc->shadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_GridEditorBuffer));
+		hc->context->Unmap(rc->shadowConstBuffer->buffer.Get(), 0);
+		hc->context->VSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
+		hc->context->PSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
+
+		hc->context->IASetIndexBuffer(grid10M->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+		hc->context->IASetVertexBuffers(0, 1, grid10M->vertexBuffer->buffer.GetAddressOf(),
+			strides, offsets);
+		hc->context->DrawIndexed(grid10M->indexBuffer->size, 0, 0);
+
+		return SyResult();
 }
+
 
 SyResult EditorGridRenderSystem::Destroy()
 {
@@ -61,50 +90,81 @@ std::shared_ptr<Mesh> EditorGridRenderSystem::CreateGrid(float metersPerCell,int
 {
 	using namespace DirectX::SimpleMath;
 
-	std::vector<int> indices;
-	std::vector<Vector4> vertices;
-	int indexCtr = 0;
-	bool state = true;
-
-	for (int i = -width / 2; i <= width / 2; i++)
+	// Initialize the index into the vertex and index arrays.
+	int index = 0;
+	float positionX;
+	float positionZ;
+	std::vector<int> indices((width - 1) * (width - 1) * 8);
+	std::vector<Vector4> vertices((width - 1) * (width - 1) * 8);
+	// Load the vertex array and index array with data.
+	for (int j = 0; j < (width - 1); j++)
 	{
-		for (int j = -width / 2; j <= width / 2; j++)
+		for (int i = 0; i < (width - 1); i++)
 		{
-			if (state)
-			{
-				indices.push_back(indexCtr);
-				indices.push_back(indexCtr + 1);
-				indices.push_back(width + indexCtr + 1);
-				indexCtr++;
-			}
-			else
-			{
-				indices.push_back(indexCtr);
-				indices.push_back(width + indexCtr + 1);
-				indices.push_back(width + indexCtr);
-				
-			}
-			vertices.push_back(Vector4(i, 0, j, 1));
-			state = !state;
+			// Line 1 - Upper left.
+			positionX = (float)i*metersPerCell;
+			positionZ = (float)(j + 1)* metersPerCell;
+
+			vertices[index]= Vector4(positionX, 0.0f, positionZ,1);
+			indices[index] = index;
+			index++;
+
+			// Line 1 - Upper right.
+			positionX = (float)(i + 1) * metersPerCell;
+			positionZ = (float)(j + 1) * metersPerCell;
+
+			vertices[index] = Vector4(positionX, 0.0f, positionZ, 1);
+			indices[index] = index;
+			index++;
+
+			// Line 2 - Upper right
+			positionX = (float)(i + 1) * metersPerCell;
+			positionZ = (float)(j + 1) * metersPerCell;
+
+			vertices[index] = Vector4(positionX, 0.0f, positionZ, 1);
+			indices[index] = index;
+			index++;
+
+			// Line 2 - Bottom right.
+			positionX = (float)(i + 1) * metersPerCell;
+			positionZ = (float)j * metersPerCell;
+
+			vertices[index]= Vector4(positionX, 0.0f, positionZ, 1);
+			indices[index] = index;
+			index++;
+
+			// Line 3 - Bottom right.
+			positionX = (float)(i + 1) * metersPerCell;
+			positionZ = (float)j * metersPerCell;
+
+			vertices[index]= Vector4(positionX, 0.0f, positionZ, 1);
+			indices[index] = index;
+			index++;
+
+			// Line 3 - Bottom left.
+			positionX = (float)i * metersPerCell;
+			positionZ = (float)j * metersPerCell;
+
+			vertices[index] = Vector4(positionX, 0.0f, positionZ, 1);
+			indices[index] = index;
+			index++;
+
+			// Line 4 - Bottom left.
+			positionX = (float)i * metersPerCell;
+			positionZ = (float)j * metersPerCell;
+
+			vertices[index] = Vector4(positionX, 0.0f, positionZ, 1);
+			indices[index] = index;
+			index++;
+
+			// Line 4 - Upper left.
+			positionX = (float)i * metersPerCell;
+			positionZ = (float)(j + 1) * metersPerCell;
+
+			vertices[index]= Vector4(positionX, 0.0f, positionZ, 1);
+			indices[index] = index;
+			index++;
 		}
-		indices.push_back(indexCtr);
-		indices.push_back(indexCtr + 1);
-		indices.push_back(width + indexCtr + 1);
-		indexCtr++;
-
-		indices.push_back(indexCtr);
-		indices.push_back(width + indexCtr + 1);
-		indices.push_back(width + indexCtr);
-		indexCtr++;
-		state = true;
-		int a = 0;
-	}
-	/*for (int i = 0; i < (width * 2 - 2)*3; i++)
-		indices.pop_back();*/
-
-	for (int i = -width / 2; i <= width / 2; i++)
-	{
-		vertices.push_back(Vector4(width / 2,i , 0, 1));
 	}
 
 	return std::make_shared<Mesh>(vertices, indices);

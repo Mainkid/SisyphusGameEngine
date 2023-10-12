@@ -31,6 +31,14 @@ public:
     
 };
 
+class CB_GridEditorBuffer
+{
+public:
+    CB_BaseBuffer baseData;
+    DirectX::SimpleMath::Matrix viewProjs[4];
+    DirectX::SimpleMath::Vector4 eyePos;
+};
+
 class CB_LightBuffer
 {
 public:

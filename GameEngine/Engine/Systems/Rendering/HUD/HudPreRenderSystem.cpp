@@ -56,6 +56,8 @@ SyResult HudPreRenderSystem::Run()
     ImGuizmo::BeginFrame();
     ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
+
+
     /*for (auto& widget : widgets)
     {
         widget->Render();

@@ -17,8 +17,10 @@ public:
 	SyResult Destroy() override;
 private:
 
-	std::shared_ptr<Mesh> grid;
-
+	const int minGridSize = 64;
+	const int maxGridSize = 128;
+	std::shared_ptr<Mesh> grid1M;
+	std::shared_ptr<Mesh> grid10M;
 	std::shared_ptr<Mesh> CreateGrid(float metersPerCell, int width);
 	EngineContext* ec;
 	RenderContext* rc;

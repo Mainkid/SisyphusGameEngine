@@ -190,6 +190,30 @@ SyResult RenderInitSystem::Init()
     hr = hc->device->CreateBlendState(&blendDesc2, rc->particlesBlendState.GetAddressOf());
 
 
+    D3D11_BLEND_DESC blendDescEditorGrid;
+    ZeroMemory(&blendDescEditorGrid, sizeof(blendDescEditorGrid));
+
+    blendDescEditorGrid.IndependentBlendEnable = false;
+
+    D3D11_RENDER_TARGET_BLEND_DESC rtbdEditorGrid;
+    ZeroMemory(&rtbdEditorGrid, sizeof(rtbdEditorGrid));
+
+    rtbdEditorGrid.BlendEnable = true;
+
+    rtbdEditorGrid.SrcBlend = D3D11_BLEND_ONE;
+    rtbdEditorGrid.DestBlend = D3D11_BLEND_ONE;
+    rtbdEditorGrid.BlendOp = D3D11_BLEND_OP_ADD;
+    rtbdEditorGrid.SrcBlendAlpha = D3D11_BLEND_ZERO;
+    //!!!! ???
+    rtbdEditorGrid.DestBlendAlpha = D3D11_BLEND_ONE;
+    rtbdEditorGrid.BlendOpAlpha = D3D11_BLEND_OP_MAX;
+    rtbdEditorGrid.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+    blendDescEditorGrid.RenderTarget[0] = rtbdEditorGrid;
+
+    hr = hc->device->CreateBlendState(&blendDescEditorGrid, rc->gridBlendState.GetAddressOf());
+
+
 
     D3D11_RASTERIZER_DESC desc;
     ZeroMemory(&desc, sizeof(D3D11_RASTERIZER_DESC));

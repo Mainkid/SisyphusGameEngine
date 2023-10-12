@@ -35,9 +35,12 @@ private:
 	void InitSRV();
 	void HandleResize();
 	void drawPlayMode(ImVec2 cursorStartPos);
+	void drawViewportTools(ImVec2 startCursorPos);
 
 	std::string windowID;
 	bool isFocused;
+	bool isWorldSpace = true;
+
 	enum class EHoveringState
 	{
 		None,
@@ -48,6 +51,14 @@ private:
 		PlayMode
 	};
 
+	enum class EViewportTool
+	{
+		None,
+		WorldSpace,
+		LocalSpace,
+		Grid
+	};
+
 	ImGuizmo::OPERATION guizmoType= ImGuizmo::OPERATION::TRANSLATE;
 	ImGuizmo::MODE guizmoMode = ImGuizmo::MODE::WORLD;
 	ImVec2 widgetSize;
@@ -56,14 +67,21 @@ private:
 
 	EHoveringState hoverState = EHoveringState::None;
 	std::map<ImGuizmo::OPERATION, ID3D11ShaderResourceView*> guizmoIconSRV;
+	std::map<EViewportTool, ID3D11ShaderResourceView*> viewportIconSRV;
 
 	const std::filesystem::path translateIconPath="Engine/Assets/HUD/Viewport/translateIcon.png";
 	const std::filesystem::path rotateIconPath= "Engine/Assets/HUD/Viewport/rotateIcon.png";
 	const std::filesystem::path scaleIconPath = "Engine/Assets/HUD/Viewport/scaleIcon.png";
+	const std::filesystem::path worldIconPath = "Engine/Assets/HUD/Viewport/worldIcon.png";
+	const std::filesystem::path localIconPath = "Engine/Assets/HUD/Viewport/localIcon.png";
+	const std::filesystem::path gridIconPath = "Engine/Assets/HUD/Viewport/gridIcon.png";
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> translateSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> rotateSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> scaleSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> worldSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> localSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> gridSRV;
 
 	const std::filesystem::path playButtonPath = "Engine/Assets/HUD/Viewport/PlayButton.png";
 	const std::filesystem::path stopButtonPath = "Engine/Assets/HUD/Viewport/StopButton.png";
@@ -75,6 +93,10 @@ private:
 
 
 	ImVec4 activeButtonBG = { 0.258f, 0.588f, 1.0f, 1 };
+	const char* elems_names[6] = { "0","0.1", "0.25", "0.5", "1.0","10.0" };
+	const float snap_values[6] = { 0.0f,0.1f,0.25f,0.5f,1.0f,10.0f };
+	int gridSnapParam = 0;
+	float snap[3] = { 0,0,0 };
 
 };
 
