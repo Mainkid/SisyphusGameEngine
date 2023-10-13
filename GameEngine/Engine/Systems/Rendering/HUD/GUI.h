@@ -2,8 +2,7 @@
 #include "imgui.h"
 
 // для Vector4
-#include "../../../../vendor/DirectXTK/Inc/SimpleMath.h"
-
+#include "SimpleMath.h"
 // для SyVector3
 #include "../../../Tools/Data/Vector.h"
 
@@ -48,6 +47,7 @@ public:
 
 //TODO:I didn't quite understand how to output what I chose ?
 // return int n ?
+// Just pass index of chosen element by reference
 	static void DrawDropDown(const char* items[], const char* name, const int& numberOfElements);
 
 
@@ -56,6 +56,7 @@ public:
 
 
 //TODO: add for Vector3 && Vector2 && Vector4 ?
+// Add all types of vectors
 	static void DrawInputField(float* var, const char* name);
 	static void DrawInputField(float* var, const char* itemsName[], const int& numberOfElements);	
 	static void DrawInputField(SyVector3& var, const char* name);
@@ -64,6 +65,7 @@ public:
 
 	static void DrawSlider(float& var, const char* name, const float& v_min, const float& v_max);
 //TODO: need to?
+// 	   Yes
 	//static void DrawSlider(float& var, enum element)
 	//{
 	//	enum Element { Element_Fire, Element_Earth, Element_Air, Element_Water, Element_COUNT };
@@ -75,9 +77,11 @@ public:
 
 	//};
 //TODO: need to?
+// 	   Yes
 	//static void DrawSlider(float* var, const char* itemsName[], const int& numberOfElements, const float& v_min, const float& v_max){	};
 
 //TODO: which class transmits "Drag'n'drop" and what type of variable ?
+	// Look how it's done in Properties Widget in fresh commits.
 	static void DrawDragDropField()
 	{
 		/// ?

@@ -157,6 +157,7 @@
     <ClCompile Include="Engine\Components\Mesh.cpp" />
     <ClCompile Include="Engine\Obsolete\RenderPipeline.cpp" />
     <ClCompile Include="Engine\Core\Scene\Scene.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\HUD\GUI.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudPostRenderSystem.cpp" />
@@ -661,6 +662,7 @@
     <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h" />
     <ClInclude Include="Engine\Obsolete\RenderPipeline.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\ContentBrowserTypes.h" />
+    <ClInclude Include="Engine\Systems\Rendering\HUD\GUI.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudPostRenderSystem.h" />
