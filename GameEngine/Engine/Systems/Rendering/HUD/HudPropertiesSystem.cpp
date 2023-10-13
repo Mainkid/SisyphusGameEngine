@@ -296,7 +296,7 @@ void HudPropertiesSystem::DrawMaterialProperties()
                 {"specularVec",std::vector<float>{col2[1][0],col2[1][1],col2[1][2],1.f * (!params[1]) - 1 * (params[1])}},
                 {"roughnessVec",std::vector<float>{col2[2][0],1.f * (!params[5]) - 1 * (params[5]),col2[2][2],1.f * (!params[2]) - 1 * (params[2])}},
                 {"metallicVec",std::vector<float>{col2[3][0],col2[3][1],col2[3][2],1.f * (!params[3]) - 1 * (params[3])}},
-                {"emissiveVec",std::vector<float>{col2[4][0],col2[4][1],col2[4][2],0.01f * (!params[4]) - 1 * (params[4])}}
+                {"emissiveVec",std::vector<float>{col2[4][0],col2[4][1],col2[4][2],0.1f * (!params[4]) - 1 * (params[4])}}
         };
             
         std::ofstream out_file;

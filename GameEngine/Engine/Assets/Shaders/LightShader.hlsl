@@ -128,13 +128,10 @@ float4 PS_Directional(PS_IN input) : SV_Target
             float3 offset = float3(float2(x, y) * texelSize, 0);
             depthValue = depthMapTexture.Sample(textureSampler, projectTexCoord+offset).r;
             shadowSum += lightDepthValue > depthValue;
-            //shadowSum = shadowSum + clamp(shadowTexture.Sample(textureSampler, input.col.xy + offset), 0, 1);
         }
     }
     
     shadowSum = shadowSum / 25.0f;
-    //shadowSum = shadowSum * depthMapTexture.Sample(textureSampler, projectTexCoord).r > depthValue;
-    //shadowSum = lightDepthValue>depthMapTexture.Sample(textureSampler, projectTexCoord).r;
     //<--- PCF
     
     lightIntesity = lightIntesity;
