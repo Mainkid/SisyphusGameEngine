@@ -7,11 +7,15 @@ using namespace DirectX::SimpleMath;
 struct TransformComponent
 {
 	TransformComponent() = default;
-	TransformComponent(Vector3 _pos, Vector3 _rot, Vector3 _scale)
+	TransformComponent(Vector3 _pos, Vector3 _rot = Vector3::Zero, Vector3 _scale=  Vector3(1,1,1))
 	{
 		this->position = _pos;
 		this->rotation = _rot;
 		this->scale = _scale;
+	}
+	~TransformComponent()
+	{
+		int a = 0;
 	}
 	SyVector3 position =		SyVector3(0, 0, 0 );
 	SyVector3 rotation =		SyVector3(0, 0, 0);

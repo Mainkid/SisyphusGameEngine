@@ -1,5 +1,7 @@
 #include "Scene.h"
 #include "../../Systems/TransformHelper.h"
+#include "../ServiceLocator.h"
+#include "../../Systems/ResourceService.h"
 
 Scene::Scene()
 {
@@ -17,12 +19,15 @@ void Scene::Update(float deltaSec)
 
 }
 
-entt::entity Scene::AddGameObject()
+entt::entity Scene::AddGameObject(boost::uuids::uuid meshUUID, Vector3 position_)
 {
 	auto id = registry.create();
 	registry.emplace<DataComponent>(id, "GameObject");
-	registry.emplace<TransformComponent>(id);
-	registry.emplace<MeshComponent>(id);
+	TransformComponent& tc=registry.emplace<TransformComponent>(id);
+	tc.localPosition = position_;
+	if (meshUUID == boost::uuids::nil_uuid())
+		meshUUID = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_MESH].uuid;
+	registry.emplace<MeshComponent>(id,meshUUID);
 	gameObjects.insert(id);
 	return id;
 }
@@ -65,7 +70,7 @@ entt::entity Scene::AddDynamicBox(const SyVector3& position_, const SyVector3& r
 	return id;
 }
 
-entt::entity Scene::AddLight(LightType _lightType)
+entt::entity Scene::AddLight(LightType _lightType,Vector3 pos)
 {
 	auto id = registry.create();
 	
@@ -80,7 +85,8 @@ entt::entity Scene::AddLight(LightType _lightType)
 		registry.emplace<EditorBillboardComponent>(id, "Engine/Assets/Sprites/DirLightSprite.png");
 	}
 	registry.emplace<LightComponent>(id,_lightType);
-	registry.emplace<TransformComponent>(id);
+	TransformComponent& tc=registry.emplace<TransformComponent>(id);
+	tc.localPosition = pos;
 	gameObjects.insert(id);
 	return id;
 }
@@ -97,7 +103,7 @@ entt::entity Scene::AddParticleSystem()
 
 bool Scene::DestroyGameObject(entt::entity _id)
 {
-	return true;
+
 	if (registry.get<TransformComponent>(_id).children.size() > 0)
 	{
 		for (auto childID : registry.get<TransformComponent>(_id).children)

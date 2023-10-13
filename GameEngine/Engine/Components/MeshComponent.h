@@ -24,7 +24,7 @@ struct MeshComponent
 {
 	MeshComponent()
 	{
-		//this->modelPath = "Engine/Assets/Cube.fbx";
+		
 	};
 	MeshComponent(boost::uuids::uuid modelUUID)
 	{

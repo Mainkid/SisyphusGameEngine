@@ -4,6 +4,7 @@
 #include "../RenderHelper.h"
 #include "../../Core/Rendering/RenderTarget.h"
 #include "../../EngineContext.h"
+#include "../../../Core/ResourcePath.h"
 
 SyResult HudViewportSystem::Init()
 {
@@ -15,17 +16,19 @@ SyResult HudViewportSystem::Init()
 	InitSRV();
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudViewport system initialization successful.");
 	return SyResult();
-
+	
 }
 
 SyResult HudViewportSystem::Run()
 {
 	ImGui::Begin(windowID.c_str());
 
+	DrawMainMenuBar();
+
 	ImGui::BeginChild("ViewportTools",ImVec2(ImGui::GetContentRegionAvail().x,26));
 	ImVec2 startCursorPos = ImGui::GetCursorScreenPos();
-	drawPlayMode(startCursorPos);
-	drawViewportTools(startCursorPos);
+	DrawPlayMode(startCursorPos);
+	DrawViewportTools(startCursorPos);
 	ImGui::EndChild();
 	ImGui::BeginChild("ViewportChild");
 	ImVec2 imgSize = ImGui::GetContentRegionAvail();
@@ -146,7 +149,7 @@ SyResult HudViewportSystem::Run()
 	
 	hoverState = EHoveringState::Viewport;
 	
-
+	ProcessInput();
 	
 
 	HandleResize();
@@ -215,7 +218,95 @@ void HudViewportSystem::HandleResize()
 	}
 }
 
-void HudViewportSystem::drawPlayMode(ImVec2 cursorStartPostion)
+void HudViewportSystem::DrawMainMenuBar()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Edit"))
+		{
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("GameObject"))
+		{
+			Vector3 pos = Vector3(ec->scene->cameraTransform->position.x, ec->scene->cameraTransform->position.y, ec->scene->cameraTransform->position.z) +
+				Vector3(ec->scene->camera->forward.x, ec->scene->camera->forward.y, ec->scene->camera->forward.z) * 3;
+
+			if (ImGui::BeginMenu("3D object"))
+			{
+				
+
+				if (ImGui::MenuItem("Cube"))
+				{
+					ec->scene->AddGameObject(rs->GetUUIDFromPath(cubeMeshPath),pos);
+				}
+				else if (ImGui::MenuItem("Sphere"))
+				{
+					ec->scene->AddGameObject(rs->GetUUIDFromPath(sphereMeshPath), pos);
+				}
+				else if (ImGui::MenuItem("Plane"))
+				{
+					ec->scene->AddGameObject(rs->GetUUIDFromPath(planeMeshPath), pos);
+				}
+				else if (ImGui::MenuItem("Cylinder"))
+				{
+					ec->scene->AddGameObject(rs->GetUUIDFromPath(cylinderMeshPath), pos);
+				}
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Lights"))
+			{
+				if (ImGui::MenuItem("Directional Light"))
+				{
+					ec->scene->AddLight(LightType::Directional,pos);
+				}
+
+				if (ImGui::MenuItem("Point Light"))
+				{
+					ec->scene->AddLight(LightType::PointLight,pos);
+				}
+
+				if (ImGui::MenuItem("Ambient Light"))
+				{
+					ec->scene->AddLight(LightType::Ambient,pos);
+				}
+
+				ImGui::EndMenu();
+			
+			}
+			if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+}
+
+void HudViewportSystem::ProcessInput()
+{
+	if (ImGui::IsKeyDown(ImGuiKey_Delete))
+	{
+		if (ec->selectedEntityID != entt::null)
+		{
+			ec->scene->DestroyGameObject(ec->selectedEntityID);
+			ec->selectedEntityID = entt::null;
+		}
+	}
+	
+	if (ImGui::Shortcut(ImGuiMod_Ctrl| ImGuiKey_C))
+	{
+		int a = 0;
+	}
+
+}
+
+void HudViewportSystem::DrawPlayMode(ImVec2 cursorStartPostion)
 {
 	if (ImGui::IsItemHovered())
 		hoverState = EHoveringState::PlayMode;
@@ -258,7 +349,7 @@ void HudViewportSystem::drawPlayMode(ImVec2 cursorStartPostion)
 	ImGui::PopStyleVar();
 }
 
-void HudViewportSystem::drawViewportTools(ImVec2 startCursorPos)
+void HudViewportSystem::DrawViewportTools(ImVec2 startCursorPos)
 {
 	
 

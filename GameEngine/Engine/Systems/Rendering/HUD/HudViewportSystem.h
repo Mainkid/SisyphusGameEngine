@@ -3,6 +3,7 @@
 #include <wrl.h>
 #include "../../../../vendor/entt/entt.hpp"
 #include "../../../../vendor/ImGui/imgui.h"
+#include "../../../../vendor/ImGui/imgui_internal.h"
 #include "../../../../vendor/ImGui/imgui_impl_dx11.h"
 #include "../../../../vendor/ImGui/imgui_impl_win32.h"
 #include "../../../../vendor/ImGuizmo/ImGuizmo.h"
@@ -34,8 +35,10 @@ private:
 
 	void InitSRV();
 	void HandleResize();
-	void drawPlayMode(ImVec2 cursorStartPos);
-	void drawViewportTools(ImVec2 startCursorPos);
+	void DrawPlayMode(ImVec2 cursorStartPos);
+	void DrawViewportTools(ImVec2 startCursorPos);
+	void DrawMainMenuBar();
+	void ProcessInput();
 
 	std::string windowID;
 	bool isFocused;

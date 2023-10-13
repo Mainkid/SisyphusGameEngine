@@ -21,7 +21,7 @@ SyResult TransformSystem::Run()
 		uint32_t hsh = hasher(tc);
 		if (tc.hash != hsh)
 		{
-			TransformHelper::UpdateTransformMatrix(tc);
+ 			TransformHelper::UpdateTransformMatrix(tc);
 			//UpdateTransformMatrix(tc);
 			tc.hash = hsh;
 		}

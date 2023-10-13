@@ -32,6 +32,7 @@ LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT umessage, WPARAM wparam, LPA
 		if (wparam)
 		{
 			ServiceLocator::instance()->Get<ResourceService>()->GenerateMetaFiles(".\\Game\\Assets");
+			ServiceLocator::instance()->Get<ResourceService>()->GenerateMetaFiles(".\\Engine\\Assets\\Resources");
 			ServiceLocator::instance()->Get<ResourceService>()->LoadResourceLibrary(".\\Game\\Assets", true);
 			ServiceLocator::instance()->Get<ResourceService>()->LoadResourceLibrary(".\\Engine\\Assets\\Resources",false,true);
 			ServiceLocator::instance()->Get <ResourceService>()->updateContentBrowser.Broadcast(wparam);
@@ -65,21 +66,6 @@ DisplayWin32::DisplayWin32(LPCWSTR applicationName, HINSTANCE hInstance,const in
 	wc = { sizeof(wc), CS_CLASSDC, HandleMessageSetup, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
 	::RegisterClassExW(&wc);
 
-	//wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-	//wc.lpfnWndProc = HandleMessageSetup;
-	//wc.cbClsExtra = 0;
-	//wc.cbWndExtra = 0;
-	//wc.hInstance = hInstance;
-	//wc.hIcon = LoadIcon(nullptr, IDI_WINLOGO);
-	//wc.hIconSm = wc.hIcon;
-	//wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	//wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
-	//wc.lpszMenuName = nullptr;
-	//wc.lpszClassName = applicationName;
-	//wc.cbSize = sizeof(WNDCLASSEX);
-
-	//// Register the window class.
-	//RegisterClassEx(&wc);
 
 	RECT windowRect = { 0, 0, static_cast<LONG>(screenWidth), static_cast<LONG>(screenHeight) };
 	AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
@@ -89,12 +75,7 @@ DisplayWin32::DisplayWin32(LPCWSTR applicationName, HINSTANCE hInstance,const in
 	auto posX = (GetSystemMetrics(SM_CXSCREEN) - screenWidth) / 2;
 	auto posY = (GetSystemMetrics(SM_CYSCREEN) - screenHeight) / 2;
 
-	/*hWnd = CreateWindowEx(WS_EX_APPWINDOW, applicationName, applicationName,
-		dwStyle,
-		posX, posY,
-		windowRect.right - windowRect.left,
-		windowRect.bottom - windowRect.top,
-		nullptr, nullptr, hInstance, nullptr);*/
+
 
 	HWND _hwnd = ::CreateWindowW(wc.lpszClassName,
 		L"Dear ImGui DirectX11 Example", WS_OVERLAPPEDWINDOW, posX, posY,
