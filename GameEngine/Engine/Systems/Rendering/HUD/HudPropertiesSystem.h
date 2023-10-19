@@ -11,9 +11,9 @@ struct RenderContext;
 class HudPropertiesSystem : public SystemBase
 {
 public:
-    void Init() override;
-    void Run() override;
-    void Destroy() override;
+    SyResult Init() override;
+    SyResult Run() override;
+    SyResult Destroy() override;
 private:
     EngineContext* ec;
     RenderContext* rc;

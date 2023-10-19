@@ -8,14 +8,17 @@
 #include "../../Components/CameraComponent.h"
 #include "../../Components/EditorBillboardComponent.h"
 
-void EditorBillboardRenderSystem::Init()
+SyResult EditorBillboardRenderSystem::Init()
 {
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
 	rc = ServiceLocator::instance()->Get<RenderContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboardRender system initialization successful.");
+    return SyResult();
+
 }
 
-void EditorBillboardRenderSystem::Run()
+SyResult EditorBillboardRenderSystem::Run()
 {
     ID3D11RenderTargetView* nullRTV[5] = { nullptr,nullptr,nullptr,nullptr,nullptr };
     hc->context->OMSetRenderTargets(5, nullRTV, nullptr);
@@ -79,9 +82,12 @@ void EditorBillboardRenderSystem::Run()
     ID3D11ShaderResourceView* srvNull = nullptr;
     hc->context->PSSetShaderResources(0, 1, &srvNull);
     hc->context->OMSetRenderTargets(2, nullRTV, nullptr);
-
+    return SyResult();
 }
 
-void EditorBillboardRenderSystem::Destroy()
+SyResult EditorBillboardRenderSystem::Destroy()
 {
+
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboardRender system destruction successful.");
+    return SyResult();
 }

@@ -11,9 +11,9 @@ struct RenderContext;
 class LightSystem : public SystemBase
 {
 public:
-	void Init() override;
-	void Run() override;
-	void Destroy() override;
+	SyResult Init() override;
+	SyResult Run() override;
+	SyResult Destroy() override;
 private:
 	std::hash<LightComponent> hasher;
 	std::vector<Vector4> GetFrustumCorners(const Matrix& view, const Matrix proj);

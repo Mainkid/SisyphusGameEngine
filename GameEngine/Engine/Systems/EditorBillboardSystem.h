@@ -10,9 +10,9 @@ struct EngineContext;
 class EditorBillboardSystem : public SystemBase
 {
 public:
-	void Init() override;
-	void Run() override;
-	void Destroy() override;
+	SyResult Init() override;
+	SyResult Run() override;
+	SyResult Destroy() override;
 private:
 	std::hash<std::string> hasher;
 	EngineContext* ec;

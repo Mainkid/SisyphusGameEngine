@@ -10,15 +10,17 @@
 #include "DirectXMath.h"
 #include "../../../Scene/CameraHelper.h"
 
-void ShadowRenderSystem::Init()
+SyResult ShadowRenderSystem::Init()
 {
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     pointlightShadowProjectionMat = DirectX::XMMatrixPerspectiveFovLH(1.5708f, rc->SHADOWMAP_WIDTH * 1.0f / rc->SHADOWMAP_HEIGHT, 0.01f, 3.0f);
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowRender system initialization successful. ");
+    return SyResult();
 }
 
-void ShadowRenderSystem::Run()
+SyResult ShadowRenderSystem::Run()
 {
     hc->context->ClearDepthStencilView(rc->shadowStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -187,9 +189,12 @@ void ShadowRenderSystem::Run()
     rc->viewport.MinDepth = 0;
     rc->viewport.MaxDepth = 1.0f;
     hc->context->RSSetViewports(1, &rc->viewport);
+
+    return SyResult();
 }
 
-void ShadowRenderSystem::Destroy()
+SyResult ShadowRenderSystem::Destroy()
 {
-
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowRender system destruction successful. ");
+    return SyResult();
 }

@@ -27,8 +27,8 @@ public:
     SyVector3                                       gravity = { 0.0f, -9.81f, 0.0f };
     float                                           stepsPerSecond = 60.0f;
 
-    void Init();
-    void Run();
-    void Destroy();
+    SyResult Init();
+    SyResult Run();
+    SyResult Destroy();
 };
 

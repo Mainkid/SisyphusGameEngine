@@ -6,14 +6,16 @@
 #include "../Core/ServiceLocator.h"
 #include "../Components/TransformComponent.h"
 
-void LightSystem::Init()
+SyResult LightSystem::Init()
 {
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "Light system initialization successful. ");
+    return SyResult();
 }
 
-void LightSystem::Run()
+SyResult LightSystem::Run()
 {
     auto viewCamera = _ecs->view<TransformComponent, CameraComponent>();
     auto [cameraTf, camera] = viewCamera.get(viewCamera.front());
@@ -44,10 +46,13 @@ void LightSystem::Run()
         if (lc.lightType == LightType::PointLight && lc.shadowMapTexture==nullptr)
             InitPointLightResources(lc);
 	}
+    return SyResult();
 }
 
-void LightSystem::Destroy()
+SyResult LightSystem::Destroy()
 {
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "Light system destruction successful. ");
+    return SyResult();
 }
 
 std::vector<Vector4> LightSystem::GetFrustumCorners(const Matrix& view, const Matrix proj)

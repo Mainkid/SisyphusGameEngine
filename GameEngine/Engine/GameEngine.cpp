@@ -87,7 +87,5 @@ int main()
     EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();
     
-    std::cout << "Hello World!\n";
-
-    
+    std::cout << "Good-bye!\n";
 }

@@ -5,13 +5,15 @@
 #include "../Systems/EngineContext.h"
 #include "MeshLoader.h"
 
-void MeshSystem::Init()
+SyResult MeshSystem::Init()
 {
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
 	ec = ServiceLocator::instance()->Get<EngineContext>();
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Mesh system initialization successful.");
+	return SyResult();
 }
 
-void MeshSystem::Run()
+SyResult MeshSystem::Run()
 {
 	auto view = _ecs->view<MeshComponent>();
 	for (auto& entity : view)
@@ -28,10 +30,13 @@ void MeshSystem::Run()
 			MeshLoader::LoadTexture(mesh.texturePath, mesh.samplerState.GetAddressOf(), mesh.texture.GetAddressOf());
 		}
 	}
+	return SyResult();
 }
 
-void MeshSystem::Destroy()
+SyResult MeshSystem::Destroy()
 {
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Mesh system destruction successful.");
+	return SyResult();
 }
 
 bool MeshSystem::LoadModel(MeshComponent& mesh)

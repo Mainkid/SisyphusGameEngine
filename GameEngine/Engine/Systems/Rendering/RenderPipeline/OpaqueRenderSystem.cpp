@@ -9,14 +9,16 @@
 #include "../../Components/MeshComponent.h"
 
 
-void OpaqueRenderSystem::Init()
+SyResult OpaqueRenderSystem::Init()
 {
 	ec = ServiceLocator::instance()->Get<EngineContext>();
 	rc = ServiceLocator::instance()->Get<RenderContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "OpaqueRender system initialization successful.");
+    return SyResult();
 }
 
-void OpaqueRenderSystem::Run()
+SyResult OpaqueRenderSystem::Run()
 {
     hc->context->RSSetState(rc->cullBackRS.Get());
 
@@ -65,8 +67,11 @@ void OpaqueRenderSystem::Run()
             hc->context->DrawIndexed(meshComp.meshes[i]->indexBuffer->size, 0, 0);
         }
     }
+    return SyResult();
 }
 
-void OpaqueRenderSystem::Destroy()
+SyResult OpaqueRenderSystem::Destroy()
 {
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "OpaqueRender system destruction successful.");
+    return SyResult();
 }

@@ -4,14 +4,16 @@
 #include "../HardwareContext.h"
 #include "../../Core/ServiceLocator.h"
 
-void PreRenderSystem::Init()
+SyResult PreRenderSystem::Init()
 {
     rc = ServiceLocator::instance()->Get<RenderContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "PreRender system initialization successful.");
+    return SyResult();
 }
 
-void PreRenderSystem::Run()
+SyResult PreRenderSystem::Run()
 {
     
     hc->context->ClearRenderTargetView(hc->rtv.Get(), bgColor);
@@ -23,8 +25,11 @@ void PreRenderSystem::Run()
     hc->context->ClearDepthStencilView(hc->depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     hc->context->RSSetViewports(1, &rc->viewport);
+    return SyResult();
 }
 
-void PreRenderSystem::Destroy()
+SyResult PreRenderSystem::Destroy()
 {
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "PreRender system destruction successful.");
+    return SyResult();
 }

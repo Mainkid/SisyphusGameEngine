@@ -6,13 +6,15 @@
 #include "../../EngineContext.h"
 #include "../../vendor/ImGui/imgui.h"
 
-void HudPostRenderSystem::Init()
+SyResult HudPostRenderSystem::Init()
 {
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudPostRender system initialization successful.");
+    return SyResult();
 }
 
-void HudPostRenderSystem::Run()
+SyResult HudPostRenderSystem::Run()
 {
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui::ShowDemoWindow();
@@ -28,12 +30,14 @@ void HudPostRenderSystem::Run()
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
     }
-
+    return SyResult();
 }
 
-void HudPostRenderSystem::Destroy()
+SyResult HudPostRenderSystem::Destroy()
 {
-    
+
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudPostRender system destruction successful.");
+    return SyResult();
 }
 
 

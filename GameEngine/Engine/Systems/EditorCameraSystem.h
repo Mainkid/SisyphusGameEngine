@@ -11,9 +11,9 @@ using namespace DirectX::SimpleMath;
 class EditorCameraSystem : public SystemBase
 {
 public:
-	void Init() override;
-	void Run() override;
-	void Destroy() override;
+	SyResult Init() override;
+	SyResult Run() override;
+	SyResult Destroy() override;
 private:
 	void UpdateViewMatrix(CameraComponent& cc,TransformComponent& tc);
 	void UpdateProjectionMatrix(CameraComponent& cc);

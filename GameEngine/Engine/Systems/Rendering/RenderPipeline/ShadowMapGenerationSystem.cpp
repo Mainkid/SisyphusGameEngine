@@ -9,14 +9,16 @@
 #include "../../Components/TransformComponent.h"
 #include "../../Components/LightComponent.h"
 
-void ShadowMapGenerationSystem::Init()
+SyResult ShadowMapGenerationSystem::Init()
 {
     ec = ServiceLocator::instance()->Get<EngineContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowMapGeneration system initialization successful. ");
+    return SyResult();
 }
 
-void ShadowMapGenerationSystem::Run()
+SyResult ShadowMapGenerationSystem::Run()
 {
     CB_LightBuffer lightBuffer;
 
@@ -130,8 +132,11 @@ void ShadowMapGenerationSystem::Run()
     }
     hc->context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
     hc->context->PSSetShaderResources(0, 5, srvNull);
+    return SyResult();
 }
 
-void ShadowMapGenerationSystem::Destroy()
+SyResult ShadowMapGenerationSystem::Destroy()
 {
+    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowMapGeneration system destruction successful. ");
+    return SyResult();
 }

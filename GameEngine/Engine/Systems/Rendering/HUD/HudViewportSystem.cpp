@@ -5,16 +5,19 @@
 #include "../../EngineContext.h"
 #include "../../../Scene/CameraHelper.h"
 
-void HudViewportSystem::Init()
+SyResult HudViewportSystem::Init()
 {
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
 	rc = ServiceLocator::instance()->Get<RenderContext>();
 	ec = ServiceLocator::instance()->Get<EngineContext>();
 	windowID = "Viewport";
 	InitSRV();
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudViewport system initialization successful.");
+	return SyResult();
+
 }
 
-void HudViewportSystem::Run()
+SyResult HudViewportSystem::Run()
 {
 	ImGui::Begin(windowID.c_str());
 
@@ -148,10 +151,14 @@ void HudViewportSystem::Run()
 
 	HandleResize();
 	ImGui::End();
+	return SyResult();
 }
 
-void HudViewportSystem::Destroy()
+SyResult HudViewportSystem::Destroy()
 {
+
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, " HudViewport system destruction successful.");
+	return SyResult();
 }
 
 void HudViewportSystem::InitSRV()

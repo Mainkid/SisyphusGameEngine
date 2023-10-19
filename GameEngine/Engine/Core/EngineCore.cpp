@@ -1,5 +1,6 @@
 #include "EngineCore.h"
 
+
 //EngineCore::EngineCore(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height)
 //{
 //	window = std::make_unique<DisplayWin32>(appName, hInstance, width, height);
@@ -73,6 +74,9 @@ void EngineCore::StartUpSystems()
 
 	_systems.Add<EditorCameraSystem>();
 
+	_systems.Add<MeshSystem>();
+
+	_systems.Add<LightSystem>();
 	_systems.Add<MeshSystem>();
 
 	_systems.Add<LightSystem>();
