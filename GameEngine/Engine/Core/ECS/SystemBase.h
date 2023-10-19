@@ -1,5 +1,6 @@
 #pragma once
 #include "../../vendor/entt/entt.hpp"
+#include "../../Tools/ErrorLogger.h"
 
 class SystemBase
 {
@@ -11,9 +12,9 @@ public:
 
 	virtual ~SystemBase() {}
 
-	virtual void Init() = 0;
-	virtual void Run() = 0;
-	virtual void Destroy() = 0;
+	virtual SyResult Init() = 0;
+	virtual SyResult Run() = 0;
+	virtual SyResult Destroy() = 0;
 
 protected:
 	entt::registry* _ecs;

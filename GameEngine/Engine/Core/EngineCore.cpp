@@ -52,6 +52,9 @@ void EngineCore::UpdateImpl()
 
 void EngineCore::StartUp()
 {
+	ServiceLocator::instance()->Register<RenderContext>();
+	ServiceLocator::instance()->Register<HardwareContext>();
+	ServiceLocator::instance()->Register<SyErrorLogger>();
 	ServiceLocator::instance()->Register<EngineContext>();
 	_context = ServiceLocator::instance()->Get<EngineContext>();
 
@@ -66,8 +69,9 @@ void EngineCore::StartUpSystems()
 
 	_systems.Add<RenderInitSystem>();
 
+	
 	_systems.Add<InputSystem>();
-
+	//Add Resource System here
 	_systems.Add<SyPhysicsSystem>();
 
 	_systems.Add<TransformSystem>();
@@ -89,6 +93,9 @@ void EngineCore::StartUpSystems()
 	_systems.Add<OpaqueRenderSystem>();
 	_systems.Add<ShadowMapGenerationSystem>();
 	_systems.Add<LightRenderSystem>();
+	_systems.Add<EditorBillboardRenderSystem>();
+	//Add Tonemapping here
+	//Add EditorGridSystem here
 	_systems.Add<PostViewportRenderSystem>();
 
 	_systems.Add<HudPreRenderSystem>();
@@ -96,6 +103,8 @@ void EngineCore::StartUpSystems()
 	_systems.Add<HudHierarchySystem>();
 	_systems.Add<HudPropertiesSystem>();
 	_systems.Add<HudViewportSystem>();
+	_systems.Add<SyHudConsoleSystem>();
+	_systems.Add<SyErrorLoggingSystem>();
 	_systems.Add<HudPostRenderSystem>();
 
 	_systems.Init();
@@ -107,7 +116,7 @@ void EngineCore::ShutDown()
 
 	ServiceLocator::instance()->Unregister<EngineCore>();
 	ServiceLocator::instance()->Unregister<RenderContext>();
-	auto hc = ServiceLocator::instance()->Get<HardwareContext>();
 	ServiceLocator::instance()->Unregister<HardwareContext>();
+	ServiceLocator::instance()->Unregister<SyErrorLogger>();
 }
 

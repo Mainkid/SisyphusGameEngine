@@ -13,12 +13,13 @@ SyResult EditorCameraSystem::Init()
 {
     ec = ServiceLocator::instance()->Get<EngineContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
-    auto id = ec->scene->registry.create();
-    ec->scene->registry.emplace<DataComponent>(id,"Camera");
-    TransformComponent& tc=ec->scene->registry.emplace<TransformComponent>(id);
-    CameraComponent& cc = ec->scene->registry.emplace<CameraComponent>(id);
-    ec->scene->camera = &cc;
-    ec->scene->cameraTransform = &tc;
+   
+    auto id = _ecs->create();
+    //_ecs->emplace<DataComponent>(id,"Camera");
+    auto tc= _ecs->emplace<TransformComponent>(id);
+    CameraComponent& cc = _ecs->emplace<CameraComponent>(id);
+   /* ec->scene->camera = &cc;
+    ec->scene->cameraTransform = &tc;*/
     SetLookAtPos(Vector3(-1, 0, 0), tc);
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboard system initialization successful. ");
     return SyResult();

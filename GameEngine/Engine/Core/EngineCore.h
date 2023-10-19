@@ -28,7 +28,7 @@ class EngineCore
 {
 public:
     std::chrono::time_point<std::chrono::steady_clock> PrevTime;
-    std::vector<std::unique_ptr<ISystem>> systems;
+    std::vector<std::unique_ptr<SystemBase>> systems;
     EngineContext* ec;
     SyErrorLogger* el;
 

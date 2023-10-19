@@ -2,6 +2,8 @@
 #include <filesystem>
 #include "../../../Tools/ErrorLogger.h"
 #include "../../../Core/ServiceLocator.h"
+#include "ImGui.h"
+
 SyResult SyHudConsoleSystem::Init()
 {
 	hc = ServiceLocator::instance()->Get<HardwareContext>();

@@ -3,7 +3,6 @@
 
 #include "../../../vendor/entt/entt.hpp"
 #include "../../../vendor/nlohmann_json/json.hpp"
-
 #include "SerializableTraits.h"
 
 namespace ser

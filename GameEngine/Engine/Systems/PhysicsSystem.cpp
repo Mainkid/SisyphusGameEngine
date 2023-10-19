@@ -5,6 +5,7 @@
 #include "../Tools/ErrorLogger.h"
 #include "../Components/TransformComponent.h"
 
+
 using namespace physx;
 
 PxPhysics*	SyRBodyComponent::physics;
@@ -61,8 +62,7 @@ SyResult SyPhysicsSystem::Run()
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
 		return result;
 	}
-	auto view = ServiceLocator::instance()->Get<EngineContext>()->
-		scene->registry.view<SyRBodyComponent, TransformComponent>();
+	auto view = _ecs->view<SyRBodyComponent, TransformComponent>();
 	for (auto& entity : view)
 	{
 		SyRBodyComponent& rbComponent = view.get<SyRBodyComponent>(entity);

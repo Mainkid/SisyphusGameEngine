@@ -625,8 +625,6 @@
     <ClCompile Include="Engine\Components\RBodyComponent.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.cpp" />
-    <ClCompile Include="Engine\Tools\Data\Vector.cpp" />
-    <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="Engine\Core\ECS\SystemsGroup.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.cpp" />
     <ClCompile Include="Engine\Systems\ErrorLoggingSystem.cpp" />
