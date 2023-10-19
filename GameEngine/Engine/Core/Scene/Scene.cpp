@@ -106,7 +106,8 @@ bool Scene::DestroyGameObject(entt::entity _id)
 
 	if (registry.get<TransformComponent>(_id).children.size() > 0)
 	{
-		for (auto childID : registry.get<TransformComponent>(_id).children)
+		auto children = registry.get<TransformComponent>(_id).children;
+		for (auto childID : children)
 			DestroyGameObject(childID);
 	}
 

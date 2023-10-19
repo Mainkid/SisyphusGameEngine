@@ -11,7 +11,7 @@ SyResult ShadowRenderSystem::Init()
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
-    pointlightShadowProjectionMat = DirectX::XMMatrixPerspectiveFovLH(1.5708f, rc->SHADOWMAP_WIDTH * 1.0f / rc->SHADOWMAP_HEIGHT, 0.01f, 3.0f);
+   
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowRender system initialization successful. ");
     return SyResult();
 }
@@ -98,6 +98,8 @@ SyResult ShadowRenderSystem::Run()
         else if (light.lightType == LightType::PointLight && (light.lightBehavior==LightBehavior::Movable ||
             (light.lightBehavior==LightBehavior::Static && light.shouldBakeShadows)))
         {
+            pointlightShadowProjectionMat = DirectX::XMMatrixPerspectiveFovLH(1.5708f, rc->SHADOWMAP_WIDTH * 1.0f / rc->SHADOWMAP_HEIGHT, 0.01f, light.paramsRadiusAndAttenuation.x);
+
             light.shouldBakeShadows = false;
             hc->context->RSSetState(rc->cullNoneRS.Get());
             float bgColor[4] = { 0,0,0,1 };
@@ -106,7 +108,8 @@ SyResult ShadowRenderSystem::Run()
             
 
             CB_PointlightShadowBuffer dataShadow;
-            dataShadow.world = Matrix::CreateTranslation(tc.position);
+            dataShadow.world =Matrix::CreateScale(light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x,
+                light.paramsRadiusAndAttenuation.x)*Matrix::CreateTranslation(tc.position);
             
             //dataShadow.baseData.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
             dataShadow.view[0] = DirectX::XMMatrixLookAtLH( Vector3(tc.position), tc.position + Vector3(1, 0, 0),

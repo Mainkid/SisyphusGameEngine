@@ -15,7 +15,6 @@ struct TransformComponent
 	}
 	~TransformComponent()
 	{
-		int a = 0;
 	}
 	SyVector3 position =		SyVector3(0, 0, 0 );
 	SyVector3 rotation =		SyVector3(0, 0, 0);

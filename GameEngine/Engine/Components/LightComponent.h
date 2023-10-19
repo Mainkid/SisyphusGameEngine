@@ -30,6 +30,7 @@ struct LightComponent
     Matrix viewMatrix;
     Matrix orthoMatrix;
     bool shouldBakeShadows = true;
+    bool castShadows = false;
 
     //Rendering shadows
     Microsoft::WRL::ComPtr<ID3D11Texture2D> shadowMapTexture = nullptr;

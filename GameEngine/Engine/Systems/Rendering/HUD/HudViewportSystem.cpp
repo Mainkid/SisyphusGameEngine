@@ -57,8 +57,14 @@ SyResult HudViewportSystem::Run()
 		int pixelColorR =RenderHelper::GetPixelValue(x, y).x;
 		if (pixelColorR != -1)
 		{
-			ec->selectedEntityID=entt::entity(pixelColorR);
-			ec->selectedContent.assetType = EAssetType::ASSET_NONE;
+			if (!ImGui::IsKeyDown(ImGuiMod_Ctrl))
+				ec->hudData.selectedEntityIDs.clear();
+
+			if (ec->hudData.selectedEntityIDs.count(entt::entity(pixelColorR)) > 0)
+				ec->hudData.selectedEntityIDs.erase(entt::entity(pixelColorR));
+			else
+				ec->hudData.selectedEntityIDs.insert(entt::entity(pixelColorR));
+			ec->hudData.selectedContent.assetType = EAssetType::ASSET_NONE;
 		}
 
 	}
@@ -102,8 +108,9 @@ SyResult HudViewportSystem::Run()
 	ec->scene->camera->mouseWheel = io.MouseWheel;
 
 	//Gizmos
-	if (ec->selectedEntityID!=entt::null)
+	if (ec->hudData.selectedEntityIDs.size()!=0)
 	{
+		Matrix deltaMatrix;
 		ImGuizmo::SetOrthographic(false);
 		ImGuizmo::SetDrawlist();
 		float windowWidth = (float)ImGui::GetWindowWidth();
@@ -114,28 +121,38 @@ SyResult HudViewportSystem::Run()
 		
 		auto viewMat = ec->scene->camera->view;
 		auto projMat = ec->scene->camera->projection;
-		auto& tc = ec->scene->registry.get<TransformComponent>(ec->selectedEntityID);
+		
+		auto& tc = ec->scene->registry.get<TransformComponent>(*ec->hudData.selectedEntityIDs.begin());
 		auto transformMat = tc.transformMatrix;
 
 		ImGuizmo::MODE mode = ImGuizmo::LOCAL;
 		if (isWorldSpace)
 			mode = ImGuizmo::WORLD;
-		
+
 		for (int i = 0; i < 3; i++)
 			snap[i] = snap_values[gridSnapParam];
-		
-		auto res=ImGuizmo::Manipulate(&viewMat._11, &projMat._11, guizmoType, mode, &transformMat._11,nullptr,mode==ImGuizmo::WORLD? snap : NULL);
-		if (ImGuizmo::IsUsing())	
+
+		auto res = ImGuizmo::Manipulate(&viewMat._11, &projMat._11, guizmoType, mode, &transformMat._11, &deltaMatrix._11, mode == ImGuizmo::WORLD ? snap : NULL);
+		if (ImGuizmo::IsUsing())
 		{
-			Vector3 translation, scale,translationL,scaleL;
-			Quaternion rotation, rotationL;
-			transformMat = transformMat * TransformHelper::ConstructInverseParentTransform(tc);
-			transformMat.Decompose(scale, rotation, translation);
-			Vector3 deltaRotation = rotation.ToEuler() - tc.localRotation;
-			tc.localRotation = tc.localRotation + deltaRotation;
-			tc.localPosition = translation;
-			tc.localScale = scale;
+			for (auto& id: ec->hudData.selectedEntityIDs)
+			{
+				Matrix transformMat;
+				TransformComponent& tc = ec->scene->registry.get<TransformComponent>(id);
+				Vector3 translation, scale, translationL, scaleL;
+				Quaternion rotation, rotationL;
+				transformMat = tc.transformMatrix * deltaMatrix;
+				transformMat = transformMat * TransformHelper::ConstructInverseParentTransform(tc);
+				transformMat.Decompose(scale, rotation, translation);
+				Vector3 deltaRotation = rotation.ToEuler() - tc.localRotation;
+				tc.localRotation = tc.localRotation + deltaRotation;
+				tc.localPosition = translation;
+				tc.localScale = scale;
+			}
 		}
+
+
+
 	}
 	
 	if (ImGui::IsKeyDown(ImGuiKey_R))
@@ -292,16 +309,28 @@ void HudViewportSystem::ProcessInput()
 {
 	if (ImGui::IsKeyDown(ImGuiKey_Delete))
 	{
-		if (ec->selectedEntityID != entt::null)
+		if (ec->hudData.selectedEntityIDs.size() != 0)
 		{
-			ec->scene->DestroyGameObject(ec->selectedEntityID);
-			ec->selectedEntityID = entt::null;
+			for (auto& go : ec->hudData.selectedEntityIDs)
+			{
+				ec->scene->DestroyGameObject(go);
+			}
+			
+			ec->hudData.selectedEntityIDs.clear();
 		}
 	}
 	
 	if (ImGui::Shortcut(ImGuiMod_Ctrl| ImGuiKey_C))
 	{
-		int a = 0;
+		ec->hudData.copyBufferEntityIDs = ec->hudData.selectedEntityIDs;
+	}
+
+	if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_V))
+	{
+		/*for (auto id : ec->hudData.copyBufferEntityIDs)
+		{
+			ec->scene->registry.get(id);
+		}*/
 	}
 
 }

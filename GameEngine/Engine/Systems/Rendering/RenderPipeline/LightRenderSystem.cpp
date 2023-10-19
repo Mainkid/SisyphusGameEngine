@@ -82,6 +82,8 @@ SyResult LightRenderSystem::Run()
             lightBuffer.baseData.worldView = lightBuffer.baseData.world * ec->scene->camera->view;
             lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * ec->scene->camera->projection;
             lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
+
+            lightBuffer.distances[0].x = light.castShadows;
         }
         else if (light.lightType == LightType::SpotLight)
         {
@@ -104,8 +106,8 @@ SyResult LightRenderSystem::Run()
             lightBuffer.baseData.worldView = lightBuffer.baseData.world * ec->scene->camera->view;
             lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * ec->scene->camera->projection;
             lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
-
-
+            
+           
         }
 
         D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -156,6 +158,7 @@ SyResult LightRenderSystem::Run()
             hc->context->PSSetShaderResources(8, 1, light.shadowMapSRV.GetAddressOf());
 
             hc->context->RSSetState(rc->cullFrontRS.Get());
+            hc->context->VSSetConstantBuffers(0, 1, rc->lightConstBuffer->buffer.GetAddressOf());
             hc->context->OMSetDepthStencilState(rc->backFaceStencilState.Get(), 0);
             hc->context->PSSetShader(rc->stencilPassShader->pixelShader.Get(), nullptr, 0);
             hc->context->VSSetShader(rc->stencilPassShader->vertexShader.Get(), nullptr, 0);

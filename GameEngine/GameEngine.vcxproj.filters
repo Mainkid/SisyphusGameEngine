@@ -172,6 +172,7 @@
     <ClInclude Include="Engine\Systems\ErrorLoggingSystem.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.h" />
+    <ClInclude Include="Engine\Core\ResourcePath.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

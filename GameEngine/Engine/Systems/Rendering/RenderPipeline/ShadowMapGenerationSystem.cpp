@@ -68,9 +68,10 @@ SyResult ShadowMapGenerationSystem::Run()
             }
             else if (light.lightType == LightType::PointLight)
             {
-                lightBuffer.lightData.Pos = Vector4(tc.position.x, tc.position.y, tc.position.z, 25);
+                lightBuffer.lightData.Pos = Vector4(tc.position.x, tc.position.y, tc.position.z, 1);
                 lightBuffer.lightData.additiveParams = light.paramsRadiusAndAttenuation;
-                lightBuffer.baseData.world = tc.transformMatrix;
+                lightBuffer.baseData.world = Matrix::CreateScale(light.paramsRadiusAndAttenuation.x,
+                    light.paramsRadiusAndAttenuation.x,light.paramsRadiusAndAttenuation.x)*tc.transformMatrix;
 
             }
 

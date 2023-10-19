@@ -55,6 +55,7 @@ int main()
     auto _lightPoint = EngineCore::instance()->ec->scene->AddLight(LightType::PointLight);
 
     EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint).paramsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
+    EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint).lightBehavior = LightBehavior::Movable;
     EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint).color = Vector4(1, 0, 1.0f, 1.0f);
     EngineCore::instance()->ec->scene->registry.get<TransformComponent>(_lightPoint).position = Vector3(3, 0, 0);
 

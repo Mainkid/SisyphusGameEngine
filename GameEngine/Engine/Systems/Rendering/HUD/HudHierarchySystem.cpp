@@ -52,7 +52,7 @@ void HudHierarchySystem::RenderTree(std::set<entt::entity>& gameObjectsVector)
 {
     for (auto& gameObjectID : gameObjectsVector)
     {
-        ImGuiTreeNodeFlags treeFlags = ((gameObjectID == ec->selectedEntityID) ? ImGuiTreeNodeFlags_Selected : 0);
+        ImGuiTreeNodeFlags treeFlags = (( ec->hudData.selectedEntityIDs.count(gameObjectID)>0) ? ImGuiTreeNodeFlags_Selected : 0);
         treeFlags |= (ec->scene->registry.get<TransformComponent>(gameObjectID).children.size() == 0) ?
             ImGuiTreeNodeFlags_Leaf : ImGuiTreeNodeFlags_None;
         treeFlags |= baseFlags;
@@ -60,10 +60,18 @@ void HudHierarchySystem::RenderTree(std::set<entt::entity>& gameObjectsVector)
         DataComponent& dc = ec->scene->registry.get<DataComponent>(gameObjectID);
         bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)gameObjectID, treeFlags,
             dc.name.c_str());
+
+
         if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
         {
-            ec->selectedEntityID = gameObjectID;
-            ec->selectedContent.assetType = EAssetType::ASSET_NONE;
+            
+            if (!ImGui::IsKeyDown(ImGuiMod_Ctrl))
+                ec->hudData.selectedEntityIDs.clear();
+            if (ec->hudData.selectedEntityIDs.count(gameObjectID) > 0)
+                ec->hudData.selectedEntityIDs.erase(gameObjectID);
+            else
+                ec->hudData.selectedEntityIDs.insert( gameObjectID);
+            ec->hudData.selectedContent.assetType = EAssetType::ASSET_NONE;
         }
 
         if (ImGui::BeginDragDropSource())

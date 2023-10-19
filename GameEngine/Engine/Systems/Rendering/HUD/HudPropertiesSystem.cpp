@@ -28,9 +28,11 @@ SyResult HudPropertiesSystem::Run()
 
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-    if (ec->selectedEntityID != entt::null)
+    if (ec->hudData.selectedEntityIDs.size()!=0)
     {
-        TransformComponent* tc = ec->scene->registry.try_get<TransformComponent>(ec->selectedEntityID);
+        
+        TransformComponent* tc = ec->scene->registry.try_get<TransformComponent>(*ec->hudData.selectedEntityIDs.begin());
+        LightComponent* lc = ec->scene->registry.try_get<LightComponent>(*ec->hudData.selectedEntityIDs.begin());
 
         if (tc)
         {
@@ -58,12 +60,36 @@ SyResult HudPropertiesSystem::Run()
             ImGui::DragFloat3("Scale", vec3, 0.1f);
             tc->localScale = (Vector3(vec3[0], vec3[1], vec3[2]));
         }
-    }
-    else if (ec->selectedContent.uuid!=boost::uuids::nil_uuid())
-    {
-        if (std::filesystem::exists(rs->resourceLibrary[ec->selectedContent.uuid].path))
+
+        if (lc)
         {
-            switch (ec->selectedContent.assetType)
+            ImGui::Text("Light");
+            Vector4 vec4D = lc->paramsRadiusAndAttenuation;
+            Vector4 color = lc->color;
+            float col3[3] = { lc->color.x,lc->color.y,lc->color.z };
+            ImGui::PushItemWidth(100);
+            ImGui::ColorEdit3("Light Color", col3);
+            ImGui::DragFloat("Light Intensity", &lc->color.w);
+
+            switch (lc->lightType)
+            {
+            
+                case LightType::PointLight:
+                    ImGui::DragFloat("Light Radius",&lc->paramsRadiusAndAttenuation.x);
+                    ImGui::Checkbox("Bake Shadows", &lc->castShadows);
+                break;
+            }
+            ImGui::PopItemWidth();
+            lc->color.x = col3[0];
+            lc->color.y = col3[1];
+            lc->color.z = col3[2];
+        }
+    }
+    else if (ec->hudData.selectedContent.uuid!=boost::uuids::nil_uuid())
+    {
+        if (std::filesystem::exists(rs->resourceLibrary[ec->hudData.selectedContent.uuid].path))
+        {
+            switch (ec->hudData.selectedContent.assetType)
             {
             case EAssetType::ASSET_MATERIAL:
                 DrawMaterialProperties();
@@ -82,8 +108,8 @@ SyResult HudPropertiesSystem::Run()
         }
         else
         {
-            ec->selectedContent.assetType = EAssetType::ASSET_NONE;
-            ec->selectedContent.uuid = boost::uuids::nil_uuid();
+            ec->hudData.selectedContent.assetType = EAssetType::ASSET_NONE;
+            ec->hudData.selectedContent.uuid = boost::uuids::nil_uuid();
         }
     }
 
@@ -105,7 +131,7 @@ void HudPropertiesSystem::DrawMaterialProperties()
     
     using json = nlohmann::json;
     ImGui::Text("Material");
-    std::string filePath=rs->FindFilePathByUUID(ec->selectedContent.uuid);
+    std::string filePath=rs->FindFilePathByUUID(ec->hudData.selectedContent.uuid);
 
     std::string albedoTextureUUID;
     std::string specularTextureUUID;
@@ -183,7 +209,7 @@ void HudPropertiesSystem::DrawMaterialProperties()
     };
 
     //Initialization
-    if (prevSelectedUUID != ec->selectedContent.uuid)
+    if (prevSelectedUUID != ec->hudData.selectedContent.uuid)
     {
         for (int i = 0; i < vecs.size(); i++)
         {
@@ -306,7 +332,7 @@ void HudPropertiesSystem::DrawMaterialProperties()
 
         rs->LoadResource(rs->GetUUIDFromPath(filePath),true);
     }
-    prevSelectedUUID = ec->selectedContent.uuid;
+    prevSelectedUUID = ec->hudData.selectedContent.uuid;
 }
 
 void HudPropertiesSystem::UpdateHudProperties(bool)

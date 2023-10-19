@@ -49,10 +49,10 @@ public:
 
 		auto ec=ServiceLocator::instance()->Get<EngineContext>();
 		auto rs = ServiceLocator::instance()->Get<ResourceService>();
-		if (ec->selectedContent.uuid == rs->GetUUIDFromPath(path))
+		if (ec->hudData.selectedContent.uuid == rs->GetUUIDFromPath(path))
 		{
-			ec->selectedContent.uuid = boost::uuids::nil_uuid();
-			ec->selectedContent.assetType = EAssetType::ASSET_NONE;
+			ec->hudData.selectedContent.uuid = boost::uuids::nil_uuid();
+			ec->hudData.selectedContent.assetType = EAssetType::ASSET_NONE;
 		}
 		std::filesystem::remove_all(path);
 

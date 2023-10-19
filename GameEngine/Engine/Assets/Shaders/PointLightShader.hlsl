@@ -19,6 +19,9 @@ cbuffer mycBuffer : register(b0)
     row_major float4x4 worldViewInverseT;
     LightData lightData;
     float4 eyePos;
+    row_major float4x4 MatrixHelper[4];
+    
+    float4 shadowParams;                       // use shadow cast (X)
 
 };
 
@@ -97,12 +100,10 @@ float4 PS_PointLight(PS_IN input) : SV_Target
     float3 depthCoord = cubeMap.Sample(textureSampler, fragToLight.xyz);
     float3 depthToLight = -(lightData.pos.xyz - depthCoord).xyz;
     //depthToLight.y = depthToLight.y * (-1);
-    float bias = 0.03f;
+    float bias = 0.1f;
     float4 posLight = float4(worldPos, 1);
     float shadowVal = currentDepth - bias < length(depthToLight);
-    
-    
-    
+
     if (distance > lightData.params.r)
         return float4(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -132,7 +133,9 @@ float4 PS_PointLight(PS_IN input) : SV_Target
     float3 resColor = PBR(normal, toEye, lightVec, H, F0, lightData.color.xyz,
     albedoColor, roughnessColor, metallicColor, emissiveColor, lightIntesity*att);
     
-    resColor = resColor * shadowVal;
+    
+    shadowVal = shadowVal * (shadowParams.x >0.5f) + (shadowParams.x<=0.5f);
+    resColor = resColor*shadowVal;
     
     
     return float4(resColor, 1.0f);

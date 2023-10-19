@@ -163,8 +163,8 @@ SyResult HudContentBrowserSystem::Run()
                             if (selectedFiles.count(directoryEntry) == 0)
                             {
                                 auto uuid = rs->GetUUIDFromPath(directoryEntry);
-                                ec->selectedContent = { uuid, rs->resourceLibrary[uuid].assetType };
-                                ec->selectedEntityID = entt::null;
+                                ec->hudData.selectedContent = { uuid, rs->resourceLibrary[uuid].assetType };
+                                ec->hudData.selectedEntityIDs.clear();
                                 selectedFiles.insert(directoryEntry);
 
                             }

@@ -6,6 +6,8 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/lexical_cast.hpp>
+#include "../../../../vendor/entt/entt.hpp"
+#include <utility>
 
 struct EngineContext;
 struct HardwareContext;
@@ -31,4 +33,5 @@ private:
     
     void DrawMaterialProperties();
     void UpdateHudProperties(bool);
+
 };
