@@ -1,11 +1,12 @@
 #pragma once
-#include "../../ISystem.h"
+#include "../../Core/ECS/SystemBase.h"
 #include <filesystem>
 #include <fstream>
 #include "../RenderContext.h"
 #include "../../EngineContext.h"
+#include "../../HardwareContext.h"
 #include "../../../Tools/Data/RingBuffer.h"
-class SyHudConsoleSystem : public ISystem
+class SyHudConsoleSystem : public SystemBase
 {
 public:
     SyResult Init() override;

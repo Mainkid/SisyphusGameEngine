@@ -1,5 +1,5 @@
 #pragma once
-#include "../../ISystem.h"
+#include "../../Core/ECS/SystemBase.h"
 #include "../../Core/ServiceLocator.h"
 #include "../RenderContext.h"
 #include <memory>
@@ -9,7 +9,7 @@ struct EngineContext;
 struct RenderContext;
 struct HardwareContext;
 
-class OpaqueRenderSystem : public ISystem
+class OpaqueRenderSystem : public SystemBase
 {
 public:
 	SyResult Init() override;

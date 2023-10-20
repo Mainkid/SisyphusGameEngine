@@ -23,7 +23,7 @@ SyResult HudPropertiesSystem::Run()
     if (io.MouseWheel > 0.0f)
         std::cout << "";
 
-    TransformComponent* tc = ec->scene->registry.try_get<TransformComponent>(ec->selectedEntityID);
+    TransformComponent* tc = _ecs->try_get<TransformComponent>(ec->selectedEntityID);
 
     if (tc)
     {

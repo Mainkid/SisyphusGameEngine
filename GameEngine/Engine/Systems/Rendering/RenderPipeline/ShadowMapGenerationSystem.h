@@ -1,11 +1,11 @@
 #pragma once
-#include "../../ISystem.h"
+#include "../../Core/ECS/SystemBase.h"
 
 struct RenderContext;
 struct EngineContext;
 struct HardwareContext;
 
-class ShadowMapGenerationSystem : public ISystem
+class ShadowMapGenerationSystem : public SystemBase
 {
 public:
 	SyResult Init() override;

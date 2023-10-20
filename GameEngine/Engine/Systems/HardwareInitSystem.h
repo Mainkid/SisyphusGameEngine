@@ -1,12 +1,12 @@
 #pragma once
-#include "ISystem.h"
+#include "../Core/ECS/SystemBase.h"
 #include "../../Core/ServiceLocator.h"
 #include "HardwareContext.h"
 #include <memory>
 
 class EngineCore;
 
-class HardwareInitSystem : public ISystem
+class HardwareInitSystem : public SystemBase
 {
 public:
 	SyResult Init() override;

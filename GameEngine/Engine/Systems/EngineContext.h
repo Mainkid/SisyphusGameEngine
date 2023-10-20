@@ -1,10 +1,16 @@
 #pragma once
-#include "../Core/Scene/Scene.h"
+
+
+#include "../../vendor/entt/entt.hpp"
 #include "../Core/IService.h"
+#include "../Serialization/Serializer.hpp"
 
 struct EngineContext : public IService
 {
-	std::unique_ptr<Scene> scene;
+	entt::registry ecs;
+
+	ser::Serializer serializer;
+
 	entt::entity selectedEntityID=entt::null;
 	float totalTime = 0;
 	unsigned int frameCount = 0;

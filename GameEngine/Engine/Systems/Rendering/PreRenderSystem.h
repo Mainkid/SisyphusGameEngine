@@ -1,12 +1,12 @@
 #pragma once
-#include "../ISystem.h"
+#include "../../Core/ECS/SystemBase.h"
 #include "SimpleMath.h"
 
 struct RenderContext;
 struct EngineContext;
 struct HardwareContext;
 
-class PreRenderSystem : public ISystem
+class PreRenderSystem : public SystemBase
 {
 public:
 	SyResult Init() override;

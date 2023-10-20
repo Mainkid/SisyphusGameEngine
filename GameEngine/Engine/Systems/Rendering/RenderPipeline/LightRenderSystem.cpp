@@ -2,7 +2,11 @@
 #include "../../EngineContext.h"
 #include "../../HardwareContext.h"
 #include "../RenderContext.h"
+#include "../../../Scene/CameraHelper.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
+#include "../../Components/TransformComponent.h"
+#include "../../Components/LightComponent.h"
+
 
 SyResult LightRenderSystem::Init()
 {
@@ -31,29 +35,27 @@ SyResult LightRenderSystem::Run()
     UINT stridesLight[1] = { 48 };
     UINT offsetsLight[1] = { 0 };
 
-    auto view = ec->scene->registry.view<TransformComponent, LightComponent>();
+    auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+
+    auto view = _ecs->view<TransformComponent, LightComponent>();
     for (auto& entity : view)
     {
-
         LightComponent& light = view.get<LightComponent>(entity);
         TransformComponent& tc = view.get<TransformComponent>(entity);
         lightBuffer.lightData.Pos = Vector4(tc.position.x, tc.position.y, tc.position.z, 1);
         lightBuffer.lightData.Color = light.color;
         lightBuffer.lightData.Dir = Vector4::Transform(Vector4::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation));
         lightBuffer.lightData.additiveParams = light.paramsRadiusAndAttenuation;
-        lightBuffer.eyePos = DirectX::SimpleMath::Vector4(ec->scene->cameraTransform->position.x,
-            ec->scene->cameraTransform->position.y,
-            ec->scene->cameraTransform->position.z,
-            1.0f);
+        lightBuffer.eyePos = Vector4(cameraTf.position.x, cameraTf.position.y, cameraTf.position.z, 1.0f);
 
         hc->context->ClearDepthStencilView(hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1, 0);
 
         if (light.lightType == LightType::Directional || light.lightType == LightType::Ambient)
         {
-            lightBuffer.baseData.world = DirectX::SimpleMath::Matrix::Identity;
-            lightBuffer.baseData.worldView = DirectX::SimpleMath::Matrix::Identity * ec->scene->camera->view;
-            lightBuffer.baseData.worldViewProj = DirectX::SimpleMath::Matrix::Identity * ec->scene->camera->view * ec->scene->camera->projection;
-            lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
+            lightBuffer.baseData.world = Matrix::Identity;
+            lightBuffer.baseData.worldView = Matrix::Identity * camera.view;
+            lightBuffer.baseData.worldViewProj = Matrix::Identity * camera.view * camera.projection;
+            lightBuffer.baseData.worldViewInverseTranspose = Matrix::Identity;
 
 
             if (light.lightType == LightType::Directional)
@@ -70,9 +72,9 @@ SyResult LightRenderSystem::Run()
             using namespace DirectX::SimpleMath;
             lightBuffer.baseData.world = Matrix::CreateScale(light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x) * Matrix::CreateTranslation(tc.position);
 
-            lightBuffer.baseData.worldView = lightBuffer.baseData.world * ec->scene->camera->view;
-            lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * ec->scene->camera->projection;
-            lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
+            lightBuffer.baseData.worldView = lightBuffer.baseData.world * camera.view;
+            lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * camera.projection;
+            lightBuffer.baseData.worldViewInverseTranspose = Matrix::Identity;
         }
         else if (light.lightType == LightType::SpotLight)
         {
@@ -92,11 +94,9 @@ SyResult LightRenderSystem::Run()
                 Matrix::CreateScale(radius, radius, light.paramsRadiusAndAttenuation.x) *
                 Matrix::CreateFromAxisAngle(a, angle) *
                 Matrix::CreateTranslation(tc.position);
-            lightBuffer.baseData.worldView = lightBuffer.baseData.world * ec->scene->camera->view;
-            lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * ec->scene->camera->projection;
-            lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
-
-
+            lightBuffer.baseData.worldView = lightBuffer.baseData.world * camera.view;
+            lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * camera.projection;
+            lightBuffer.baseData.worldViewInverseTranspose = Matrix::Identity;
         }
 
         D3D11_MAPPED_SUBRESOURCE mappedResource;

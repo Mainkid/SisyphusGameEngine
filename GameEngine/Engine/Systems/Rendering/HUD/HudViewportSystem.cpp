@@ -3,6 +3,7 @@
 #include "../RenderHelper.h"
 #include "../../Core/Rendering/RenderTarget.h"
 #include "../../EngineContext.h"
+#include "../../../Scene/CameraHelper.h"
 
 SyResult HudViewportSystem::Init()
 {
@@ -56,7 +57,9 @@ SyResult HudViewportSystem::Run()
 	}
 
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	ec->scene->camera->mouseWheel = io.MouseWheel;
+
+	auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+	camera.mouseWheel = io.MouseWheel;
 
 	//Gizmos
 	if (ec->selectedEntityID!=entt::null)
@@ -70,10 +73,10 @@ SyResult HudViewportSystem::Run()
 
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		
-		auto viewMat = ec->scene->camera->view;
-		auto projMat = ec->scene->camera->projection;
-		auto& tc = ec->scene->registry.get<TransformComponent>(ec->selectedEntityID);
-		auto transformMat = tc.transformMatrix;
+		auto viewMat = camera.view;
+		auto projMat = camera.projection;
+		auto& selectedTransform = _ecs->get<TransformComponent>(ec->selectedEntityID);
+		auto transformMat = selectedTransform.transformMatrix;
 
 		auto res=ImGuizmo::Manipulate(&viewMat._11, &projMat._11, guizmoType, ImGuizmo::LOCAL, &transformMat._11);
 		
@@ -81,12 +84,12 @@ SyResult HudViewportSystem::Run()
 		{
 			Vector3 translation, scale,translationL,scaleL;
 			Quaternion rotation, rotationL;
-			transformMat = transformMat * TransformHelper::ConstructInverseParentTransform(tc);
+			transformMat = transformMat * TransformHelper::ConstructInverseParentTransform(selectedTransform);
 			transformMat.Decompose(scale, rotation, translation);
-			Vector3 deltaRotation = rotation.ToEuler() - tc.localRotation;
-			tc.localRotation = tc.localRotation + deltaRotation;
-			tc.localPosition = translation;
-			tc.localScale = scale;
+			Vector3 deltaRotation = rotation.ToEuler() - selectedTransform.localRotation;
+			selectedTransform.localRotation = selectedTransform.localRotation + deltaRotation;
+			selectedTransform.localPosition = translation;
+			selectedTransform.localScale = scale;
 		}
 	}
 
@@ -194,12 +197,8 @@ void HudViewportSystem::HandleResize()
 		//hud->ViewportResizedEvent.Broadcast(newWidgetSize.x * 1.0f / newWidgetSize.y);
 		widgetSize = newWidgetSize;
 
-		auto view = ec->scene->registry.view<TransformComponent, CameraComponent>();
-		for (auto& entity : view)
-		{
-			CameraComponent& cc = view.get<CameraComponent>(entity);
-			cc.aspectRatio = widgetSize.x / widgetSize.y;
-		}
+		auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+		camera.aspectRatio = widgetSize.x / widgetSize.y;
 	}
 }
 
