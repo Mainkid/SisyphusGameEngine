@@ -14,7 +14,7 @@ SyResult TransformSystem::Init()
 SyResult TransformSystem::Run()
 {
 	SyResult result;
-	auto view = ec->scene->registry.view<TransformComponent>();
+	auto view = _ecs->view<TransformComponent>();
 	for (auto& entity :view)
 	{
 		TransformComponent& tc = view.get<TransformComponent>(entity);

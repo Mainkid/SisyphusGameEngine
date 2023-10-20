@@ -19,7 +19,6 @@
     <ClCompile Include="Engine\GameEngine.cpp" />
     <ClCompile Include="Engine\Components\Mesh.cpp" />
     <ClCompile Include="Engine\Obsolete\RenderPipeline.cpp" />
-    <ClCompile Include="Engine\Core\Scene\Scene.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudPostRenderSystem.cpp" />
@@ -64,6 +63,11 @@
     <ClCompile Include="vendor\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_tables.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Engine\Serialization\SerializableTraits.h" />
+    <ClCompile Include="Engine\Scene\GameObjectHelper.cpp" />
+    <ClCompile Include="Engine\Core\ECS\SystemsGroup.cpp" />
+    <ClCompile Include="Engine\Scene\CameraHelper.cpp" />
+    <ClCompile Include="Engine\Serialization\SerializableOuters.h" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ToneMappingRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\MaterialUpdateSystem.cpp" />
     <ClCompile Include="Engine\Systems\ResourceSystem.cpp" />
@@ -82,7 +86,7 @@
     <ClInclude Include="Engine\Components\EditorBillboardComponent.h" />
     <ClInclude Include="Engine\Systems\EditorCameraSystem.h" />
     <ClInclude Include="Engine\Components\CameraComponent.h" />
-    <ClInclude Include="Engine\Components\DataComponent.h" />
+    <ClInclude Include="Engine\Components\GameObjectComp.h" />
     <ClInclude Include="Engine\Core\DisplayWin32.h" />
     <ClInclude Include="Engine\Core\EngineCore.h" />
     <ClInclude Include="Engine\Components\TransformComponent.h" />
@@ -110,14 +114,13 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowRenderSystem.h" />
     <ClInclude Include="Engine\Systems\Systems.h" />
     <ClInclude Include="Engine\Systems\SystemsEnum.h" />
-    <ClInclude Include="Engine\Core\Scene\Scene.h" />
     <ClInclude Include="Engine\Components\LightComponent.h" />
     <ClInclude Include="Engine\Core\Rendering\RenderTarget.h" />
     <ClInclude Include="Engine\Tools\ErrorLogger.h" />
     <ClInclude Include="Engine\Tools\ImageLoader.h" />
     <ClInclude Include="Engine\Components\ParticleComponent.h" />
     <ClInclude Include="Engine\Components\Particle.h" />
-    <ClInclude Include="Engine\Systems\ISystem.h" />
+    <ClInclude Include="Engine\Core\ECS\SystemBase.h" />
     <ClInclude Include="Engine\Systems\TransformSystem.h" />
     <ClInclude Include="Engine\Systems\TransformHelper.h" />
     <ClInclude Include="Engine\Systems\MeshSystem.h" />
@@ -167,12 +170,20 @@
     <ClInclude Include="Engine\Components\ResourceBase.h" />
     <ClInclude Include="Engine\Components\Texture.h" />
     <ClInclude Include="Engine\Components\Model.h" />
+    <ClInclude Include="Engine\Serialization\Serializer.hpp" />
+    <ClInclude Include="Engine\Serialization\SerializableMacros.h" />
+    <ClInclude Include="vendor\nlohmann_json\json.hpp" />
+    <ClInclude Include="Engine\Scene\GameObjectHelper.h" />
+    <ClInclude Include="Engine\Core\ECS\SystemsGroup.h" />
+    <ClInclude Include="Engine\Scene\CameraHelper.h" />
+    <ClInclude Include="Engine\Serialization\Serializable.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.h" />
     <ClInclude Include="Engine\Tools\ComplexString.h" />
     <ClInclude Include="Engine\Systems\ErrorLoggingSystem.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.h" />
     <ClInclude Include="Engine\Core\ResourcePath.h" />
+    <ClInclude Include="Engine\Tools\Data\RingBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
@@ -191,6 +202,7 @@
     <None Include="Engine\Assets\Shaders\PBR_Functions.hlsli" />
     <None Include="Engine\Assets\Shaders\ToneMapping.hlsl" />
     <None Include="Engine\Assets\Shaders\EditorGridShader.hlsl" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png">

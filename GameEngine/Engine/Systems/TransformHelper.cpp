@@ -2,6 +2,7 @@
 #include "../Core/EngineCore.h"
 #include "../Core/ServiceLocator.h"
 #include "../Systems/EngineContext.h"
+#include "../Tools/Data/Vector.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -14,31 +15,32 @@ Matrix TransformHelper::ConstructLocalTransformMatrix(TransformComponent& tc)
 Matrix TransformHelper::ConstructInverseParentTransform(TransformComponent& tc)
 {
 	Matrix resultMat = Matrix::Identity;
-	EngineContext* ec = ServiceLocator::instance()->Get<EngineContext>();
-	entt::entity curID = tc.parent;
+	EngineContext* context = ServiceLocator::instance()->Get<EngineContext>();
+	entt::entity curID = static_cast<entt::entity>(tc.parent);
 
-	while (curID != entt::null) {
-		TransformComponent& curTc = ec->scene->registry.get<TransformComponent>(curID);
+	while (curID != entt::null) 
+	{
+		TransformComponent& curTc = context->ecs.get<TransformComponent>(curID);
 		resultMat = resultMat * (Matrix::CreateScale(curTc.localScale)* Matrix::CreateFromYawPitchRoll(curTc.localRotation) * Matrix::CreateTranslation(curTc.localPosition));
-		curID = curTc.parent;
+		curID = static_cast<entt::entity>(curTc.parent);
 	}
 	return resultMat.Invert();
 }
 
 void TransformHelper::UpdateTransformMatrix(TransformComponent& tc)
 {
-	EngineContext* ec = ServiceLocator::instance()->Get<EngineContext>();
+	EngineContext* context = ServiceLocator::instance()->Get<EngineContext>();
 	tc.transformMatrix = Matrix::CreateScale(tc.localScale) * Matrix::CreateFromYawPitchRoll(tc.localRotation) * Matrix::CreateTranslation(tc.localPosition);
-	entt::entity curID = tc.parent;
+	entt::entity curID = static_cast<entt::entity>(tc.parent);
 	if (curID!=entt::null)
 	{
-		TransformComponent& curTc = ec->scene->registry.get<TransformComponent>(curID);
+		TransformComponent& curTc = context->ecs.get<TransformComponent>(curID);
 		tc.transformMatrix = tc.transformMatrix * curTc.transformMatrix;
 	}
 
 	for (auto& child : tc.children)
 	{
-		UpdateTransformMatrix(ec->scene->registry.get<TransformComponent>(child));
+		UpdateTransformMatrix(context->ecs.get<TransformComponent>(child));
 	}
 	Quaternion q;
 	Vector3 scaleNew = tc.scale;
@@ -88,6 +90,19 @@ void TransformHelper::UpdateRelativeToParent(const TransformComponent* parent, T
 		tc.transformMatrix = (Matrix::CreateScale(scale) * Matrix::CreateFromYawPitchRoll(tc.localRotation) * Matrix::CreateTranslation(translation));
 	}
 
+}
+
+bool TransformHelper::HasHierarchyCycles(entt::registry* ecs, entt::entity sourceGameObject, entt::entity parentGameObject)
+{
+	if (parentGameObject == sourceGameObject)
+		return true;
+
+	bool res = false;
+	for (auto& gameObject : ecs->get<TransformComponent>(sourceGameObject).children)
+	{
+		res = res || HasHierarchyCycles(ecs,gameObject, parentGameObject);
+	}
+	return res;
 }
 
 void TransformHelper::DegreesToRad(Vector3& vec)

@@ -15,9 +15,6 @@ SyResult RenderInitSystem::Init()
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
-
-    ec->scene=std::make_unique<Scene>();
-
     rc->cubeMesh = MeshLoader::LoadSimpleMesh("./Engine/Assets/Resources/Cube.fbx");
 
     using namespace DirectX::SimpleMath;

@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "ISystem.h"
+#include "../Core/ECS/SystemBase.h"
 #include "../Tools/Data/Vector.h"
 
 # pragma region forward declaration
@@ -15,7 +15,7 @@ namespace physx
 #pragma endregion
 
 class SyPhysicsSystem :
-    public ISystem
+    public SystemBase
 {
     std::shared_ptr<physx::PxDefaultAllocator>		allocator = nullptr;
     std::shared_ptr<physx::PxDefaultErrorCallback>	errorCallback = nullptr;

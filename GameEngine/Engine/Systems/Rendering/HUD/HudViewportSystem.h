@@ -1,5 +1,5 @@
 #pragma once
-#include "../../ISystem.h"
+#include "../../Core/ECS/SystemBase.h"
 #include <wrl.h>
 #include "../../../../vendor/entt/entt.hpp"
 #include "../../../../vendor/ImGui/imgui.h"
@@ -14,6 +14,7 @@
 #include <filesystem>
 #include <boost/uuid/uuid.hpp>
 #include <boost/lexical_cast.hpp>
+#include <commdlg.h>
 
 struct EngineContext;
 struct HardwareContext;
@@ -21,7 +22,7 @@ struct RenderContext;
 class ResourceService;
 
 
-class HudViewportSystem : public ISystem
+class HudViewportSystem : public SystemBase
 {
 public:
 	SyResult Init() override;

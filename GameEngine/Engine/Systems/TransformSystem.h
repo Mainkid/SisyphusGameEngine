@@ -1,12 +1,12 @@
 #pragma once
-#include "ISystem.h"
+#include "../Core/ECS/SystemBase.h"
 #include "SimpleMath.h"
 #include "../Components/TransformComponent.h"
 
 struct EngineContext;
 
 using namespace DirectX::SimpleMath;
-class TransformSystem: public ISystem
+class TransformSystem: public SystemBase
 {
 public:
 	SyResult Init() override;

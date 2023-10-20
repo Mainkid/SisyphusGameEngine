@@ -1,5 +1,7 @@
 #pragma once
-#include "../Core/Scene/Scene.h"
+
+
+#include "../../vendor/entt/entt.hpp"
 #include "../Core/IService.h"
 #include "../Systems/ResourceInfo.h"
 #include "ResourceInfo.h"
@@ -8,6 +10,7 @@
 #include <boost/uuid/nil_generator.hpp>
 #include <set>
 
+#include "../Serialization/Serializer.hpp"
 
 
 
@@ -26,7 +29,11 @@ struct HudData
 
 struct EngineContext : public IService
 {
-	std::unique_ptr<Scene> scene;
+	entt::registry ecs;
+
+	ser::Serializer serializer;
+
+	entt::entity selectedEntityID=entt::null;
 	HudData hudData;
 	float totalTime = 0;
 	unsigned int frameCount = 0;

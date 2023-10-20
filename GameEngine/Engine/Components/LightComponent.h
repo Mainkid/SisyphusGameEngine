@@ -6,6 +6,7 @@
 #include "../Core/Rendering/Lights/LightType.h"
 #include <memory>
 #include <vector>
+#include "../Serialization/Serializable.h"
 
 class EngineCore;
 
@@ -38,6 +39,13 @@ struct LightComponent
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shadowMapSRV = nullptr;
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> shadowMapRTV = nullptr;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilView> shadowMapDSV = nullptr;
+
+
+    SER_COMP(LightComponent,
+        lightType,
+        lightBehavior,
+        color,
+        paramsRadiusAndAttenuation)
 };
 
 namespace std

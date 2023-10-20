@@ -3,8 +3,12 @@
 #include "../../EngineContext.h"
 #include "../../HardwareContext.h"
 #include "../RenderContext.h"
+#include "../../../Scene/CameraHelper.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
 #include "../../../../vendor/ImGuizmo/ImGuizmo.h"
+#include "../../Components/TransformComponent.h"
+#include "../../Components/MeshComponent.h"
+
 
 SyResult OpaqueRenderSystem::Init()
 {
@@ -19,24 +23,24 @@ SyResult OpaqueRenderSystem::Run()
 {
     hc->context->RSSetState(rc->cullBackRS.Get());
 
-    auto view = ec->scene->registry.view<TransformComponent, MeshComponent>();
+    auto view =_ecs->view<TransformComponent, MeshComponent>();
+    auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
    
     for (auto& entity : view)
     {
         CB_BaseEditorBuffer dataOpaque;
-        TransformComponent& transformComp = ec->scene->registry.get<TransformComponent>(entity);
-        MeshComponent& meshComp = ec->scene->registry.get<MeshComponent>(entity);
+        TransformComponent& transformComp = _ecs->get<TransformComponent>(entity);
+        MeshComponent& meshComp = _ecs->get<MeshComponent>(entity);
         
         dataOpaque.baseData.world = transformComp.transformMatrix;
 
-        dataOpaque.baseData.view = ec->scene->camera->view;
+        dataOpaque.baseData.view =camera.view;
 
         dataOpaque.baseData.worldViewProj =
             transformComp.transformMatrix *
-            ec->scene->camera->view * ec->scene->camera->projection;
+            camera.view * camera.projection;
 
-        dataOpaque.baseData.worldView = transformComp.transformMatrix *
-            ec->scene->camera->view;
+        dataOpaque.baseData.worldView = transformComp.transformMatrix * camera.view;
 
         dataOpaque.baseData.worldViewInverseTranspose =
             DirectX::XMMatrixTranspose(

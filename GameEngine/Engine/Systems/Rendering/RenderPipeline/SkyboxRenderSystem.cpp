@@ -2,6 +2,8 @@
 #include "../RenderContext.h"
 #include "../../EngineContext.h"
 #include "../../HardwareContext.h"
+#include "../../../Components/CameraComponent.h"
+#include "../../../Scene/CameraHelper.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
 
@@ -21,7 +23,10 @@ SyResult SkyboxRenderSystem::Run()
     //hc->context->ClearDepthStencilView(rc->shadowStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     CB_BaseEditorBuffer dataOpaque;
     //dataOpaque.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
-    dataOpaque.baseData.world = ec->scene->camera->view*ec->scene->camera->projection;
+
+    auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+
+    dataOpaque.baseData.world = camera.view * camera.projection;
 
     UINT strides[1] = {80 };
     UINT offsets[1] = { 0 };

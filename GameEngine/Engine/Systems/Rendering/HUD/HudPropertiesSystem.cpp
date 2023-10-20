@@ -6,6 +6,7 @@
 #include "../../ResourceService.h"
 #include "../../TransformHelper.h"
 #include "../../Core/ServiceLocator.h"
+#include "../../../Components/LightComponent.h"
 #include "json.hpp"
 
 #include <fstream>
@@ -28,20 +29,19 @@ SyResult HudPropertiesSystem::Run()
 
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-    if (ec->hudData.selectedEntityIDs.size()!=0)
+    if (ec->hudData.selectedEntityIDs.size() != 0)
     {
-        
-        TransformComponent* tc = ec->scene->registry.try_get<TransformComponent>(*ec->hudData.selectedEntityIDs.begin());
-        LightComponent* lc = ec->scene->registry.try_get<LightComponent>(*ec->hudData.selectedEntityIDs.begin());
+        TransformComponent* tc = _ecs->try_get<TransformComponent>(*ec->hudData.selectedEntityIDs.begin());
+        LightComponent* lc = _ecs->try_get<LightComponent>(*ec->hudData.selectedEntityIDs.begin());
 
         if (tc)
         {
-            auto degToRadians = [](float angle) {return angle * M_PI / 180.0f; };
-            ImGui::Text("Transform");
-            Vector3 vec3Dx = tc->localPosition;
-            float vec3[3]{ vec3Dx.x, vec3Dx.y, vec3Dx.z };
-            ImGui::DragFloat3("Translation", vec3, 0.1f);
-            tc->localPosition = (Vector3(vec3[0], vec3[1], vec3[2]));
+        auto degToRadians = [](float angle) {return angle * M_PI / 180.0f; };
+        ImGui::Text("Transform");
+        Vector3 vec3Dx = tc->localPosition;
+        float vec3[3]{ vec3Dx.x, vec3Dx.y, vec3Dx.z };
+        ImGui::DragFloat3("Translation", vec3,0.1f);
+        tc->localPosition=(Vector3(vec3[0], vec3[1], vec3[2]));
 
             vec3Dx = TransformHelper::GetRotationDegrees(*tc);
             vec3[0] = vec3Dx.x;

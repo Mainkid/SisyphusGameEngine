@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../../ISystem.h"
+#include "../../Core/ECS/SystemBase.h"
 #include "../../../vendor/ImGui/imgui.h"
 #include "../../../vendor/ImGui/imgui_internal.h"
 #include "../../vendor/entt/entt.hpp"
@@ -10,7 +10,7 @@ struct EngineContext;
 struct HardwareContext;
 struct RenderContext;
 
-class HudHierarchySystem : public ISystem
+class HudHierarchySystem : public SystemBase
 {
 public:
     SyResult Init() override;
@@ -25,6 +25,6 @@ private:
     
     const ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow |
         ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
-    void RenderTree(std::set<entt::entity>& gameObjectsVector);
+    void RenderTree(std::set<entt::entity> entities);
     
 };

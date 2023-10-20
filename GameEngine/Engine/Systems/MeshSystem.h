@@ -1,5 +1,5 @@
 #pragma once
-#include "ISystem.h"
+#include "../Core/ECS/SystemBase.h"
 #include "SimpleMath.h"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
@@ -16,7 +16,7 @@ struct HardwareContext;
 struct EngineContext;
 class ResourceService;
 
-class MeshSystem : public ISystem
+class MeshSystem : public SystemBase
 {
 public:
 	SyResult Init() override;

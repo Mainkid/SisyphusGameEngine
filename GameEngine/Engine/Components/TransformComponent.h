@@ -2,6 +2,7 @@
 #include "SimpleMath.h"
 #include "../../vendor/entt/entt.hpp"
 #include "../Tools/Data/Vector.h"
+#include "../Serialization/Serializable.h"
 
 using namespace DirectX::SimpleMath;
 struct TransformComponent
@@ -24,8 +25,18 @@ struct TransformComponent
 	SyVector3 localScale =		SyVector3(1, 1, 1);
 	Matrix transformMatrix =	Matrix::Identity;
 	uint32_t hash =				0;
-	entt::entity parent =		entt::null;
+	uint32_t parent =		entt::null;
 	std::set<entt::entity> children = {};
+
+
+	SER_COMP(TransformComponent, 
+		position, 
+		rotation, 
+		scale,
+		localPosition,
+		localRotation,
+		localScale,
+		parent)
 };
 
 namespace std
@@ -73,7 +84,7 @@ namespace std
 			result_type const h1(std::hash<SyVector3>()(a.position));
 			result_type const h2(std::hash<SyVector3>()(a.scale));
 			result_type const h3(std::hash<SyVector3>()(a.rotation));
-			result_type const h4(std::hash<entt::entity>()(a.parent));
+			result_type const h4(std::hash<uint32_t>()(a.parent));
 			result_type const h5(std::hash<SyVector3>()(a.localPosition));
 			result_type const h6(std::hash<SyVector3>()(a.localRotation));
 			result_type const h7(std::hash<SyVector3>()(a.localScale));

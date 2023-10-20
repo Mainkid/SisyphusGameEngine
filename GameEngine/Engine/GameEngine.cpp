@@ -1,9 +1,18 @@
 ﻿#include <iostream>
 #include <uuid.hpp>
+#include "Components/EditorBillboardComponent.h"
+#include "Components/GameObjectComp.h"
+#include "Components/MeshComponent.h"
+#include "Components/TransformComponent.h"
 #include "Core/EngineCore.h"
+#include "Scene/GameObjectHelper.h"
+
+#include "SimpleMath.h"
+#include "Serialization/Serializable.h"
 
 #define SY_PI 3.14f
-#define SY_PI2 SY_PI / 2 
+#define SY_PI2 SY_PI / 2
+
 
 int main()
 {
@@ -16,10 +25,10 @@ int main()
     //material->roughnessValue = (1, 0, 0, 0);
 
     EngineCore::instance()->StartUp();
-    auto rc=ServiceLocator::instance()->Get<RenderContext>();
-    //rc->materialSet.insert(std::move(material));
 
-    auto it=rc->materialSet.begin();
+
+
+    entt::registry* ecs = &ServiceLocator::instance()->Get<EngineContext>()->ecs;
     
     //EngineCore* engine = new EngineCore();
     
@@ -48,16 +57,22 @@ int main()
     //
     ////_go3->GetComponent<TransformComponent>().SetPosition(Vector3(-3, 0, 0));
     //_go3->GetComponent<MeshComponent>().UpdateMesh("./Game/Assets/DefaultModel.obj");
-    auto _lightDir = EngineCore::instance()->ec->scene->AddLight(LightType::Directional);
-    auto light = EngineCore::instance()->ec->scene->AddLight(LightType::Ambient);
-    EngineCore::instance()->ec->scene->registry.get<LightComponent>(light).color = Vector4(0.01f, 0.01f, 0.01f, 0.01f);
-    EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightDir).color = Vector4(1.0f, 1.0f,1.0f, 40.0f);
-    auto _lightPoint = EngineCore::instance()->ec->scene->AddLight(LightType::PointLight);
+    auto lightDir = GameObjectHelper::CreateLight(ecs, LightType::Directional);
 
-    EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint).paramsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
-    EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint).lightBehavior = LightBehavior::Movable;
-    EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint).color = Vector4(1, 0, 1.0f, 1.0f);
-    EngineCore::instance()->ec->scene->registry.get<TransformComponent>(_lightPoint).position = Vector3(3, 0, 0);
+    auto light = GameObjectHelper::CreateLight(ecs, LightType::Ambient);
+    ecs->get<LightComponent>(light).color = Vector4(0.15f, 0.15f, 0.15f, 0.15f);
+
+    auto lightPoint = GameObjectHelper::CreateLight(ecs, LightType::PointLight);
+    ecs->get<LightComponent>(lightPoint).paramsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
+    ecs->get<LightComponent>(lightPoint).color = Vector4(1, 1, 0.0f, 3.0f);
+    ecs->get<TransformComponent>(lightPoint).position = Vector3(3, 0, 0);
+
+    auto lightPoint2 = GameObjectHelper::CreateLight(ecs, LightType::PointLight);
+
+    ecs->get<LightComponent>(lightPoint2).paramsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
+    ecs->get<LightComponent>(lightPoint2).color = Vector4(1, 0, 0.0f, 3.0f);
+    ecs->get<TransformComponent>(lightPoint2).position = Vector3(3, 0, 0);
+    ecs->get<LightComponent>(lightPoint2).lightBehavior = LightBehavior::Static;
 
     //auto _lightPoint2 = EngineCore::instance()->ec->scene->AddLight(LightType::PointLight);
 
@@ -75,7 +90,7 @@ int main()
 
     
     
-    EngineCore::instance()->StartUpdateLoop();
+    EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();
     
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "ISystem.h"
+#include "../Core/ECS/SystemBase.h"
 #include <filesystem>
 #include <fstream>
 #include <unordered_map>
@@ -8,7 +8,7 @@
 struct EngineContext;
 class ResourceService;
 
-class ResourceSystem:public ISystem
+class ResourceSystem:public SystemBase
 {
 public:
 	SyResult Init() override;

@@ -1,9 +1,9 @@
 #pragma once
-#include "ISystem.h"
+#include "../Core/ECS/SystemBase.h"
 #include "../Core/ServiceLocator.h"
 #include <fstream>
 
-class SyErrorLoggingSystem : public ISystem
+class SyErrorLoggingSystem : public SystemBase
 {
 	SyResult Init();
 	SyResult Run();

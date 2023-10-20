@@ -1,10 +1,14 @@
-#include "HudViewportSystem.h"
+﻿#include "HudViewportSystem.h"
 #include "../../../Core/ServiceLocator.h"
 #include "../../ResourceService.h"
 #include "../RenderHelper.h"
 #include "../../Core/Rendering/RenderTarget.h"
 #include "../../EngineContext.h"
 #include "../../../Core/ResourcePath.h"
+#include "../../../Scene/CameraHelper.h"
+#include "../../../Scene/GameObjectHelper.h"
+#include "../../../Components/MeshComponent.h"
+
 
 SyResult HudViewportSystem::Init()
 {
@@ -82,22 +86,17 @@ SyResult HudViewportSystem::Run()
 
 			if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_MESH)
 			{
-				auto go = ec->scene->AddGameObject();
-				auto camera = ec->scene->registry.view<CameraComponent, TransformComponent>();
-
-
-				ec->scene->registry.get<MeshComponent>(go).modelUUID = uuid;
-				auto pos = camera.get<TransformComponent>(camera.front()).localPosition + Vector3(camera.get<CameraComponent>(camera.front()).forward * 5.0f);
-				ec->scene->registry.get<TransformComponent>(go).localPosition = pos;
+				auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
+				Vector3 pos = cameraTransform.localPosition + camera.forward * 5.0f;
+				auto go = GameObjectHelper::CreateMesh(_ecs, uuid,pos);
 			}
 			else if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_MATERIAL)
 			{
 				auto enttID = RenderHelper::GetPixelValue(x, y);
 				if (enttID.z == int(EAssetType::ASSET_MESH))
 				{
-					MeshComponent& meshComp = ec->scene->registry.get<MeshComponent>(static_cast<entt::entity>(enttID.x));
+					MeshComponent& meshComp = _ecs->get<MeshComponent>(static_cast<entt::entity>(enttID.x));
 					meshComp.materialUUIDs[enttID.y] = uuid;
-					//meshComp.materials[enttID.y] = static_cast<Material*>(rs->LoadResource(uuid));
 				}
 			}
 		}
@@ -105,7 +104,9 @@ SyResult HudViewportSystem::Run()
 	}
 
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	ec->scene->camera->mouseWheel = io.MouseWheel;
+
+	auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+	camera.mouseWheel = io.MouseWheel;
 
 	//Gizmos
 	if (ec->hudData.selectedEntityIDs.size()!=0)
@@ -119,11 +120,10 @@ SyResult HudViewportSystem::Run()
 
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		
-		auto viewMat = ec->scene->camera->view;
-		auto projMat = ec->scene->camera->projection;
-		
-		auto& tc = ec->scene->registry.get<TransformComponent>(*ec->hudData.selectedEntityIDs.begin());
-		auto transformMat = tc.transformMatrix;
+		auto viewMat = camera.view;
+		auto projMat = camera.projection;
+		auto& selectedTransform = _ecs->get<TransformComponent>(*ec->hudData.selectedEntityIDs.begin());
+		auto transformMat = selectedTransform.transformMatrix;
 
 		ImGuizmo::MODE mode = ImGuizmo::LOCAL;
 		if (isWorldSpace)
@@ -138,7 +138,7 @@ SyResult HudViewportSystem::Run()
 			for (auto& id: ec->hudData.selectedEntityIDs)
 			{
 				Matrix transformMat;
-				TransformComponent& tc = ec->scene->registry.get<TransformComponent>(id);
+				TransformComponent& tc = _ecs->get<TransformComponent>(id);
 				Vector3 translation, scale, translationL, scaleL;
 				Quaternion rotation, rotationL;
 				transformMat = tc.transformMatrix * deltaMatrix;
@@ -226,12 +226,8 @@ void HudViewportSystem::HandleResize()
 		//hud->ViewportResizedEvent.Broadcast(newWidgetSize.x * 1.0f / newWidgetSize.y);
 		widgetSize = newWidgetSize;
 
-		auto view = ec->scene->registry.view<TransformComponent, CameraComponent>();
-		for (auto& entity : view)
-		{
-			CameraComponent& cc = view.get<CameraComponent>(entity);
-			cc.aspectRatio = widgetSize.x / widgetSize.y;
-		}
+		auto [cc,_] = CameraHelper::Find(_ecs);
+		cc.aspectRatio = widgetSize.x / widgetSize.y;
 	}
 }
 
@@ -241,6 +237,40 @@ void HudViewportSystem::DrawMainMenuBar()
 	{
 		if (ImGui::BeginMenu("File"))
 		{
+			if (ImGui::MenuItem("Open scene"))
+			{
+				OPENFILENAME ofn;
+				WCHAR* szFile = new WCHAR[512];
+				WCHAR* szFileTitle = new WCHAR[512];
+				memset(&ofn, 0, sizeof(ofn));
+				memset(szFile, 0, sizeof(WCHAR) * 512);
+				memset(szFileTitle, 0, sizeof(WCHAR) * 512);
+
+				ofn.lStructSize = sizeof(ofn);
+				ofn.hwndOwner = hc->window->GetHWND();
+				ofn.lpstrFilter = L"All File\0*.*\0";
+				ofn.nFilterIndex = 1;
+				ofn.lpstrFile = szFile;
+				ofn.nMaxFile = sizeof(WCHAR) * 512;
+				ofn.lpstrFileTitle = szFileTitle;
+				ofn.nMaxFileTitle = sizeof(WCHAR) * 512;
+				ofn.Flags = OFN_FILEMUSTEXIST | OFN_EXPLORER;
+
+				// press the OK button
+				BOOL ok = GetOpenFileName(&ofn);
+				if (ok) {
+					MessageBox(hc->window->GetHWND(), L"Plumb", L"Plumb", MB_OK);
+				}
+
+				delete[]szFile;
+				delete[]szFileTitle;
+			
+			}
+			if (ImGui::MenuItem("Save scene"))
+			{
+
+
+			}
 			
 			ImGui::EndMenu();
 		}
@@ -250,28 +280,29 @@ void HudViewportSystem::DrawMainMenuBar()
 		}
 		if (ImGui::BeginMenu("GameObject"))
 		{
-			Vector3 pos = Vector3(ec->scene->cameraTransform->position.x, ec->scene->cameraTransform->position.y, ec->scene->cameraTransform->position.z) +
-				Vector3(ec->scene->camera->forward.x, ec->scene->camera->forward.y, ec->scene->camera->forward.z) * 3;
+			auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
+
+
+			Vector3 pos = Vector3(cameraTransform.position.x, cameraTransform.position.y, cameraTransform.position.z) +
+				Vector3(camera.forward.x, camera.forward.y, camera.forward.z) * 3;
 
 			if (ImGui::BeginMenu("3D object"))
 			{
-				
-
 				if (ImGui::MenuItem("Cube"))
 				{
-					ec->scene->AddGameObject(rs->GetUUIDFromPath(cubeMeshPath),pos);
+					GameObjectHelper::CreateMesh(_ecs, rs->GetUUIDFromPath(cubeMeshPath),pos);
 				}
 				else if (ImGui::MenuItem("Sphere"))
 				{
-					ec->scene->AddGameObject(rs->GetUUIDFromPath(sphereMeshPath), pos);
+					GameObjectHelper::CreateMesh(_ecs, rs->GetUUIDFromPath(sphereMeshPath),pos);
 				}
 				else if (ImGui::MenuItem("Plane"))
 				{
-					ec->scene->AddGameObject(rs->GetUUIDFromPath(planeMeshPath), pos);
+					GameObjectHelper::CreateMesh(_ecs, rs->GetUUIDFromPath(planeMeshPath),pos);
 				}
 				else if (ImGui::MenuItem("Cylinder"))
 				{
-					ec->scene->AddGameObject(rs->GetUUIDFromPath(cylinderMeshPath), pos);
+					GameObjectHelper::CreateMesh(_ecs, rs->GetUUIDFromPath(cylinderMeshPath),pos);
 				}
 
 				ImGui::EndMenu();
@@ -281,17 +312,17 @@ void HudViewportSystem::DrawMainMenuBar()
 			{
 				if (ImGui::MenuItem("Directional Light"))
 				{
-					ec->scene->AddLight(LightType::Directional,pos);
+					GameObjectHelper::CreateLight(_ecs,LightType::Directional,pos);
 				}
 
 				if (ImGui::MenuItem("Point Light"))
 				{
-					ec->scene->AddLight(LightType::PointLight,pos);
+					GameObjectHelper::CreateLight(_ecs,LightType::PointLight,pos);
 				}
 
 				if (ImGui::MenuItem("Ambient Light"))
 				{
-					ec->scene->AddLight(LightType::Ambient,pos);
+					GameObjectHelper::CreateLight(_ecs,LightType::Ambient,pos);
 				}
 
 				ImGui::EndMenu();
@@ -313,7 +344,7 @@ void HudViewportSystem::ProcessInput()
 		{
 			for (auto& go : ec->hudData.selectedEntityIDs)
 			{
-				ec->scene->DestroyGameObject(go);
+				GameObjectHelper::Destroy(_ecs,go);
 			}
 			
 			ec->hudData.selectedEntityIDs.clear();

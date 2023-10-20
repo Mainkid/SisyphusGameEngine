@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "../../ISystem.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
+#include "../../Core/ECS/SystemBase.h"
 #include "ContentBrowserTypes.h"
 #include "ResourceHelper.h"
 #include <d3d11.h>
@@ -21,8 +21,7 @@ struct RenderContext;
 class ResourceService;
 
 
-
-class HudContentBrowserSystem : public ISystem
+class HudContentBrowserSystem : public SystemBase
 {
 public:
     SyResult Init() override;

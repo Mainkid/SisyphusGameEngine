@@ -1,6 +1,9 @@
 ﻿#include "HudHierarchySystem.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../EngineContext.h"
+#include "../../../Components/GameObjectComp.h"
+#include "../../../Scene/GameObjectHelper.h"
+#include "../../Components/TransformComponent.h"
 
 SyResult HudHierarchySystem::Init()
 {
@@ -14,16 +17,15 @@ SyResult HudHierarchySystem::Run()
 {
     ImGui::Begin(windowID.c_str());
 	
-    std::set<entt::entity> tmpSet;
-    for (auto& id : ec->scene->gameObjects)
+    std::set<entt::entity> rootEntities;
+    auto view = _ecs->view<GameObjectComp, TransformComponent>();
+    for (auto ent : view)
     {
-        if (ec->scene->registry.get<TransformComponent>(id).parent==entt::null) //???
-            {
-            tmpSet.insert(id);
-            }
+        auto transform = view.get<TransformComponent>(ent);
+        if (transform.parent == entt::null)
+            rootEntities.insert(ent);
     }
-	
-    RenderTree(tmpSet);
+    RenderTree(rootEntities);
 
     ImVec2 windowSize = ImGui::GetWindowSize();
     ImVec2 cursorPos = ImGui::GetCursorPos();
@@ -34,7 +36,7 @@ SyResult HudHierarchySystem::Run()
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENODE"))
         {
             const entt::entity* item = (const entt::entity*)payload->Data;
-            ec->scene->SetParent(*item, entt::null);
+            GameObjectHelper::SetParent(_ecs, *item, entt::null);
             ImGui::EndDragDropTarget();
         }
     }
@@ -48,35 +50,35 @@ SyResult HudHierarchySystem::Destroy()
     return SyResult();
 }
 
-void HudHierarchySystem::RenderTree(std::set<entt::entity>& gameObjectsVector)
+void HudHierarchySystem::RenderTree(std::set<entt::entity> entities)
 {
-    for (auto& gameObjectID : gameObjectsVector)
+    for (auto ent : entities)
     {
-        ImGuiTreeNodeFlags treeFlags = (( ec->hudData.selectedEntityIDs.count(gameObjectID)>0) ? ImGuiTreeNodeFlags_Selected : 0);
-        treeFlags |= (ec->scene->registry.get<TransformComponent>(gameObjectID).children.size() == 0) ?
-            ImGuiTreeNodeFlags_Leaf : ImGuiTreeNodeFlags_None;
-        treeFlags |= baseFlags;
+        auto [go,transform] = _ecs->get<GameObjectComp, TransformComponent>(ent);
 
-        DataComponent& dc = ec->scene->registry.get<DataComponent>(gameObjectID);
-        bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)gameObjectID, treeFlags,
-            dc.name.c_str());
+        ImGuiTreeNodeFlags treeFlags = ((ec->hudData.selectedEntityIDs.count(ent) > 0) ? ImGuiTreeNodeFlags_Selected : 0);
+        treeFlags |= (_ecs->get<TransformComponent>(ent).children.size() == 0) ?
+            ImGuiTreeNodeFlags_Leaf : ImGuiTreeNodeFlags_None;
+
+        bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)ent, treeFlags,
+            go.Name.c_str());
 
 
         if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
         {
-            
+
             if (!ImGui::IsKeyDown(ImGuiMod_Ctrl))
                 ec->hudData.selectedEntityIDs.clear();
-            if (ec->hudData.selectedEntityIDs.count(gameObjectID) > 0)
-                ec->hudData.selectedEntityIDs.erase(gameObjectID);
+            if (ec->hudData.selectedEntityIDs.count(ent) > 0)
+                ec->hudData.selectedEntityIDs.erase(ent);
             else
-                ec->hudData.selectedEntityIDs.insert( gameObjectID);
+                ec->hudData.selectedEntityIDs.insert(ent);
             ec->hudData.selectedContent.assetType = EAssetType::ASSET_NONE;
         }
 
         if (ImGui::BeginDragDropSource())
         {
-            const entt::entity item = entt::entity(gameObjectID);
+            const entt::entity item = entt::entity(ent);
             ImGui::SetDragDropPayload("_TREENODE", &item, sizeof(entt::entity));
             ImGui::EndDragDropSource();
         }
@@ -86,14 +88,14 @@ void HudHierarchySystem::RenderTree(std::set<entt::entity>& gameObjectsVector)
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENODE"))
             {
                 const entt::entity* item = (const entt::entity*)payload->Data;
-                ec->scene->SetParent(*item, gameObjectID);
+                GameObjectHelper::SetParent(_ecs, *item, ent);
                 ImGui::EndDragDropTarget();
             }
         }
 
         if (opened)
         {
-            RenderTree(ec->scene->registry.get<TransformComponent>(gameObjectID).children);
+            RenderTree(transform.children);
             ImGui::TreePop();
         }
     }

@@ -1,12 +1,12 @@
 #pragma once
-#include "ISystem.h"
+#include "../Core/ECS/SystemBase.h"
 #include "../Components/Material.h"
 
 struct EngineContext;
 struct RenderContext;
 struct HardwareContext;
 
-class MaterialUpdateSystem : public ISystem
+class MaterialUpdateSystem : public SystemBase
 {
 public:
 	SyResult Init() override;

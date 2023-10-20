@@ -1,5 +1,5 @@
 #pragma once
-#include "ISystem.h"
+#include "../Core/ECS/SystemBase.h"
 #include "SimpleMath.h"
 #include "../Components/CameraComponent.h"
 
@@ -8,7 +8,7 @@ struct EngineContext;
 struct HardwareContext;
 
 using namespace DirectX::SimpleMath;
-class EditorCameraSystem : public ISystem
+class EditorCameraSystem : public SystemBase
 {
 public:
 	SyResult Init() override;

@@ -1,5 +1,5 @@
 #pragma once
-#include "../../ISystem.h"
+#include "../../Core/Ecs/SystemBase.h"
 #include "../../Core/ServiceLocator.h"
 
 
@@ -7,7 +7,7 @@ struct EngineContext;
 struct RenderContext;
 struct HardwareContext;
 
-class ToneMappingRenderSystem : public ISystem
+class ToneMappingRenderSystem : public SystemBase
 {
 public:
 	SyResult Init() override;

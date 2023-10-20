@@ -2,6 +2,8 @@
 #include <filesystem>
 #include "../../../Tools/ErrorLogger.h"
 #include "../../../Core/ServiceLocator.h"
+#include "ImGui.h"
+
 SyResult SyHudConsoleSystem::Init()
 {
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
@@ -14,7 +16,6 @@ SyResult SyHudConsoleSystem::Init()
 				{'E', true},
 				{'C', true}};
 
-	messages.reserve(10000);
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "HUD console system initialization successful. ");
 	SY_LOG_HUD(SY_LOGLEVEL_WARNING, "Example warning! ");
 	SY_LOG_HUD(SY_LOGLEVEL_ERROR, "Example error! ");
@@ -27,9 +28,8 @@ SyResult SyHudConsoleSystem::Init()
 SyResult SyHudConsoleSystem::Run()
 {
 	SyResult result;
-	messages.insert(messages.end(), 
-					SY_EL->messagePool.begin(), 
-					SY_EL->messagePool.end());
+	for (auto& message : SY_EL->messagePool)
+		messageBuffer.Push(message);
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
 	if (!ImGui::Begin("Console Output", NULL, ImGuiWindowFlags_NoTitleBar))
 	{
@@ -41,8 +41,9 @@ SyResult SyHudConsoleSystem::Run()
 	};
 	
 	ImGui::BeginChild("ScrollingLog", ImVec2(-ImGui::GetContentRegionAvail().x / 15, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
-	for (auto& message : messages)
+	for (auto i = messageBuffer.Head(); messageBuffer.Stopped(i) != true; i = messageBuffer.Next(i))
 	{
+		auto& message = messageBuffer[i];
 		ImVec4 color;
 		bool has_color = false;
 		char levelFirstChar = message.GetInsertion(1)[0];
@@ -74,26 +75,29 @@ SyResult SyHudConsoleSystem::Run()
 	ImGui::SameLine();
 	ImGui::BeginChild("Settings", ImVec2(0, 0), true);
 	ImGui::TextUnformatted("Show:");
-	ImGui::BeginTable("options", 1);
-	ImGui::TableNextColumn();
-	ImGui::Selectable("INFO", &(filters.find('I')->second));
-	ImGui::TableNextColumn();
-	ImGui::Selectable("DEBUG", &(filters.find('D')->second));
-	ImGui::TableNextColumn();
-	ImGui::Selectable("WARNING", &(filters.find('W')->second));
-	ImGui::TableNextColumn();
-	ImGui::Selectable("ERROR", &(filters.find('E')->second));
-	ImGui::TableNextColumn();
-	ImGui::Selectable("CRITICAL", &(filters.find('C')->second));
-	ImGui::TableNextColumn();
-	ImGui::Separator();
-	ImGui::TextUnformatted("");
-	ImGui::TextUnformatted("");
-	if (ImGui::Button("Clear", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+
+	if (ImGui::BeginTable("options", 1))
 	{
-		messages.clear();
+		ImGui::TableNextColumn();
+		ImGui::Selectable("INFO", &(filters.find('I')->second));
+		ImGui::TableNextColumn();
+		ImGui::Selectable("DEBUG", &(filters.find('D')->second));
+		ImGui::TableNextColumn();
+		ImGui::Selectable("WARNING", &(filters.find('W')->second));
+		ImGui::TableNextColumn();
+		ImGui::Selectable("ERROR", &(filters.find('E')->second));
+		ImGui::TableNextColumn();
+		ImGui::Selectable("CRITICAL", &(filters.find('C')->second));
+		ImGui::TableNextColumn();
+		ImGui::Separator();
+		ImGui::TextUnformatted("");
+		//ImGui::TextUnformatted("");
+		if (ImGui::Button("Clear", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+		{
+			messageBuffer.Clear();
+		}
+		ImGui::EndTable();
 	}
-	ImGui::EndTable();
 	ImGui::EndChild();
 	ImGui::End();
 	return result;

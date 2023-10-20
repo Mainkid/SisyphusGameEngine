@@ -6,6 +6,7 @@
 #include "../../Core/Graphics/ConstantBuffer.h"
 #include "../../../../vendor/ImGui/imgui.h"
 #include "../../../../vendor/ImGuizmo/ImGuizmo.h"
+#include "../../../Scene/CameraHelper.h"
 
 SyResult EditorGridRenderSystem::Init()
 {
@@ -26,17 +27,18 @@ SyResult EditorGridRenderSystem::Run()
 	UINT offsets[1] = { 0 };
 
 	hc->context->OMSetBlendState(rc->gridBlendState.Get(), nullptr, 0xffffffff);
+	auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
 
 	dataOpaque.baseData.worldViewProj =
-		ec->scene->camera->view * ec->scene->camera->projection;
+	camera.view * camera.projection;
 	hc->context->OMSetDepthStencilState(rc->offStencilState.Get(),0);
 	
 
-	dataOpaque.eyePos = Vector4(ec->scene->cameraTransform->position.x, ec->scene->cameraTransform->position.y, ec->scene->cameraTransform->position.z,10);
+	dataOpaque.eyePos = Vector4(cameraTransform.position.x, cameraTransform.position.y, cameraTransform.position.z,10);
 	Vector3 vec3 = Vector3((int)dataOpaque.eyePos.x- minGridSize / 2, 0, (int)dataOpaque.eyePos.z-minGridSize/2);
 	dataOpaque.baseData.worldView = Matrix::CreateTranslation(vec3);
 	dataOpaque.baseData.worldViewProj = Matrix::CreateTranslation(vec3) *
-		ec->scene->camera->view*ec->scene->camera->projection;
+		camera.view*camera.projection;
 	
 	
 
@@ -63,7 +65,7 @@ SyResult EditorGridRenderSystem::Run()
 		vec3 = Vector3(((int)(dataOpaque.eyePos.x/10))*10 - maxGridSize*10 / 2, 0, ((int)(dataOpaque.eyePos.z/10))*10 - maxGridSize*10 / 2);
 		dataOpaque.baseData.worldView = Matrix::CreateTranslation(vec3);
 		dataOpaque.baseData.worldViewProj = Matrix::CreateTranslation(vec3) *
-			ec->scene->camera->view * ec->scene->camera->projection;
+			camera.view * camera.projection;
 
 		res = hc->context->Map(rc->shadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_GridEditorBuffer));
