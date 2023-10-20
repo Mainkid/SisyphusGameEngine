@@ -16,13 +16,13 @@ Matrix TransformHelper::ConstructInverseParentTransform(TransformComponent& tc)
 {
 	Matrix resultMat = Matrix::Identity;
 	EngineContext* context = ServiceLocator::instance()->Get<EngineContext>();
-	entt::entity curID = tc.parent;
+	entt::entity curID = static_cast<entt::entity>(tc.parent);
 
 	while (curID != entt::null) 
 	{
 		TransformComponent& curTc = context->ecs.get<TransformComponent>(curID);
 		resultMat = resultMat * (Matrix::CreateScale(curTc.localScale)* Matrix::CreateFromYawPitchRoll(curTc.localRotation) * Matrix::CreateTranslation(curTc.localPosition));
-		curID = curTc.parent;
+		curID = static_cast<entt::entity>(curTc.parent);
 	}
 	return resultMat.Invert();
 }
@@ -31,7 +31,7 @@ void TransformHelper::UpdateTransformMatrix(TransformComponent& tc)
 {
 	EngineContext* context = ServiceLocator::instance()->Get<EngineContext>();
 	tc.transformMatrix = Matrix::CreateScale(tc.localScale) * Matrix::CreateFromYawPitchRoll(tc.localRotation) * Matrix::CreateTranslation(tc.localPosition);
-	entt::entity curID = tc.parent;
+	entt::entity curID = static_cast<entt::entity>(tc.parent);
 	if (curID!=entt::null)
 	{
 		TransformComponent& curTc = context->ecs.get<TransformComponent>(curID);

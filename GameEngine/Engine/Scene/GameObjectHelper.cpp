@@ -43,7 +43,7 @@ void GameObjectHelper::SetParent(entt::registry* ecs, entt::entity child, entt::
 
 	if (childTf->parent != entt::null)
 	{
-		auto prevParentTf = ecs->try_get<TransformComponent>(childTf->parent);
+		auto prevParentTf = ecs->try_get<TransformComponent>(static_cast<entt::entity>(childTf->parent));
 		if (prevParentTf != nullptr)
 			prevParentTf->children.erase(child);
 		childTf->parent = entt::null;
@@ -57,7 +57,7 @@ void GameObjectHelper::SetParent(entt::registry* ecs, entt::entity child, entt::
 		return;
 	parentTf->children.insert(child);
 
-	childTf->parent = parent;
+	childTf->parent = static_cast<uint32_t>(parent);
 }
 
 
