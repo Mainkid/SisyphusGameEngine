@@ -3,6 +3,7 @@
 #include "../../../vendor/entt/entt.hpp"
 #include "../Tools/Data/Vector.h"
 #include "../../Components/LightComponent.h"
+#include "../Tools/ErrorLogger.h"
 
 class GameObjectHelper
 {

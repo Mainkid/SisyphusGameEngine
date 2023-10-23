@@ -644,6 +644,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Event\IEvent.h" />
     <ClInclude Include="Engine\Scene\CameraHelper.h" />
     <ClInclude Include="Engine\Components\SkyboxComponent.h" />
     <ClInclude Include="Engine\Scene\GameObjectHelper.h" />
