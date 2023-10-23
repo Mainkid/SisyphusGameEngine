@@ -93,7 +93,7 @@ float4 PS_Directional(PS_IN input) : SV_Target
     
     //PCF --->
     
-    float bias = 0.001f;
+    float bias = 0.005f;
     float3 projectTexCoord;
     float depthValue;
     float lightDepthValue;
@@ -108,7 +108,7 @@ float4 PS_Directional(PS_IN input) : SV_Target
     
     float texelWidth = 1.0 / 1280.0f;
     float texelHeight = 1.0 / 720.0f;
-    float texelOffset = 1;
+    float texelOffset = 2;
     float2 texelSize = float2(texelWidth, texelHeight)*texelOffset;
     float shadowSum = 0.0f;
     
@@ -133,6 +133,9 @@ float4 PS_Directional(PS_IN input) : SV_Target
     
     shadowSum = shadowSum / 25.0f;
     //<--- PCF
+    
+    //depthValue = depthMapTexture.Sample(textureSampler, projectTexCoord).r;
+    //shadowSum = lightDepthValue > depthValue;
     
     lightIntesity = lightIntesity;
     float3 F0 = float3(0.04, 0.04, 0.04);
