@@ -5,6 +5,7 @@
 #include "../../EngineContext.h"
 #include "../RenderContext.h"
 #include "../../HardwareContext.h"
+#include "../../../Tools/MathHelper.h"
 
 SyResult HudContentBrowserSystem::Init()
 {
@@ -27,7 +28,7 @@ SyResult HudContentBrowserSystem::Run()
     ImGui::Begin("Content Browser");
     //Widget::Render();
 	float panelWidth = ImGui::GetContentRegionAvail().x;
-    int columnCount = std::max(static_cast<int>(panelWidth / cellSize), 1);
+    int columnCount = SyMathHelper::Max(static_cast<int>(panelWidth / cellSize), 1);
     ImGui::Columns(columnCount, 0, false);
 
     if (curDirectory != std::filesystem::path(assetsDirectory))

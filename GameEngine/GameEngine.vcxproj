@@ -714,6 +714,7 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.h" />
     <ClInclude Include="Engine\Tools\Data\Vector.h" />
+    <ClInclude Include="Engine\Tools\MathHelper.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Engine\Core\ECS\SystemsGroup.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.h" />
