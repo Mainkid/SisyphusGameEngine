@@ -15,8 +15,7 @@
 #include <vector>
 #include <string>
 #include <wtypes.h>
-
-//#include "../Serialization/Serializable.h"
+#include "../Serialization/Serializable.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -43,8 +42,8 @@ struct MeshComponent
 	UINT offsets[1] = { 0 };
 	uint32_t hashMaterial = 0;
 	uint32_t hashModel = 0;
-	/*SER_COMP(MeshComponent,
+	SER_COMP(MeshComponent,
 		modelUUID,
-		materialUUIDs)*/
+		materialUUIDs)
 };
 

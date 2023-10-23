@@ -90,6 +90,11 @@ namespace ser
         template<typename T>
         void DeserializeSet(const nlohmann::json& json, std::unordered_set<T>& outSet);
 
+        template<typename T, size_t N>
+        void SerializeNativeArray(const T (&arr)[N], nlohmann::json& outJson);
+        template<typename T, size_t N>
+        void DeserializeNativeArray(const nlohmann::json& json, T (&outArr)[N]);
+
 
         struct CompMeta
         {
@@ -244,6 +249,10 @@ namespace ser
         {
             SerializeSet(val, outJson);
         }
+        else if constexpr (std::is_array_v<T>)
+        {
+            SerializeNativeArray(val, outJson);
+        }
         else
         {
             outJson = val;
@@ -278,6 +287,10 @@ namespace ser
         else if constexpr (IsCollection<T, std::unordered_set>::value)
         {
             DeserializeSet(json, outVal);
+        }
+        else if constexpr (std::is_array_v<T>)
+        {
+            DeserializeNativeArray(json, outVal);
         }
         else
             outVal = json.get<T>();
@@ -353,5 +366,26 @@ namespace ser
             DeserializeVal(json[i], value);
             outSet.insert(value);
         }
+    }
+
+    template <typename T, size_t N>
+    void Serializer::SerializeNativeArray(const T(& arr)[N], nlohmann::json& outJson)
+    {
+        for (int i = 0; i < N; i++)
+        {
+            auto& jsonValue = outJson.emplace_back();
+            SerializeVal(arr[i], jsonValue);
+        }
+    }
+
+    template <typename T, size_t N>
+    void Serializer::DeserializeNativeArray(const nlohmann::json& json, T(& outArr)[N])
+    {
+	    for (int i = 0; i < N; i++)
+	    {
+            T value;
+            DeserializeVal(json[i], value);
+            outArr[i] = value;
+	    }
     }
 }
