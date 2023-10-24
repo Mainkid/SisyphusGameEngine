@@ -11,7 +11,7 @@ using namespace physx;
 PxPhysics*	SyRBodyComponent::physics;
 PxScene*	SyRBodyComponent::scene;
 
-SyResult SyPhysicsSystem::Init()
+SyResult SyPhysicsSystem::Init() 
 {
 	allocator = std::make_shared<PxDefaultAllocator>();
 	errorCallback = std::make_shared<PxDefaultErrorCallback>();

@@ -15,7 +15,7 @@ namespace physx
 #pragma endregion
 
 class SyPhysicsSystem :
-    public SystemBase
+    public SystemBase<SyPhysicsSystem>
 {
     std::shared_ptr<physx::PxDefaultAllocator>		allocator = nullptr;
     std::shared_ptr<physx::PxDefaultErrorCallback>	errorCallback = nullptr;
