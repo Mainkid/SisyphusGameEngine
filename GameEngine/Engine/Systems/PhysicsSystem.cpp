@@ -34,6 +34,8 @@ SyResult SyPhysicsSystem::Init()
 	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 	scene = physics->createScene(sceneDesc);
 	SyRBodyComponent::scene = scene;
+
+	CallEvent<SyTestEvent>("100");
 	SY_LOG_PHYS(SY_LOGLEVEL_INFO, "Physics initialization successful. ");
 	return SyResult();
 }

@@ -30,5 +30,7 @@ public:
     SyResult Init();
     SyResult Run();
     SyResult Destroy();
+
+    SyResult ProcessEvent()
 };
 
