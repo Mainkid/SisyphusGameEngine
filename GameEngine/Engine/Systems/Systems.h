@@ -25,3 +25,4 @@
 #include "Rendering/RenderPipeline/EditorBillboardRenderSystem.h"
 #include "Rendering/RenderPipeline/ShadowMapGenerationSystem.h"
 #include "Rendering/PostViewportRenderSystem.h"
+#include "../Systems/PrepareEventsSystem.h"

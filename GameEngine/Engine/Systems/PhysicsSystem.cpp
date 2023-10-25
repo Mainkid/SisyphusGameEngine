@@ -35,7 +35,7 @@ SyResult SyPhysicsSystem::Init()
 	scene = physics->createScene(sceneDesc);
 	SyRBodyComponent::scene = scene;
 
-	CallEvent<SyTestEvent>("100");
+	CallEvent<SyTestEvent>("TestEvent", "Test event was called! ");
 	SY_LOG_PHYS(SY_LOGLEVEL_INFO, "Physics initialization successful. ");
 	return SyResult();
 }
@@ -82,6 +82,13 @@ SyResult SyPhysicsSystem::Run()
 		PxTransform rbTrasform = rb->getGlobalPose();
 		trComponent.localPosition = rbTrasform.p;
 		trComponent.localRotation = SyVector3::PxQuatToEuler(rbTrasform.q);
+	}
+
+	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyTestEvent);
+	for (auto& entity : eventView)
+	{
+		SyTestEvent& testEvent = eventView.get<SyTestEvent>(entity);
+		SY_LOG_EVSY(SY_LOGLEVEL_WARNING, testEvent.message.c_str());
 	}
 	return SyResult();
 }

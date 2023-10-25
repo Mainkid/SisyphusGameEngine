@@ -162,6 +162,7 @@
     <ClCompile Include="Engine\GameEngine.cpp" />
     <ClCompile Include="Engine\Components\Mesh.cpp" />
     <ClCompile Include="Engine\Obsolete\RenderPipeline.cpp" />
+    <ClCompile Include="Engine\Systems\PrepareEventsSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudPostRenderSystem.cpp" />
@@ -644,7 +645,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
-    <ClInclude Include="Engine\Core\EventBase.h" />
+    <ClInclude Include="Engine\Core\ECS\Event.h" />
     <ClInclude Include="Engine\Scene\CameraHelper.h" />
     <ClInclude Include="Engine\Components\SkyboxComponent.h" />
     <ClInclude Include="Engine\Scene\GameObjectHelper.h" />
@@ -672,6 +673,7 @@
     <ClInclude Include="Engine\Core\Rendering\Lights\LightData.h" />
     <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h" />
     <ClInclude Include="Engine\Obsolete\RenderPipeline.h" />
+    <ClInclude Include="Engine\Systems\PrepareEventsSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\ContentBrowserTypes.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.h" />
