@@ -156,6 +156,7 @@ entt::entity GameObjectHelper::CreateLight(entt::registry* ecs, LightType lightT
 	{
 		ent = Create(ecs, "PointLight",pos);
 		ecs->emplace<EditorBillboardComponent>(ent, "Engine/Assets/Sprites/PointLightSprite.png");
+		
 	}
 	else
 	{
@@ -163,6 +164,9 @@ entt::entity GameObjectHelper::CreateLight(entt::registry* ecs, LightType lightT
 		ecs->emplace<EditorBillboardComponent>(ent, "Engine/Assets/Sprites/DirLightSprite.png");
 	}
 	ecs->emplace<LightComponent>(ent, lightType);
+
+	ecs->get<LightComponent>(ent).lightBehavior = LightBehavior::Static;
+	ecs->get<LightComponent>(ent).paramsRadiusAndAttenuation = Vector4(1, 0, 0, 1);
 	return ent;
 }
 
