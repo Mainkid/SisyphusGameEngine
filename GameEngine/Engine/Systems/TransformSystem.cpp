@@ -2,6 +2,7 @@
 #include "EngineContext.h"
 #include "../Core/ServiceLocator.h"
 #include "TransformHelper.h"
+#include "../Scene/GameObjectHelper.h"
 
 SyResult TransformSystem::Init()
 {
@@ -15,6 +16,25 @@ SyResult TransformSystem::Run()
 {
 	SyResult result;
 	auto view = _ecs->view<TransformComponent>();
+
+	if (ec->isNewSceneLoaded)
+	{
+		ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+		for (auto& entity : view)
+		{
+			TransformComponent& tc = view.get<TransformComponent>(entity);
+			tc.parent = static_cast<uint32_t>(ser.GetContextEntityToEntity(static_cast<entt::entity>(tc.parent)));
+			
+		}
+
+		for (auto& entity : view)
+		{
+			TransformComponent& tc = view.get<TransformComponent>(entity);
+			GameObjectHelper::AddChild(_ecs, static_cast<entt::entity>(tc.parent), entity);
+		}
+		ec->isNewSceneLoaded = false;
+	}
+
 	for (auto& entity :view)
 	{
 		TransformComponent& tc = view.get<TransformComponent>(entity);
@@ -22,7 +42,6 @@ SyResult TransformSystem::Run()
 		if (tc.hash != hsh)
 		{
  			TransformHelper::UpdateTransformMatrix(tc);
-			//UpdateTransformMatrix(tc);
 			tc.hash = hsh;
 		}
 	}

@@ -23,6 +23,10 @@
 #include <boost/uuid/string_generator.hpp>
 #include "../../vendor/Delegates.h"
 #include "../Tools/ErrorLogger.h"
+#include "../../vendor/entt/entt.hpp"
+#include "../Serialization/Serializer.hpp"
+#include "EngineContext.h"
+#include "../Components/GameObjectComp.h"
 
 struct BaseResourceInfo
 {
@@ -52,9 +56,10 @@ public:
 	void GenerateMetaFiles(std::filesystem::path currentDirectory);
 	std::vector<boost::uuids::uuid> GetAllResourcesOfType(EAssetType assetType);
 	std::vector<std::string> GetAllResourcesFilePaths(EAssetType assetType, bool findFullPath = false);
-
 	SyDelegates::MulticastDelegate<bool> updateContentBrowser;
 	
+	void LoadSceneFromFile(std::filesystem::path file, entt::registry* ecs);
+	void SaveSceneToFile(std::filesystem::path file, entt::registry* ecs);
 
 private:
 	const std::string baseTexture = ".\\Engine\\Assets\\Resources\\Textures\\default_albedo.png";

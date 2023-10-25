@@ -55,6 +55,9 @@ namespace ser
         template<typename T>
         void DeserializeField(const nlohmann::json& json, const char* key, T& outVal);
 
+
+        entt::entity GetContextEntityToEntity(entt::entity ent);
+
     private:
         struct CompMeta;
 
@@ -135,6 +138,14 @@ namespace ser
         nlohmann::json result;
         result["entities"] = jsEntities;
         return result;
+    }
+
+    inline entt::entity Serializer::GetContextEntityToEntity(entt::entity ent)
+    {
+        if (_contextEntityIdToEntity.count(static_cast<uint32_t>(ent)) > 0)
+            return _contextEntityIdToEntity[static_cast<unsigned int>(ent)];
+        else
+            return entt::null;
     }
 
     inline void Serializer::SerializeEntity(entt::registry& ecs, entt::entity ent, nlohmann::json& outJson)

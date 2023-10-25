@@ -1,5 +1,8 @@
 #include "EngineCore.h"
-
+#include "../Components/EditorBillboardComponent.h"
+#include "../Components/GameObjectComp.h"
+#include "../Components/MeshComponent.h"
+#include "../Components/TransformComponent.h"
 
 //EngineCore::EngineCore(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height)
 //{
@@ -58,6 +61,14 @@ void EngineCore::StartUp()
 	ServiceLocator::instance()->Register<EngineContext>();
 	ServiceLocator::instance()->Register<ResourceService>();
 	_context = ServiceLocator::instance()->Get<EngineContext>();
+
+	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+	ser.AddEcsCompMeta<GameObjectComp>();
+	ser.AddEcsCompMeta<TransformComponent>();
+	ser.AddEcsCompMeta<MeshComponent>();
+	ser.AddEcsCompMeta<LightComponent>();
+	ser.AddEcsCompMeta<EditorBillboardComponent>();
+
 
 	StartUpSystems();
 }

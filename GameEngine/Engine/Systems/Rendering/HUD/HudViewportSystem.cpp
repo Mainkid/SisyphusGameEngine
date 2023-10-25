@@ -8,6 +8,7 @@
 #include "../../../Scene/CameraHelper.h"
 #include "../../../Scene/GameObjectHelper.h"
 #include "../../../Components/MeshComponent.h"
+#include "../../ResourceService.h"
 
 
 SyResult HudViewportSystem::Init()
@@ -259,6 +260,7 @@ void HudViewportSystem::DrawMainMenuBar()
 				// press the OK button
 				BOOL ok = GetOpenFileName(&ofn);
 				if (ok) {
+					rs->LoadSceneFromFile(ofn.lpstrFile, _ecs);
 					MessageBox(hc->window->GetHWND(), L"Plumb", L"Plumb", MB_OK);
 				}
 
@@ -268,7 +270,32 @@ void HudViewportSystem::DrawMainMenuBar()
 			}
 			if (ImGui::MenuItem("Save scene"))
 			{
+				OPENFILENAME ofn;
+				WCHAR* szFile = new WCHAR[512];
+				WCHAR* szFileTitle = new WCHAR[512];
+				memset(&ofn, 0, sizeof(ofn));
+				memset(szFile, 0, sizeof(WCHAR) * 512);
+				memset(szFileTitle, 0, sizeof(WCHAR) * 512);
 
+				ofn.lStructSize = sizeof(ofn);
+				ofn.hwndOwner = hc->window->GetHWND();
+				ofn.lpstrFilter = L"All File\0*.*\0";
+				ofn.nFilterIndex = 1;
+				ofn.lpstrFile = szFile;
+				ofn.nMaxFile = sizeof(WCHAR) * 512;
+				ofn.lpstrFileTitle = szFileTitle;
+				ofn.nMaxFileTitle = sizeof(WCHAR) * 512;
+				ofn.Flags = OFN_FILEMUSTEXIST | OFN_EXPLORER;
+
+				// press the OK button
+				BOOL ok = GetSaveFileName(&ofn);
+				if (ok) {
+					rs->SaveSceneToFile(ofn.lpstrFile, _ecs);
+					MessageBox(hc->window->GetHWND(), L"Plumb", L"Plumb", MB_OK);
+				}
+
+				delete[]szFile;
+				delete[]szFileTitle;
 
 			}
 			

@@ -74,19 +74,27 @@ int main()
     ecs->get<TransformComponent>(lightPoint2).position = Vector3(3, 0, 0);
     ecs->get<LightComponent>(lightPoint2).lightBehavior = LightBehavior::Static;
 
-    //auto _lightPoint2 = EngineCore::instance()->ec->scene->AddLight(LightType::PointLight);
 
-    //EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint2).paramsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
-    //EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint2).color = Vector4(1, 0, 0.0f, 3.0f);
-    //EngineCore::instance()->ec->scene->registry.get<TransformComponent>(_lightPoint2).position = Vector3(3, 0, 0);
-    //EngineCore::instance()->ec->scene->registry.get<LightComponent>(_lightPoint2).lightBehavior = LightBehavior::Static;
-    //_go3->SetParent(_go);
 
-    ////GameObject* particles = EngineCore::instance()->scene->AddParticleSystem();
-    ////light->GetComponent<LightComponent>().params = Vector4::Zero;
-    ////auto res= EngineCore::instance()->scene->DestroyGameObject(_go2);
-    ////_go2 = EngineCore::instance()->scene->AddGameObject();
-    ////engine->scene->Initialize();
+    //ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+    //ser.AddEcsCompMeta<GameObjectComp>();
+    //ser.AddEcsCompMeta<TransformComponent>();
+    //ser.AddEcsCompMeta<MeshComponent>();
+    //ser.AddEcsCompMeta<LightComponent>();
+    //ser.AddEcsCompMeta<EditorBillboardComponent>();
+
+    //auto json = ser.Serialize<GameObjectComp>(*ecs);
+    //std::ofstream file;
+    //file.open("scene.json", std::ios::trunc);
+    //file << std::setw(1) << json;
+    //file.close();
+
+    //auto view = ecs->view<GameObjectComp>();
+    //for (auto ent : view)
+    //    ecs->destroy(ent);
+
+
+    //ser.Deserialize(json, *ecs);
 
     
     

@@ -39,6 +39,9 @@ struct EngineContext : public IService
 	unsigned int frameCount = 0;
 	float deltaTime = 0;
 	bool isClosed = false;
+	bool isNewSceneLoaded = false; //TODO: Use Events!!!
+	std::unordered_map<entt::entity, entt::entity> serEnttToSceneEnttMap;
+
 	//PlayMode states and var for it
 	enum class EPlayModeState
 	{

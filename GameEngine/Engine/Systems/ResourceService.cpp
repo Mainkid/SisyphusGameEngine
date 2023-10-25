@@ -277,6 +277,39 @@ std::vector<std::string> ResourceService::GetAllResourcesFilePaths(EAssetType as
 	return filePaths;
 }
 
+void ResourceService::LoadSceneFromFile(std::filesystem::path filePath, entt::registry* ecs)
+{
+	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+	std::ifstream file;
+	nlohmann::json json;
+	file.open(filePath);
+	file >> json;
+	file.close();
+
+	auto view = ecs->view<GameObjectComp>();
+	for (auto ent : view)
+		ecs->destroy(ent);
+	ser.Deserialize(json, *ecs);
+
+	auto& hudData = ServiceLocator::instance()->Get<EngineContext>()->hudData;
+	hudData.copyBufferEntityIDs.clear();
+	hudData.selectedContent.assetType = EAssetType::ASSET_NONE;
+	hudData.selectedContent.uuid = boost::uuids::nil_uuid();
+	hudData.selectedEntityIDs.clear();
+
+	ServiceLocator::instance()->Get<EngineContext>()->isNewSceneLoaded = true;
+}
+
+void ResourceService::SaveSceneToFile(std::filesystem::path filePath, entt::registry* ecs)
+{
+	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+	auto json = ser.Serialize<GameObjectComp>(*ecs);
+	std::ofstream file;
+	file.open(filePath, std::ios::trunc);
+	file << std::setw(1) << json;
+	file.close();
+}
+
 void ResourceService::GenerateMetaFiles(std::filesystem::path currentDirectory)
 {
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Generating metafiles in %s folder",currentDirectory.string().c_str());

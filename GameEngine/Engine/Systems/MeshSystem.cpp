@@ -21,6 +21,7 @@ SyResult MeshSystem::Run()
 	for (auto& entity : view)
 	{
 		MeshComponent& mesh =view.get<MeshComponent>(entity);
+
 		uint32_t hsh = hasherModel(mesh.modelUUID);
 		if (mesh.hashModel != hsh)
 		{
@@ -31,7 +32,8 @@ SyResult MeshSystem::Run()
 			
 			for (int i = 0; i < mesh.materials.size(); i++)
 			{
-				mesh.materialUUIDs[i] = (rs->baseResourceDB[EAssetType::ASSET_MATERIAL].uuid);
+				if (mesh.materialUUIDs[i]==boost::uuids::nil_uuid())
+					mesh.materialUUIDs[i] = (rs->baseResourceDB[EAssetType::ASSET_MATERIAL].uuid);
 			}
 		}
 

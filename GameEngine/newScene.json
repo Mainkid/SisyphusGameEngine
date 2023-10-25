@@ -1,0 +1,240 @@
+{
+ "entities": [
+  {
+   "id": 1048580,
+   "struct EditorBillboardComponent": {
+    "texturePath": "Engine/Assets/Sprites/DirLightSprite.png"
+   },
+   "struct GameObjectComp": {
+    "Name": "DirectionalLight",
+    "Tag": "None"
+   },
+   "struct LightComponent": {
+    "color": {
+     "w": 1.0,
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    },
+    "lightBehavior": 1,
+    "lightType": 1,
+    "paramsRadiusAndAttenuation": {
+     "w": 1.0,
+     "x": 0.0,
+     "y": 1.0,
+     "z": 1.0
+    }
+   },
+   "struct TransformComponent": {
+    "localPosition": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "localRotation": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "localScale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    },
+    "parent": 4294967295,
+    "position": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "rotation": {
+     "x": -0.0,
+     "y": 0.0,
+     "z": -0.0
+    },
+    "scale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    }
+   }
+  },
+  {
+   "id": 1048579,
+   "struct EditorBillboardComponent": {
+    "texturePath": "Engine/Assets/Sprites/DirLightSprite.png"
+   },
+   "struct GameObjectComp": {
+    "Name": "DirectionalLight",
+    "Tag": "None"
+   },
+   "struct LightComponent": {
+    "color": {
+     "w": 0.15000000596046448,
+     "x": 0.15000000596046448,
+     "y": 0.15000000596046448,
+     "z": 0.15000000596046448
+    },
+    "lightBehavior": 1,
+    "lightType": 0,
+    "paramsRadiusAndAttenuation": {
+     "w": 1.0,
+     "x": 0.0,
+     "y": 1.0,
+     "z": 1.0
+    }
+   },
+   "struct TransformComponent": {
+    "localPosition": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "localRotation": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "localScale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    },
+    "parent": 4294967295,
+    "position": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "rotation": {
+     "x": -0.0,
+     "y": 0.0,
+     "z": -0.0
+    },
+    "scale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    }
+   }
+  },
+  {
+   "id": 1048578,
+   "struct EditorBillboardComponent": {
+    "texturePath": "Engine/Assets/Sprites/PointLightSprite.png"
+   },
+   "struct GameObjectComp": {
+    "Name": "PointLight",
+    "Tag": "None"
+   },
+   "struct LightComponent": {
+    "color": {
+     "w": 3.0,
+     "x": 1.0,
+     "y": 1.0,
+     "z": 0.0
+    },
+    "lightBehavior": 1,
+    "lightType": 2,
+    "paramsRadiusAndAttenuation": {
+     "w": 1.0,
+     "x": 3.0,
+     "y": 0.0,
+     "z": 0.0
+    }
+   },
+   "struct TransformComponent": {
+    "localPosition": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "localRotation": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "localScale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    },
+    "parent": 4294967295,
+    "position": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "rotation": {
+     "x": -0.0,
+     "y": 0.0,
+     "z": -0.0
+    },
+    "scale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    }
+   }
+  },
+  {
+   "id": 1048577,
+   "struct EditorBillboardComponent": {
+    "texturePath": "Engine/Assets/Sprites/PointLightSprite.png"
+   },
+   "struct GameObjectComp": {
+    "Name": "PointLight",
+    "Tag": "None"
+   },
+   "struct LightComponent": {
+    "color": {
+     "w": 3.0,
+     "x": 1.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "lightBehavior": 0,
+    "lightType": 2,
+    "paramsRadiusAndAttenuation": {
+     "w": 1.0,
+     "x": 3.0,
+     "y": 0.0,
+     "z": 0.0
+    }
+   },
+   "struct TransformComponent": {
+    "localPosition": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "localRotation": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "localScale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    },
+    "parent": 4294967295,
+    "position": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "rotation": {
+     "x": -0.0,
+     "y": 0.0,
+     "z": -0.0
+    },
+    "scale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    }
+   }
+  }
+ ]
+}
