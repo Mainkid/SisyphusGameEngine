@@ -4,6 +4,8 @@
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 
+#include "../Tools/ErrorLogger.h"
+
 namespace mono
 {
 	class SyMonoRuntime
@@ -13,10 +15,10 @@ namespace mono
 		inline static const std::string DLL_USER_PATH = "TestGame.dll";
 
 	public:
-		void Init();
+		SyResult Init();
 		void Destroy();
 
-		void Reload();
+		SyResult Reload();
 
 		MonoDomain* GetDomain() const;
 
@@ -31,7 +33,7 @@ namespace mono
 		MonoAssembly* _userAssembly = nullptr;
 		MonoImage* _userAssemblyImage = nullptr;
 
-		MonoAssembly* LoadAssembly(const std::string& dllPath);
-		char* ReadFileBytes(const std::string& filepath, uint32_t* outSize);
+		SyResult LoadAssembly(const std::string& dllPath, MonoAssembly** outAssembly);
+		SyResult ReadFileBytes(const std::string& filepath, char** outBytes, uint32_t* outBytesSize);
 	};
 }

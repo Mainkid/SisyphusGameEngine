@@ -78,7 +78,7 @@ void EngineCore::StartUpSystems()
 	
 	_systems.Add<InputSystem>();
 
-	_systems.Add<MonoSyncSystem>();
+	_systems.Add<MonoSyncGameSystem>();
 
 	//Add Resource System here
 	_systems.Add<SyPhysicsSystem>();
@@ -127,6 +127,7 @@ void EngineCore::ShutDown()
 	ServiceLocator::instance()->Unregister<EngineCore>();
 	ServiceLocator::instance()->Unregister<RenderContext>();
 	ServiceLocator::instance()->Unregister<HardwareContext>();
+	ServiceLocator::instance()->Unregister<mono::SyMono>();
 	ServiceLocator::instance()->Unregister<SyErrorLogger>();
 }
 

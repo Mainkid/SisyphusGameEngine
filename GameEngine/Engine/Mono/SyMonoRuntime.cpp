@@ -5,9 +5,11 @@
 #include <iostream>
 #include <Windows.h>
 
+#include "../Tools/ErrorLogger.h"
+
 using namespace mono;
 
-void SyMonoRuntime::Init()
+SyResult SyMonoRuntime::Init()
 {
     wchar_t buffer[MAX_PATH];
     GetModuleFileName(nullptr, buffer, sizeof(buffer));
@@ -20,33 +22,34 @@ void SyMonoRuntime::Init()
 
     _rootDomain = mono_jit_init("RootDomain");
     if (_rootDomain == nullptr)
-    {
-        std::cout << "[mono_engine] failed to init lib" << std::endl;
-    }
+	    return SyResult{ SY_RESCODE_ERROR, "failed to init lib" };
+    return {};
 }
 
 void SyMonoRuntime::Destroy()
 {
-    mono_jit_cleanup(_rootDomain);
+    if (_rootDomain != nullptr)
+        mono_jit_cleanup(_rootDomain);
     _rootDomain = nullptr;
     _appDomain = nullptr;
     _layerAssembly = nullptr;
+    _layerAssemblyImage = nullptr;
+    _userAssembly = nullptr;
+    _userAssemblyImage = nullptr;
 }
 
-void SyMonoRuntime::Reload()
+SyResult SyMonoRuntime::Reload()
 {
     char appDomainName[] = "MonoLayerDomain";
     MonoDomain* domain = mono_domain_create_appdomain(appDomainName, nullptr);
     mono_domain_set(domain, true);
 
-    _layerAssembly = LoadAssembly(DLL_LAYER_PATH);
-    if (_layerAssembly == nullptr)
-        return;
+    SyResult r = LoadAssembly(DLL_LAYER_PATH, &_layerAssembly);
+    SY_RESULT_CHECK_EXT(r, "layer assembly");
     _layerAssemblyImage = mono_assembly_get_image(_layerAssembly);
 
-    _userAssembly = LoadAssembly(DLL_USER_PATH);
-    if (_userAssembly == nullptr)
-        return;
+    r = LoadAssembly(DLL_USER_PATH, &_userAssembly);
+    SY_RESULT_CHECK_EXT(r, "user assembly");
     _userAssemblyImage = mono_assembly_get_image(_userAssembly);
 
     if (_appDomain != nullptr)
@@ -54,6 +57,7 @@ void SyMonoRuntime::Reload()
         mono_domain_unload(_appDomain);
     }
     _appDomain = domain;
+    return {};
 }
 
 MonoDomain* SyMonoRuntime::GetDomain() const
@@ -71,20 +75,25 @@ MonoImage* SyMonoRuntime::GetUserAssemblyImage() const
     return _userAssemblyImage;
 }
 
-MonoAssembly* SyMonoRuntime::LoadAssembly(const std::string& dllPath)
+SyResult SyMonoRuntime::LoadAssembly(const std::string& dllPath, MonoAssembly** outAssembly)
 {
     uint32_t fileSize = 0;
-    char* fileData = ReadFileBytes(dllPath, &fileSize);
+    char* fileData = nullptr;
 
+    SyResult r = ReadFileBytes(dllPath, &fileData, &fileSize);
+    SY_RESULT_CHECK(r);
 
     MonoImageOpenStatus status;
     MonoImage* image = mono_image_open_from_data_full(fileData, fileSize, 1, &status, 0);
 
     if (status != MONO_IMAGE_OK)
     {
-        const char* errorMessage = mono_image_strerror(status);
-        std::cout << "[mono] assembly load error: " << errorMessage << std::endl;
-        return nullptr;
+        delete[] fileData;
+        return SyResult
+        {
+            SY_RESCODE_ERROR,
+            SyComplexString("assembly image error: %s", mono_image_strerror(status))
+        };
     }
 
     MonoAssembly* assembly = mono_assembly_load_from_full(image, dllPath.c_str(), &status, 0);
@@ -93,35 +102,31 @@ MonoAssembly* SyMonoRuntime::LoadAssembly(const std::string& dllPath)
     delete[] fileData;
 
     if (assembly == nullptr)
-        std::cout << "assembly " << dllPath << " is not loaded" << std::endl;
+        return SyResult{ SY_RESCODE_ERROR, SyComplexString("assembly failed to loaded") };
 
-    return assembly;
+    *outAssembly = assembly;
+    return {};
 }
 
-char* SyMonoRuntime::ReadFileBytes(const std::string& filepath, uint32_t* outSize)
+SyResult SyMonoRuntime::ReadFileBytes(const std::string& filepath, char** outBytes, uint32_t* outBytesSize)
 {
     std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
 
     if (!stream)
-    {
-        std::cout << "[mono] reading assembly file failed" << std::endl;
-        return nullptr;
-    }
+	    return SyResult{SY_RESCODE_ERROR, "cannot access assembly file"};
 
     std::streampos end = stream.tellg();
     stream.seekg(0, std::ios::beg);
     uint32_t size = end - stream.tellg();
 
     if (size == 0)
-    {
-        std::cout << "[mono] assembly is empty" << std::endl;
-        return nullptr;
-    }
+	    return SyResult{ SY_RESCODE_ERROR, "assembly is empty" };
 
     auto buffer = new char[size];
-    stream.read((char*)buffer, size);
+    stream.read(buffer, size);
     stream.close();
 
-    *outSize = size;
-    return buffer;
+    *outBytes = buffer;
+    *outBytesSize = size;
+    return {};
 }

@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include "ISyMonoGameCallbackReceiver.h"
-#include "SyMonoRuntime.h"
+#include "../ISyMonoGameCallbackReceiver.h"
+#include "../SyMonoRuntime.h"
 
 using namespace mono;
 
@@ -63,19 +63,23 @@ void SyMonoGame::SetCallbackReceiver(ISyMonoGameCallbackReceiver* receiver)
 	_cbReceiver = receiver;
 }
 
-void SyMonoGame::OnAfterCreate()
+SyResult SyMonoGame::OnAfterCreate()
 {
+	SyResult r {};
+
 	_instance = this;
 
-	EG_SetConfig.Bind(_instance);
-	EG_LoopInit.Bind(_instance);
-	EG_LoopRun.Bind(_instance);
-	EG_LoopDestroy.Bind(_instance);
-	EG_UpdateTransformComp.Bind(_instance);
+	SY_RESULT_CHECK(EG_SetConfig.Bind(_instance));
+	SY_RESULT_CHECK(EG_LoopInit.Bind(_instance));
+	SY_RESULT_CHECK(EG_LoopRun.Bind(_instance));
+	SY_RESULT_CHECK(EG_LoopDestroy.Bind(_instance));
+	SY_RESULT_CHECK(EG_UpdateTransformComp.Bind(_instance));
 
 	std::string prefix = NAMESPACE + std::string(".") + CLASS_NAME + std::string("::");
 	mono_add_internal_call((prefix + GE_CREATE_ENTITY).c_str(),
 		(const void*)GE_CreateEngineEntity);
+	mono_add_internal_call((prefix + GE_DESTROY_ENTITY).c_str(),
+		(const void*)GE_DestroyEngineEntity);
 
 	mono_add_internal_call((prefix + GE_ADD_TRANSFORM_COMP).c_str(),
 		(const void*)GE_AddTransformComp);
@@ -86,9 +90,11 @@ void SyMonoGame::OnAfterCreate()
 		(const void*)GE_AddMeshComp);
 	mono_add_internal_call((prefix + GE_UPDATE_MESH_COMP).c_str(),
 		(const void*)GE_UpdateMeshComp);
+
+	return {};
 }
 
-void SyMonoGame::OnBeforeDestroy()
+SyResult SyMonoGame::OnBeforeDestroy()
 {
 	_instance = nullptr;
 
@@ -97,6 +103,8 @@ void SyMonoGame::OnBeforeDestroy()
 	EG_LoopRun.UnBind();
 	EG_LoopDestroy.UnBind();
 	EG_UpdateTransformComp.UnBind();
+
+	return {};
 }
 
 const std::string& SyMonoGame::GetMonoClassName()

@@ -4,6 +4,8 @@
 
 #include "mono/jit/jit.h"
 
+#include "../Tools/ErrorLogger.h"
+
 namespace mono
 {
 	class SyMonoRuntime;
@@ -13,8 +15,8 @@ namespace mono
 	public:
 		virtual ~SyMonoObj();
 
-		void Create(const SyMonoRuntime& runtime);
-		void Destroy();
+		SyResult Create(const SyMonoRuntime& runtime);
+		SyResult Destroy();
 
 		bool IsValid() const;
 
@@ -22,15 +24,12 @@ namespace mono
 		MonoObject* GetInstance() const;
 
 	protected:
-		MonoMethod* FindMethod(const std::string& methodName, int paramsCount);
-		void* BindMethod(const std::string& methodName, int paramsCount);
-
 		virtual const std::string& GetMonoClassName() = 0;
 		virtual const std::string& GetNamespace() = 0;
 		virtual bool IsUserClass() = 0;
 
-		virtual void OnAfterCreate() = 0;
-		virtual void OnBeforeDestroy() = 0;
+		virtual SyResult OnAfterCreate() = 0;
+		virtual SyResult OnBeforeDestroy() = 0;
 	private:
 		bool _isValid = false;
 		MonoClass* _class = nullptr;

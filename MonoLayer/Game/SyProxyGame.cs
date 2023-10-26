@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using SyEngine.Game.Comps;
+using SyEngine.Logs;
 
 namespace SyEngine.Game
 {
-public class SyProxyGame
+internal class SyProxyGame
 {
-    private readonly SyGameInternalContext _context;
+    private readonly SyGameContext _context;
 
     private readonly SyEcs     _ecs;
     private readonly SyEcsSync _ecsSync;
@@ -15,7 +16,7 @@ public class SyProxyGame
     {
         try
         {
-            _context = new SyGameInternalContext();
+            _context = new SyGameContext();
 
             _ecs     = new SyEcs(_context);
             _ecsSync = new SyEcsSync(_ecs, _context);
@@ -30,14 +31,14 @@ public class SyProxyGame
 
     public void EG_SetConfig(SyGameConfigBase config)
     {
-        Console.WriteLine("[game] receive EG_SetConfig");
+        SyLog.Debug(ELogTag.ProxyGame, "config received");
         try
         {
             _ecs.SetSystems(config.GetSystems());
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            SyLog.Err(ELogTag.ProxyGame, e.ToString());
         }
     }
 
@@ -46,10 +47,11 @@ public class SyProxyGame
         try
         {
             _ecs.InitSystems();
+            _ecsSync.SyncEngineWithGame();
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            SyLog.Err(ELogTag.ProxyGame, e.ToString());
         }
     }
 
@@ -58,15 +60,12 @@ public class SyProxyGame
         try
         {
             _ecs.GetSingleton<TimeData>() = timeData;
-            
             _ecs.RunSystems();
-
-            //_ecsSync.SendTransformsToEngine();
-            //_ecsSync.SendMeshesToEngine();
+            _ecsSync.SyncEngineWithGame();
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            SyLog.Err(ELogTag.ProxyGame, e.ToString());
         }
     }
 
@@ -78,7 +77,7 @@ public class SyProxyGame
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            SyLog.Err(ELogTag.ProxyGame, e.ToString());
         }
     }
 
@@ -89,7 +88,7 @@ public class SyProxyGame
     public static extern uint GE_CreateEngineEntity();
     
     [MethodImpl(MethodImplOptions.InternalCall)]
-    public static extern uint GE_DestroyEngineEntity();
+    public static extern void GE_DestroyEngineEntity(uint engineEnt);
     
     //-----------------------------------------------------------
     //-----------------------------------------------------------
@@ -107,11 +106,11 @@ public class SyProxyGame
     {
         try
         {
-            //_ecsSync.ReceiveTransformFromEngine(engineEnt, comp);
+            _ecsSync.ReceiveTransformFromEngine(engineEnt, comp);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            SyLog.Err(ELogTag.ProxyGame, e.ToString());
         }
     }
 
@@ -134,7 +133,7 @@ public class SyProxyGame
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            SyLog.Err(ELogTag.ProxyGame, e.ToString());
         }
     }
 }

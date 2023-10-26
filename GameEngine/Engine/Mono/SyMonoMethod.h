@@ -22,7 +22,7 @@ namespace mono
 				_params[i] = nullptr;
 		}
 
-		void Bind(SyMonoObj* target)
+		SyResult Bind(SyMonoObj* target)
 		{
 			_target = target;
 
@@ -31,7 +31,8 @@ namespace mono
 				_name.c_str(),
 				sizeof...(TParams));
 			if (_method == nullptr)
-				std::cout << "[mono] failed to find method " << _name << std::endl;
+				return SyResult{ SY_RESCODE_ERROR, SyComplexString("failed to find method %s", _name)};
+			return {};
 		}
 
 		void UnBind()

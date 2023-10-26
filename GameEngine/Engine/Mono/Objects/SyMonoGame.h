@@ -1,10 +1,9 @@
 #pragma once
 #include <string>
 
-#include "SyMonoGameConfig.h"
-#include "SyMonoMethod.h"
-#include "SyMonoObj.h"
-#include "SyMonoProxyDatas.h"
+#include "../SyMonoMethod.h"
+#include "../SyMonoObj.h"
+#include "../SyMonoProxyDatas.h"
 
 namespace mono
 {
@@ -39,6 +38,7 @@ namespace mono
 
 		void SetCallbackReceiver(ISyMonoGameCallbackReceiver* receiver);
 
+	private:
 		static void GE_CreateEngineEntity();
 		static void GE_DestroyEngineEntity(uint32_t rawEnt);
 
@@ -54,12 +54,11 @@ namespace mono
 		inline static SyMonoGame* _instance = nullptr;
 
 
-		SyMonoGameConfig _gameConfig;
 		ISyMonoGameCallbackReceiver* _cbReceiver = nullptr;
 
 
-		void OnAfterCreate() override;
-		void OnBeforeDestroy() override;
+		SyResult OnAfterCreate() override;
+		SyResult OnBeforeDestroy() override;
 		const std::string& GetMonoClassName() override;
 		const std::string& GetNamespace() override;
 		bool IsUserClass() override;

@@ -12,7 +12,7 @@ SyMonoObj::~SyMonoObj()
 	Destroy();
 }
 
-void SyMonoObj::Create(const SyMonoRuntime& runtime)
+SyResult SyMonoObj::Create(const SyMonoRuntime& runtime)
 {
 	MonoImage* image = IsUserClass() ? runtime.GetUserAssemblyImage() : runtime.GetLayerAssemblyImage();
 
@@ -21,36 +21,33 @@ void SyMonoObj::Create(const SyMonoRuntime& runtime)
 		GetNamespace().c_str(),
 		GetMonoClassName().c_str());
 	if (_class == nullptr)
-	{
-		std::cout << "[mono] failed to find class " << GetMonoClassName() << std::endl;
-		return;
-	}
+		return SyResult{ SY_RESCODE_ERROR, SyComplexString("failed to find class %s", GetMonoClassName().c_str()) };
 
 	MonoObject* instance = mono_object_new(
 		runtime.GetDomain(),
 		_class);
 	if (instance == nullptr)
-	{
-		std::cout << "[mono] failed to instantiate object " << GetMonoClassName() << std::endl;
-	}
+		return SyResult{ SY_RESCODE_ERROR, SyComplexString("obj is not instantiated %s", GetMonoClassName().c_str()) };
 
 	mono_runtime_object_init(instance);
 	_gcHandle = mono_gchandle_new(instance, false);
 	_isValid = true;
 
-	OnAfterCreate();
+	return OnAfterCreate();
 }
 
-void SyMonoObj::Destroy()
+SyResult SyMonoObj::Destroy()
 {
 	if (!IsValid())
-		return;
+		return {};
 
-	OnBeforeDestroy();
+	SyResult r = OnBeforeDestroy();
 
 	_class = nullptr;
 	_isValid = false;
 	mono_gchandle_free(_gcHandle);
+
+	return r;
 }
 
 MonoClass* SyMonoObj::GetClass() const
@@ -61,26 +58,6 @@ MonoClass* SyMonoObj::GetClass() const
 MonoObject* SyMonoObj::GetInstance() const
 {
 	return mono_gchandle_get_target(_gcHandle);
-}
-
-
-MonoMethod* SyMonoObj::FindMethod(const std::string& methodName, int paramsCount)
-{
-	MonoMethod* method = mono_class_get_method_from_name(
-		_class,
-		methodName.c_str(),
-		paramsCount);
-	if (method == nullptr)
-		std::cout << "[mono] failed to find method " << methodName << std::endl;
-	return method;
-}
-
-void* SyMonoObj::BindMethod(const std::string& methodName, int paramsCount)
-{
-	MonoMethod* method = FindMethod(methodName, paramsCount);
-	if (method == nullptr)
-		return nullptr;
-	return mono_method_get_unmanaged_thunk(method);
 }
 
 bool SyMonoObj::IsValid() const

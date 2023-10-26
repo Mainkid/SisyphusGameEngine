@@ -6,7 +6,7 @@ namespace SyEngine.Game
 internal class SyEcsSync
 {
     private readonly SyEcs                 _ecs;
-    private readonly SyGameInternalContext _context;
+    private readonly SyGameContext _context;
 
     private readonly EcsPool<TransformComp> _transformsPool;
     private readonly EcsPool<MeshComp>      _meshesPool;
@@ -14,7 +14,7 @@ internal class SyEcsSync
     private readonly EcsFilter _transformsFilter;
     private readonly EcsFilter _meshesFilter;
 
-    public SyEcsSync(SyEcs ecs, SyGameInternalContext context)
+    public SyEcsSync(SyEcs ecs, SyGameContext context)
     {
         _ecs     = ecs;
         _context = context;
@@ -28,7 +28,13 @@ internal class SyEcsSync
 
     //-----------------------------------------------------------
     //-----------------------------------------------------------
-    public void SendTransformsToEngine()
+    public void SyncEngineWithGame()
+    {
+        SendTransformsToEngine();
+        //SendMeshesToEngine();
+    }
+    
+    private void SendTransformsToEngine()
     {
         foreach (int ent in _transformsFilter)
         {
@@ -45,7 +51,7 @@ internal class SyEcsSync
 
     //-----------------------------------------------------------
     //-----------------------------------------------------------
-    public void SendMeshesToEngine()
+    private void SendMeshesToEngine()
     {
         foreach (int ent in _meshesFilter)
         {

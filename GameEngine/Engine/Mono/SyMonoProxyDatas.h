@@ -1,8 +1,23 @@
 #pragma once
+
+#include <string>
+
 #include "../Tools/Data/Vector.h"
 
 namespace mono
 {
+	struct ProxyVector3
+	{
+		float X = 0;
+		float Y = 0;
+		float Z = 0;
+
+		ProxyVector3() { }
+		ProxyVector3(const SyVector3& v) : X(v.x), Y(v.y), Z(v.z) { }
+
+		operator SyVector3() const { return { X, Y, Z }; }
+	};
+
 	struct ProxyTimeData
 	{
 		float TotalTime;
@@ -11,9 +26,9 @@ namespace mono
 
 	struct ProxyTransformComp
 	{
-		SyVector3 Position;
-		SyVector3 Rotation;
-		SyVector3 Scale;
+		ProxyVector3 Position;
+		ProxyVector3 Rotation;
+		ProxyVector3 Scale;
 	};
 
 	struct ProxyMeshComp

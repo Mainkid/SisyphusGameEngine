@@ -3,7 +3,7 @@ using Leopotam.EcsLite;
 
 namespace SyEngine.Game
 {
-public class SyGameInternalContext
+internal class SyGameContext
 {
 	internal EcsWorld EcsWorld;
 

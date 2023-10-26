@@ -1,5 +1,5 @@
 #pragma once
-#include "SyMonoObj.h"
+#include "../SyMonoObj.h"
 
 namespace mono
 {
@@ -9,8 +9,8 @@ namespace mono
 		inline static const std::string CLASS_NAME = "SyGameConfig";
 
 	private:
-		void OnAfterCreate() override;
-		void OnBeforeDestroy() override;
+		SyResult OnAfterCreate() override;
+		SyResult OnBeforeDestroy() override;
 		const std::string& GetMonoClassName() override;
 		const std::string& GetNamespace() override;
 		bool IsUserClass() override;

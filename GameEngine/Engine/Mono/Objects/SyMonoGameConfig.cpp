@@ -3,9 +3,15 @@
 
 using namespace mono;
 
-void SyMonoGameConfig::OnAfterCreate() {}
+SyResult SyMonoGameConfig::OnAfterCreate()
+{
+	return {};
+}
 
-void SyMonoGameConfig::OnBeforeDestroy() {}
+SyResult SyMonoGameConfig::OnBeforeDestroy()
+{
+	return {};
+}
 
 const std::string& SyMonoGameConfig::GetMonoClassName()
 {

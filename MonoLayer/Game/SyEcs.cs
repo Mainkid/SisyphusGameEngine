@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using Leopotam.EcsLite;
 using SyEngine.Game.Comps;
 using SyEngine.Game.Datas;
+using SyEngine.Logs;
 
 namespace SyEngine.Game
 {
 public class SyEcs
 {
-    private readonly SyGameInternalContext _context;
+    private readonly SyGameContext _context;
     private readonly EcsWorld              _world;
 
 
-    internal SyEcs(SyGameInternalContext internalContext)
+    internal SyEcs(SyGameContext internalContext)
     {
         _context = internalContext;
 
@@ -85,40 +86,47 @@ public class SyEcs
     }
     
 
-    public void AddTransformComp(int ent)
+    public ref TransformComp AddTransformComp(int ent)
     {
-        Console.WriteLine($"[game] add transform comp to g{ent}");
+        SyLog.Debug(ELogTag.Ecs, $"add transform comp to g{ent}");
         
         TryCreateEngineEntity(ent);
         
-        _world.GetPool<TransformComp>().Add(ent).Scale = SyVector3.One;
+        ref var comp = ref _world.GetPool<TransformComp>().Add(ent);
+        comp.Scale = SyVector3.One;
+        
         SyProxyGame.GE_AddTransformComp(_context.GameEntToEngineEnt[ent]);
         IncreaseEntityEngineCompsCount(ent);
+
+        return ref comp;
     }
 
     public void RemoveTransformComp(int ent)
     {
-        Console.WriteLine($"[game] remove transform comp from f{ent}");
+        SyLog.Debug(ELogTag.Ecs, $"remove transform comp from g{ent}");
         
         _world.GetPool<TransformComp>().Del(ent);
         SyProxyGame.GE_RemoveTransformComp(_context.GameEntToEngineEnt[ent]);
         DecreaseEntityEngineCompsCount(ent);
     }
 
-    public void AddMeshComp(int ent)
+    public ref MeshComp AddMeshComp(int ent)
     {
-        Console.WriteLine($"[game] add mesh comp to g{ent}");
+        SyLog.Debug(ELogTag.Ecs, $"add mesh comp to g{ent}");
         
         TryCreateEngineEntity(ent);
         
-        _world.GetPool<MeshComp>().Add(ent);
+        ref var comp = ref _world.GetPool<MeshComp>().Add(ent);
+        
         SyProxyGame.GE_AddMeshComp(_context.GameEntToEngineEnt[ent]);
         IncreaseEntityEngineCompsCount(ent);
+
+        return ref comp;
     }
 
     public void RemoveMeshComp(int ent)
     {
-        Console.WriteLine($"[game] remove mesh comp from g{ent}");
+        SyLog.Debug(ELogTag.Ecs, $"remove mesh comp from g{ent}");
 
         TryCreateEngineEntity(ent);
 
@@ -163,13 +171,13 @@ public class SyEcs
         if (_context.GameEntToEngineEnt.TryGetValue(gameEnt, out _))
             return;
 
-        Console.WriteLine("[game] create engine entity");
+        SyLog.Debug(ELogTag.Ecs, "create engine entity");
         uint engineEnt = SyProxyGame.GE_CreateEngineEntity();
 
         _context.GameEntToEngineEnt[gameEnt]        = engineEnt;
         _context.EngineEntToGameEnt[engineEnt]      = gameEnt;
         _context.GameEntToEngineCompsCount[gameEnt] = 0;
-        Console.WriteLine($"[game] entities pair created g{gameEnt} : e{engineEnt}");
+        SyLog.Debug(ELogTag.Ecs, $"entities pair created g{gameEnt} : e{engineEnt}");
     }
     
     private void TryDestroyEngineEntity(int gameEnt)
@@ -177,8 +185,8 @@ public class SyEcs
         if (!_context.GameEntToEngineEnt.TryGetValue(gameEnt, out uint engineEnt))
             return;
         
-        Console.WriteLine("[game] destroy engine entity");
-        SyProxyGame.GE_DestroyEngineEntity();
+        SyLog.Debug(ELogTag.Ecs, "destroy engine entity");
+        SyProxyGame.GE_DestroyEngineEntity(engineEnt);
 
         _context.GameEntToEngineEnt.Remove(gameEnt);
         _context.EngineEntToGameEnt.Remove(engineEnt);

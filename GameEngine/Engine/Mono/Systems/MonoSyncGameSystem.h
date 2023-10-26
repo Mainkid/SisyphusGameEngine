@@ -10,7 +10,7 @@ namespace mono
 class SyMonoGame;
 }
 
-class MonoSyncSystem : public SystemBase, mono::ISyMonoGameCallbackReceiver
+class MonoSyncGameSystem : public SystemBase, mono::ISyMonoGameCallbackReceiver
 {
 public:
 	SyResult Init() override;
@@ -20,6 +20,12 @@ public:
 private:
 	EngineContext* _engineContext = nullptr;
 	mono::SyMonoGame* _monoGame = nullptr;
+
+	bool _isGameInited = false;
+
+	std::chrono::time_point<std::chrono::steady_clock> _testTimeOnPrevFrame;
+	float _testTotalTime = 0;
+
 
 	uint32_t CreateEngineEntity() override;
 	void DestroyEngineEntity(uint32_t rawEnt) override;
