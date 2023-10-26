@@ -121,7 +121,7 @@ SyResult LightRenderSystem::Run()
 
         hc->context->OMSetBlendState(rc->lightBlendState.Get(), nullptr, 0xffffffff);
         hc->context->PSSetSamplers(0, 1, rc->samplerState.GetAddressOf());
-        hc->context->PSSetSamplers(1, 1, rc->samplerDepthState.GetAddressOf());
+        hc->context->PSSetSamplers(1, 1, rc->shadowMapSampler.GetAddressOf());
 
         hc->context->OMSetRenderTargets(1, rc->gBuffer->HDRBufferRTV.GetAddressOf(), hc->depthStencilView.Get());
         //hc->renderTarget->SetRenderTarget(hc->depthStencilView.Get());

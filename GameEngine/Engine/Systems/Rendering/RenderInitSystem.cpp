@@ -79,13 +79,15 @@ SyResult RenderInitSystem::Init()
 
     D3D11_SAMPLER_DESC sampDesc2;
     ZeroMemory(&sampDesc, sizeof(sampDesc2));
-    sampDesc2.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    sampDesc2.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
     sampDesc2.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
     sampDesc2.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
     sampDesc2.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc2.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    sampDesc2.ComparisonFunc = D3D11_COMPARISON_LESS;
     sampDesc2.MinLOD = 0;
     sampDesc2.MaxLOD = D3D11_FLOAT32_MAX;
+    sampDesc2.MipLODBias = 0;
+    sampDesc2.MaxAnisotropy = 0;
     hr = hc->device->CreateSamplerState(&sampDesc2, rc->shadowMapSampler.GetAddressOf()); //Create sampler state
 
 

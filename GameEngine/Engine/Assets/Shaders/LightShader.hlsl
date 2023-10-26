@@ -39,7 +39,7 @@ Texture2DArray depthMapTexture : register(t10);
 
 
 SamplerState textureSampler : SAMPLER : register(s0);
-SamplerState shadowSampler : register(s1);
+SamplerComparisonState shadowSampler : SAMPLER : register(s1);
 
 struct VS_IN
 {
@@ -92,13 +92,12 @@ float calcShadowValue(float3 worldPos,float layer,float bias)
         for (int x = -2; x <= 2; x++)
         {
             float3 offset = float3(float2(x, y) * texelSize, 0);
-            depthValue = depthMapTexture.Sample(textureSampler, projectTexCoord + offset).r;
-            shadowSum += lightDepthValue > depthValue;
+            shadowSum += depthMapTexture.SampleCmpLevelZero(shadowSampler, projectTexCoord + offset, lightDepthValue).r;
         }
     }
     
     shadowSum = shadowSum / 25.0f;
-    return shadowSum;
+    return 1-shadowSum;
 }
 
 

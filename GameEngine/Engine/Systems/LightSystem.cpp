@@ -136,7 +136,7 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
             maxZ = std::max(maxZ, trf.z);
         }
 
-        constexpr float zMult = 7.0f;
+        constexpr float zMult = 3.0f;
         minZ = (minZ < 0) ? minZ * zMult : minZ / zMult;
         maxZ = (maxZ < 0) ? maxZ / zMult : maxZ * zMult;
 
