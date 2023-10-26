@@ -3,6 +3,7 @@
 #include "Serializable.h"
 #include "../Tools/Data/Vector.h"
 #include "SimpleMath.h"
+#include <boost/uuid/uuid.hpp>
 
 namespace DirectX
 {
@@ -14,3 +15,12 @@ namespace DirectX
 }
 
 SER_DATA_OUTER(SyVector3, x, y, z)
+
+namespace boost
+{
+	namespace uuids
+	{
+		SER_DATA_OUTER(boost::uuids::uuid, data)
+	}
+}
+

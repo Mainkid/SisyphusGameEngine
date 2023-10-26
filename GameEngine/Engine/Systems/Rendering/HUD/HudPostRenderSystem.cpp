@@ -30,6 +30,9 @@ SyResult HudPostRenderSystem::Run()
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
     }
+
+    
+
     return SyResult();
 }
 

@@ -15,7 +15,7 @@ SyResult ShadowRenderSystem::Init()
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
-    pointlightShadowProjectionMat = DirectX::XMMatrixPerspectiveFovLH(1.5708f, rc->SHADOWMAP_WIDTH * 1.0f / rc->SHADOWMAP_HEIGHT, 0.01f, 3.0f);
+   
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowRender system initialization successful. ");
     return SyResult();
 }
@@ -64,7 +64,7 @@ SyResult ShadowRenderSystem::Run()
                 hc->context->PSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
                 hc->context->GSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
 
-                for (auto& mesh : meshComp.meshes)
+                for (auto& mesh : meshComp.model->meshes)
                 {
                     UINT offset[1] = { 0 };
                     UINT stride[1] = { 48 };
@@ -90,23 +90,27 @@ SyResult ShadowRenderSystem::Run()
                     //    engineActor->model->strides, engineActor->model->offsets);
                     hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                         meshComp.strides, meshComp.offsets);
-                    hc->context->DrawInstanced(mesh->indexBuffer->size, 4, 0, 0);
+                    hc->context->DrawIndexedInstanced(mesh->indexBuffer->size, 4, 0, 0,0);
                     
                 }
             }
-            hc->context->GSSetShader(nullptr, nullptr, 0);
+            //hc->context->GSSetShader(nullptr, nullptr, 0);
         }
         else if (light.lightType == LightType::PointLight && (light.lightBehavior==LightBehavior::Movable ||
             (light.lightBehavior==LightBehavior::Static && light.shouldBakeShadows)))
         {
+            pointlightShadowProjectionMat = DirectX::XMMatrixPerspectiveFovLH(1.5708f, rc->SHADOWMAP_WIDTH * 1.0f / rc->SHADOWMAP_HEIGHT, 0.01f, light.paramsRadiusAndAttenuation.x);
+
             light.shouldBakeShadows = false;
             hc->context->RSSetState(rc->cullNoneRS.Get());
             float bgColor[4] = { 0,0,0,1 };
             hc->context->ClearDepthStencilView(light.shadowMapDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
             hc->context->ClearRenderTargetView(light.shadowMapRTV.Get(),bgColor);
-           
+            
+
             CB_PointlightShadowBuffer dataShadow;
-            dataShadow.world = Matrix::CreateTranslation(lightTf.position);
+            dataShadow.world =Matrix::CreateScale(light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x,
+                light.paramsRadiusAndAttenuation.x)*Matrix::CreateTranslation(lightTf.position);
             
             //dataShadow.baseData.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
             dataShadow.view[0] = DirectX::XMMatrixLookAtLH( Vector3(lightTf.position), lightTf.position + Vector3(1, 0, 0),
@@ -159,18 +163,16 @@ SyResult ShadowRenderSystem::Run()
                 hc->context->VSSetShader(rc->shadowPointLightShader->vertexShader.Get(), nullptr, 0);
                 hc->context->GSSetShader(rc->shadowPointLightShader->geomShader.Get(), nullptr, 0);
 
-                for (auto& mesh : meshComp.meshes)
+                for (auto& mesh : meshComp.model->meshes)
                 {
                     UINT offset[1] = { 0 };
                     UINT stride[1] = { 48 };
-
-
                     hc->context->IASetIndexBuffer(mesh->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
                     //!hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                     //    engineActor->model->strides, engineActor->model->offsets);
                     hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                         meshComp.strides, meshComp.offsets);
-                    hc->context->DrawInstanced(mesh->indexBuffer->size, 6, 0, 0);
+                    hc->context->DrawIndexedInstanced(mesh->indexBuffer->size, 6, 0, 0,0);
                     
                 }
                
@@ -180,7 +182,7 @@ SyResult ShadowRenderSystem::Run()
         }
     }
 
-
+    hc->context->GSSetShader(nullptr, nullptr, 0);
 
     rc->viewport.Width = static_cast<float>(hc->window->GetWidth());
     rc->viewport.Height = static_cast<float>(hc->window->GetHeight());

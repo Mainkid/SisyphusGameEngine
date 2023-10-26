@@ -24,15 +24,24 @@ SyResult LightRenderSystem::Run()
     CB_LightBuffer lightBuffer;
 
     float bgColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    ID3D11ShaderResourceView* srvNull[] = { nullptr,nullptr,nullptr,nullptr,nullptr };
+    ID3D11ShaderResourceView* srvNull[] = { nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr };
 
-    ID3D11ShaderResourceView* resources[] = { rc->gBuffer->diffuseSRV.Get(),rc->gBuffer->normalSRV.Get(),rc->gBuffer->positionSRV.Get(),rc->gBuffer->depthSRV.Get(),rc->gBuffer->specularSRV.Get() };
-    //hc->context->ClearRenderTargetView(engine->rtv.Get(), bgColor);
+    ID3D11ShaderResourceView* resources[] = 
+    { rc->gBuffer->diffuseSRV.Get(),
+        rc->gBuffer->metallicSRV.Get(),
+        rc->gBuffer->specularSRV.Get(),
+        rc->gBuffer->roughnessSRV.Get(),
+        rc->gBuffer->emissiveSRV.Get(),
+         rc->gBuffer->normalSRV.Get(),
+         rc->gBuffer->positionSRV.Get(),
+         rc->gBuffer->depthSRV.Get()
+    };
+    hc->context->ClearRenderTargetView(rc->gBuffer->HDRBufferRTV.Get(), bgColor);
     hc->renderTarget->ClearRenderTarget(hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL);
     UINT strides[1] = { 32 };
     UINT offsets[1] = { 0 };
 
-    UINT stridesLight[1] = { 48 };
+    UINT stridesLight[1] = { 80 };
     UINT offsetsLight[1] = { 0 };
 
     auto [camera, cameraTf] = CameraHelper::Find(_ecs);
@@ -71,10 +80,11 @@ SyResult LightRenderSystem::Run()
         {
             using namespace DirectX::SimpleMath;
             lightBuffer.baseData.world = Matrix::CreateScale(light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x) * Matrix::CreateTranslation(tc.position);
-
             lightBuffer.baseData.worldView = lightBuffer.baseData.world * camera.view;
             lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * camera.projection;
-            lightBuffer.baseData.worldViewInverseTranspose = Matrix::Identity;
+            lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
+
+            lightBuffer.distances[0].x = light.castShadows;
         }
         else if (light.lightType == LightType::SpotLight)
         {
@@ -96,7 +106,9 @@ SyResult LightRenderSystem::Run()
                 Matrix::CreateTranslation(tc.position);
             lightBuffer.baseData.worldView = lightBuffer.baseData.world * camera.view;
             lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * camera.projection;
-            lightBuffer.baseData.worldViewInverseTranspose = Matrix::Identity;
+            lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
+            
+           
         }
 
         D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -111,9 +123,9 @@ SyResult LightRenderSystem::Run()
         hc->context->PSSetSamplers(0, 1, rc->samplerState.GetAddressOf());
         hc->context->PSSetSamplers(1, 1, rc->samplerDepthState.GetAddressOf());
 
-        //hc->context->OMSetRenderTargets(1, engine->rtv.GetAddressOf(), engine->depthStencilView.Get());
-        hc->renderTarget->SetRenderTarget(hc->depthStencilView.Get());
-        hc->context->PSSetShaderResources(0, 5, resources);
+        hc->context->OMSetRenderTargets(1, rc->gBuffer->HDRBufferRTV.GetAddressOf(), hc->depthStencilView.Get());
+        //hc->renderTarget->SetRenderTarget(hc->depthStencilView.Get());
+        hc->context->PSSetShaderResources(0, 8, resources);
 
         if (light.lightType == LightType::Ambient || light.lightType == LightType::Directional)
         {
@@ -123,12 +135,13 @@ SyResult LightRenderSystem::Run()
             if (light.lightType == LightType::Directional)
             {
                 hc->context->PSSetShader(rc->dirLightShader->pixelShader.Get(), nullptr, 0);
-                hc->context->PSSetShaderResources(5, 1, &rc->shadowMapResourceView);
+                hc->context->PSSetShaderResources(8, 1, &rc->shadowMapResourceView);
+                hc->context->PSSetShaderResources(10, 1, &rc->shadowResourceView);
             }
             else
             {
                 hc->context->PSSetShader(rc->ambientLightShader->pixelShader.Get(), nullptr, 0);
-                hc->context->PSSetShaderResources(6, 1, rc->gBuffer->skyboxSRV.GetAddressOf());
+                hc->context->PSSetShaderResources(9, 1, rc->gBuffer->skyboxSRV.GetAddressOf());
                 //hc->context->PSSetShaderResources(7, 1, hc->depthStencilView.GetAddressOf());
             }
 
@@ -143,9 +156,10 @@ SyResult LightRenderSystem::Run()
         {
 
             //Back Face Pass
-            hc->context->PSSetShaderResources(5, 1, light.shadowMapSRV.GetAddressOf());
+            hc->context->PSSetShaderResources(8, 1, light.shadowMapSRV.GetAddressOf());
 
             hc->context->RSSetState(rc->cullFrontRS.Get());
+            hc->context->VSSetConstantBuffers(0, 1, rc->lightConstBuffer->buffer.GetAddressOf());
             hc->context->OMSetDepthStencilState(rc->backFaceStencilState.Get(), 0);
             hc->context->PSSetShader(rc->stencilPassShader->pixelShader.Get(), nullptr, 0);
             hc->context->VSSetShader(rc->stencilPassShader->vertexShader.Get(), nullptr, 0);
@@ -187,8 +201,6 @@ SyResult LightRenderSystem::Run()
                 strides, offsets);
 
             hc->context->DrawIndexed(6, 0, 0);
-
-
         }
 
         else if (light.lightType == LightType::SpotLight)
@@ -237,11 +249,9 @@ SyResult LightRenderSystem::Run()
                 strides, offsets);
 
             hc->context->DrawIndexed(6, 0, 0);
-
         }
-
     }
-    hc->context->PSSetShaderResources(0, 5, srvNull);
+    hc->context->PSSetShaderResources(0, 10, srvNull);
     return SyResult();
 }
 

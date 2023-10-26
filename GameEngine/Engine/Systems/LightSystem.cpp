@@ -22,17 +22,17 @@ SyResult LightSystem::Run()
     auto [cameraTf, camera] = viewCamera.get(viewCamera.front());
 
     auto viewLights = _ecs->view<TransformComponent, LightComponent>();
-	for (auto& ent : viewLights)
-	{
-		LightComponent& lc = viewLights.get<LightComponent>(ent);
+    for (auto& ent : viewLights)
+    {
+        LightComponent& lc = viewLights.get<LightComponent>(ent);
         TransformComponent& tc = viewLights.get<TransformComponent>(ent);
         if (lc.lightType != LightType::Ambient)
         {
             GenerateViewMatrix(Vector3(camera.forward), lc, Vector3(cameraTf.localPosition));
-              //GenerateOrthoFromFrustum(lc, Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
-              //    ec->scene->camera->view,
-              //    ec->scene->camera->projection);
-            GenerateOrthosFromFrustum(lc, 
+            //GenerateOrthoFromFrustum(lc, Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
+            //    ec->scene->camera->view,
+            //    ec->scene->camera->projection);
+            GenerateOrthosFromFrustum(lc,
                 Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
                 camera.view,
                 camera.projection,
@@ -41,12 +41,12 @@ SyResult LightSystem::Run()
 
         if (!lc.aabb)
         {
-            lc.aabb = MeshLoader::LoadSimpleMesh("Engine/Assets/Cube.fbx");
+            lc.aabb = MeshLoader::LoadSimpleMesh("Engine/Assets/Resources/Cube.fbx");
         }
-        
-        if (lc.lightType == LightType::PointLight && lc.shadowMapTexture==nullptr)
+
+        if (lc.lightType == LightType::PointLight && lc.shadowMapTexture == nullptr)
             InitPointLightResources(lc);
-	}
+    }
     return SyResult();
 }
 
@@ -81,10 +81,19 @@ std::vector<Vector4> LightSystem::GetFrustumCorners(const Matrix& view, const Ma
     return frustumCorners;
 }
 
-std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc,Vector3 direction,const Matrix& view, const Matrix proj, float farZ)
+std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, Vector3 direction, const Matrix& view, const Matrix proj, float farZ)
 {
     using namespace DirectX::SimpleMath;
+    using namespace DirectX;
+
+    BoundingSphere bs;
     std::vector<Vector4> frustumCorners = GetFrustumCorners(view, proj);
+    
+    static float boundingSphereRadius[5];
+    
+
+   
+
     lc.orthoMatrices.clear();
     lc.viewMatrices.clear();
     lc.distances.clear();
@@ -106,15 +115,28 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc,Ve
             newCorners[j + 1].w = 1.0f;
         }
 
-        Vector3 center = Vector3::Zero;
 
-        for (const auto& v : newCorners)
+        //
+        XMFLOAT3 corners[8];
+
+        for (int i = 0; i < 8; i++)
         {
-            center += Vector3(v);
+            corners[i] = Vector3(newCorners[i]);
         }
 
 
-        center /= newCorners.size();
+        BoundingSphere::CreateFromPoints(bs, 8, corners, sizeof(XMFLOAT3));
+
+        if (boundingSphereRadius[i] < bs.Radius)
+        {
+            boundingSphereRadius[i] = bs.Radius + 1;
+        }
+
+        std::cout << boundingSphereRadius[i] << std::endl;
+
+
+
+        Vector3 center = bs.Center;
 
         Matrix viewMatrix2 = DirectX::XMMatrixLookAtLH(center, center - direction, Vector3::Up);
 
@@ -142,7 +164,24 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc,Ve
         maxZ = (maxZ < 0) ? maxZ / zMult : maxZ * zMult;
 
 
-        lc.orthoMatrices.push_back(Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ));
+        minX = center.x - boundingSphereRadius[i];
+        maxX = center.x + boundingSphereRadius[i];
+        minY = center.y - boundingSphereRadius[i];
+        maxY = center.y + boundingSphereRadius[i];
+
+        
+        auto shadowProj = Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ);
+        
+        Vector3 shadowOrigin = Vector3::Transform(Vector3::Zero, viewMatrix2 * shadowProj);
+        shadowOrigin *= (rc->SHADOWMAP_WIDTH / 2.0f);
+        Vector2 roundedOrigin = Vector2(round(shadowOrigin.x), round(shadowOrigin.y));
+        Vector2 rounding = roundedOrigin - shadowOrigin;
+        rounding /= (rc->SHADOWMAP_WIDTH / 2.0f);
+        Matrix roundMatrix = Matrix::CreateTranslation(rounding.x, rounding.y, 0);
+        
+        lc.orthoMatrices.push_back(shadowProj*roundMatrix);
+
+
         lc.viewMatrices.push_back(viewMatrix2);
         lc.distances.push_back(Vector4(farZ * pow((i * 1.0f / n), exp),
             farZ * pow((i * 1.0f / n), exp), farZ * pow((i * 1.0f / n), exp), 1.0f));
@@ -151,7 +190,7 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc,Ve
     return std::vector<Matrix>();
 }
 
-void LightSystem::GenerateOrthoMatrix(LightComponent& lc,float width, float depthPlane, float nearPlane)
+void LightSystem::GenerateOrthoMatrix(LightComponent& lc, float width, float depthPlane, float nearPlane)
 {
     lc.orthoMatrix = DirectX::XMMatrixOrthographicLH(width, width, nearPlane, depthPlane);
 }
@@ -163,7 +202,7 @@ void LightSystem::GenerateViewMatrix(Vector3 cameraForward, LightComponent& lc, 
     lc.viewMatrix = DirectX::XMMatrixLookAtLH(pos, lookAt, up);
 }
 
-void LightSystem::GenerateOrthoFromFrustum(LightComponent& lc,Vector3 direction,const Matrix& view, const Matrix proj)
+void LightSystem::GenerateOrthoFromFrustum(LightComponent& lc, Vector3 direction, const Matrix& view, const Matrix proj)
 {
     std::vector<Vector4> frustumCorners = GetFrustumCorners(view, proj);
     Vector3 center = Vector3::Zero;
@@ -221,8 +260,8 @@ void LightSystem::InitPointLightResources(LightComponent& lc)
 
     HRESULT result = hc->device->CreateTexture2D(&textureDesc_, nullptr, lc.shadowMapTexture.GetAddressOf());
 
-    
-    result = hc->device->CreateRenderTargetView(lc.shadowMapTexture.Get(),nullptr, lc.shadowMapRTV.GetAddressOf());
+
+    result = hc->device->CreateRenderTargetView(lc.shadowMapTexture.Get(), nullptr, lc.shadowMapRTV.GetAddressOf());
 
     D3D11_TEXTURE2D_DESC textureDescDSV = {};
     textureDescDSV.Width = rc->SHADOWMAP_WIDTH;
@@ -244,7 +283,7 @@ void LightSystem::InitPointLightResources(LightComponent& lc)
     ZeroMemory(&depthStencilViewPointDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
     depthStencilViewPointDesc.Format = DXGI_FORMAT_D32_FLOAT;
     depthStencilViewPointDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
-    depthStencilViewPointDesc.Texture2DArray.MipSlice = 0; 
+    depthStencilViewPointDesc.Texture2DArray.MipSlice = 0;
     depthStencilViewPointDesc.Texture2DArray.FirstArraySlice = 0;
     depthStencilViewPointDesc.Texture2DArray.ArraySize = 6;
 

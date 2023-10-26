@@ -15,8 +15,7 @@ SyResult RenderInitSystem::Init()
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
-
-    rc->cubeMesh = MeshLoader::LoadSimpleMesh("./Engine/Assets/Cube.fbx");
+    rc->cubeMesh = MeshLoader::LoadSimpleMesh("./Engine/Assets/Resources/Cube.fbx");
 
     using namespace DirectX::SimpleMath;
     {
@@ -50,13 +49,19 @@ SyResult RenderInitSystem::Init()
     rc->gBuffer = std::make_unique<GBuffer>(hc->device);
     rc->gBuffer->Initialize(hc->window->GetWidth(), hc->window->GetHeight());
 
-    rc->rtvs[0] = rc->gBuffer->normalRTV.Get();
-    rc->rtvs[1] = rc->gBuffer->diffuseRTV.Get();
-    rc->rtvs[2] = rc->gBuffer->positionRTV.Get();
-    rc->rtvs[3] = rc->gBuffer->depthRTV.Get();
-    rc->rtvs[4] = rc->gBuffer->specularRTV.Get();
 
-    rc->editorBillboardRtvs[0] = hc->renderTarget->renderTargetView.Get();
+    rc->rtvs[0] = rc->gBuffer->diffuseRTV.Get();
+    rc->rtvs[1] = rc->gBuffer->metallicRTV.Get();
+    rc->rtvs[2] = rc->gBuffer->specularRTV.Get();
+    rc->rtvs[3] = rc->gBuffer->roughnessRTV.Get();
+    rc->rtvs[4] = rc->gBuffer->emissiveRTV.Get();
+    rc->rtvs[5] = rc->gBuffer->normalRTV.Get();
+    
+    rc->rtvs[6] = rc->gBuffer->positionRTV.Get();
+    rc->rtvs[7] = rc->gBuffer->depthRTV.Get();
+    //rc->rtvs[4] = rc->gBuffer->specularRTV.Get();
+
+    rc->editorBillboardRtvs[0] = rc->gBuffer->HDRBufferRTV.Get();
     rc->editorBillboardRtvs[1] = rc->gBuffer->depthRTV.Get();
 
 
@@ -180,6 +185,30 @@ SyResult RenderInitSystem::Init()
     blendDesc2.RenderTarget[0] = rtbd2;
 
     hr = hc->device->CreateBlendState(&blendDesc2, rc->particlesBlendState.GetAddressOf());
+
+
+    D3D11_BLEND_DESC blendDescEditorGrid;
+    ZeroMemory(&blendDescEditorGrid, sizeof(blendDescEditorGrid));
+
+    blendDescEditorGrid.IndependentBlendEnable = false;
+
+    D3D11_RENDER_TARGET_BLEND_DESC rtbdEditorGrid;
+    ZeroMemory(&rtbdEditorGrid, sizeof(rtbdEditorGrid));
+
+    rtbdEditorGrid.BlendEnable = true;
+
+    rtbdEditorGrid.SrcBlend = D3D11_BLEND_ONE;
+    rtbdEditorGrid.DestBlend = D3D11_BLEND_ONE;
+    rtbdEditorGrid.BlendOp = D3D11_BLEND_OP_ADD;
+    rtbdEditorGrid.SrcBlendAlpha = D3D11_BLEND_ZERO;
+    //!!!! ???
+    rtbdEditorGrid.DestBlendAlpha = D3D11_BLEND_ONE;
+    rtbdEditorGrid.BlendOpAlpha = D3D11_BLEND_OP_MAX;
+    rtbdEditorGrid.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+    blendDescEditorGrid.RenderTarget[0] = rtbdEditorGrid;
+
+    hr = hc->device->CreateBlendState(&blendDescEditorGrid, rc->gridBlendState.GetAddressOf());
 
 
 
@@ -395,7 +424,7 @@ SyResult RenderInitSystem::Init()
 
     rc->opaqueShader = std::make_unique<Shader>();
     rc->opaqueShader->Initialize(L"./Engine/Assets/Shaders/OpaqueShader.hlsl",
-        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_NORMAL | USE_COLOR);
+        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_NORMAL | USE_COLOR | USE_TANGENT_BITANGENT);
 
     rc->dirLightShader = std::make_unique<Shader>();
     rc->dirLightShader->Initialize(L"./Engine/Assets/Shaders/LightShader.hlsl",
@@ -419,7 +448,7 @@ SyResult RenderInitSystem::Init()
 
     rc->shadowShader = std::make_unique<Shader>();
     rc->shadowShader->Initialize(L"./Engine/Assets/Shaders/ShadowShader.hlsl",
-        COMPILE_VERTEX | COMPILE_GEOM, USE_POSITION | USE_COLOR | USE_NORMAL, "DepthVertexShader");
+        COMPILE_VERTEX | COMPILE_GEOM | COMPILE_PIXEL, USE_POSITION | USE_COLOR | USE_NORMAL, "DepthVertexShader","PS_Main");
 
     rc->shadowPointLightShader = std::make_unique<Shader>();
     rc->shadowPointLightShader->Initialize(L"./Engine/Assets/Shaders/ShadowPointlightShader.hlsl",
@@ -441,6 +470,15 @@ SyResult RenderInitSystem::Init()
     rc->skyBoxShader = std::make_unique<Shader>();
     rc->skyBoxShader->Initialize(L"./Engine/Assets/Shaders/Skybox.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VS", "PS");
+
+    rc->toneMapper = std::make_unique<Shader>();
+    rc->toneMapper->Initialize(L"./Engine/Assets/Shaders/ToneMapping.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VSMain", "PSMain");
+
+    rc->editorGridRenderer = std::make_unique<Shader>();
+    rc->editorGridRenderer->Initialize(L"./Engine/Assets/Shaders/EditorGridShader.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL,USE_POSITION,"VSMain");
+
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "RenderInit system initialization successful. ");
     return SyResult();
 }
@@ -465,7 +503,8 @@ void RenderInitSystem::InitSkybox()
     textureDesc_.Height = resolution;
     textureDesc_.MipLevels = 1;
     textureDesc_.ArraySize = 6;
-    textureDesc_.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    
+    textureDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
     textureDesc_.SampleDesc.Count = 1;
     textureDesc_.SampleDesc.Quality = 0;
     textureDesc_.Usage = D3D11_USAGE_DEFAULT;

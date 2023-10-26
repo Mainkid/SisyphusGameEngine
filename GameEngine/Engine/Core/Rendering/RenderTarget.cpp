@@ -23,6 +23,7 @@ bool RenderTarget::Initialize(int textureWidth, int textureHeight)
 	textureDesc.Height = textureHeight;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
+
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;

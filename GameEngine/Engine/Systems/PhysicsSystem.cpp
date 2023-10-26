@@ -8,8 +8,8 @@
 
 using namespace physx;
 
-PxPhysics*	SyRBodyComponent::physics;
-PxScene*	SyRBodyComponent::scene;
+PxPhysics* SyRBodyComponent::physics;
+PxScene* SyRBodyComponent::scene;
 
 SyResult SyPhysicsSystem::Init() 
 {
@@ -54,7 +54,7 @@ SyResult SyPhysicsSystem::Run()
 	{
 		result.code = SY_RESCODE_ERROR;
 		result.message = "Physics simulate function returned false.";
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR,  result.message.ToString());
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
 		return result;
 	}
 	if (!scene->fetchResults(true))

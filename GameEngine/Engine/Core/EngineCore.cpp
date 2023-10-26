@@ -1,5 +1,8 @@
 #include "EngineCore.h"
-
+#include "../Components/EditorBillboardComponent.h"
+#include "../Components/GameObjectComp.h"
+#include "../Components/MeshComponent.h"
+#include "../Components/TransformComponent.h"
 
 //EngineCore::EngineCore(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height)
 //{
@@ -56,7 +59,16 @@ void EngineCore::StartUp()
 	ServiceLocator::instance()->Register<HardwareContext>();
 	ServiceLocator::instance()->Register<SyErrorLogger>();
 	ServiceLocator::instance()->Register<EngineContext>();
+	ServiceLocator::instance()->Register<ResourceService>();
 	_context = ServiceLocator::instance()->Get<EngineContext>();
+
+	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+	ser.AddEcsCompMeta<GameObjectComp>();
+	ser.AddEcsCompMeta<TransformComponent>();
+	ser.AddEcsCompMeta<MeshComponent>();
+	ser.AddEcsCompMeta<LightComponent>();
+	ser.AddEcsCompMeta<EditorBillboardComponent>();
+
 
 	StartUpSystems();
 }
@@ -71,7 +83,7 @@ void EngineCore::StartUpSystems()
 
 	
 	_systems.Add<InputSystem>();
-	//Add Resource System here
+	_systems.Add<ResourceSystem>();
 	_systems.Add<SyPhysicsSystem>();
 
 	_systems.Add<TransformSystem>();
@@ -94,8 +106,8 @@ void EngineCore::StartUpSystems()
 	_systems.Add<ShadowMapGenerationSystem>();
 	_systems.Add<LightRenderSystem>();
 	_systems.Add<EditorBillboardRenderSystem>();
-	//Add Tonemapping here
-	//Add EditorGridSystem here
+	_systems.Add<ToneMappingRenderSystem>();
+	_systems.Add<EditorGridRenderSystem>();
 	_systems.Add<PostViewportRenderSystem>();
 
 	_systems.Add<HudPreRenderSystem>();
@@ -119,5 +131,6 @@ void EngineCore::ShutDown()
 	ServiceLocator::instance()->Unregister<RenderContext>();
 	ServiceLocator::instance()->Unregister<HardwareContext>();
 	ServiceLocator::instance()->Unregister<SyErrorLogger>();
+	ServiceLocator::instance()->Unregister<ResourceService>();
 }
 

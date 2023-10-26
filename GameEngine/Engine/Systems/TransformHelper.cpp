@@ -92,6 +92,19 @@ void TransformHelper::UpdateRelativeToParent(const TransformComponent* parent, T
 
 }
 
+bool TransformHelper::HasHierarchyCycles(entt::registry* ecs, entt::entity sourceGameObject, entt::entity parentGameObject)
+{
+	if (parentGameObject == sourceGameObject)
+		return true;
+
+	bool res = false;
+	for (auto& gameObject : ecs->get<TransformComponent>(sourceGameObject).children)
+	{
+		res = res || HasHierarchyCycles(ecs,gameObject, parentGameObject);
+	}
+	return res;
+}
+
 void TransformHelper::DegreesToRad(Vector3& vec)
 {
 	vec.x *= M_PI / 180.0f;

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "../../Core/ECS/SystemBase.h"
 #include "../../../vendor/ImGui/imgui.h"
+#include "../../../vendor/ImGui/imgui_internal.h"
 #include "../../vendor/entt/entt.hpp"
 #include <set>
 

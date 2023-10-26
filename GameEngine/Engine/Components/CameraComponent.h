@@ -10,7 +10,7 @@ struct CameraComponent
 	float farPlane = 100.0f;
 	float fovDegrees = 90.0f;
 	float aspectRatio = 1280.0f/720.0f;
-	float cameraSpeed = 1.0f;
+	float cameraSpeed = 2.0f;
 	uint32_t hash = 0;
 	uint32_t transformHash = 0;
 

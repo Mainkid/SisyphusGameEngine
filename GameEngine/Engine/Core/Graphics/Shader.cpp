@@ -10,9 +10,14 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
     HRESULT res;
     if ((compile_flags & COMPILE_PIXEL) == COMPILE_PIXEL)
     {
-        res = D3DCompileFromFile(shaderPath, nullptr /*macros*/, nullptr /*include*/,
+        res = D3DCompileFromFile(shaderPath, nullptr /*macros*/, D3D_COMPILE_STANDARD_FILE_INCLUDE /*include*/,
             p_entryPoint, "ps_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
             0, pixelBC.GetAddressOf(), errorPixelCode.GetAddressOf());
+        if (FAILED(res))
+        {
+            if (errorPixelCode != nullptr)
+                OutputDebugStringA((char*)errorPixelCode->GetBufferPointer());
+        }
 
         res = hc->device->CreatePixelShader(
             this->pixelBC->GetBufferPointer(),
@@ -22,9 +27,15 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
 
     if ((compile_flags &COMPILE_VERTEX)==COMPILE_VERTEX)
     {
-        res = D3DCompileFromFile(shaderPath, nullptr, nullptr,
+        res = D3DCompileFromFile(shaderPath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE,
             v_entryPoint, "vs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0,
             vertexBC.GetAddressOf(), errorVertexCode.GetAddressOf());
+
+        if (FAILED(res))
+        {
+            if (errorVertexCode != nullptr)
+                OutputDebugStringA((char*)errorVertexCode->GetBufferPointer());
+        }
 
         res = hc->device->CreateVertexShader(
             this->vertexBC->GetBufferPointer(),
@@ -59,7 +70,7 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
 
     //UNIFORM parameters
 
-    D3D11_INPUT_ELEMENT_DESC inputElements [3];
+    D3D11_INPUT_ELEMENT_DESC inputElements [5];
     int ctr = 0;
 
     if ((uniform_flags & USE_POSITION) == USE_POSITION)
@@ -92,6 +103,29 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
     {
         inputElements[ctr]=D3D11_INPUT_ELEMENT_DESC{
             "NORMAL",
+            0,
+            DXGI_FORMAT_R32G32B32A32_FLOAT,
+            0,
+            D3D11_APPEND_ALIGNED_ELEMENT,
+            D3D11_INPUT_PER_VERTEX_DATA,
+            0 };
+        ctr++;
+    }
+
+    if ((uniform_flags & USE_TANGENT_BITANGENT) == USE_TANGENT_BITANGENT)
+    {
+        inputElements[ctr] = D3D11_INPUT_ELEMENT_DESC{
+            "TANGENT",
+            0,
+            DXGI_FORMAT_R32G32B32A32_FLOAT,
+            0,
+            D3D11_APPEND_ALIGNED_ELEMENT,
+            D3D11_INPUT_PER_VERTEX_DATA,
+            0 };
+        ctr++;
+
+        inputElements[ctr] = D3D11_INPUT_ELEMENT_DESC{
+            "BITANGENT",
             0,
             DXGI_FORMAT_R32G32B32A32_FLOAT,
             0,

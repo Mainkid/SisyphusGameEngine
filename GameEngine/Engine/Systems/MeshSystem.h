@@ -7,12 +7,14 @@
 #include "assimp/cimport.h"
 #include "../Components/Mesh.h"
 #include "SpriteBatch.h"
-
+#include <boost/uuid/uuid.hpp>
+#include <boost/functional/hash.hpp>
 
 
 struct MeshComponent;
 struct HardwareContext;
 struct EngineContext;
+class ResourceService;
 
 class MeshSystem : public SystemBase
 {
@@ -21,11 +23,10 @@ public:
 	SyResult Run() override;
 	SyResult Destroy() override;
 private:
-	bool LoadModel(MeshComponent& mesh);
-	void LoadTexture(MeshComponent& mesh);
-	void ProcessNode(MeshComponent& meshComp, aiNode* node, const aiScene* scene);
-	std::hash<std::string> hasher;
+	boost::hash<boost::uuids::uuid> hasherModel;
+	boost::hash<std::vector<boost::uuids::uuid>> hasherMaterial;
 	HardwareContext* hc;
 	EngineContext* ec;
+	ResourceService* rs;
 };
 

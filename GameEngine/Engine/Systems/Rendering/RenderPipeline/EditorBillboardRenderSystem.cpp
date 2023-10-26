@@ -64,7 +64,7 @@ SyResult EditorBillboardRenderSystem::Run()
                 DirectX::XMMatrixInverse(nullptr,
                     billboardMat));
 
-        dataOpaque.instanseID = (uint32_t)ent;
+        dataOpaque.instanseID = DirectX::SimpleMath::Vector4(int(ent), int(ent), int(EAssetType::ASSET_TEXTURE),1);
 
         D3D11_MAPPED_SUBRESOURCE mappedResource;
         HRESULT res = hc->context->Map(rc->opaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

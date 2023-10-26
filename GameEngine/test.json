@@ -1,0 +1,408 @@
+{
+ "entities": [
+  {
+   "id": 1048582,
+   "struct EditorBillboardComponent": {
+    "texturePath": "Engine/Assets/Sprites/PointLightSprite.png"
+   },
+   "struct GameObjectComp": {
+    "Name": "PointLight",
+    "Tag": "None"
+   },
+   "struct LightComponent": {
+    "color": {
+     "w": 3.0,
+     "x": 1.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "lightBehavior": 0,
+    "lightType": 2,
+    "paramsRadiusAndAttenuation": {
+     "w": 1.0,
+     "x": 3.0,
+     "y": 0.0,
+     "z": 0.0
+    }
+   },
+   "struct TransformComponent": {
+    "localPosition": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "localRotation": {
+     "x": -0.0,
+     "y": 0.0,
+     "z": -0.0
+    },
+    "localScale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    },
+    "parent": 4294967295,
+    "position": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "rotation": {
+     "x": -0.0,
+     "y": 0.0,
+     "z": -0.0
+    },
+    "scale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    }
+   }
+  },
+  {
+   "id": 1048581,
+   "struct EditorBillboardComponent": {
+    "texturePath": "Engine/Assets/Sprites/PointLightSprite.png"
+   },
+   "struct GameObjectComp": {
+    "Name": "PointLight",
+    "Tag": "None"
+   },
+   "struct LightComponent": {
+    "color": {
+     "w": 3.0,
+     "x": 1.0,
+     "y": 1.0,
+     "z": 0.0
+    },
+    "lightBehavior": 1,
+    "lightType": 2,
+    "paramsRadiusAndAttenuation": {
+     "w": 1.0,
+     "x": 3.0,
+     "y": 0.0,
+     "z": 0.0
+    }
+   },
+   "struct TransformComponent": {
+    "localPosition": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "localRotation": {
+     "x": -0.0,
+     "y": 0.0,
+     "z": -0.0
+    },
+    "localScale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    },
+    "parent": 4294967295,
+    "position": {
+     "x": 0.0,
+     "y": 0.0,
+     "z": 0.0
+    },
+    "rotation": {
+     "x": -0.0,
+     "y": 0.0,
+     "z": -0.0
+    },
+    "scale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    }
+   }
+  },
+  {
+   "id": 3145732,
+   "struct EditorBillboardComponent": {
+    "texturePath": "Engine/Assets/Sprites/DirLightSprite.png"
+   },
+   "struct GameObjectComp": {
+    "Name": "DirectionalLight",
+    "Tag": "None"
+   },
+   "struct LightComponent": {
+    "color": {
+     "w": 0.15000000596046448,
+     "x": 0.15000000596046448,
+     "y": 0.15000000596046448,
+     "z": 0.15000000596046448
+    },
+    "lightBehavior": 1,
+    "lightType": 0,
+    "paramsRadiusAndAttenuation": {
+     "w": 1.0,
+     "x": 0.0,
+     "y": 1.0,
+     "z": 1.0
+    }
+   },
+   "struct TransformComponent": {
+    "localPosition": {
+     "x": 0.2660844326019287,
+     "y": 1.0317384004592896,
+     "z": -7.698897838592529
+    },
+    "localRotation": {
+     "x": -0.0,
+     "y": 0.0,
+     "z": -0.0
+    },
+    "localScale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    },
+    "parent": 3145729,
+    "position": {
+     "x": -3.532283306121826,
+     "y": 0.0,
+     "z": 1.2690911293029785
+    },
+    "rotation": {
+     "x": -0.0,
+     "y": 0.7006146311759949,
+     "z": -0.0
+    },
+    "scale": {
+     "x": 0.9999998807907104,
+     "y": 1.0,
+     "z": 0.9999998807907104
+    }
+   }
+  },
+  {
+   "id": 3145731,
+   "struct EditorBillboardComponent": {
+    "texturePath": "Engine/Assets/Sprites/DirLightSprite.png"
+   },
+   "struct GameObjectComp": {
+    "Name": "DirectionalLight",
+    "Tag": "None"
+   },
+   "struct LightComponent": {
+    "color": {
+     "w": 1.0,
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    },
+    "lightBehavior": 1,
+    "lightType": 1,
+    "paramsRadiusAndAttenuation": {
+     "w": 1.0,
+     "x": 0.0,
+     "y": 1.0,
+     "z": 1.0
+    }
+   },
+   "struct TransformComponent": {
+    "localPosition": {
+     "x": 0.2660844326019287,
+     "y": 1.0317384004592896,
+     "z": -7.698897838592529
+    },
+    "localRotation": {
+     "x": -0.0,
+     "y": 0.0,
+     "z": -0.0
+    },
+    "localScale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    },
+    "parent": 3145729,
+    "position": {
+     "x": -3.532283306121826,
+     "y": 0.0,
+     "z": 1.2690911293029785
+    },
+    "rotation": {
+     "x": -0.0,
+     "y": 0.7006146311759949,
+     "z": -0.0
+    },
+    "scale": {
+     "x": 0.9999998807907104,
+     "y": 1.0,
+     "z": 0.9999998807907104
+    }
+   }
+  },
+  {
+   "id": 3145730,
+   "struct GameObjectComp": {
+    "Name": "Mesh",
+    "Tag": "None"
+   },
+   "struct MeshComponent": {
+    "materialUUIDs": [
+     {
+      "data": [
+       104,
+       31,
+       202,
+       4,
+       196,
+       158,
+       72,
+       145,
+       132,
+       242,
+       12,
+       60,
+       32,
+       117,
+       87,
+       77
+      ]
+     }
+    ],
+    "modelUUID": {
+     "data": [
+      101,
+      206,
+      185,
+      21,
+      208,
+      89,
+      70,
+      78,
+      152,
+      236,
+      75,
+      231,
+      52,
+      235,
+      231,
+      226
+     ]
+    }
+   },
+   "struct TransformComponent": {
+    "localPosition": {
+     "x": -0.029454827308654785,
+     "y": 0.0,
+     "z": 5.468299865722656
+    },
+    "localRotation": {
+     "x": 0.0,
+     "y": 0.7006146311759949,
+     "z": 0.0
+    },
+    "localScale": {
+     "x": 0.9999998807907104,
+     "y": 1.0,
+     "z": 0.9999998807907104
+    },
+    "parent": 4294967295,
+    "position": {
+     "x": -0.029454827308654785,
+     "y": 0.0,
+     "z": 5.468299865722656
+    },
+    "rotation": {
+     "x": -0.0,
+     "y": 0.7006146311759949,
+     "z": -0.0
+    },
+    "scale": {
+     "x": 0.9999998807907104,
+     "y": 1.0,
+     "z": 0.9999998807907104
+    }
+   }
+  },
+  {
+   "id": 3145729,
+   "struct GameObjectComp": {
+    "Name": "Mesh",
+    "Tag": "None"
+   },
+   "struct MeshComponent": {
+    "materialUUIDs": [
+     {
+      "data": [
+       71,
+       141,
+       57,
+       185,
+       37,
+       168,
+       74,
+       137,
+       154,
+       180,
+       194,
+       8,
+       232,
+       222,
+       87,
+       21
+      ]
+     }
+    ],
+    "modelUUID": {
+     "data": [
+      101,
+      206,
+      185,
+      21,
+      208,
+      89,
+      70,
+      78,
+      152,
+      236,
+      75,
+      231,
+      52,
+      235,
+      231,
+      226
+     ]
+    }
+   },
+   "struct TransformComponent": {
+    "localPosition": {
+     "x": -0.23662957549095154,
+     "y": -1.0317384004592896,
+     "z": 2.230597972869873
+    },
+    "localRotation": {
+     "x": -0.0,
+     "y": 0.0,
+     "z": -0.0
+    },
+    "localScale": {
+     "x": 1.0,
+     "y": 1.0,
+     "z": 1.0
+    },
+    "parent": 3145730,
+    "position": {
+     "x": 1.2276934385299683,
+     "y": -1.0317384004592896,
+     "z": 7.326023578643799
+    },
+    "rotation": {
+     "x": -0.0,
+     "y": 0.7006146311759949,
+     "z": -0.0
+    },
+    "scale": {
+     "x": 0.9999998807907104,
+     "y": 1.0,
+     "z": 0.9999998807907104
+    }
+   }
+  }
+ ]
+}
