@@ -4,7 +4,9 @@
 #include "../../Components/TransformComponent.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../Systems/EngineContext.h"
+#include "../../Systems/ResourceService.h"
 #include "../Components/MonoSyncComp.h"
+#include "../../Core/ResourcePath.h"
 
 SyResult MonoSyncGameSystem::Init()
 {
@@ -118,7 +120,11 @@ void MonoSyncGameSystem::AddMeshComp(uint32_t rawEnt)
 {
 	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "add mesh comp to e%d", static_cast<int>(rawEnt));
 
-	_ecs->emplace<MeshComponent>(static_cast<entt::entity>(rawEnt));
+	auto resourceService = ServiceLocator::instance()->Get<ResourceService>();
+	auto uuid = resourceService->GetUUIDFromPath(cubeMeshPath);
+
+	_ecs->emplace<MeshComponent>(static_cast<entt::entity>(rawEnt))
+		.modelUUID = uuid;
 }
 
 void MonoSyncGameSystem::RemoveMeshComp(uint32_t rawEnt)
@@ -131,6 +137,6 @@ void MonoSyncGameSystem::RemoveMeshComp(uint32_t rawEnt)
 void MonoSyncGameSystem::UpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshComp& proxy)
 {
 	auto& mesh = _ecs->get<MeshComponent>(static_cast<entt::entity>(rawEnt));
-	mesh.texturePath = proxy.TexturePath;
-	mesh.modelPath = proxy.ModelPath;
+	//mesh.texturePath = proxy.TexturePath;
+	//mesh.modelPath = proxy.ModelPath;
 }

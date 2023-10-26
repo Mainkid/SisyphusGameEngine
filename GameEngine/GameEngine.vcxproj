@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
   </PropertyGroup>
