@@ -62,12 +62,18 @@ void EngineCore::StartUp()
 	ServiceLocator::instance()->Register<ResourceService>();
 	_context = ServiceLocator::instance()->Get<EngineContext>();
 
+
 	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
 	ser.AddEcsCompMeta<GameObjectComp>();
 	ser.AddEcsCompMeta<TransformComponent>();
 	ser.AddEcsCompMeta<MeshComponent>();
 	ser.AddEcsCompMeta<LightComponent>();
 	ser.AddEcsCompMeta<EditorBillboardComponent>();
+	
+	ServiceLocator::instance()->Register<mono::SyMono>();
+	mono::SyMono* mono = ServiceLocator::instance()->Get<mono::SyMono>();
+	mono->Init();
+	mono->HotReload();
 
 
 	StartUpSystems();
@@ -84,6 +90,10 @@ void EngineCore::StartUpSystems()
 	
 	_systems.Add<InputSystem>();
 	_systems.Add<ResourceSystem>();
+
+	_systems.Add<MonoSyncGameSystem>();
+
+	//Add Resource System here
 	_systems.Add<SyPhysicsSystem>();
 
 	_systems.Add<TransformSystem>();
@@ -130,6 +140,7 @@ void EngineCore::ShutDown()
 	ServiceLocator::instance()->Unregister<EngineCore>();
 	ServiceLocator::instance()->Unregister<RenderContext>();
 	ServiceLocator::instance()->Unregister<HardwareContext>();
+	ServiceLocator::instance()->Unregister<mono::SyMono>();
 	ServiceLocator::instance()->Unregister<SyErrorLogger>();
 	ServiceLocator::instance()->Unregister<ResourceService>();
 }
