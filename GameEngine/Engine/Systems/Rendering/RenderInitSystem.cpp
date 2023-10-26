@@ -77,6 +77,18 @@ SyResult RenderInitSystem::Init()
     HRESULT hr = hc->device->CreateSamplerState(&sampDesc, rc->samplerState.GetAddressOf()); //Create sampler state
 
 
+    D3D11_SAMPLER_DESC sampDesc2;
+    ZeroMemory(&sampDesc, sizeof(sampDesc2));
+    sampDesc2.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    sampDesc2.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc2.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc2.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc2.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    sampDesc2.MinLOD = 0;
+    sampDesc2.MaxLOD = D3D11_FLOAT32_MAX;
+    hr = hc->device->CreateSamplerState(&sampDesc2, rc->shadowMapSampler.GetAddressOf()); //Create sampler state
+
+
     D3D11_DEPTH_STENCIL_DESC depthstencildesc;
     ZeroMemory(&depthstencildesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
 

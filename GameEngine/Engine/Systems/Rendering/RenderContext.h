@@ -84,6 +84,7 @@ struct RenderContext : public IService
     Microsoft::WRL::ComPtr <ID3D11DepthStencilView> shadowStencilView;
     Microsoft::WRL::ComPtr <ID3D11DepthStencilView> shadowPointLightStencilView;
     ID3D11ShaderResourceView* shadowResourceView;
+    Microsoft::WRL::ComPtr <ID3D11SamplerState> shadowMapSampler;
     
     ID3D11Texture2D* texture_;
     

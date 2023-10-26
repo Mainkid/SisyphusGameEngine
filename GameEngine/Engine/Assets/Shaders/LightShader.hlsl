@@ -125,7 +125,7 @@ float4 PS_Directional(PS_IN input) : SV_Target
     
     //PCF --->
     float blendArea = 0.2f;
-    float bias = 0.005f;
+    
     float3 projectTexCoord;
     float depthValue;
     float lightDepthValue;
@@ -138,15 +138,16 @@ float4 PS_Directional(PS_IN input) : SV_Target
             layer = i;
             break;
         }
+    float bias = 0.005f;
     layer2 = clamp(layer + 1, 0, 3);
     
    
     float shadowSum1 = calcShadowValue(worldPos, layer, bias);
-    float shadowSum2 = calcShadowValue(worldPos, layer2, bias);
+    //float shadowSum2 = calcShadowValue(worldPos, layer2, bias);
     
     float lerpValue = 1-clamp((-depthVal+distances[layer].x) / blendArea, 0, 1);
     //return float4(lerpValue, 0, 0, 1);
-    shadowSum1 = lerp(shadowSum1, shadowSum2, lerpValue);
+    //shadowSum1 = lerp(shadowSum1, shadowSum2, lerpValue);
     //<--- PCF
     
     //depthValue = depthMapTexture.Sample(textureSampler, projectTexCoord).r;

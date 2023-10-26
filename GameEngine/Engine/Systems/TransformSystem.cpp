@@ -18,7 +18,17 @@ SyResult TransformSystem::Run()
 	SyResult result;
 	auto view = _ecs->view<TransformComponent>();
 
-	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SySceneLoadEvent); 		
+	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SySceneLoadEvent);
+
+	//NOT WORKING!!!
+	// 
+	//for (auto& entity : eventView)
+	//{
+	//	SySceneLoadEvent& testEvent = eventView.get<SySceneLoadEvent>(entity);	//получили само событие (объект) со всеми переданными в него данными
+	//	SY_LOG_EVSY(SY_LOGLEVEL_WARNING, testEvent.message.c_str());	//логика обработки ивента
+	//}
+
+
 	if (eventView.size_hint()>0)
 	{
 		ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;

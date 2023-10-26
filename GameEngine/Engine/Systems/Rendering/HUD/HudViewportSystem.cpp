@@ -28,7 +28,6 @@ SyResult HudViewportSystem::Init()
 SyResult HudViewportSystem::Run()
 {
 	ImGui::Begin(windowID.c_str());
-
 	DrawMainMenuBar();
 
 	ImGui::BeginChild("ViewportTools",ImVec2(ImGui::GetContentRegionAvail().x,26));

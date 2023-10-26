@@ -90,8 +90,7 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
     lc.distances.clear();
 
     int n = 4;
-    int exp = 2.5;
-
+    int exp =3;
 
 
     for (int i = 1; i <= n; i++)
@@ -137,7 +136,7 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
             maxZ = std::max(maxZ, trf.z);
         }
 
-        constexpr float zMult = 5.0f;
+        constexpr float zMult = 7.0f;
         minZ = (minZ < 0) ? minZ * zMult : minZ / zMult;
         maxZ = (maxZ < 0) ? maxZ / zMult : maxZ * zMult;
 
