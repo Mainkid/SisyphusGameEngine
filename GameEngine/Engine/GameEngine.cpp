@@ -63,24 +63,24 @@ int main()
 
 
     //---------- Serialization test ----------------
-    ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
-    ser.AddEcsCompMeta<GameObjectComp>();
-    ser.AddEcsCompMeta<TransformComponent>();
-    ser.AddEcsCompMeta<MeshComponent>();
-    ser.AddEcsCompMeta<LightComponent>();
-    ser.AddEcsCompMeta<EditorBillboardComponent>();
-    
-    auto json = ser.Serialize<GameObjectComp>(*ecs);
-    std::ofstream file;
-    file.open("scene.json", std::ios::trunc);
-    file << std::setw(1) << json;
-    file.close();
-    
-    auto view = ecs->view<GameObjectComp>();
-    for (auto ent : view)
-        ecs->destroy(ent);
-    
-    ser.Deserialize(json, *ecs);
+    //ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+    //ser.AddEcsCompMeta<GameObjectComp>();
+    //ser.AddEcsCompMeta<TransformComponent>();
+    //ser.AddEcsCompMeta<MeshComponent>();
+    //ser.AddEcsCompMeta<LightComponent>();
+    //ser.AddEcsCompMeta<EditorBillboardComponent>();
+    //
+    //auto json = ser.Serialize<GameObjectComp>(*ecs);
+    //std::ofstream file;
+    //file.open("scene.json", std::ios::trunc);
+    //file << std::setw(1) << json;
+    //file.close();
+    //
+    //auto view = ecs->view<GameObjectComp>();
+    //for (auto ent : view)
+    //    ecs->destroy(ent);
+    //
+    //ser.Deserialize(json, *ecs);
     //---------------------------------------------
 
 

@@ -4,6 +4,10 @@
 
 class SyErrorLoggingSystem : public SystemBase
 {
+public:
+	static void SetLogDirectoryCapacity(unsigned newCapacity_);
+	static unsigned GetLogDirectoryCapacity();
+private:
 	SyResult Init();
 	SyResult Run();
 	SyResult Destroy();
@@ -14,7 +18,7 @@ class SyErrorLoggingSystem : public SystemBase
 	const std::string logDir = "logs";
 	std::string logPath;
 	std::ofstream fout;
-	const unsigned logDirCapacity = 10;
+	static unsigned logDirCapacity;
 
 };
 

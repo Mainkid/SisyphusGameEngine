@@ -1,5 +1,18 @@
 #include "ErrorLoggingSystem.h"
 #include <filesystem>
+
+unsigned SyErrorLoggingSystem::logDirCapacity = 10;
+
+void SyErrorLoggingSystem::SetLogDirectoryCapacity(unsigned newCapacity_)
+{
+	logDirCapacity = newCapacity_;
+}
+
+unsigned SyErrorLoggingSystem::GetLogDirectoryCapacity()
+{
+	return logDirCapacity;
+}
+
 SyResult SyErrorLoggingSystem::Init()
 {
 	if (std::find(SY_EL->sinks.begin(), SY_EL->sinks.end(), SY_SINK_TXT) != SY_EL->sinks.end())
@@ -28,23 +41,23 @@ SyResult SyErrorLoggingSystem::Init()
 							int(now.time_since_epoch().count() / 1000000 % 1000)).ToString();
 		fout = std::ofstream(logPath);
 	}
+
+	std::filesystem::path logDir_(logDir);
+	unsigned fileCtr = 0;
+	std::vector<std::filesystem::directory_entry> logFiles;
+	logFiles.reserve(2 * logDirCapacity);
+	for (auto& logDirEntry : std::filesystem::directory_iterator(logDir_))
+		logFiles.push_back(logDirEntry);
+	for (auto i = 0; i != logFiles.size() - logDirCapacity; i++)
+		std::filesystem::remove(logFiles[i]);
+
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Error logging system initialization successful. ");
 	return SyResult();
 }
 
 SyResult SyErrorLoggingSystem::Run()
 {
-	std::filesystem::path logPath_(logPath);
-	unsigned fileCtr = 0;
-	for (auto& directoryEntry : std::filesystem::directory_iterator(logPath_))
-	{
-		fileCtr++;
-		if (fileCtr > 10)
-		{
-			std::filesystem::remove(directoryEntry);
-			directoryEntry = directoryEntry.
-		}
-	}
+	
 	for (auto& sink : SY_EL->sinks)
 		for (auto& message : SY_EL->messagePool)
 		{
