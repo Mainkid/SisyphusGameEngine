@@ -106,7 +106,8 @@ void EngineCore::StartUpSystems()
 	_systems.Add<SyHudConsoleSystem>();
 	_systems.Add<SyErrorLoggingSystem>();
 	_systems.Add<HudPostRenderSystem>();
-
+	_systems.Add<SyPrepareEventsSystem>();
+	
 	_systems.Init();
 }
 

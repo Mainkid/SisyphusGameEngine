@@ -11,7 +11,7 @@ using namespace physx;
 PxPhysics*	SyRBodyComponent::physics;
 PxScene*	SyRBodyComponent::scene;
 
-SyResult SyPhysicsSystem::Init()
+SyResult SyPhysicsSystem::Init() 
 {
 	allocator = std::make_shared<PxDefaultAllocator>();
 	errorCallback = std::make_shared<PxDefaultErrorCallback>();
@@ -34,6 +34,8 @@ SyResult SyPhysicsSystem::Init()
 	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 	scene = physics->createScene(sceneDesc);
 	SyRBodyComponent::scene = scene;
+
+	CallEvent<SyTestEvent>("TestEvent", "Test event was called! ");
 	SY_LOG_PHYS(SY_LOGLEVEL_INFO, "Physics initialization successful. ");
 	return SyResult();
 }
@@ -80,6 +82,13 @@ SyResult SyPhysicsSystem::Run()
 		PxTransform rbTrasform = rb->getGlobalPose();
 		trComponent.localPosition = rbTrasform.p;
 		trComponent.localRotation = SyVector3::PxQuatToEuler(rbTrasform.q);
+	}
+
+	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyTestEvent);
+	for (auto& entity : eventView)
+	{
+		SyTestEvent& testEvent = eventView.get<SyTestEvent>(entity);
+		SY_LOG_EVSY(SY_LOGLEVEL_WARNING, testEvent.message.c_str());
 	}
 	return SyResult();
 }

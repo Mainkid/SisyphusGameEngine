@@ -38,6 +38,10 @@ struct SyRingBuffer
 					isHead = true;
 					return true;
 				}
+			else
+			{
+				return false;
+			}
 		}
 		else
 			return index_ >= size;
@@ -123,6 +127,11 @@ struct SyRingBuffer<T*>
 					isHead = true;
 					return true;
 				}
+			else
+			{
+				return false;
+			}
+			
 		}
 		else
 			return index_ >= size;
