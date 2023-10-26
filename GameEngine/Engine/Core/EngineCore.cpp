@@ -58,6 +58,12 @@ void EngineCore::StartUp()
 	ServiceLocator::instance()->Register<EngineContext>();
 	_context = ServiceLocator::instance()->Get<EngineContext>();
 
+	ServiceLocator::instance()->Register<mono::SyMono>();
+	mono::SyMono* mono = ServiceLocator::instance()->Get<mono::SyMono>();
+	mono->Init();
+	mono->HotReload();
+
+
 	StartUpSystems();
 }
 
@@ -71,6 +77,9 @@ void EngineCore::StartUpSystems()
 
 	
 	_systems.Add<InputSystem>();
+
+	_systems.Add<MonoSyncSystem>();
+
 	//Add Resource System here
 	_systems.Add<SyPhysicsSystem>();
 

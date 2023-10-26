@@ -26,3 +26,4 @@
 #include "Rendering/RenderPipeline/ShadowMapGenerationSystem.h"
 #include "Rendering/PostViewportRenderSystem.h"
 #include "../Systems/PrepareEventsSystem.h"
+#include "../Mono/Systems/MonoSyncSystem.h"

@@ -70,6 +70,14 @@
     <ClCompile Include="Engine\Serialization\SerializableOuters.h" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.cpp" />
     <ClCompile Include="Engine\Systems\ErrorLoggingSystem.cpp" />
+    <ClCompile Include="Engine\Mono\SyMono.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoGame.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoGameConfig.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoObj.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoRuntime.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoProxyDatas.h" />
+    <ClCompile Include="Engine\Mono\Systems\MonoSyncSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Components\MonoSyncComp.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -165,6 +173,14 @@
     <ClInclude Include="Engine\Tools\ComplexString.h" />
     <ClInclude Include="Engine\Systems\ErrorLoggingSystem.h" />
     <ClInclude Include="Engine\Tools\Data\RingBuffer.h" />
+    <ClInclude Include="Engine\Mono\ISyMonoGameCallbackReceiver.h" />
+    <ClInclude Include="Engine\Mono\SyMono.h" />
+    <ClInclude Include="Engine\Mono\SyMonoGame.h" />
+    <ClInclude Include="Engine\Mono\SyMonoGameConfig.h" />
+    <ClInclude Include="Engine\Mono\SyMonoObj.h" />
+    <ClInclude Include="Engine\Mono\SyMonoRuntime.h" />
+    <ClInclude Include="Engine\Mono\Systems\MonoSyncSystem.h" />
+    <ClInclude Include="Engine\Mono\SyMonoMethod.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

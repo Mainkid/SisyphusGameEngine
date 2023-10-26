@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;D:\Projects\cpp\GameEngine\GameEngine\vendor\mono\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
   </PropertyGroup>
@@ -120,7 +120,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>
@@ -148,6 +148,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Mono\Components\MonoSyncComp.h" />
+    <ClCompile Include="Engine\Mono\SyMono.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoProxyDatas.h" />
+    <ClCompile Include="Engine\Mono\SyMonoGame.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoGameConfig.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoObj.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoRuntime.cpp" />
     <ClCompile Include="Engine\Scene\CameraHelper.cpp" />
     <ClCompile Include="Engine\Scene\GameObjectHelper.cpp" />
     <ClCompile Include="Engine\Serialization\SerializableOuters.h" />
@@ -629,6 +636,7 @@
     <ClCompile Include="Engine\Core\ECS\SystemsGroup.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.cpp" />
     <ClCompile Include="Engine\Systems\ErrorLoggingSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Systems\MonoSyncSystem.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -646,6 +654,13 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="Engine\Core\ECS\Event.h" />
+    <ClInclude Include="Engine\Mono\ISyMonoGameCallbackReceiver.h" />
+    <ClInclude Include="Engine\Mono\SyMono.h" />
+    <ClInclude Include="Engine\Mono\SyMonoGame.h" />
+    <ClInclude Include="Engine\Mono\SyMonoGameConfig.h" />
+    <ClInclude Include="Engine\Mono\SyMonoMethod.h" />
+    <ClInclude Include="Engine\Mono\SyMonoObj.h" />
+    <ClInclude Include="Engine\Mono\SyMonoRuntime.h" />
     <ClInclude Include="Engine\Scene\CameraHelper.h" />
     <ClInclude Include="Engine\Components\SkyboxComponent.h" />
     <ClInclude Include="Engine\Scene\GameObjectHelper.h" />
@@ -721,6 +736,7 @@
     <ClInclude Include="Engine\Core\ECS\SystemsGroup.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.h" />
     <ClInclude Include="Engine\Systems\ErrorLoggingSystem.h" />
+    <ClInclude Include="Engine\Mono\Systems\MonoSyncSystem.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
