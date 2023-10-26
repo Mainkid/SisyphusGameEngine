@@ -137,7 +137,7 @@ float4 PS_Directional(PS_IN input) : SV_Target
             layer = i;
             break;
         }
-    float bias = 0.005f;
+    float bias = 0.01f * (1 + layer);
     layer2 = clamp(layer + 1, 0, 3);
     
    

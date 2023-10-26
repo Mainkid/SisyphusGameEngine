@@ -85,6 +85,7 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
 {
     using namespace DirectX::SimpleMath;
     std::vector<Vector4> frustumCorners = GetFrustumCorners(view, proj);
+    std::vector<float> planesProportions = {0, 0.02,0.05,0.15,1 };
     lc.orthoMatrices.clear();
     lc.viewMatrices.clear();
     lc.distances.clear();
@@ -98,10 +99,10 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
         std::vector<Vector4> newCorners = std::vector<Vector4>();
         for (int j = 0; j < 8; j += 2)
         {
-            newCorners.push_back(frustumCorners[j] + frustumCorners[j + 1] * pow((i - 1 + 0.0001f) / n, exp));
+            newCorners.push_back(frustumCorners[j] + frustumCorners[j + 1] * planesProportions[i-1]);
             newCorners[j].w = 1.0f;
 
-            newCorners.push_back(frustumCorners[j] + frustumCorners[j + 1] * pow((i + 0.0001f) / n, exp));
+            newCorners.push_back(frustumCorners[j] + frustumCorners[j + 1] * planesProportions[i]);
             newCorners[j + 1].w = 1.0f;
         }
 
@@ -143,8 +144,8 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
 
         lc.orthoMatrices.push_back(Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ));
         lc.viewMatrices.push_back(viewMatrix2);
-        lc.distances.push_back(Vector4(farZ * pow((i * 1.0f / n), exp),
-            farZ * pow((i * 1.0f / n), exp), farZ * pow((i * 1.0f / n), exp), 1.0f));
+        lc.distances.push_back(Vector4(farZ * planesProportions[i],
+            farZ * planesProportions[i], farZ * planesProportions[i], 1.0f));
     }
 
     return std::vector<Matrix>();
