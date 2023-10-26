@@ -34,6 +34,17 @@ SyResult SyErrorLoggingSystem::Init()
 
 SyResult SyErrorLoggingSystem::Run()
 {
+	std::filesystem::path logPath_(logPath);
+	unsigned fileCtr = 0;
+	for (auto& directoryEntry : std::filesystem::directory_iterator(logPath_))
+	{
+		fileCtr++;
+		if (fileCtr > 10)
+		{
+			std::filesystem::remove(directoryEntry);
+			directoryEntry = directoryEntry.
+		}
+	}
 	for (auto& sink : SY_EL->sinks)
 		for (auto& message : SY_EL->messagePool)
 		{
