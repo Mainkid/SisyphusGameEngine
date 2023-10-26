@@ -1328,6 +1328,13 @@
      "z": 0.9999847412109375
     }
    }
+  },
+  {
+   "id": 0,
+   "struct GameObjectComp": {
+    "Name": "",
+    "Tag": "None"
+   }
   }
  ]
 }

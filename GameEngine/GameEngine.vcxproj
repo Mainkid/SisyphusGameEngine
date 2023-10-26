@@ -163,6 +163,7 @@
     <ClCompile Include="Engine\GameEngine.cpp" />
     <ClCompile Include="Engine\Components\Mesh.cpp" />
     <ClCompile Include="Engine\Obsolete\RenderPipeline.cpp" />
+    <ClCompile Include="Engine\Systems\PrepareEventsSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudPostRenderSystem.cpp" />
@@ -650,6 +651,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Core\ECS\Event.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SySceneLoadEvent.h" />
     <ClInclude Include="Engine\Core\ResourcePath.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.h" />
     <ClInclude Include="Engine\Components\Material.h" />
@@ -682,6 +685,7 @@
     <ClInclude Include="Engine\Core\Rendering\Lights\LightData.h" />
     <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h" />
     <ClInclude Include="Engine\Obsolete\RenderPipeline.h" />
+    <ClInclude Include="Engine\Systems\PrepareEventsSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\ContentBrowserTypes.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudHierarchySystem.h" />
@@ -725,6 +729,7 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.h" />
     <ClInclude Include="Engine\Tools\Data\Vector.h" />
+    <ClInclude Include="Engine\Tools\MathHelper.h" />
     <ClInclude Include="Engine\Systems\MaterialUpdateSystem.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ToneMappingRenderSystem.h" />

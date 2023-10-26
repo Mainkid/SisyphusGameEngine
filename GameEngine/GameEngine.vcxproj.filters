@@ -76,6 +76,7 @@
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.cpp" />
     <ClCompile Include="Engine\Systems\ErrorLoggingSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\PrepareEventsSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -184,6 +185,10 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.h" />
     <ClInclude Include="Engine\Core\ResourcePath.h" />
     <ClInclude Include="Engine\Tools\Data\RingBuffer.h" />
+    <ClInclude Include="Engine\Core\ECS\Event.h" />
+    <ClInclude Include="Engine\Systems\PrepareEventsSystem.h" />
+    <ClInclude Include="Engine\Tools\MathHelper.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SySceneLoadEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

@@ -1,5 +1,5 @@
 #include "ResourceService.h"
-
+#include "../Core/ECS/Events/SySceneLoadEvent.h"
 
 ResourceService::ResourceService()
 {
@@ -297,7 +297,6 @@ void ResourceService::LoadSceneFromFile(std::filesystem::path filePath, entt::re
 	hudData.selectedContent.uuid = boost::uuids::nil_uuid();
 	hudData.selectedEntityIDs.clear();
 
-	ServiceLocator::instance()->Get<EngineContext>()->isNewSceneLoaded = true;
 }
 
 void ResourceService::SaveSceneToFile(std::filesystem::path filePath, entt::registry* ecs)

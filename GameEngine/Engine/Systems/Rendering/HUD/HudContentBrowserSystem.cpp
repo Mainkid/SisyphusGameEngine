@@ -8,6 +8,7 @@
 #include "../../HardwareContext.h"
 #include <uuid.hpp>
 #include <fstream>
+#include "../../../Tools/MathHelper.h"
 
 SyResult HudContentBrowserSystem::Init()
 {

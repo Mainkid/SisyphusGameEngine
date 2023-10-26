@@ -16,12 +16,7 @@ SyResult SyHudConsoleSystem::Init()
 				{'E', true},
 				{'C', true}};
 
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "HUD console system initialization successful. ");
-	SY_LOG_HUD(SY_LOGLEVEL_WARNING, "Example warning! ");
-	SY_LOG_HUD(SY_LOGLEVEL_ERROR, "Example error! ");
-	SY_LOG_HUD(SY_LOGLEVEL_CRITICAL, "Example critical! ");
-	SY_EL->AddChannel("FUCK");
-	SY_LOG("FUCK", SY_LOGLEVEL_DEBUG, "Example fuck!");
+
     return SyResult();
 }
 
@@ -100,6 +95,7 @@ SyResult SyHudConsoleSystem::Run()
 	}
 	ImGui::EndChild();
 	ImGui::End();
+	
 	return result;
 }
 

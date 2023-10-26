@@ -3,6 +3,7 @@
 #include "../Core/ServiceLocator.h"
 #include "TransformHelper.h"
 #include "../Scene/GameObjectHelper.h"
+#include "../Core/ECS/Events/SySceneLoadEvent.h"
 
 SyResult TransformSystem::Init()
 {
@@ -17,14 +18,15 @@ SyResult TransformSystem::Run()
 	SyResult result;
 	auto view = _ecs->view<TransformComponent>();
 
-	if (ec->isNewSceneLoaded)
+	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SySceneLoadEvent); 		
+	if (eventView.size_hint()>0)
 	{
 		ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
 		for (auto& entity : view)
 		{
 			TransformComponent& tc = view.get<TransformComponent>(entity);
 			tc.parent = static_cast<uint32_t>(ser.GetContextEntityToEntity(static_cast<entt::entity>(tc.parent)));
-			
+
 		}
 
 		for (auto& entity : view)
@@ -32,7 +34,6 @@ SyResult TransformSystem::Run()
 			TransformComponent& tc = view.get<TransformComponent>(entity);
 			GameObjectHelper::AddChild(_ecs, static_cast<entt::entity>(tc.parent), entity);
 		}
-		ec->isNewSceneLoaded = false;
 	}
 
 	for (auto& entity :view)

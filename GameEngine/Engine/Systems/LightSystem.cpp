@@ -5,6 +5,7 @@
 #include "Rendering\RenderContext.h"
 #include "../Core/ServiceLocator.h"
 #include "../Components/TransformComponent.h"
+#include "../../Tools/MathHelper.h"
 
 SyResult LightSystem::Init()
 {
@@ -150,12 +151,12 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
         {
             const auto trf = Vector4::Transform(v, viewMatrix2);
 
-            minX = std::min(minX, trf.x);
-            maxX = std::max(maxX, trf.x);
-            minY = std::min(minY, trf.y);
-            maxY = std::max(maxY, trf.y);
-            minZ = std::min(minZ, trf.z);
-            maxZ = std::max(maxZ, trf.z);
+            minX = SyMathHelper::Min(minX, trf.x);
+            maxX = SyMathHelper::Max(maxX, trf.x);
+            minY = SyMathHelper::Min(minY, trf.y);
+            maxY = SyMathHelper::Max(maxY, trf.y);
+            minZ = SyMathHelper::Min(minZ, trf.z);
+            maxZ = SyMathHelper::Max(maxZ, trf.z);
         }
 
         constexpr float zMult = 5.0f;
@@ -226,12 +227,12 @@ void LightSystem::GenerateOrthoFromFrustum(LightComponent& lc, Vector3 direction
     {
         const Vector4 trf = Vector4::Transform(v, lc.viewMatrix);
 
-        minX = std::min(minX, trf.x);
-        maxX = std::max(maxX, trf.x);
-        minY = std::min(minY, trf.y);
-        maxY = std::max(maxY, trf.y);
-        minZ = std::min(minZ, trf.z);
-        maxZ = std::max(maxZ, trf.z);
+        minX = SyMathHelper::Min(minX, trf.x);
+        maxX = SyMathHelper::Max(maxX, trf.x);
+        minY = SyMathHelper::Min(minY, trf.y);
+        maxY = SyMathHelper::Max(maxY, trf.y);
+        minZ = SyMathHelper::Min(minZ, trf.z);
+        maxZ = SyMathHelper::Max(maxZ, trf.z);
     }
 
     constexpr float zMult = 10.0f;

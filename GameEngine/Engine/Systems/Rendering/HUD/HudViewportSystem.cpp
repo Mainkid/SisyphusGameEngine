@@ -9,6 +9,7 @@
 #include "../../../Scene/GameObjectHelper.h"
 #include "../../../Components/MeshComponent.h"
 #include "../../ResourceService.h"
+#include "../../../Core/ECS/Events/SySceneLoadEvent.h"
 
 
 SyResult HudViewportSystem::Init()
@@ -260,7 +261,9 @@ void HudViewportSystem::DrawMainMenuBar()
 				// press the OK button
 				BOOL ok = GetOpenFileName(&ofn);
 				if (ok) {
+				
 					rs->LoadSceneFromFile(ofn.lpstrFile, _ecs);
+					CallEvent<SySceneLoadEvent>("SySceneLoadEvent");
 					MessageBox(hc->window->GetHWND(), L"Plumb", L"Plumb", MB_OK);
 				}
 
