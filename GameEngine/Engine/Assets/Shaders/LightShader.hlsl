@@ -172,6 +172,8 @@ float4 PS_Ambient(PS_IN input) : SV_Target
     float3 instanceID =InstanceIDTex.Sample(textureSampler, input.col.xy);
     float3 skyBoxColor = skyboxTexture.Sample(textureSampler, input.col.xy);
     float3 resColor;
-    resColor = pixelColor * lightData.color.xyz * (instanceID.x > 0) + skyBoxColor*(instanceID.x<0);
+
+    float lightIntensity = lightData.color.w;
+    resColor = pixelColor * lightData.color.xyz * (instanceID.x > 0)*lightIntensity + skyBoxColor*(instanceID.x<0);
     return float4(resColor, 1.0f);
 }
