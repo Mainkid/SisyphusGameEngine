@@ -84,23 +84,13 @@ std::vector<Vector4> LightSystem::GetFrustumCorners(const Matrix& view, const Ma
 std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, Vector3 direction, const Matrix& view, const Matrix proj, float farZ)
 {
     using namespace DirectX::SimpleMath;
-    using namespace DirectX;
-
-    BoundingSphere bs;
     std::vector<Vector4> frustumCorners = GetFrustumCorners(view, proj);
-    
-    static float boundingSphereRadius[5];
-    
-
-   
-
+    std::vector<float> planesProportions = {0, 0.05,0.1,0.35,1 };
     lc.orthoMatrices.clear();
     lc.viewMatrices.clear();
     lc.distances.clear();
 
     int n = 4;
-    int exp = 3;
-
 
 
     for (int i = 1; i <= n; i++)
@@ -108,35 +98,22 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
         std::vector<Vector4> newCorners = std::vector<Vector4>();
         for (int j = 0; j < 8; j += 2)
         {
-            newCorners.push_back(frustumCorners[j] + frustumCorners[j + 1] * pow((i - 1 + 0.0001f) / n, exp));
+            newCorners.push_back(frustumCorners[j] + frustumCorners[j + 1] * planesProportions[i-1]);
             newCorners[j].w = 1.0f;
 
-            newCorners.push_back(frustumCorners[j] + frustumCorners[j + 1] * pow((i + 0.0001f) / n, exp));
+            newCorners.push_back(frustumCorners[j] + frustumCorners[j + 1] * planesProportions[i]);
             newCorners[j + 1].w = 1.0f;
         }
 
+        Vector3 center = Vector3::Zero;
 
-        //
-        XMFLOAT3 corners[8];
-
-        for (int i = 0; i < 8; i++)
+        for (const auto& v : newCorners)
         {
-            corners[i] = Vector3(newCorners[i]);
+            center += Vector3(v);
         }
 
 
-        BoundingSphere::CreateFromPoints(bs, 8, corners, sizeof(XMFLOAT3));
-
-        if (boundingSphereRadius[i] < bs.Radius)
-        {
-            boundingSphereRadius[i] = bs.Radius + 1;
-        }
-
-        std::cout << boundingSphereRadius[i] << std::endl;
-
-
-
-        Vector3 center = bs.Center;
+        center /= newCorners.size();
 
         Matrix viewMatrix2 = DirectX::XMMatrixLookAtLH(center, center - direction, Vector3::Up);
 
@@ -151,40 +128,23 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
         {
             const auto trf = Vector4::Transform(v, viewMatrix2);
 
-            minX = SyMathHelper::Min(minX, trf.x);
-            maxX = SyMathHelper::Max(maxX, trf.x);
-            minY = SyMathHelper::Min(minY, trf.y);
-            maxY = SyMathHelper::Max(maxY, trf.y);
-            minZ = SyMathHelper::Min(minZ, trf.z);
-            maxZ = SyMathHelper::Max(maxZ, trf.z);
+            minX = std::min(minX, trf.x);
+            maxX = std::max(maxX, trf.x);
+            minY = std::min(minY, trf.y);
+            maxY = std::max(maxY, trf.y);
+            minZ = std::min(minZ, trf.z);
+            maxZ = std::max(maxZ, trf.z);
         }
 
-        constexpr float zMult = 5.0f;
+        constexpr float zMult = 3.0f;
         minZ = (minZ < 0) ? minZ * zMult : minZ / zMult;
         maxZ = (maxZ < 0) ? maxZ / zMult : maxZ * zMult;
 
 
-        minX = center.x - boundingSphereRadius[i];
-        maxX = center.x + boundingSphereRadius[i];
-        minY = center.y - boundingSphereRadius[i];
-        maxY = center.y + boundingSphereRadius[i];
-
-        
-        auto shadowProj = Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ);
-        
-        Vector3 shadowOrigin = Vector3::Transform(Vector3::Zero, viewMatrix2 * shadowProj);
-        shadowOrigin *= (rc->SHADOWMAP_WIDTH / 2.0f);
-        Vector2 roundedOrigin = Vector2(round(shadowOrigin.x), round(shadowOrigin.y));
-        Vector2 rounding = roundedOrigin - shadowOrigin;
-        rounding /= (rc->SHADOWMAP_WIDTH / 2.0f);
-        Matrix roundMatrix = Matrix::CreateTranslation(rounding.x, rounding.y, 0);
-        
-        lc.orthoMatrices.push_back(shadowProj*roundMatrix);
-
-
+        lc.orthoMatrices.push_back(Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ));
         lc.viewMatrices.push_back(viewMatrix2);
-        lc.distances.push_back(Vector4(farZ * pow((i * 1.0f / n), exp),
-            farZ * pow((i * 1.0f / n), exp), farZ * pow((i * 1.0f / n), exp), 1.0f));
+        lc.distances.push_back(Vector4(farZ * planesProportions[i],
+            farZ * planesProportions[i], farZ * planesProportions[i], 1.0f));
     }
 
     return std::vector<Matrix>();

@@ -15,7 +15,7 @@ SyResult LightRenderSystem::Init()
     rc = ServiceLocator::instance()->Get<RenderContext>();
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "LightRender system initialization successful.");
     return SyResult();
-
+    
 }
 
 SyResult LightRenderSystem::Run()
@@ -121,7 +121,7 @@ SyResult LightRenderSystem::Run()
 
         hc->context->OMSetBlendState(rc->lightBlendState.Get(), nullptr, 0xffffffff);
         hc->context->PSSetSamplers(0, 1, rc->samplerState.GetAddressOf());
-        hc->context->PSSetSamplers(1, 1, rc->samplerDepthState.GetAddressOf());
+        hc->context->PSSetSamplers(1, 1, rc->shadowMapSampler.GetAddressOf());
 
         hc->context->OMSetRenderTargets(1, rc->gBuffer->HDRBufferRTV.GetAddressOf(), hc->depthStencilView.Get());
         //hc->renderTarget->SetRenderTarget(hc->depthStencilView.Get());
@@ -136,7 +136,7 @@ SyResult LightRenderSystem::Run()
             {
                 hc->context->PSSetShader(rc->dirLightShader->pixelShader.Get(), nullptr, 0);
                 hc->context->PSSetShaderResources(8, 1, &rc->shadowMapResourceView);
-                hc->context->PSSetShaderResources(10, 1, &rc->shadowResourceView);
+                hc->context->PSSetShaderResources(10, 1, &rc->m_bluredShadowSRV);
             }
             else
             {
@@ -237,7 +237,6 @@ SyResult LightRenderSystem::Run()
             hc->context->DrawIndexed(light.aabb->indexBuffer->size, 0, 0);
 
             //Final Pass
-
             hc->context->RSSetState(rc->cullBackRS.Get());
             hc->context->OMSetDepthStencilState(rc->finalPassStencilState.Get(), 0);
             hc->context->VSSetShader(rc->dirLightShader->vertexShader.Get(), nullptr, 0);
@@ -264,4 +263,5 @@ SyResult LightRenderSystem::Destroy()
 void LightRenderSystem::ShadowMap()
 {
     
+
 }

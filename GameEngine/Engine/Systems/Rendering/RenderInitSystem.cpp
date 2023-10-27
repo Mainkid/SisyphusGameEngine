@@ -77,6 +77,23 @@ SyResult RenderInitSystem::Init()
     HRESULT hr = hc->device->CreateSamplerState(&sampDesc, rc->samplerState.GetAddressOf()); //Create sampler state
 
 
+    D3D11_SAMPLER_DESC sampDesc2;
+    ZeroMemory(&sampDesc, sizeof(sampDesc2));
+    sampDesc2.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    sampDesc2.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc2.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc2.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc2.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    sampDesc2.MinLOD = 0;
+    sampDesc2.MaxLOD = D3D11_FLOAT32_MAX;
+    sampDesc2.MaxAnisotropy = 0;
+    sampDesc2.MipLODBias = 0;
+    hr = hc->device->CreateSamplerState(&sampDesc2, rc->shadowMapSampler.GetAddressOf()); //Create sampler state
+
+
+    sampDesc2.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+    hr = hc->device->CreateSamplerState(&sampDesc2, rc->pointSampler.GetAddressOf()); //Create sampler state
+
     D3D11_DEPTH_STENCIL_DESC depthstencildesc;
     ZeroMemory(&depthstencildesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
 
@@ -349,29 +366,32 @@ SyResult RenderInitSystem::Init()
     textureDesc.Height = rc->SHADOWMAP_HEIGHT;
     textureDesc.MipLevels = 1;
     textureDesc.ArraySize = 4;
-    textureDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+    textureDesc.Format = DXGI_FORMAT_R32G32_TYPELESS;
     textureDesc.SampleDesc.Count = 1;
     textureDesc.Usage = D3D11_USAGE_DEFAULT;
-    textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
     textureDesc.CPUAccessFlags = 0;
     textureDesc.MiscFlags = 0;
 
     // Create the render target texture.
     result = hc->device->CreateTexture2D(&textureDesc, NULL, &rc->m_renderTargetTexture);
+    result = hc->device->CreateTexture2D(&textureDesc, NULL, &rc->m_bluredShadowTexture);
     // Setup the description of the render target view.
 
-    renderTargetViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
+    renderTargetViewDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
     renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
     renderTargetViewDesc.Texture2DArray.MipSlice = 0;
     renderTargetViewDesc.Texture2DArray.ArraySize = 4;
     renderTargetViewDesc.Texture2DArray.FirstArraySlice = 0;
 
+
     // Create the render target view.
     result = hc->device->CreateRenderTargetView(rc->m_renderTargetTexture, &renderTargetViewDesc, &rc->m_renderTargetView);
+    result = hc->device->CreateRenderTargetView(rc->m_bluredShadowTexture, &renderTargetViewDesc, &rc->m_bluredShadowRTV);
 
     //result=engine->device->CreateRenderTargetView(m_renderTargetTexture, nullptr, &m_renderTargetView);
     // Setup the description of the shader resource view.
-    shaderResourceViewDesc2.Format = DXGI_FORMAT_R32_FLOAT;
+    shaderResourceViewDesc2.Format = DXGI_FORMAT_R32G32_FLOAT;
     shaderResourceViewDesc2.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
     shaderResourceViewDesc2.Texture2DArray.MostDetailedMip = 0;
     shaderResourceViewDesc2.Texture2DArray.MipLevels = 1;
@@ -381,7 +401,7 @@ SyResult RenderInitSystem::Init()
 
     // Create the shader resource view.
     result = hc->device->CreateShaderResourceView(rc->m_renderTargetTexture, &shaderResourceViewDesc2, &rc->m_shaderResourceView);
-
+    result = hc->device->CreateShaderResourceView(rc->m_bluredShadowTexture, &shaderResourceViewDesc2, &rc->m_bluredShadowSRV);
 
     //Creating instance ID Texture
     D3D11_TEXTURE2D_DESC desc2;
@@ -478,6 +498,14 @@ SyResult RenderInitSystem::Init()
     rc->editorGridRenderer = std::make_unique<Shader>();
     rc->editorGridRenderer->Initialize(L"./Engine/Assets/Shaders/EditorGridShader.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL,USE_POSITION,"VSMain");
+
+    rc->gaussianBlurX = std::make_unique<Shader>();
+    rc->gaussianBlurX->Initialize(L"./Engine/Assets/Shaders/GaussianBlur.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL | COMPILE_GEOM, USE_POSITION | USE_COLOR, "VS_Blur", "PS_BlurX","GSMain");
+
+    rc->gaussianBlurY = std::make_unique<Shader>();
+    rc->gaussianBlurY->Initialize(L"./Engine/Assets/Shaders/GaussianBlur.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL | COMPILE_GEOM, USE_POSITION | USE_COLOR, "VS_Blur", "PS_BlurY","GSMain");
 
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "RenderInit system initialization successful. ");
     return SyResult();

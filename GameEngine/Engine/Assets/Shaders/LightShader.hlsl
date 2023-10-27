@@ -39,7 +39,7 @@ Texture2DArray depthMapTexture : register(t10);
 
 
 SamplerState textureSampler : SAMPLER : register(s0);
-SamplerState shadowSampler : register(s1);
+SamplerState shadowSampler : SAMPLER : register(s1);
 
 struct VS_IN
 {
@@ -67,15 +67,47 @@ PS_IN VSMain(VS_IN input)
     return output;
 }
 
+float LinStep(float low, float high, float v)
+{
+    return clamp((v - low) / (high - low), 0.0f, 1.0f);
+}
 
+
+float SampleVarianceShadowMap(float3 worldPos,int layer)
+{
+    float4 posLight = float4(worldPos, 1);
+    float3 projectTexCoord;
+    float shadowSum = 0;
+    float depthValue = 0;
+    float bias = 0.001f;
+    
+    posLight = mul(posLight, viewProj[layer]);
+    projectTexCoord.x = posLight.x / posLight.w / 2.0f + 0.5f;
+    projectTexCoord.y = -posLight.y / posLight.w / 2.0f + 0.5f;
+    projectTexCoord.z = layer;
+    
+    float compare = posLight.z / posLight.w - bias;
+    
+    float2 moments = depthMapTexture.Sample(shadowSampler, projectTexCoord).rg;
+    float p = step(compare, moments.x);
+    float variance = max(moments.y - moments.x * moments.x, 0.00002);
+    
+    float d = compare - moments.x;
+    float pMax = LinStep(0.4, 1.0, variance / (variance + d * d));
+   
+ 
+    
+    return 1-min(max(p, pMax), 1.0f);
+
+}
 
 
 float4 PS_Directional(PS_IN input) : SV_Target
 {
     
-    float3 albedoColor =DiffuseTex.Sample(textureSampler, input.col.xy);
+    float3 albedoColor = DiffuseTex.Sample(textureSampler, input.col.xy);
     //pixelColor = pow(pixelColor, 1.0f / 2.2f);
-    float3 worldPos =PositionTex.Sample(textureSampler, input.col.xy);
+    float3 worldPos = PositionTex.Sample(textureSampler, input.col.xy);
     float3 normal = NormalTex.Sample(textureSampler, input.col.xy);
     float3 metallicColor = MetallicTex.Sample(textureSampler, input.col.xy);
     float3 specularColor = SpecularTex.Sample(textureSampler, input.col.xy);
@@ -92,12 +124,13 @@ float4 PS_Directional(PS_IN input) : SV_Target
     float3 H = normalize(toEye + lightVec);
     
     //PCF --->
+    float blendArea = 0.2f;
     
-    float bias = 0.005f;
     float3 projectTexCoord;
     float depthValue;
     float lightDepthValue;
     int layer = 3;
+    int layer2;
     float depthVal = abs(mul(float4(worldPos, 1), worldView).z);
     for (int i = 0; i < 4; i++)
         if (depthVal < distances[i].x)
@@ -105,33 +138,16 @@ float4 PS_Directional(PS_IN input) : SV_Target
             layer = i;
             break;
         }
+    float bias = 0.01f * (1 + layer);
+    layer2 = clamp(layer + 1, 0, 3);
     
-    float texelWidth = 1.0 / 1280.0f;
-    float texelHeight = 1.0 / 720.0f;
-    float texelOffset = 2;
-    float2 texelSize = float2(texelWidth, texelHeight)*texelOffset;
-    float shadowSum = 0.0f;
+   
+    float shadowSum1 = SampleVarianceShadowMap(worldPos,layer);
+    //float shadowSum2 = calcShadowValue(worldPos, layer2, bias);
     
-    float4 posLight = float4(worldPos, 1);
-    posLight = mul(posLight, viewProj[layer]);
-    
-    
-    projectTexCoord.x = posLight.x / posLight.w / 2.0f + 0.5f;
-    projectTexCoord.y = -posLight.y / posLight.w / 2.0f + 0.5f;
-    projectTexCoord.z = layer;
-    lightDepthValue = posLight.z / posLight.w - bias;
-    
-    for (int y = -2; y <= 2; y++)
-    {
-        for (int x = -2; x <= 2; x++)
-        {
-            float3 offset = float3(float2(x, y) * texelSize, 0);
-            depthValue = depthMapTexture.Sample(textureSampler, projectTexCoord+offset).r;
-            shadowSum += lightDepthValue > depthValue;
-        }
-    }
-    
-    shadowSum = shadowSum / 25.0f;
+    //float lerpValue = 1-clamp((-depthVal+distances[layer].x) / blendArea, 0, 1);
+    //return float4(lerpValue, 0, 0, 1);
+    //shadowSum1 = lerp(shadowSum1, shadowSum2, lerpValue);
     //<--- PCF
     
     //depthValue = depthMapTexture.Sample(textureSampler, projectTexCoord).r;
@@ -141,11 +157,11 @@ float4 PS_Directional(PS_IN input) : SV_Target
     float3 F0 = float3(0.04, 0.04, 0.04);
     F0 = lerp(F0, albedoColor, (metallicColor.r + metallicColor.g + metallicColor.b) / 3.0f);
     float3 instanceID = InstanceIDTex.Sample(textureSampler, input.col.xy);
-    float3 resColor = PBR(normal, toEye, lightVec, H,F0,
+    float3 resColor = PBR(normal, toEye, lightVec, H, F0,
     lightData.color.xyz, albedoColor, roughnessColor, metallicColor, emissiveColor, lightIntesity) * (instanceID.x > 0);
     
     
-    return float4(resColor * (1 - shadowSum), 1.0f);
+    return float4(resColor * (1 - shadowSum1), 1.0f);
 
 }
 
@@ -153,10 +169,11 @@ float4 PS_Ambient(PS_IN input) : SV_Target
 {
     
     float3 pixelColor = DiffuseTex.Sample(textureSampler, input.col.xy);
-    //pixelColor = pow(pixelColor, 2.2f);
     float3 instanceID =InstanceIDTex.Sample(textureSampler, input.col.xy);
     float3 skyBoxColor = skyboxTexture.Sample(textureSampler, input.col.xy);
     float3 resColor;
-    resColor = pixelColor * lightData.color.xyz * (instanceID.x > 0) + skyBoxColor*(instanceID.x<0);
+
+    float lightIntensity = lightData.color.w;
+    resColor = pixelColor * lightData.color.xyz * (instanceID.x > 0)*lightIntensity + skyBoxColor*(instanceID.x<0);
     return float4(resColor, 1.0f);
 }

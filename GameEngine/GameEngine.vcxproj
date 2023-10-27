@@ -772,6 +772,9 @@
     <None Include="Engine\Assets\Shaders\EditorGridShader.hlsl">
       <FileType>Document</FileType>
     </None>
+    <FxCompile Include="Engine\Assets\Shaders\GaussianBlur.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Engine\Assets\Shaders\OpaqueShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
