@@ -79,15 +79,15 @@ SyResult RenderInitSystem::Init()
 
     D3D11_SAMPLER_DESC sampDesc2;
     ZeroMemory(&sampDesc, sizeof(sampDesc2));
-    sampDesc2.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+    sampDesc2.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
     sampDesc2.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
     sampDesc2.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
     sampDesc2.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc2.ComparisonFunc = D3D11_COMPARISON_LESS;
+    sampDesc2.ComparisonFunc = D3D11_COMPARISON_NEVER;
     sampDesc2.MinLOD = 0;
     sampDesc2.MaxLOD = D3D11_FLOAT32_MAX;
-    sampDesc2.MipLODBias = 0;
     sampDesc2.MaxAnisotropy = 0;
+    sampDesc2.MipLODBias = 0;
     hr = hc->device->CreateSamplerState(&sampDesc2, rc->shadowMapSampler.GetAddressOf()); //Create sampler state
 
 
@@ -363,7 +363,7 @@ SyResult RenderInitSystem::Init()
     textureDesc.Height = rc->SHADOWMAP_HEIGHT;
     textureDesc.MipLevels = 1;
     textureDesc.ArraySize = 4;
-    textureDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+    textureDesc.Format = DXGI_FORMAT_R32G32_TYPELESS;
     textureDesc.SampleDesc.Count = 1;
     textureDesc.Usage = D3D11_USAGE_DEFAULT;
     textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
@@ -374,7 +374,7 @@ SyResult RenderInitSystem::Init()
     result = hc->device->CreateTexture2D(&textureDesc, NULL, &rc->m_renderTargetTexture);
     // Setup the description of the render target view.
 
-    renderTargetViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
+    renderTargetViewDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
     renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
     renderTargetViewDesc.Texture2DArray.MipSlice = 0;
     renderTargetViewDesc.Texture2DArray.ArraySize = 4;
@@ -385,7 +385,7 @@ SyResult RenderInitSystem::Init()
 
     //result=engine->device->CreateRenderTargetView(m_renderTargetTexture, nullptr, &m_renderTargetView);
     // Setup the description of the shader resource view.
-    shaderResourceViewDesc2.Format = DXGI_FORMAT_R32_FLOAT;
+    shaderResourceViewDesc2.Format = DXGI_FORMAT_R32G32_FLOAT;
     shaderResourceViewDesc2.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
     shaderResourceViewDesc2.Texture2DArray.MostDetailedMip = 0;
     shaderResourceViewDesc2.Texture2DArray.MipLevels = 1;

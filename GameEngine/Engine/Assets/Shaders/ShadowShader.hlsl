@@ -80,6 +80,7 @@ GS_IN
 
 float4 PS_Main(GS_OUT output) :SV_Target
 {
-    return float4(1, 0, 0, 1);
+    float z = output.pos.z / output.pos.w;
+    return float4(z, z * z, 0, 1);
 
 }

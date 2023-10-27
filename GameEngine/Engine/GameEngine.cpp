@@ -26,7 +26,7 @@ int main()
 
     EngineCore::instance()->StartUp();
 
-
+    
 
     entt::registry* ecs = &ServiceLocator::instance()->Get<EngineContext>()->ecs;
     
@@ -75,7 +75,7 @@ int main()
     ecs->get<LightComponent>(lightPoint2).lightBehavior = LightBehavior::Static;
 
 
-
+    //auto model = GameObjectHelper::CreateMesh(ecs, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath("./Game/Assets/fbx/artifact.fbx"));
     //ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
     //ser.AddEcsCompMeta<GameObjectComp>();
     //ser.AddEcsCompMeta<TransformComponent>();

@@ -84,7 +84,7 @@ SyResult ShadowRenderSystem::Run()
                     hc->context->OMSetRenderTargets(1, &rc->m_renderTargetView, rc->shadowStencilView.Get());
                     hc->context->VSSetShader(rc->shadowShader->vertexShader.Get(), nullptr, 0);
                     hc->context->GSSetShader(rc->shadowShader->geomShader.Get(), nullptr, 0);
-
+                    hc->context->PSSetShader(rc->shadowShader->pixelShader.Get(), nullptr, 0);
                     hc->context->IASetIndexBuffer(mesh->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
                     //!hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                     //    engineActor->model->strides, engineActor->model->offsets);

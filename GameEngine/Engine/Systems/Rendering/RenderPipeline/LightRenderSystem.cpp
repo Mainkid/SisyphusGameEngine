@@ -15,7 +15,7 @@ SyResult LightRenderSystem::Init()
     rc = ServiceLocator::instance()->Get<RenderContext>();
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "LightRender system initialization successful.");
     return SyResult();
-
+    
 }
 
 SyResult LightRenderSystem::Run()
@@ -136,7 +136,7 @@ SyResult LightRenderSystem::Run()
             {
                 hc->context->PSSetShader(rc->dirLightShader->pixelShader.Get(), nullptr, 0);
                 hc->context->PSSetShaderResources(8, 1, &rc->shadowMapResourceView);
-                hc->context->PSSetShaderResources(10, 1, &rc->shadowResourceView);
+                hc->context->PSSetShaderResources(10, 1, &rc->m_shaderResourceView);
             }
             else
             {

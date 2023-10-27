@@ -39,7 +39,7 @@ Texture2DArray depthMapTexture : register(t10);
 
 
 SamplerState textureSampler : SAMPLER : register(s0);
-SamplerComparisonState shadowSampler : SAMPLER : register(s1);
+SamplerState shadowSampler : SAMPLER : register(s1);
 
 struct VS_IN
 {
@@ -67,37 +67,38 @@ PS_IN VSMain(VS_IN input)
     return output;
 }
 
-float calcShadowValue(float3 worldPos,float layer,float bias)
+float LinStep(float low, float high, float v)
+{
+    return clamp((v - low) / (high - low), 0.0f, 1.0f);
+}
+
+
+float SampleVarianceShadowMap(float3 worldPos,int layer)
 {
     float4 posLight = float4(worldPos, 1);
     float3 projectTexCoord;
     float shadowSum = 0;
     float depthValue = 0;
-    
-    float texelWidth = 1.0 / 1280.0f;
-    float texelHeight = 1.0 / 720.0f;
-    float texelOffset = 2;
-    float2 texelSize = float2(texelWidth, texelHeight) * texelOffset;
+    float bias = 0.001f;
     
     posLight = mul(posLight, viewProj[layer]);
-    
-    
     projectTexCoord.x = posLight.x / posLight.w / 2.0f + 0.5f;
     projectTexCoord.y = -posLight.y / posLight.w / 2.0f + 0.5f;
     projectTexCoord.z = layer;
-    float lightDepthValue = posLight.z / posLight.w - bias;
     
-    for (int y = -2; y <= 2; y++)
-    {
-        for (int x = -2; x <= 2; x++)
-        {
-            float3 offset = float3(float2(x, y) * texelSize, 0);
-            shadowSum += depthMapTexture.SampleCmpLevelZero(shadowSampler, projectTexCoord + offset, lightDepthValue).r;
-        }
-    }
+    float compare = posLight.z / posLight.w - bias;
     
-    shadowSum = shadowSum / 25.0f;
-    return 1-shadowSum;
+    float2 moments = depthMapTexture.Sample(shadowSampler, projectTexCoord).rg;
+    float p = step(compare, moments.x);
+    float variance = max(moments.y - moments.x * moments.x, 0.00002);
+    
+    float d = compare - moments.x;
+    float pMax = LinStep(0.2, 1.0, variance / (variance + d * d));
+   
+ 
+    
+    return 1-min(max(p, pMax), 1.0f);
+
 }
 
 
@@ -141,10 +142,10 @@ float4 PS_Directional(PS_IN input) : SV_Target
     layer2 = clamp(layer + 1, 0, 3);
     
    
-    float shadowSum1 = calcShadowValue(worldPos, layer, bias);
+    float shadowSum1 = SampleVarianceShadowMap(worldPos, layer);
     //float shadowSum2 = calcShadowValue(worldPos, layer2, bias);
     
-    float lerpValue = 1-clamp((-depthVal+distances[layer].x) / blendArea, 0, 1);
+    //float lerpValue = 1-clamp((-depthVal+distances[layer].x) / blendArea, 0, 1);
     //return float4(lerpValue, 0, 0, 1);
     //shadowSum1 = lerp(shadowSum1, shadowSum2, lerpValue);
     //<--- PCF
