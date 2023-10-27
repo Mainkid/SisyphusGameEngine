@@ -24,8 +24,6 @@ struct GS_OUT
 {
     float4 pos : SV_Position;
     uint arrInd : SV_RenderTargetArrayIndex;
-
-
 };
 
 struct VertexInputType
@@ -58,7 +56,6 @@ void GSMain(triangle GS_IN p[3], in uint id : SV_GSInstanceID, inout TriangleStr
     }
     
     stream.RestartStrip();
-    
 }
 
 

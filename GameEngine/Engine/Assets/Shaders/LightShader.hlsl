@@ -93,7 +93,7 @@ float SampleVarianceShadowMap(float3 worldPos,int layer)
     float variance = max(moments.y - moments.x * moments.x, 0.00002);
     
     float d = compare - moments.x;
-    float pMax = LinStep(0.2, 1.0, variance / (variance + d * d));
+    float pMax = LinStep(0.4, 1.0, variance / (variance + d * d));
    
  
     
@@ -142,7 +142,7 @@ float4 PS_Directional(PS_IN input) : SV_Target
     layer2 = clamp(layer + 1, 0, 3);
     
    
-    float shadowSum1 = SampleVarianceShadowMap(worldPos, layer);
+    float shadowSum1 = SampleVarianceShadowMap(worldPos,layer);
     //float shadowSum2 = calcShadowValue(worldPos, layer2, bias);
     
     //float lerpValue = 1-clamp((-depthVal+distances[layer].x) / blendArea, 0, 1);
@@ -169,7 +169,6 @@ float4 PS_Ambient(PS_IN input) : SV_Target
 {
     
     float3 pixelColor = DiffuseTex.Sample(textureSampler, input.col.xy);
-    //pixelColor = pow(pixelColor, 2.2f);
     float3 instanceID =InstanceIDTex.Sample(textureSampler, input.col.xy);
     float3 skyBoxColor = skyboxTexture.Sample(textureSampler, input.col.xy);
     float3 resColor;

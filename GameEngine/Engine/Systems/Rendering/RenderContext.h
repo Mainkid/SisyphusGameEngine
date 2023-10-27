@@ -27,6 +27,8 @@ struct RenderContext : public IService
     std::unique_ptr<Shader> skyBoxShader;
     std::unique_ptr<Shader> toneMapper;
     std::unique_ptr<Shader> editorGridRenderer;
+    std::unique_ptr<Shader> gaussianBlurX;
+    std::unique_ptr<Shader> gaussianBlurY;
     
 
     std::shared_ptr<Mesh> cubeMesh;
@@ -37,6 +39,7 @@ struct RenderContext : public IService
     Microsoft::WRL::ComPtr<ID3D11BlendState> gridBlendState;
     Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
     Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerDepthState;
+    Microsoft::WRL::ComPtr<ID3D11SamplerState> pointSampler;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilState> offStencilState;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilState> backFaceStencilState;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilState> frontFaceStencilState;
@@ -89,8 +92,12 @@ struct RenderContext : public IService
     ID3D11Texture2D* texture_;
     
     ID3D11Texture2D* m_renderTargetTexture;
+    ID3D11Texture2D* m_bluredShadowTexture;
     ID3D11RenderTargetView* m_renderTargetView;
     ID3D11ShaderResourceView* m_shaderResourceView;
+    ID3D11UnorderedAccessView* m_shadowUAV;
+    ID3D11ShaderResourceView* m_bluredShadowSRV;
+    ID3D11RenderTargetView* m_bluredShadowRTV;
 
     /*
         PCF

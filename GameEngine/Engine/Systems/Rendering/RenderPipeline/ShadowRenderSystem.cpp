@@ -34,7 +34,7 @@ SyResult ShadowRenderSystem::Run()
         {
             hc->context->RSSetState(rc->cullNoneRS.Get());
             hc->context->OMSetRenderTargets(1, &rc->m_renderTargetView, rc->shadowStencilView.Get());
-            rc->m_renderTargetTexture = nullptr;
+            //rc->m_renderTargetTexture = nullptr;
             auto viewMeshes = _ecs->view<TransformComponent, MeshComponent>();
             for (auto& ent : viewMeshes)
             {
@@ -91,10 +91,9 @@ SyResult ShadowRenderSystem::Run()
                     hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                         meshComp.strides, meshComp.offsets);
                     hc->context->DrawIndexedInstanced(mesh->indexBuffer->size, 4, 0, 0,0);
-                    
                 }
             }
-            //hc->context->GSSetShader(nullptr, nullptr, 0);
+            BlurShadowMap();
         }
         else if (light.lightType == LightType::PointLight && (light.lightBehavior==LightBehavior::Movable ||
             (light.lightBehavior==LightBehavior::Static && light.shouldBakeShadows)))
@@ -199,4 +198,35 @@ SyResult ShadowRenderSystem::Destroy()
 {
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowRender system destruction successful. ");
     return SyResult();
+}
+
+void ShadowRenderSystem::BlurShadowMap()
+{
+    UINT strides[1] = { 32 };
+    UINT offsets[1] = { 0 };
+
+    hc->context->OMSetDepthStencilState(rc->offStencilState.Get(), 0);
+    hc->context->VSSetShader(rc->gaussianBlurX->vertexShader.Get(), nullptr, 0);
+    hc->context->PSSetShader(rc->gaussianBlurX->pixelShader.Get(), nullptr, 0);
+    hc->context->GSSetShader(rc->gaussianBlurX->geomShader.Get(), nullptr, 0);
+    hc->context->PSSetSamplers(0, 1, rc->pointSampler.GetAddressOf());
+    hc->context->IASetInputLayout(rc->gaussianBlurX->layout.Get());
+    hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    hc->context->OMSetRenderTargets(1,&rc->m_bluredShadowRTV , nullptr);
+
+    hc->context->PSSetShaderResources(0, 1, &rc->m_shaderResourceView);
+    hc->context->IASetIndexBuffer(rc->indexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+    hc->context->IASetVertexBuffers(0, 1, rc->vertexQuadBuffer->buffer.GetAddressOf(),
+        strides, offsets);
+
+    hc->context->DrawIndexedInstanced(6, 4, 0, 0, 0);
+
+    hc->context->CopyResource(rc->m_renderTargetTexture, rc->m_bluredShadowTexture);
+
+    hc->context->PSSetShader(rc->gaussianBlurY->pixelShader.Get(), nullptr, 0);
+    hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    hc->context->OMSetRenderTargets(1, &rc->m_bluredShadowRTV, nullptr);
+    hc->context->DrawIndexedInstanced(6, 4, 0, 0, 0);
+
+    hc->context->OMSetDepthStencilState(hc->depthStencilState.Get(), 0);
 }

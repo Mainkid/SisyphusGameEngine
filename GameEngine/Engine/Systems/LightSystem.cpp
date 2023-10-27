@@ -85,13 +85,12 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
 {
     using namespace DirectX::SimpleMath;
     std::vector<Vector4> frustumCorners = GetFrustumCorners(view, proj);
-    std::vector<float> planesProportions = {0, 0.02,0.05,0.35,1 };
+    std::vector<float> planesProportions = {0, 0.05,0.1,0.35,1 };
     lc.orthoMatrices.clear();
     lc.viewMatrices.clear();
     lc.distances.clear();
 
     int n = 4;
-    int exp =3;
 
 
     for (int i = 1; i <= n; i++)

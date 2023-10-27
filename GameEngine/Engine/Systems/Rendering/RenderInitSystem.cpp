@@ -91,6 +91,9 @@ SyResult RenderInitSystem::Init()
     hr = hc->device->CreateSamplerState(&sampDesc2, rc->shadowMapSampler.GetAddressOf()); //Create sampler state
 
 
+    sampDesc2.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+    hr = hc->device->CreateSamplerState(&sampDesc2, rc->pointSampler.GetAddressOf()); //Create sampler state
+
     D3D11_DEPTH_STENCIL_DESC depthstencildesc;
     ZeroMemory(&depthstencildesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
 
@@ -366,12 +369,13 @@ SyResult RenderInitSystem::Init()
     textureDesc.Format = DXGI_FORMAT_R32G32_TYPELESS;
     textureDesc.SampleDesc.Count = 1;
     textureDesc.Usage = D3D11_USAGE_DEFAULT;
-    textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
     textureDesc.CPUAccessFlags = 0;
     textureDesc.MiscFlags = 0;
 
     // Create the render target texture.
     result = hc->device->CreateTexture2D(&textureDesc, NULL, &rc->m_renderTargetTexture);
+    result = hc->device->CreateTexture2D(&textureDesc, NULL, &rc->m_bluredShadowTexture);
     // Setup the description of the render target view.
 
     renderTargetViewDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
@@ -380,8 +384,10 @@ SyResult RenderInitSystem::Init()
     renderTargetViewDesc.Texture2DArray.ArraySize = 4;
     renderTargetViewDesc.Texture2DArray.FirstArraySlice = 0;
 
+
     // Create the render target view.
     result = hc->device->CreateRenderTargetView(rc->m_renderTargetTexture, &renderTargetViewDesc, &rc->m_renderTargetView);
+    result = hc->device->CreateRenderTargetView(rc->m_bluredShadowTexture, &renderTargetViewDesc, &rc->m_bluredShadowRTV);
 
     //result=engine->device->CreateRenderTargetView(m_renderTargetTexture, nullptr, &m_renderTargetView);
     // Setup the description of the shader resource view.
@@ -395,7 +401,7 @@ SyResult RenderInitSystem::Init()
 
     // Create the shader resource view.
     result = hc->device->CreateShaderResourceView(rc->m_renderTargetTexture, &shaderResourceViewDesc2, &rc->m_shaderResourceView);
-
+    result = hc->device->CreateShaderResourceView(rc->m_bluredShadowTexture, &shaderResourceViewDesc2, &rc->m_bluredShadowSRV);
 
     //Creating instance ID Texture
     D3D11_TEXTURE2D_DESC desc2;
@@ -492,6 +498,14 @@ SyResult RenderInitSystem::Init()
     rc->editorGridRenderer = std::make_unique<Shader>();
     rc->editorGridRenderer->Initialize(L"./Engine/Assets/Shaders/EditorGridShader.hlsl",
         COMPILE_VERTEX | COMPILE_PIXEL,USE_POSITION,"VSMain");
+
+    rc->gaussianBlurX = std::make_unique<Shader>();
+    rc->gaussianBlurX->Initialize(L"./Engine/Assets/Shaders/GaussianBlur.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL | COMPILE_GEOM, USE_POSITION | USE_COLOR, "VS_Blur", "PS_BlurX","GSMain");
+
+    rc->gaussianBlurY = std::make_unique<Shader>();
+    rc->gaussianBlurY->Initialize(L"./Engine/Assets/Shaders/GaussianBlur.hlsl",
+        COMPILE_VERTEX | COMPILE_PIXEL | COMPILE_GEOM, USE_POSITION | USE_COLOR, "VS_Blur", "PS_BlurY","GSMain");
 
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "RenderInit system initialization successful. ");
     return SyResult();

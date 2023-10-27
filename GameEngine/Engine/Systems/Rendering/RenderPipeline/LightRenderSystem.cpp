@@ -136,7 +136,7 @@ SyResult LightRenderSystem::Run()
             {
                 hc->context->PSSetShader(rc->dirLightShader->pixelShader.Get(), nullptr, 0);
                 hc->context->PSSetShaderResources(8, 1, &rc->shadowMapResourceView);
-                hc->context->PSSetShaderResources(10, 1, &rc->m_shaderResourceView);
+                hc->context->PSSetShaderResources(10, 1, &rc->m_bluredShadowSRV);
             }
             else
             {
@@ -237,7 +237,6 @@ SyResult LightRenderSystem::Run()
             hc->context->DrawIndexed(light.aabb->indexBuffer->size, 0, 0);
 
             //Final Pass
-
             hc->context->RSSetState(rc->cullBackRS.Get());
             hc->context->OMSetDepthStencilState(rc->finalPassStencilState.Get(), 0);
             hc->context->VSSetShader(rc->dirLightShader->vertexShader.Get(), nullptr, 0);
@@ -264,4 +263,5 @@ SyResult LightRenderSystem::Destroy()
 void LightRenderSystem::ShadowMap()
 {
     
+
 }
