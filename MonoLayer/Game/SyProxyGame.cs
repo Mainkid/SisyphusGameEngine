@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using SyEngine.Game.Comps;
-using SyEngine.Logs;
+using SyEngine.Logger;
 
 namespace SyEngine.Game
 {

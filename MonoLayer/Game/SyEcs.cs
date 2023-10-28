@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Leopotam.EcsLite;
 using SyEngine.Game.Comps;
 using SyEngine.Game.Datas;
-using SyEngine.Logs;
+using SyEngine.Logger;
 
 namespace SyEngine.Game
 {

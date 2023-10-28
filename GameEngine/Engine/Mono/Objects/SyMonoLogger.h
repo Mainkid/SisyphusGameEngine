@@ -8,7 +8,7 @@ namespace mono
 {
 	class SyMonoLogger : public SyMonoObj
 	{
-		inline static const std::string NAMESPACE = "SyEngine.Logs";
+		inline static const std::string NAMESPACE = "SyEngine.Logger";
 		inline static const std::string CLASS_NAME = "SyProxyLogger";
 
 		inline static const std::string GE_LOG = "GE_Log";

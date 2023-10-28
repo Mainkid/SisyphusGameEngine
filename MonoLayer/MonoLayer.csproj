@@ -56,8 +56,8 @@
         <Compile Include="LeoEcs\filters.cs" />
         <Compile Include="LeoEcs\systems.cs" />
         <Compile Include="LeoEcs\worlds.cs" />
-        <Compile Include="Logs\SyLog.cs" />
-        <Compile Include="Logs\SyProxyLogger.cs" />
+        <Compile Include="Logger\SyLog.cs" />
+        <Compile Include="Logger\SyProxyLogger.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>

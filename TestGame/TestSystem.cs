@@ -2,7 +2,7 @@
 using SyEngine.Game;
 using SyEngine.Game.Comps;
 using SyEngine.Game.Datas;
-using SyEngine.Logs;
+using SyEngine.Logger;
 
 namespace TestGame
 {
