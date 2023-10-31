@@ -22,9 +22,10 @@ private:
 	void GenerateViewMatrix(Vector3 cameraForward, LightComponent& lc, Vector3 pos);
 	void GenerateOrthoFromFrustum(LightComponent& lc,Vector3 direction, const Matrix& view, const Matrix proj);
 	void InitPointLightResources(LightComponent& lc);
+	void InitDirLightResources(LightComponent& lc);
 
-	HardwareContext* hc;
-	RenderContext* rc;
-	EngineContext* ec;
+	HardwareContext* _hc = nullptr;
+	RenderContext* _rc = nullptr;
+	EngineContext* _ec = nullptr;
 };
 

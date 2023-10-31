@@ -45,7 +45,7 @@ SyResult ShadowMapGenerationSystem::Run()
     {
         LightComponent& light = view.get<LightComponent>(entity);
         TransformComponent& tc = view.get<TransformComponent>(entity);
-        if (light.LightType == LightType::Directional)
+        if (light.LightType == ELightType::Directional)
         {
             lightBuffer.lightData.Pos = Vector4(tc.position.x, tc.position.y, tc.position.z, 1);
             lightBuffer.lightData.Color = light.Color;
@@ -59,21 +59,21 @@ SyResult ShadowMapGenerationSystem::Run()
 
             hc->context->ClearDepthStencilView(hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1, 0);
 
-            if (light.LightType == LightType::Directional || light.LightType == LightType::Ambient)
+            if (light.LightType == ELightType::Directional || light.LightType == ELightType::Ambient)
             {
                 lightBuffer.baseData.world = Matrix::Identity;
                 lightBuffer.baseData.worldView = Matrix::Identity * camera.view;
                 lightBuffer.baseData.worldViewProj = Matrix::Identity * camera.view * camera.projection;
                 lightBuffer.baseData.worldViewInverseTranspose = Matrix::Identity;
 
-                if (light.LightType == LightType::Directional)
+                if (light.LightType == ELightType::Directional)
                     for (int i = 0; i < 4; i++)
                     {
                         lightBuffer.distances[i] = light.Distances[i];
                         lightBuffer.viewProjs[i] = light.ViewMatrices[i] * light.OrthoMatrices[i];
                     }
             }
-            else if (light.LightType == LightType::PointLight)
+            else if (light.LightType == ELightType::PointLight)
             {
                 lightBuffer.lightData.Pos = Vector4(tc.position.x, tc.position.y, tc.position.z, 1);
                 lightBuffer.lightData.additiveParams = light.ParamsRadiusAndAttenuation;
@@ -97,14 +97,14 @@ SyResult ShadowMapGenerationSystem::Run()
             hc->context->OMSetRenderTargets(1, &rc->ShadowMapRTV, nullptr);
             
 
-            if (light.LightType == LightType::Directional)
+            if (light.LightType == ELightType::Directional)
             {
                 hc->context->PSSetShaderResources(0, 5, resources);
                 hc->context->RSSetState(rc->CullBackRasterizerState.Get());
                 hc->context->OMSetDepthStencilState(rc->OffStencilState.Get(), 0);
                 hc->context->VSSetShader(rc->ShadowMapGenerator->vertexShader.Get(), nullptr, 0);
                 hc->context->PSSetShader(rc->ShadowMapGenerator->pixelShader.Get(), nullptr, 0);
-                hc->context->PSSetShaderResources(5, 1, &rc->ShadowResourceView);
+                hc->context->PSSetShaderResources(5, 1, light.ShadowResourceView.GetAddressOf());
                 //hc->context->PSSetShaderResources(6, 1, &rc->SkyboxSRV);
                 hc->context->IASetInputLayout(rc->ShadowMapGenerator->layout.Get());
                 hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
@@ -113,7 +113,7 @@ SyResult ShadowMapGenerationSystem::Run()
                     strides, offsets);
                 hc->context->DrawIndexed(6, 0, 0);
             }
-            else if (light.LightType == LightType::PointLight)
+            else if (light.LightType == ELightType::PointLight)
             {
                 hc->context->RSSetState(rc->CullBackRasterizerState.Get());
                 hc->context->OMSetDepthStencilState(rc->OffStencilState.Get(), 0);

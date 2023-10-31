@@ -24,7 +24,7 @@ SyResult PreRenderSystem::Run()
     hc->context->ClearRenderTargetView(rc->Rtvs[4], bgColor);
     hc->context->ClearRenderTargetView(rc->Rtvs[5], bgColor);
     hc->context->ClearRenderTargetView(rc->Rtvs[6], bgEntitiesColor);
-    hc->context->ClearRenderTargetView(rc->MRenderTargetView, bgColor);
+    //hc->context->ClearRenderTargetView(rc->MRenderTargetView, bgColor);
 
     hc->context->ClearDepthStencilView(hc->depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 

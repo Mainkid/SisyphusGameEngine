@@ -58,7 +58,7 @@ SyResult LightRenderSystem::Run()
 
         hc->context->ClearDepthStencilView(hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1, 0);
 
-        if (light.LightType == LightType::Directional || light.LightType == LightType::Ambient)
+        if (light.LightType == ELightType::Directional || light.LightType == ELightType::Ambient)
         {
             lightBuffer.baseData.world = Matrix::Identity;
             lightBuffer.baseData.worldView = Matrix::Identity * camera.view;
@@ -66,7 +66,7 @@ SyResult LightRenderSystem::Run()
             lightBuffer.baseData.worldViewInverseTranspose = Matrix::Identity;
 
 
-            if (light.LightType == LightType::Directional)
+            if (light.LightType == ELightType::Directional)
                 for (int i = 0; i < 4; i++)
                 {
                     lightBuffer.distances[i] = light.Distances[i];
@@ -75,7 +75,7 @@ SyResult LightRenderSystem::Run()
 
 
         }
-        else if (light.LightType == LightType::PointLight)
+        else if (light.LightType == ELightType::PointLight)
         {
             using namespace DirectX::SimpleMath;
             lightBuffer.baseData.world = Matrix::CreateScale(light.ParamsRadiusAndAttenuation.x, light.ParamsRadiusAndAttenuation.x, light.ParamsRadiusAndAttenuation.x) * Matrix::CreateTranslation(tc.position);
@@ -85,7 +85,7 @@ SyResult LightRenderSystem::Run()
 
             lightBuffer.distances[0].x = light.CastShadows;
         }
-        else if (light.LightType == LightType::SpotLight)
+        else if (light.LightType == ELightType::SpotLight)
         {
             using namespace DirectX::SimpleMath;
             Vector3 a;
@@ -120,22 +120,23 @@ SyResult LightRenderSystem::Run()
 
         hc->context->OMSetBlendState(rc->LightBlendState.Get(), nullptr, 0xffffffff);
         hc->context->PSSetSamplers(0, 1, rc->SamplerState.GetAddressOf());
-        hc->context->PSSetSamplers(1, 1, rc->ShadowMapSampler.GetAddressOf());
+       
 
         hc->context->OMSetRenderTargets(1, rc->GBuffer->HdrBufferRtv.GetAddressOf(), hc->depthStencilView.Get());
         //hc->renderTarget->SetRenderTarget(hc->depthStencilView.Get());
         hc->context->PSSetShaderResources(0, 7, resources);
 
-        if (light.LightType == LightType::Ambient || light.LightType == LightType::Directional)
+        if (light.LightType == ELightType::Ambient || light.LightType == ELightType::Directional)
         {
+            hc->context->PSSetSamplers(1, 1, light.ShadowMapSampler.GetAddressOf());
             hc->context->RSSetState(rc->CullBackRasterizerState.Get());
             hc->context->OMSetDepthStencilState(rc->OffStencilState.Get(), 0);
             hc->context->VSSetShader(rc->DirLightShader->vertexShader.Get(), nullptr, 0);
-            if (light.LightType == LightType::Directional)
+            if (light.LightType == ELightType::Directional)
             {
                 hc->context->PSSetShader(rc->DirLightShader->pixelShader.Get(), nullptr, 0);
-                hc->context->PSSetShaderResources(8, 1, &rc->ShadowMapResourceView);
-                hc->context->PSSetShaderResources(10, 1, &rc->MBluredShadowSrv);
+                hc->context->PSSetShaderResources(8, 1, light.DirShadowSrv.GetAddressOf());
+                hc->context->PSSetShaderResources(10, 1, light.DirShadowBluredSrv.GetAddressOf());
             }
             else
             {
@@ -151,7 +152,7 @@ SyResult LightRenderSystem::Run()
                 strides, offsets);
             hc->context->DrawIndexed(6, 0, 0);
         }
-        else if (light.LightType == LightType::PointLight)
+        else if (light.LightType == ELightType::PointLight)
         {
 
             //Back Face Pass
@@ -202,7 +203,7 @@ SyResult LightRenderSystem::Run()
             hc->context->DrawIndexed(6, 0, 0);
         }
 
-        else if (light.LightType == LightType::SpotLight)
+        else if (light.LightType == ELightType::SpotLight)
         {
             //Back Face Pass
 

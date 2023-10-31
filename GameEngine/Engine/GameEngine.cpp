@@ -57,17 +57,17 @@ int main()
     //
     ////_go3->GetComponent<TransformComponent>().SetPosition(Vector3(-3, 0, 0));
     //_go3->GetComponent<MeshComponent>().UpdateMesh("./Game/Assets/DefaultModel.obj");
-    auto lightDir = GameObjectHelper::CreateLight(ecs, LightType::Directional);
+    auto lightDir = GameObjectHelper::CreateLight(ecs, ELightType::Directional);
 
-    auto light = GameObjectHelper::CreateLight(ecs, LightType::Ambient);
+    auto light = GameObjectHelper::CreateLight(ecs, ELightType::Ambient);
     ecs->get<LightComponent>(light).Color = Vector4(0.15f, 0.15f, 0.15f, 0.15f);
 
-    auto lightPoint = GameObjectHelper::CreateLight(ecs, LightType::PointLight);
+    auto lightPoint = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
     ecs->get<LightComponent>(lightPoint).ParamsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
     ecs->get<LightComponent>(lightPoint).Color = Vector4(1, 1, 0.0f, 3.0f);
     ecs->get<TransformComponent>(lightPoint).position = Vector3(3, 0, 0);
 
-    auto lightPoint2 = GameObjectHelper::CreateLight(ecs, LightType::PointLight);
+    auto lightPoint2 = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
 
     ecs->get<LightComponent>(lightPoint2).ParamsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
     ecs->get<LightComponent>(lightPoint2).Color = Vector4(1, 0, 0.0f, 3.0f);

@@ -341,17 +341,17 @@ void HudViewportSystem::DrawMainMenuBar()
 			{
 				if (ImGui::MenuItem("Directional Light"))
 				{
-					GameObjectHelper::CreateLight(_ecs,LightType::Directional,pos);
+					GameObjectHelper::CreateLight(_ecs,ELightType::Directional,pos);
 				}
 
 				if (ImGui::MenuItem("Point Light"))
 				{
-					GameObjectHelper::CreateLight(_ecs,LightType::PointLight,pos);
+					GameObjectHelper::CreateLight(_ecs,ELightType::PointLight,pos);
 				}
 
 				if (ImGui::MenuItem("Ambient Light"))
 				{
-					GameObjectHelper::CreateLight(_ecs,LightType::Ambient,pos);
+					GameObjectHelper::CreateLight(_ecs,ELightType::Ambient,pos);
 				}
 
 				ImGui::EndMenu();

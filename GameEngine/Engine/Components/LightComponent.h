@@ -3,7 +3,7 @@
 #include "SimpleMath.h"
 #include <d3d11.h>
 #include "../Components/Mesh.h"
-#include "../Core/Rendering/Lights/LightType.h"
+#include "../Core/Rendering/Lights/ELightType.h"
 #include <memory>
 #include <vector>
 #include "../Serialization/Serializable.h"
@@ -15,7 +15,7 @@ using namespace DirectX::SimpleMath;
 struct LightComponent
 {
     LightComponent() = default;
-    LightComponent(LightType _type)
+    LightComponent(ELightType _type)
     {
         LightType = _type;
     };
@@ -23,7 +23,7 @@ struct LightComponent
     std::vector<Matrix> OrthoMatrices;
     std::vector<Vector4> Distances;
     std::shared_ptr<Mesh> Aabb = nullptr;
-    LightType LightType = LightType::Ambient;
+    ELightType LightType = ELightType::Ambient;
     LightBehavior LightBehavior = LightBehavior::Movable;
     Vector4 Color = { 1,1,1,1 };
     Vector4 ParamsRadiusAndAttenuation = { 0,1,1,1 };
@@ -32,6 +32,8 @@ struct LightComponent
     Matrix OrthoMatrix;
     bool ShouldBakeShadows = true;
     bool CastShadows = false;
+
+    int ShadowMapSize = 1024;
 
     /*
      *  Rendering pointlight/spotlight shadows
@@ -46,6 +48,19 @@ struct LightComponent
      *  Rendering directional cascade shadows
      */
 
+    Microsoft::WRL::ComPtr<ID3D11DepthStencilState> DirShadowStencilState;
+    Microsoft::WRL::ComPtr<ID3D11DepthStencilView> DirShadowStencilView;
+    Microsoft::WRL::ComPtr<ID3D11DepthStencilView> ShadowPointLightStencilView;
+    Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> ShadowResourceView;
+    Microsoft::WRL::ComPtr<ID3D11SamplerState> ShadowMapSampler;
+
+    Microsoft::WRL::ComPtr <ID3D11Texture2D> DirShadowTexture = nullptr;
+    Microsoft::WRL::ComPtr <ID3D11Texture2D> DirShadowRtTexture;
+    Microsoft::WRL::ComPtr <ID3D11Texture2D> DirBluredShadowTexture;
+    Microsoft::WRL::ComPtr <ID3D11RenderTargetView> DirShadowRtv;
+    Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> DirShadowSrv;
+    Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> DirShadowBluredSrv;
+    Microsoft::WRL::ComPtr <ID3D11RenderTargetView> DirShadowBluredRtv;
 
 
 

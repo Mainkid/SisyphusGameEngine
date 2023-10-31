@@ -132,22 +132,7 @@ void RenderInitSystem::InitSkybox() const
 
 void RenderInitSystem::CreateTextures() const
 {
-	D3D11_TEXTURE2D_DESC shadowMapDesc;
-	ZeroMemory(&shadowMapDesc, sizeof(D3D11_TEXTURE2D_DESC));
-	shadowMapDesc.Width = _rc->ShadowmapWidth;
-	shadowMapDesc.Height = _rc->ShadowmapHeight;
-	shadowMapDesc.MipLevels = 1;
-	shadowMapDesc.ArraySize = 4;
-	shadowMapDesc.Format = DXGI_FORMAT_R32_TYPELESS;
-	shadowMapDesc.SampleDesc.Count = 1;
-	shadowMapDesc.SampleDesc.Quality = 0;
-	shadowMapDesc.Usage = D3D11_USAGE_DEFAULT;
-	shadowMapDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-	shadowMapDesc.CPUAccessFlags = 0;
-	shadowMapDesc.MiscFlags = 0;
-
-	HRESULT hr = _hc->device->CreateTexture2D(&shadowMapDesc, nullptr, &_rc->Texture);
-
+	
 
 	D3D11_TEXTURE2D_DESC shadowMapDesc_;
 	ZeroMemory(&shadowMapDesc_, sizeof(D3D11_TEXTURE2D_DESC));
@@ -163,27 +148,9 @@ void RenderInitSystem::CreateTextures() const
 	shadowMapDesc_.CPUAccessFlags = 0;
 	shadowMapDesc_.MiscFlags = 0;
 
-	hr = _hc->device->CreateTexture2D(&shadowMapDesc_, nullptr, &_rc->TexturePCF);
+	HRESULT hr = _hc->device->CreateTexture2D(&shadowMapDesc_, nullptr, &_rc->TexturePCF);
 
-	D3D11_TEXTURE2D_DESC textureDesc;
-	// Initialize the render target texture description.
-	ZeroMemory(&textureDesc, sizeof(textureDesc));
-
-	// Setup the render target texture description.
-	textureDesc.Width = _rc->ShadowmapWidth;
-	textureDesc.Height = _rc->ShadowmapHeight;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 4;
-	textureDesc.Format = DXGI_FORMAT_R32G32_TYPELESS;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
-	textureDesc.CPUAccessFlags = 0;
-	textureDesc.MiscFlags = 0;
-
-	// Create the render target texture.
-	auto result = _hc->device->CreateTexture2D(&textureDesc, NULL, &_rc->MRenderTargetTexture);
-	result = _hc->device->CreateTexture2D(&textureDesc, NULL, &_rc->MBluredShadowTexture);
+	
 
 	D3D11_TEXTURE2D_DESC desc2;
 	ZeroMemory(&desc2, sizeof(desc2));
@@ -197,7 +164,7 @@ void RenderInitSystem::CreateTextures() const
 	desc2.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 	desc2.CPUAccessFlags = 0;
 
-	result = _hc->device->CreateTexture2D(&desc2, NULL, _rc->EntityIdTexture.GetAddressOf());
+	HRESULT result = _hc->device->CreateTexture2D(&desc2, NULL, _rc->EntityIdTexture.GetAddressOf());
 }
 
 void RenderInitSystem::CompileShaders() const
@@ -384,22 +351,10 @@ void RenderInitSystem::CreateSamplers() const
 	HRESULT hr = _hc->device->CreateSamplerState(&sampDesc, _rc->SamplerState.GetAddressOf()); //Create sampler state
 
 
-	D3D11_SAMPLER_DESC sampDesc2;
-	ZeroMemory(&sampDesc, sizeof(sampDesc2));
-	sampDesc2.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampDesc2.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc2.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc2.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc2.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc2.MinLOD = 0;
-	sampDesc2.MaxLOD = D3D11_FLOAT32_MAX;
-	sampDesc2.MaxAnisotropy = 0;
-	sampDesc2.MipLODBias = 0;
-	hr = _hc->device->CreateSamplerState(&sampDesc2, _rc->ShadowMapSampler.GetAddressOf()); //Create sampler state
+	
 
-
-	sampDesc2.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-	hr = _hc->device->CreateSamplerState(&sampDesc2, _rc->PointSampler.GetAddressOf()); //Create sampler state
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	hr = _hc->device->CreateSamplerState(&sampDesc, _rc->PointSampler.GetAddressOf()); //Create sampler state
 
 	D3D11_SAMPLER_DESC samplerDesc;
 	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
@@ -475,46 +430,18 @@ void RenderInitSystem::CreateDepthAndStencils() const
 	hr = _hc->device->CreateDepthStencilState(&depthstencildesc, _rc->FinalPassStencilState.GetAddressOf());
 
 
-	D3D11_DEPTH_STENCIL_DESC depthstencildesc2;
-	ZeroMemory(&depthstencildesc2, sizeof(D3D11_DEPTH_STENCIL_DESC));
-
-	depthstencildesc2.DepthEnable = true;
-	depthstencildesc2.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
-	depthstencildesc2.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
-
-	hr = _hc->device->CreateDepthStencilState(&depthstencildesc2, _rc->ShadowStencilState.GetAddressOf());
-
+	
 
 	/*
 	 * Creating Views for depthStencil
 	 *
 	 */
 
-	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-	ZeroMemory(&depthStencilViewDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
-	depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
-	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
-	depthStencilViewDesc.Texture2DArray.MipSlice = 0;
-	depthStencilViewDesc.Texture2DArray.FirstArraySlice = 0;
-	depthStencilViewDesc.Texture2DArray.ArraySize = 4;
-
-	hr = _hc->device->CreateDepthStencilView(_rc->Texture, &depthStencilViewDesc, &_rc->ShadowStencilView);
 }
 
 void RenderInitSystem::CreateShaderResourceViewsAndRenderTargets() const
 {
-	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-	ZeroMemory(&shaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-	shaderResourceViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
-	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
-	shaderResourceViewDesc.Texture2DArray.MostDetailedMip = 0;
-	shaderResourceViewDesc.Texture2DArray.MipLevels = 1;
-	shaderResourceViewDesc.Texture2DArray.FirstArraySlice = 0;
-	shaderResourceViewDesc.Texture2DArray.ArraySize = 4;
-
-
-	HRESULT hr = _hc->device->CreateShaderResourceView(_rc->Texture, &shaderResourceViewDesc, &_rc->ShadowResourceView);
-
+	
 	//Shadow maps -->
 
 
@@ -525,7 +452,7 @@ void RenderInitSystem::CreateShaderResourceViewsAndRenderTargets() const
 	shaderResourceViewDesc_.Texture2D.MipLevels = 1;
 
 
-	hr = _hc->device->CreateShaderResourceView(_rc->TexturePCF, &shaderResourceViewDesc_, &_rc->ShadowMapResourceView);
+	HRESULT hr = _hc->device->CreateShaderResourceView(_rc->TexturePCF, &shaderResourceViewDesc_, &_rc->ShadowMapResourceView);
 
 	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
 	renderTargetViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
@@ -536,40 +463,11 @@ void RenderInitSystem::CreateShaderResourceViewsAndRenderTargets() const
 	hr = _hc->device->CreateRenderTargetView(_rc->TexturePCF, &renderTargetViewDesc, &_rc->ShadowMapRTV);
 
 	HRESULT result;
-	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc2;
 
-
-	// Setup the description of the render target view.
-
-	renderTargetViewDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
-	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
-	renderTargetViewDesc.Texture2DArray.MipSlice = 0;
-	renderTargetViewDesc.Texture2DArray.ArraySize = 4;
-	renderTargetViewDesc.Texture2DArray.FirstArraySlice = 0;
-
-
-	// Create the render target view.
-	result = _hc->device->CreateRenderTargetView(_rc->MRenderTargetTexture, &renderTargetViewDesc,
-	                                             &_rc->MRenderTargetView);
-	result = _hc->device->CreateRenderTargetView(_rc->MBluredShadowTexture, &renderTargetViewDesc,
-	                                             &_rc->MBluredShadowRtv);
-
-	//result=engine->device->CreateRenderTargetView(MRenderTargetTexture, nullptr, &MRenderTargetView);
-	// Setup the description of the shader resource view.
-	shaderResourceViewDesc2.Format = DXGI_FORMAT_R32G32_FLOAT;
-	shaderResourceViewDesc2.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
-	shaderResourceViewDesc2.Texture2DArray.MostDetailedMip = 0;
-	shaderResourceViewDesc2.Texture2DArray.MipLevels = 1;
-	shaderResourceViewDesc2.Texture2DArray.ArraySize = 4;
-	shaderResourceViewDesc2.Texture2DArray.FirstArraySlice = 0;
 
 
 	// Create the shader resource view.
-	result = _hc->device->CreateShaderResourceView(_rc->MRenderTargetTexture, &shaderResourceViewDesc2,
-	                                               &_rc->MShaderResourceView);
-	result = _hc->device->CreateShaderResourceView(_rc->MBluredShadowTexture, &shaderResourceViewDesc2,
-	                                               &_rc->MBluredShadowSrv);
-
+	
 	//Creating instance ID Texture
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;

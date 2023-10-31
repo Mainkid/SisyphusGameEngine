@@ -510,15 +510,15 @@
     "Tag": "None"
    },
    "struct LightComponent": {
-    "color": {
+    "Color": {
      "w": 13.0,
      "x": 1.0,
      "y": 1.0,
      "z": 0.0
     },
-    "lightBehavior": 0,
-    "lightType": 2,
-    "paramsRadiusAndAttenuation": {
+    "LightBehavior": 0,
+    "LightType": 2,
+    "ParamsRadiusAndAttenuation": {
      "w": 1.0,
      "x": 6.0,
      "y": 0.0,
@@ -569,15 +569,15 @@
     "Tag": "None"
    },
    "struct LightComponent": {
-    "color": {
+    "Color": {
      "w": 0.15000000596046448,
      "x": 0.15000000596046448,
      "y": 0.15000000596046448,
      "z": 0.15000000596046448
     },
-    "lightBehavior": 0,
-    "lightType": 0,
-    "paramsRadiusAndAttenuation": {
+    "LightBehavior": 0,
+    "LightType": 0,
+    "ParamsRadiusAndAttenuation": {
      "w": 1.0,
      "x": 1.0,
      "y": 0.0,
@@ -628,15 +628,15 @@
     "Tag": "None"
    },
    "struct LightComponent": {
-    "color": {
+    "Color": {
      "w": 1.0,
      "x": 1.0,
      "y": 1.0,
      "z": 1.0
     },
-    "lightBehavior": 0,
-    "lightType": 1,
-    "paramsRadiusAndAttenuation": {
+    "LightBehavior": 0,
+    "LightType": 1,
+    "ParamsRadiusAndAttenuation": {
      "w": 1.0,
      "x": 1.0,
      "y": 0.0,
@@ -687,15 +687,15 @@
     "Tag": "None"
    },
    "struct LightComponent": {
-    "color": {
+    "Color": {
      "w": 1.0,
      "x": 1.0,
      "y": 1.0,
      "z": 1.0
     },
-    "lightBehavior": 1,
-    "lightType": 2,
-    "paramsRadiusAndAttenuation": {
+    "LightBehavior": 1,
+    "LightType": 2,
+    "ParamsRadiusAndAttenuation": {
      "w": 1.0,
      "x": 24.0,
      "y": 0.0,

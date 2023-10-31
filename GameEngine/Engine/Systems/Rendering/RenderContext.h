@@ -82,19 +82,7 @@ struct RenderContext : public IService
 	 */
 	int ShadowmapWidth = 1024;
 	int ShadowmapHeight = 1024;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> ShadowStencilState;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> ShadowStencilView;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> ShadowPointLightStencilView;
-	ID3D11ShaderResourceView* ShadowResourceView;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> ShadowMapSampler;
-
-	ID3D11Texture2D* Texture;
-	ID3D11Texture2D* MRenderTargetTexture;
-	ID3D11Texture2D* MBluredShadowTexture;
-	ID3D11RenderTargetView* MRenderTargetView;
-	ID3D11ShaderResourceView* MShaderResourceView;
-	ID3D11ShaderResourceView* MBluredShadowSrv;
-	ID3D11RenderTargetView* MBluredShadowRtv;
+	
 
 	/*
 	    PCF

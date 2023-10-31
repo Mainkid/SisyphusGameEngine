@@ -101,7 +101,7 @@
     <ClInclude Include="Engine\Core\Keys.h" />
     <ClInclude Include="Engine\Core\Rendering\GBuffer.h" />
     <ClInclude Include="Engine\Core\Rendering\Lights\LightData.h" />
-    <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h" />
+    <ClInclude Include="Engine\Core\Rendering\Lights\ELightType.h" />
     <ClInclude Include="Engine\Obsolete\RenderPipeline.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\ContentBrowserTypes.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.h" />

@@ -74,7 +74,7 @@ SyResult HudPropertiesSystem::Run()
             switch (lc->LightType)
             {
             
-                case LightType::PointLight:
+                case ELightType::PointLight:
                     ImGui::DragFloat("Light Radius",&lc->ParamsRadiusAndAttenuation.x);
                     ImGui::Checkbox("Bake Shadows", &lc->CastShadows);
                 break;
