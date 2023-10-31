@@ -19,8 +19,8 @@ SyResult SkyboxRenderSystem::Init()
 SyResult SkyboxRenderSystem::Run()
 {
     float bgcolor[] = { 0.0f,0.0f,0.0f,0.0f };
-    hc->context->RSSetState(rc->cullFrontRS.Get());
-    //hc->context->ClearDepthStencilView(rc->shadowStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    hc->context->RSSetState(rc->CullFrontRasterizerState.Get());
+    //hc->context->ClearDepthStencilView(rc->ShadowStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     CB_BaseEditorBuffer dataOpaque;
     //dataOpaque.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
 
@@ -33,24 +33,24 @@ SyResult SkyboxRenderSystem::Run()
     ID3D11RenderTargetView* nulls[] = { nullptr };
     
     D3D11_MAPPED_SUBRESOURCE mappedResource;
-    HRESULT res = hc->context->Map(rc->opaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    HRESULT res = hc->context->Map(rc->OpaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
     CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_BaseEditorBuffer));
-    hc->context->Unmap(rc->opaqueConstBuffer->buffer.Get(), 0);
-    hc->context->VSSetConstantBuffers(0, 1, rc->opaqueConstBuffer->buffer.GetAddressOf());
-    hc->context->PSSetConstantBuffers(0, 1, rc->opaqueConstBuffer->buffer.GetAddressOf());
-    hc->context->ClearRenderTargetView(rc->gBuffer->skyboxRTV.Get(), bgcolor);
-    hc->context->OMSetRenderTargets(1,rc->gBuffer->skyboxRTV.GetAddressOf(), nullptr);
-    hc->context->IASetInputLayout(rc->skyBoxShader->layout.Get());
+    hc->context->Unmap(rc->OpaqueConstBuffer->buffer.Get(), 0);
+    hc->context->VSSetConstantBuffers(0, 1, rc->OpaqueConstBuffer->buffer.GetAddressOf());
+    hc->context->PSSetConstantBuffers(0, 1, rc->OpaqueConstBuffer->buffer.GetAddressOf());
+    hc->context->ClearRenderTargetView(rc->GBuffer->SkyboxRtv.Get(), bgcolor);
+    hc->context->OMSetRenderTargets(1,rc->GBuffer->SkyboxRtv.GetAddressOf(), nullptr);
+    hc->context->IASetInputLayout(rc->SkyBoxShader->layout.Get());
     hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    hc->context->IASetIndexBuffer(rc->cubeMesh->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-    hc->context->IASetVertexBuffers(0, 1, rc->cubeMesh->vertexBuffer->buffer.GetAddressOf(),
+    hc->context->IASetIndexBuffer(rc->CubeMesh->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+    hc->context->IASetVertexBuffers(0, 1, rc->CubeMesh->vertexBuffer->buffer.GetAddressOf(),
        strides, offsets);
-    hc->context->PSSetSamplers(0, 1, rc->samplerState.GetAddressOf());
-    hc->context->PSSetShaderResources(0, 1, rc->skyboxSRV.GetAddressOf());
-    hc->context->VSSetShader(rc->skyBoxShader->vertexShader.Get(), nullptr, 0);
-    hc->context->PSSetShader(rc->skyBoxShader->pixelShader.Get(), nullptr, 0);
+    hc->context->PSSetSamplers(0, 1, rc->SamplerState.GetAddressOf());
+    hc->context->PSSetShaderResources(0, 1, rc->SkyboxSRV.GetAddressOf());
+    hc->context->VSSetShader(rc->SkyBoxShader->vertexShader.Get(), nullptr, 0);
+    hc->context->PSSetShader(rc->SkyBoxShader->pixelShader.Get(), nullptr, 0);
     
-    hc->context->DrawIndexed(rc->cubeMesh->indexBuffer->size, 0, 0);
+    hc->context->DrawIndexed(rc->CubeMesh->indexBuffer->size, 0, 0);
     
     return SyResult();
 }

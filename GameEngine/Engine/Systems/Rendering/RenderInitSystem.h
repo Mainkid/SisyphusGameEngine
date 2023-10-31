@@ -13,9 +13,17 @@ public:
 	SyResult Run() override;
 	SyResult Destroy() override;
 private:
-	void InitSkybox();
-	EngineContext* ec;
-	RenderContext* rc;
-	HardwareContext* hc;
+	void InitSkybox() const;
+	void CreateTextures() const;
+	void CompileShaders() const;
+	void CreateBlendStates() const;
+	void CreateBuffers() const;
+	void CreateSamplers() const;
+	void CreateDepthAndStencils() const;
+	void CreateShaderResourceViewsAndRenderTargets() const;
+	void CreateRasterizerStates() const;
+	EngineContext* _ec = nullptr;
+	RenderContext* _rc = nullptr;
+	HardwareContext* _hc = nullptr;
 };
 

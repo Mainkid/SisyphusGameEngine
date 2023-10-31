@@ -31,7 +31,7 @@ public:
 		const SyVector3& scale = { 1.0f, 1.0f, 1.0f }
 	);
 
-	static entt::entity CreateLight(entt::registry* ecs, LightType lightType, Vector3 pos = Vector3::Zero);
+	static entt::entity CreateLight(entt::registry* ecs, ELightType lightType, Vector3 pos = Vector3::Zero);
 
 	static entt::entity CreateMesh(entt::registry* ecs, boost::uuids::uuid uuid, Vector3 pos=Vector3::Zero);
 
