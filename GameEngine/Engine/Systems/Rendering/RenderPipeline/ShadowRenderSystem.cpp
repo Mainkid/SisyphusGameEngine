@@ -22,7 +22,7 @@ SyResult ShadowRenderSystem::Init()
 
 SyResult ShadowRenderSystem::Run()
 {
-    hc->context->ClearDepthStencilView(rc->shadowStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    hc->context->ClearDepthStencilView(rc->ShadowStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     auto [camera, cameraTf] = CameraHelper::Find(_ecs);
 
@@ -30,11 +30,11 @@ SyResult ShadowRenderSystem::Run()
     for (auto& lightEnt : viewLights)
     {
         auto [light, lightTf] = viewLights.get(lightEnt);
-        if (light.lightType == LightType::Directional)
+        if (light.LightType == LightType::Directional)
         {
-            hc->context->RSSetState(rc->cullNoneRS.Get());
-            hc->context->OMSetRenderTargets(1, &rc->m_renderTargetView, rc->shadowStencilView.Get());
-            //rc->m_renderTargetTexture = nullptr;
+            hc->context->RSSetState(rc->CullNoneRasterizerState.Get());
+            hc->context->OMSetRenderTargets(1, &rc->MRenderTargetView, rc->ShadowStencilView.Get());
+            //rc->MRenderTargetTexture = nullptr;
             auto viewMeshes = _ecs->view<TransformComponent, MeshComponent>();
             for (auto& ent : viewMeshes)
             {
@@ -54,15 +54,15 @@ SyResult ShadowRenderSystem::Run()
 			                                transform.transformMatrix * camera.view));
 
                 for (int i = 0; i < 4; i++)
-                    dataShadow.viewProjs[i] = light.viewMatrices[i] * light.orthoMatrices[i];
+                    dataShadow.viewProjs[i] = light.ViewMatrices[i] * light.OrthoMatrices[i];
 
                 D3D11_MAPPED_SUBRESOURCE mappedResource;
-                HRESULT res = hc->context->Map(rc->shadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                HRESULT res = hc->context->Map(rc->ShadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
                 CopyMemory(mappedResource.pData, &dataShadow, sizeof(CB_ShadowBuffer));
-                hc->context->Unmap(rc->shadowConstBuffer->buffer.Get(), 0);
-                hc->context->VSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
-                hc->context->PSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
-                hc->context->GSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
+                hc->context->Unmap(rc->ShadowConstBuffer->buffer.Get(), 0);
+                hc->context->VSSetConstantBuffers(0, 1, rc->ShadowConstBuffer->buffer.GetAddressOf());
+                hc->context->PSSetConstantBuffers(0, 1, rc->ShadowConstBuffer->buffer.GetAddressOf());
+                hc->context->GSSetConstantBuffers(0, 1, rc->ShadowConstBuffer->buffer.GetAddressOf());
 
                 for (auto& mesh : meshComp.model->meshes)
                 {
@@ -70,8 +70,8 @@ SyResult ShadowRenderSystem::Run()
                     UINT stride[1] = { 48 };
 
                     D3D11_VIEWPORT viewport = {};
-                    viewport.Width = static_cast<float>(rc->SHADOWMAP_WIDTH);
-                    viewport.Height = static_cast<float>(rc->SHADOWMAP_HEIGHT);
+                    viewport.Width = static_cast<float>(rc->ShadowmapWidth);
+                    viewport.Height = static_cast<float>(rc->ShadowmapHeight);
                     viewport.TopLeftX = 0;
                     viewport.TopLeftY = 0;
                     viewport.MinDepth = 0;
@@ -79,12 +79,12 @@ SyResult ShadowRenderSystem::Run()
 
                     hc->context->RSSetViewports(1, &viewport);
 
-                    hc->context->IASetInputLayout(rc->shadowShader->layout.Get());
+                    hc->context->IASetInputLayout(rc->ShadowShader->layout.Get());
                     hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-                    hc->context->OMSetRenderTargets(1, &rc->m_renderTargetView, rc->shadowStencilView.Get());
-                    hc->context->VSSetShader(rc->shadowShader->vertexShader.Get(), nullptr, 0);
-                    hc->context->GSSetShader(rc->shadowShader->geomShader.Get(), nullptr, 0);
-                    hc->context->PSSetShader(rc->shadowShader->pixelShader.Get(), nullptr, 0);
+                    hc->context->OMSetRenderTargets(1, &rc->MRenderTargetView, rc->ShadowStencilView.Get());
+                    hc->context->VSSetShader(rc->ShadowShader->vertexShader.Get(), nullptr, 0);
+                    hc->context->GSSetShader(rc->ShadowShader->geomShader.Get(), nullptr, 0);
+                    hc->context->PSSetShader(rc->ShadowShader->pixelShader.Get(), nullptr, 0);
                     hc->context->IASetIndexBuffer(mesh->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
                     //!hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                     //    engineActor->model->strides, engineActor->model->offsets);
@@ -95,21 +95,21 @@ SyResult ShadowRenderSystem::Run()
             }
             BlurShadowMap();
         }
-        else if (light.lightType == LightType::PointLight && (light.lightBehavior==LightBehavior::Movable ||
-            (light.lightBehavior==LightBehavior::Static && light.shouldBakeShadows)))
+        else if (light.LightType == LightType::PointLight && (light.LightBehavior==LightBehavior::Movable ||
+            (light.LightBehavior==LightBehavior::Static && light.ShouldBakeShadows)))
         {
-            pointlightShadowProjectionMat = DirectX::XMMatrixPerspectiveFovLH(1.5708f, rc->SHADOWMAP_WIDTH * 1.0f / rc->SHADOWMAP_HEIGHT, 0.01f, light.paramsRadiusAndAttenuation.x);
+            pointlightShadowProjectionMat = DirectX::XMMatrixPerspectiveFovLH(1.5708f, rc->ShadowmapWidth * 1.0f / rc->ShadowmapHeight, 0.01f, light.ParamsRadiusAndAttenuation.x);
 
-            light.shouldBakeShadows = false;
-            hc->context->RSSetState(rc->cullNoneRS.Get());
+            light.ShouldBakeShadows = false;
+            hc->context->RSSetState(rc->CullNoneRasterizerState.Get());
             float bgColor[4] = { 0,0,0,1 };
-            hc->context->ClearDepthStencilView(light.shadowMapDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-            hc->context->ClearRenderTargetView(light.shadowMapRTV.Get(),bgColor);
+            hc->context->ClearDepthStencilView(light.ShadowCubeMapDsv.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+            hc->context->ClearRenderTargetView(light.ShadowCubeMapRtv.Get(),bgColor);
             
 
             CB_PointlightShadowBuffer dataShadow;
-            dataShadow.world =Matrix::CreateScale(light.paramsRadiusAndAttenuation.x, light.paramsRadiusAndAttenuation.x,
-                light.paramsRadiusAndAttenuation.x)*Matrix::CreateTranslation(lightTf.position);
+            dataShadow.world =Matrix::CreateScale(light.ParamsRadiusAndAttenuation.x, light.ParamsRadiusAndAttenuation.x,
+                light.ParamsRadiusAndAttenuation.x)*Matrix::CreateTranslation(lightTf.position);
             
             //dataShadow.baseData.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
             dataShadow.view[0] = DirectX::XMMatrixLookAtLH( Vector3(lightTf.position), lightTf.position + Vector3(1, 0, 0),
@@ -136,18 +136,18 @@ SyResult ShadowRenderSystem::Run()
                 dataShadow.world = transform.transformMatrix;
                 
                 D3D11_MAPPED_SUBRESOURCE mappedResource;
-                HRESULT res = hc->context->Map(rc->shadowPointlightConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                HRESULT res = hc->context->Map(rc->ShadowPointlightConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
                 CopyMemory(mappedResource.pData, &dataShadow, sizeof(CB_PointlightShadowBuffer));
-                hc->context->Unmap(rc->shadowPointlightConstBuffer->buffer.Get(), 0);
+                hc->context->Unmap(rc->ShadowPointlightConstBuffer->buffer.Get(), 0);
 
-                hc->context->VSSetConstantBuffers(0, 1, rc->shadowPointlightConstBuffer->buffer.GetAddressOf());
-                hc->context->PSSetConstantBuffers(0, 1, rc->shadowPointlightConstBuffer->buffer.GetAddressOf());
-                hc->context->GSSetConstantBuffers(0, 1, rc->shadowPointlightConstBuffer->buffer.GetAddressOf());
+                hc->context->VSSetConstantBuffers(0, 1, rc->ShadowPointlightConstBuffer->buffer.GetAddressOf());
+                hc->context->PSSetConstantBuffers(0, 1, rc->ShadowPointlightConstBuffer->buffer.GetAddressOf());
+                hc->context->GSSetConstantBuffers(0, 1, rc->ShadowPointlightConstBuffer->buffer.GetAddressOf());
 
 
                 D3D11_VIEWPORT viewport = {};
-                viewport.Width = static_cast<float>(rc->SHADOWMAP_WIDTH);
-                viewport.Height = static_cast<float>(rc->SHADOWMAP_HEIGHT);
+                viewport.Width = static_cast<float>(rc->ShadowmapWidth);
+                viewport.Height = static_cast<float>(rc->ShadowmapHeight);
                 viewport.TopLeftX = 0;
                 viewport.TopLeftY = 0;
                 viewport.MinDepth = 0;
@@ -155,12 +155,12 @@ SyResult ShadowRenderSystem::Run()
 
                 hc->context->RSSetViewports(1, &viewport);
 
-                hc->context->IASetInputLayout(rc->shadowPointLightShader->layout.Get());
+                hc->context->IASetInputLayout(rc->ShadowPointLightShader->layout.Get());
                 hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-                hc->context->OMSetRenderTargets(1, light.shadowMapRTV.GetAddressOf(), light.shadowMapDSV.Get());
-                hc->context->PSSetShader(rc->shadowPointLightShader->pixelShader.Get(), nullptr, 0);
-                hc->context->VSSetShader(rc->shadowPointLightShader->vertexShader.Get(), nullptr, 0);
-                hc->context->GSSetShader(rc->shadowPointLightShader->geomShader.Get(), nullptr, 0);
+                hc->context->OMSetRenderTargets(1, light.ShadowCubeMapRtv.GetAddressOf(), light.ShadowCubeMapDsv.Get());
+                hc->context->PSSetShader(rc->ShadowPointLightShader->pixelShader.Get(), nullptr, 0);
+                hc->context->VSSetShader(rc->ShadowPointLightShader->vertexShader.Get(), nullptr, 0);
+                hc->context->GSSetShader(rc->ShadowPointLightShader->geomShader.Get(), nullptr, 0);
 
                 for (auto& mesh : meshComp.model->meshes)
                 {
@@ -183,13 +183,13 @@ SyResult ShadowRenderSystem::Run()
 
     hc->context->GSSetShader(nullptr, nullptr, 0);
 
-    rc->viewport.Width = static_cast<float>(hc->window->GetWidth());
-    rc->viewport.Height = static_cast<float>(hc->window->GetHeight());
-    rc->viewport.TopLeftX = 0;
-    rc->viewport.TopLeftY = 0;
-    rc->viewport.MinDepth = 0;
-    rc->viewport.MaxDepth = 1.0f;
-    hc->context->RSSetViewports(1, &rc->viewport);
+    rc->Viewport.Width = static_cast<float>(hc->window->GetWidth());
+    rc->Viewport.Height = static_cast<float>(hc->window->GetHeight());
+    rc->Viewport.TopLeftX = 0;
+    rc->Viewport.TopLeftY = 0;
+    rc->Viewport.MinDepth = 0;
+    rc->Viewport.MaxDepth = 1.0f;
+    hc->context->RSSetViewports(1, &rc->Viewport);
 
     return SyResult();
 }
@@ -205,27 +205,27 @@ void ShadowRenderSystem::BlurShadowMap()
     UINT strides[1] = { 32 };
     UINT offsets[1] = { 0 };
 
-    hc->context->OMSetDepthStencilState(rc->offStencilState.Get(), 0);
-    hc->context->VSSetShader(rc->gaussianBlurX->vertexShader.Get(), nullptr, 0);
-    hc->context->PSSetShader(rc->gaussianBlurX->pixelShader.Get(), nullptr, 0);
-    hc->context->GSSetShader(rc->gaussianBlurX->geomShader.Get(), nullptr, 0);
-    hc->context->PSSetSamplers(0, 1, rc->pointSampler.GetAddressOf());
-    hc->context->IASetInputLayout(rc->gaussianBlurX->layout.Get());
+    hc->context->OMSetDepthStencilState(rc->OffStencilState.Get(), 0);
+    hc->context->VSSetShader(rc->GaussianBlurX->vertexShader.Get(), nullptr, 0);
+    hc->context->PSSetShader(rc->GaussianBlurX->pixelShader.Get(), nullptr, 0);
+    hc->context->GSSetShader(rc->GaussianBlurX->geomShader.Get(), nullptr, 0);
+    hc->context->PSSetSamplers(0, 1, rc->PointSampler.GetAddressOf());
+    hc->context->IASetInputLayout(rc->GaussianBlurX->layout.Get());
     hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    hc->context->OMSetRenderTargets(1,&rc->m_bluredShadowRTV , nullptr);
+    hc->context->OMSetRenderTargets(1,&rc->MBluredShadowRtv , nullptr);
 
-    hc->context->PSSetShaderResources(0, 1, &rc->m_shaderResourceView);
-    hc->context->IASetIndexBuffer(rc->indexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-    hc->context->IASetVertexBuffers(0, 1, rc->vertexQuadBuffer->buffer.GetAddressOf(),
+    hc->context->PSSetShaderResources(0, 1, &rc->MShaderResourceView);
+    hc->context->IASetIndexBuffer(rc->IndexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+    hc->context->IASetVertexBuffers(0, 1, rc->VertexQuadBuffer->buffer.GetAddressOf(),
         strides, offsets);
 
     hc->context->DrawIndexedInstanced(6, 4, 0, 0, 0);
 
-    hc->context->CopyResource(rc->m_renderTargetTexture, rc->m_bluredShadowTexture);
+    hc->context->CopyResource(rc->MRenderTargetTexture, rc->MBluredShadowTexture);
 
-    hc->context->PSSetShader(rc->gaussianBlurY->pixelShader.Get(), nullptr, 0);
+    hc->context->PSSetShader(rc->GaussianBlurY->pixelShader.Get(), nullptr, 0);
     hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    hc->context->OMSetRenderTargets(1, &rc->m_bluredShadowRTV, nullptr);
+    hc->context->OMSetRenderTargets(1, &rc->MBluredShadowRtv, nullptr);
     hc->context->DrawIndexedInstanced(6, 4, 0, 0, 0);
 
     hc->context->OMSetDepthStencilState(hc->depthStencilState.Get(), 0);

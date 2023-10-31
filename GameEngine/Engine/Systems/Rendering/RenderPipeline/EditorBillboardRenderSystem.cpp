@@ -22,7 +22,7 @@ SyResult EditorBillboardRenderSystem::Run()
 {
     ID3D11RenderTargetView* nullRTV[5] = { nullptr,nullptr,nullptr,nullptr,nullptr };
     hc->context->OMSetRenderTargets(5, nullRTV, nullptr);
-    hc->context->RSSetState(rc->cullBackRS.Get());
+    hc->context->RSSetState(rc->CullBackRasterizerState.Get());
     hc->context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
     UINT strides[1] = { 32 };
     UINT offsets[1] = { 0 };
@@ -32,14 +32,14 @@ SyResult EditorBillboardRenderSystem::Run()
     auto viewBb = _ecs->view<TransformComponent, EditorBillboardComponent>();
 
     hc->context->OMSetDepthStencilState(hc->depthStencilState.Get(), 0);
-    hc->context->VSSetShader(rc->billboardShader->vertexShader.Get(), nullptr, 0); //
-    hc->context->PSSetShader(rc->billboardShader->pixelShader.Get(), nullptr, 0); //
-    hc->context->IASetInputLayout(rc->billboardShader->layout.Get());
+    hc->context->VSSetShader(rc->BillboardShader->vertexShader.Get(), nullptr, 0); //
+    hc->context->PSSetShader(rc->BillboardShader->pixelShader.Get(), nullptr, 0); //
+    hc->context->IASetInputLayout(rc->BillboardShader->layout.Get());
     hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    hc->context->IASetIndexBuffer(rc->indexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-    hc->context->IASetVertexBuffers(0, 1, rc->vertexQuadBuffer->buffer.GetAddressOf(),
+    hc->context->IASetIndexBuffer(rc->IndexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+    hc->context->IASetVertexBuffers(0, 1, rc->VertexQuadBuffer->buffer.GetAddressOf(),
         strides, offsets);
-    hc->context->OMSetRenderTargets(2, rc->editorBillboardRtvs, hc->depthStencilView.Get());
+    hc->context->OMSetRenderTargets(2, rc->EditorBillboardRtvs, hc->depthStencilView.Get());
 
     for (auto& ent : viewBb)
     {
@@ -67,11 +67,11 @@ SyResult EditorBillboardRenderSystem::Run()
         dataOpaque.instanseID = DirectX::SimpleMath::Vector4(int(ent), int(ent), int(EAssetType::ASSET_TEXTURE),1);
 
         D3D11_MAPPED_SUBRESOURCE mappedResource;
-        HRESULT res = hc->context->Map(rc->opaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+        HRESULT res = hc->context->Map(rc->OpaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
         CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_BaseEditorBuffer));
-        hc->context->Unmap(rc->opaqueConstBuffer->buffer.Get(), 0);
-        hc->context->VSSetConstantBuffers(0, 1, rc->opaqueConstBuffer->buffer.GetAddressOf());
-        hc->context->PSSetConstantBuffers(0, 1, rc->opaqueConstBuffer->buffer.GetAddressOf());
+        hc->context->Unmap(rc->OpaqueConstBuffer->buffer.Get(), 0);
+        hc->context->VSSetConstantBuffers(0, 1, rc->OpaqueConstBuffer->buffer.GetAddressOf());
+        hc->context->PSSetConstantBuffers(0, 1, rc->OpaqueConstBuffer->buffer.GetAddressOf());
         //engine->renderTarget->SetRenderTarget(engine->depthStencilView.Get());
 
         hc->context->PSSetSamplers(0, 1, billboardComp.samplerState.GetAddressOf());

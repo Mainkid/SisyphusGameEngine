@@ -26,12 +26,12 @@ SyResult EditorGridRenderSystem::Run()
 	UINT strides[1] = { 16 };
 	UINT offsets[1] = { 0 };
 
-	hc->context->OMSetBlendState(rc->gridBlendState.Get(), nullptr, 0xffffffff);
+	hc->context->OMSetBlendState(rc->GridBlendState.Get(), nullptr, 0xffffffff);
 	auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
 
 	dataOpaque.baseData.worldViewProj =
 	camera.view * camera.projection;
-	hc->context->OMSetDepthStencilState(rc->offStencilState.Get(),0);
+	hc->context->OMSetDepthStencilState(rc->OffStencilState.Get(),0);
 	
 
 	dataOpaque.eyePos = Vector4(cameraTransform.position.x, cameraTransform.position.y, cameraTransform.position.z,10);
@@ -44,21 +44,21 @@ SyResult EditorGridRenderSystem::Run()
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		
-		HRESULT res = hc->context->Map(rc->shadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		HRESULT res = hc->context->Map(rc->ShadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_GridEditorBuffer));
-		hc->context->Unmap(rc->shadowConstBuffer->buffer.Get(), 0);
-		hc->context->VSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
-		hc->context->PSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
+		hc->context->Unmap(rc->ShadowConstBuffer->buffer.Get(), 0);
+		hc->context->VSSetConstantBuffers(0, 1, rc->ShadowConstBuffer->buffer.GetAddressOf());
+		hc->context->PSSetConstantBuffers(0, 1, rc->ShadowConstBuffer->buffer.GetAddressOf());
 		hc->renderTarget->SetRenderTarget( hc->depthStencilView.Get());
-		hc->context->IASetInputLayout(rc->editorGridRenderer->layout.Get());
+		hc->context->IASetInputLayout(rc->EditorGridRenderer->layout.Get());
 		hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 		hc->context->IASetIndexBuffer(grid1M->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 		hc->context->IASetVertexBuffers(0, 1, grid1M->vertexBuffer->buffer.GetAddressOf(),
 			strides, offsets);
 	
 		
-		hc->context->VSSetShader(rc->editorGridRenderer->vertexShader.Get(), nullptr, 0);
-		hc->context->PSSetShader(rc->editorGridRenderer->pixelShader.Get(), nullptr, 0);
+		hc->context->VSSetShader(rc->EditorGridRenderer->vertexShader.Get(), nullptr, 0);
+		hc->context->PSSetShader(rc->EditorGridRenderer->pixelShader.Get(), nullptr, 0);
 		hc->context->DrawIndexed(grid1M->indexBuffer->size, 0, 0);
 
 		dataOpaque.eyePos.w = 10000000;
@@ -67,11 +67,11 @@ SyResult EditorGridRenderSystem::Run()
 		dataOpaque.baseData.worldViewProj = Matrix::CreateTranslation(vec3) *
 			camera.view * camera.projection;
 
-		res = hc->context->Map(rc->shadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		res = hc->context->Map(rc->ShadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_GridEditorBuffer));
-		hc->context->Unmap(rc->shadowConstBuffer->buffer.Get(), 0);
-		hc->context->VSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
-		hc->context->PSSetConstantBuffers(0, 1, rc->shadowConstBuffer->buffer.GetAddressOf());
+		hc->context->Unmap(rc->ShadowConstBuffer->buffer.Get(), 0);
+		hc->context->VSSetConstantBuffers(0, 1, rc->ShadowConstBuffer->buffer.GetAddressOf());
+		hc->context->PSSetConstantBuffers(0, 1, rc->ShadowConstBuffer->buffer.GetAddressOf());
 
 		hc->context->IASetIndexBuffer(grid10M->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 		hc->context->IASetVertexBuffers(0, 1, grid10M->vertexBuffer->buffer.GetAddressOf(),

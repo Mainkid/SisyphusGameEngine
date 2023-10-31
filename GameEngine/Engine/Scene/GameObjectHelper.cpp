@@ -165,8 +165,8 @@ entt::entity GameObjectHelper::CreateLight(entt::registry* ecs, LightType lightT
 	}
 	ecs->emplace<LightComponent>(ent, lightType);
 
-	ecs->get<LightComponent>(ent).lightBehavior = LightBehavior::Static;
-	ecs->get<LightComponent>(ent).paramsRadiusAndAttenuation = Vector4(1, 0, 0, 1);
+	ecs->get<LightComponent>(ent).LightBehavior = LightBehavior::Static;
+	ecs->get<LightComponent>(ent).ParamsRadiusAndAttenuation = Vector4(1, 0, 0, 1);
 	return ent;
 }
 

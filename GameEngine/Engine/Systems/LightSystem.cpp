@@ -26,7 +26,7 @@ SyResult LightSystem::Run()
     {
         LightComponent& lc = viewLights.get<LightComponent>(ent);
         TransformComponent& tc = viewLights.get<TransformComponent>(ent);
-        if (lc.lightType != LightType::Ambient)
+        if (lc.LightType != LightType::Ambient)
         {
             GenerateViewMatrix(Vector3(camera.forward), lc, Vector3(cameraTf.localPosition));
             //GenerateOrthoFromFrustum(lc, Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
@@ -39,12 +39,12 @@ SyResult LightSystem::Run()
                 camera.farPlane);
         }
 
-        if (!lc.aabb)
+        if (!lc.Aabb)
         {
-            lc.aabb = MeshLoader::LoadSimpleMesh("Engine/Assets/Resources/Cube.fbx");
+            lc.Aabb = MeshLoader::LoadSimpleMesh("Engine/Assets/Resources/Cube.fbx");
         }
 
-        if (lc.lightType == LightType::PointLight && lc.shadowMapTexture == nullptr)
+        if (lc.LightType == LightType::PointLight && lc.ShadowCubeMapTexture == nullptr)
             InitPointLightResources(lc);
     }
     return SyResult();
@@ -86,9 +86,9 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
     using namespace DirectX::SimpleMath;
     std::vector<Vector4> frustumCorners = GetFrustumCorners(view, proj);
     std::vector<float> planesProportions = {0, 0.05,0.1,0.35,1 };
-    lc.orthoMatrices.clear();
-    lc.viewMatrices.clear();
-    lc.distances.clear();
+    lc.OrthoMatrices.clear();
+    lc.ViewMatrices.clear();
+    lc.Distances.clear();
 
     int n = 4;
 
@@ -141,9 +141,9 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
         maxZ = (maxZ < 0) ? maxZ / zMult : maxZ * zMult;
 
 
-        lc.orthoMatrices.push_back(Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ));
-        lc.viewMatrices.push_back(viewMatrix2);
-        lc.distances.push_back(Vector4(farZ * planesProportions[i],
+        lc.OrthoMatrices.push_back(Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ));
+        lc.ViewMatrices.push_back(viewMatrix2);
+        lc.Distances.push_back(Vector4(farZ * planesProportions[i],
             farZ * planesProportions[i], farZ * planesProportions[i], 1.0f));
     }
 
@@ -152,14 +152,14 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
 
 void LightSystem::GenerateOrthoMatrix(LightComponent& lc, float width, float depthPlane, float nearPlane)
 {
-    lc.orthoMatrix = DirectX::XMMatrixOrthographicLH(width, width, nearPlane, depthPlane);
+    lc.OrthoMatrix = DirectX::XMMatrixOrthographicLH(width, width, nearPlane, depthPlane);
 }
 
 void LightSystem::GenerateViewMatrix(Vector3 cameraForward, LightComponent& lc, Vector3 pos)
 {
     Vector4 lookAt = pos + Vector4(cameraForward.x, cameraForward.y, cameraForward.z, 1.0f);
     Vector4 up = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
-    lc.viewMatrix = DirectX::XMMatrixLookAtLH(pos, lookAt, up);
+    lc.ViewMatrix = DirectX::XMMatrixLookAtLH(pos, lookAt, up);
 }
 
 void LightSystem::GenerateOrthoFromFrustum(LightComponent& lc, Vector3 direction, const Matrix& view, const Matrix proj)
@@ -174,7 +174,7 @@ void LightSystem::GenerateOrthoFromFrustum(LightComponent& lc, Vector3 direction
 
     center /= frustumCorners.size();
 
-    lc.viewMatrix = DirectX::XMMatrixLookAtLH(center, center - direction, Vector3::Up);
+    lc.ViewMatrix = DirectX::XMMatrixLookAtLH(center, center - direction, Vector3::Up);
 
     float minX = 10000000.0f;
     float maxX = -10000000.0f;
@@ -185,7 +185,7 @@ void LightSystem::GenerateOrthoFromFrustum(LightComponent& lc, Vector3 direction
 
     for (const auto& v : frustumCorners)
     {
-        const Vector4 trf = Vector4::Transform(v, lc.viewMatrix);
+        const Vector4 trf = Vector4::Transform(v, lc.ViewMatrix);
 
         minX = SyMathHelper::Min(minX, trf.x);
         maxX = SyMathHelper::Max(maxX, trf.x);
@@ -200,14 +200,14 @@ void LightSystem::GenerateOrthoFromFrustum(LightComponent& lc, Vector3 direction
     maxZ = (maxZ < 0) ? maxZ / zMult : maxZ * zMult;
 
 
-    lc.orthoMatrix = Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ);
+    lc.OrthoMatrix = Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ);
 }
 
 void LightSystem::InitPointLightResources(LightComponent& lc)
 {
     D3D11_TEXTURE2D_DESC textureDesc_ = {};
-    textureDesc_.Width = rc->SHADOWMAP_WIDTH;
-    textureDesc_.Height = rc->SHADOWMAP_HEIGHT;
+    textureDesc_.Width = rc->ShadowmapWidth;
+    textureDesc_.Height = rc->ShadowmapHeight;
     textureDesc_.MipLevels = 1;
     textureDesc_.ArraySize = 6;
     textureDesc_.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -218,14 +218,14 @@ void LightSystem::InitPointLightResources(LightComponent& lc)
     textureDesc_.CPUAccessFlags = 0;
     textureDesc_.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
-    HRESULT result = hc->device->CreateTexture2D(&textureDesc_, nullptr, lc.shadowMapTexture.GetAddressOf());
+    HRESULT result = hc->device->CreateTexture2D(&textureDesc_, nullptr, lc.ShadowCubeMapTexture.GetAddressOf());
 
 
-    result = hc->device->CreateRenderTargetView(lc.shadowMapTexture.Get(), nullptr, lc.shadowMapRTV.GetAddressOf());
+    result = hc->device->CreateRenderTargetView(lc.ShadowCubeMapTexture.Get(), nullptr, lc.ShadowCubeMapRtv.GetAddressOf());
 
     D3D11_TEXTURE2D_DESC textureDescDSV = {};
-    textureDescDSV.Width = rc->SHADOWMAP_WIDTH;
-    textureDescDSV.Height = rc->SHADOWMAP_HEIGHT;
+    textureDescDSV.Width = rc->ShadowmapWidth;
+    textureDescDSV.Height = rc->ShadowmapHeight;
     textureDescDSV.MipLevels = 1;
     textureDescDSV.ArraySize = 6;
     textureDescDSV.Format = DXGI_FORMAT_R32_TYPELESS;
@@ -236,7 +236,7 @@ void LightSystem::InitPointLightResources(LightComponent& lc)
     textureDescDSV.CPUAccessFlags = 0;
     textureDescDSV.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
-    result = hc->device->CreateTexture2D(&textureDescDSV, nullptr, lc.depthStencilViewTexture.GetAddressOf());
+    result = hc->device->CreateTexture2D(&textureDescDSV, nullptr, lc.DepthStencilViewCubeTexture.GetAddressOf());
 
 
     D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewPointDesc;
@@ -247,12 +247,12 @@ void LightSystem::InitPointLightResources(LightComponent& lc)
     depthStencilViewPointDesc.Texture2DArray.FirstArraySlice = 0;
     depthStencilViewPointDesc.Texture2DArray.ArraySize = 6;
 
-    result = hc->device->CreateDepthStencilView(lc.depthStencilViewTexture.Get(), &depthStencilViewPointDesc, lc.shadowMapDSV.GetAddressOf());
+    result = hc->device->CreateDepthStencilView(lc.DepthStencilViewCubeTexture.Get(), &depthStencilViewPointDesc, lc.ShadowCubeMapDsv.GetAddressOf());
 
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
     srvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
     srvDesc.Texture2D.MostDetailedMip = 0;
     srvDesc.Texture2D.MipLevels = 1;
-    result = hc->device->CreateShaderResourceView(lc.shadowMapTexture.Get(), &srvDesc, lc.shadowMapSRV.GetAddressOf());
+    result = hc->device->CreateShaderResourceView(lc.ShadowCubeMapTexture.Get(), &srvDesc, lc.ShadowCubeMapSrv.GetAddressOf());
 }

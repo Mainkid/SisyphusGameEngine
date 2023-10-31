@@ -17,35 +17,43 @@ struct LightComponent
     LightComponent() = default;
     LightComponent(LightType _type)
     {
-        lightType = _type;
+        LightType = _type;
     };
-    std::vector<Matrix> viewMatrices;
-    std::vector<Matrix> orthoMatrices;
-    std::vector<Vector4> distances;
-    std::shared_ptr<Mesh> aabb = nullptr;
-    LightType lightType = LightType::Ambient;
-    LightBehavior lightBehavior = LightBehavior::Movable;
-    Vector4 color = { 1,1,1,1 };
-    Vector4 paramsRadiusAndAttenuation = { 0,1,1,1 };
-    uint32_t hash = 0;
-    Matrix viewMatrix;
-    Matrix orthoMatrix;
-    bool shouldBakeShadows = true;
-    bool castShadows = false;
+    std::vector<Matrix> ViewMatrices;
+    std::vector<Matrix> OrthoMatrices;
+    std::vector<Vector4> Distances;
+    std::shared_ptr<Mesh> Aabb = nullptr;
+    LightType LightType = LightType::Ambient;
+    LightBehavior LightBehavior = LightBehavior::Movable;
+    Vector4 Color = { 1,1,1,1 };
+    Vector4 ParamsRadiusAndAttenuation = { 0,1,1,1 };
+    uint32_t Hash = 0;
+    Matrix ViewMatrix;
+    Matrix OrthoMatrix;
+    bool ShouldBakeShadows = true;
+    bool CastShadows = false;
 
-    //Rendering shadows
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> shadowMapTexture = nullptr;
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencilViewTexture = nullptr;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shadowMapSRV = nullptr;
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> shadowMapRTV = nullptr;
-    Microsoft::WRL::ComPtr<ID3D11DepthStencilView> shadowMapDSV = nullptr;
+    /*
+     *  Rendering pointlight/spotlight shadows
+     */
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> ShadowCubeMapTexture = nullptr;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> DepthStencilViewCubeTexture = nullptr;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ShadowCubeMapSrv = nullptr;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> ShadowCubeMapRtv = nullptr;
+    Microsoft::WRL::ComPtr<ID3D11DepthStencilView> ShadowCubeMapDsv = nullptr;
+
+    /*
+     *  Rendering directional cascade shadows
+     */
+
+
 
 
     SER_COMP(LightComponent,
-        lightType,
-        lightBehavior,
-        color,
-        paramsRadiusAndAttenuation)
+        LightType,
+        LightBehavior,
+        Color,
+        ParamsRadiusAndAttenuation)
 };
 
 namespace std
@@ -76,11 +84,11 @@ namespace std
         using result_type = std::size_t;
         result_type operator()(argument_type const& a) const
         {
-            result_type const h1(std::hash<Vector4>()(a.color));
-            result_type const h3(std::hash<Vector4>()(a.paramsRadiusAndAttenuation));
+            result_type const h1(std::hash<Vector4>()(a.Color));
+            result_type const h3(std::hash<Vector4>()(a.ParamsRadiusAndAttenuation));
             return h1 * 37 + (h1 * 37 + h3) * 37 + ((h1 * 37 + h3) * 37 + h3);
         }
     };
 }
 
-//TODO: Добавить MeshComponent aabb!!!
+//TODO: Добавить MeshComponent Aabb!!!

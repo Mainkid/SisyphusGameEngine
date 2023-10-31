@@ -17,7 +17,7 @@ SyResult HudPostRenderSystem::Init()
 SyResult HudPostRenderSystem::Run()
 {
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::ShowDemoWindow();
+    //ImGui::ShowDemoWindow();
     ImGui::Render();
     
     
