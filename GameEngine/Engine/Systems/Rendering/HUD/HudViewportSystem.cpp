@@ -10,6 +10,8 @@
 #include "../../../Components/MeshComponent.h"
 #include "../../ResourceService.h"
 #include "../../../Core/ECS/Events/SyHotReloadEvent.h"
+#include "../../../Core/ECS/Events/SyPlayModeEndedEvent.h"
+#include "../../../Core/ECS/Events/SyPlayModeStartedEvent.h"
 #include "../../../Core/ECS/Events/SySceneLoadEvent.h"
 
 
@@ -418,6 +420,7 @@ void HudViewportSystem::DrawPlayMode(ImVec2 cursorStartPostion)
 	if (ImGui::IsItemClicked())
 	{
 		ec->playModeState = EngineContext::EPlayModeState::PlayMode;
+		CallEvent<SyPlayModeStartedEvent>("SyPlayModeStartedEvent");
 	}
 	offset += dtOffset;
 	ImGui::SameLine(offset);
@@ -439,6 +442,7 @@ void HudViewportSystem::DrawPlayMode(ImVec2 cursorStartPostion)
 		ec->playModeState != EngineContext::EPlayModeState::EditorMode)
 	{
 		ec->playModeState = EngineContext::EPlayModeState::EditorMode;
+		CallEvent<SyPlayModeEndedEvent>("SyPlayModeEndedEvent");
 	}
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();

@@ -654,6 +654,8 @@
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="Engine\Core\ECS\Event.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SyHotReloadEvent.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeStartedEvent.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeEndedEvent.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SySceneLoadEvent.h" />
     <ClInclude Include="Engine\Core\ResourcePath.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.h" />

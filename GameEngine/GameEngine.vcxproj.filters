@@ -193,6 +193,8 @@
     <ClInclude Include="Engine\Core\ECS\Events\SySceneLoadEvent.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\HbaoRenderSystem.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SyHotReloadEvent.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeStartedEvent.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeEndedEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
