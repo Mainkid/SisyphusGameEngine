@@ -29,9 +29,9 @@ SyResult LightRenderSystem::Run()
     ID3D11ShaderResourceView* resources[] = 
     { rc->GBuffer->DiffuseSrv.Get(),
         rc->GBuffer->MetallicSrv.Get(),
-        rc->GBuffer->HbaoSrv.Get(),
+        rc->GBuffer->DepthSrv.Get(),
         rc->GBuffer->EmissiveSrv.Get(),
-         rc->GBuffer->NormalSrv.Get(),
+         rc->GBuffer->NormalAndDepthSrv.Get(),
          rc->GBuffer->PositionSrv.Get(),
          rc->GBuffer->IdSrv.Get()
     };
@@ -58,8 +58,14 @@ SyResult LightRenderSystem::Run()
 
         hc->context->ClearDepthStencilView(hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1, 0);
 
+        
+        
+
         if (light.LightType == ELightType::Directional || light.LightType == ELightType::Ambient)
         {
+
+            
+
             lightBuffer.baseData.world = Matrix::Identity;
             lightBuffer.baseData.worldView = Matrix::Identity * camera.view;
             lightBuffer.baseData.worldViewProj = Matrix::Identity * camera.view * camera.projection;
@@ -67,11 +73,14 @@ SyResult LightRenderSystem::Run()
 
 
             if (light.LightType == ELightType::Directional)
+            {
                 for (int i = 0; i < 4; i++)
                 {
                     lightBuffer.distances[i] = light.Distances[i];
                     lightBuffer.viewProjs[i] = light.ViewMatrices[i] * light.OrthoMatrices[i];
                 }
+                hc->context->ClearRenderTargetView(light.DirShadowRtv.Get(), bgColor);
+            }
 
 
         }
@@ -141,7 +150,8 @@ SyResult LightRenderSystem::Run()
             else
             {
                 hc->context->PSSetShader(rc->AmbientLightShader->pixelShader.Get(), nullptr, 0);
-                hc->context->PSSetShaderResources(9, 1, rc->GBuffer->SkyboxSrv.GetAddressOf());
+                hc->context->PSSetShaderResources(7, 1, rc->HbaoSrv.GetAddressOf());
+            	hc->context->PSSetShaderResources(9, 1, rc->GBuffer->SkyboxSrv.GetAddressOf());
                 //hc->context->PSSetShaderResources(7, 1, hc->depthStencilView.GetAddressOf());
             }
 

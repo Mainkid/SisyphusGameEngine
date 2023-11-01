@@ -29,4 +29,5 @@
 #include "Rendering/RenderPipeline/ToneMappingRenderSystem.h"
 #include "Rendering/PostViewportRenderSystem.h"
 #include "Rendering/RenderPipeline/EditorGridRenderSystem.h"
+#include "Rendering/RenderPipeline/HbaoRenderSystem.h"
 #include "../Systems/PrepareEventsSystem.h"

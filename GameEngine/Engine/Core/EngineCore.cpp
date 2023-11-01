@@ -4,10 +4,6 @@
 #include "../Components/MeshComponent.h"
 #include "../Components/TransformComponent.h"
 
-//EngineCore::EngineCore(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height)
-//{
-//	window = std::make_unique<DisplayWin32>(appName, hInstance, width, height);
-//}
 
 EngineCore::EngineCore()
 {
@@ -103,6 +99,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<ShadowRenderSystem>();
 	_systems.Add<SkyboxRenderSystem>();
 	_systems.Add<OpaqueRenderSystem>();
+	_systems.Add<HbaoRenderSystem>();
 	_systems.Add<ShadowMapGenerationSystem>();
 	_systems.Add<LightRenderSystem>();
 	_systems.Add<EditorBillboardRenderSystem>();

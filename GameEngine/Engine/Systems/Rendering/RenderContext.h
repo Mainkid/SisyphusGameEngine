@@ -7,6 +7,8 @@
 #include "../../Core/Graphics/Shader.h"
 #include "../../Core/IService.h"
 #include "../../Components/Mesh.h"
+#include "../../vendor/HBAO/GFSDK_SSAO.h"
+
 
 struct RenderContext : public IService
 {
@@ -103,4 +105,19 @@ struct RenderContext : public IService
 	std::unique_ptr<Buffer> ShadowPointlightConstBuffer;
 
 	std::set<std::unique_ptr<Material>> MaterialSet;
+
+
+	/*
+	 *	Ambient Occlusion
+	 */
+
+	GFSDK_SSAO_Parameters HbaoParams;
+	GFSDK_SSAO_InputData_D3D11 Input;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> HbaoTexture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> HbaoSrv;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> HbaoRtv;
+	
+	GFSDK_SSAO_CustomHeap CustomHeap;
+	GFSDK_SSAO_Status status;
+	GFSDK_SSAO_Context_D3D11* pAOContext;
 };

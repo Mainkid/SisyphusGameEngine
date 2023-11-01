@@ -1,6 +1,7 @@
 #include "HardwareInitSystem.h"
 #include "../Core/DisplayWin32.h"
 #include "../Core/Rendering/RenderTarget.h"
+#include "../../vendor/HBAO/GFSDK_SSAO.h"
 
 SyResult HardwareInitSystem::Init()
 {
@@ -79,22 +80,35 @@ void HardwareInitSystem::CreateDeviceAndSwapChain()
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
 	depthStencilDesc.Width = hc->window->GetWidth();
 	depthStencilDesc.Height = hc->window->GetHeight();
-	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.MipLevels = 0;
 	depthStencilDesc.ArraySize = 1;
-	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
 	depthStencilDesc.SampleDesc.Count = 1;
 	depthStencilDesc.SampleDesc.Quality = 0;
 	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 	depthStencilDesc.CPUAccessFlags = 0;
 	depthStencilDesc.MiscFlags = 0;
+	
 
 	HRESULT hr = hc->device->CreateTexture2D(&depthStencilDesc, NULL, hc->depthStencilBuffer.GetAddressOf());
 
 
-	hr = hc->device->CreateDepthStencilView(hc->depthStencilBuffer.Get(), NULL, hc->depthStencilView.GetAddressOf());
+	D3D11_DEPTH_STENCIL_VIEW_DESC depthSRVDesc = {};
+	depthSRVDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthSRVDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
-	
+	hr = hc->device->CreateDepthStencilView(hc->depthStencilBuffer.Get(), &depthSRVDesc, hc->depthStencilView.GetAddressOf());
+
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	ZeroMemory(&srvDesc, sizeof(srvDesc));
+	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	hr = hc->device->CreateShaderResourceView(hc->depthStencilBuffer.Get(), &srvDesc, hc->depthStencilSrv.GetAddressOf());
+
 
 	res = hc->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backTex);	// __uuidof(ID3D11Texture2D)
 	res = hc->device->CreateRenderTargetView(backTex, nullptr, hc->rtv.GetAddressOf());

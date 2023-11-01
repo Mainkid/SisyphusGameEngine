@@ -7,6 +7,7 @@
 #include "../../Core/ServiceLocator.h"
 #include "../../Tools/ImageLoader.h"
 #include "../MeshLoader.h"
+#include "../../vendor/HBAO/GFSDK_SSAO.h"
 
 SyResult RenderInitSystem::Init()
 {
@@ -40,7 +41,7 @@ SyResult RenderInitSystem::Init()
 	_rc->Rtvs[1] = _rc->GBuffer->MetallicRtv.Get();
 	_rc->Rtvs[2] = _rc->GBuffer->SpecularRtv.Get();
 	_rc->Rtvs[3] = _rc->GBuffer->EmissiveRtv.Get();
-	_rc->Rtvs[4] = _rc->GBuffer->NormalRtv.Get();
+	_rc->Rtvs[4] = _rc->GBuffer->NormalAndDepthRtv.Get();
 	_rc->Rtvs[5] = _rc->GBuffer->PositionRtv.Get();
 	_rc->Rtvs[6] = _rc->GBuffer->IdRtv.Get();
 	//_rc->Rtvs[4] = _rc->GBuffer->SpecularRtv.Get();
@@ -73,6 +74,10 @@ SyResult RenderInitSystem::Init()
 	InitSkybox();
 
 	CompileShaders();
+
+	CreateHbao();
+
+	
 
 
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "RenderInit system initialization successful. ");
@@ -165,6 +170,24 @@ void RenderInitSystem::CreateTextures() const
 	desc2.CPUAccessFlags = 0;
 
 	HRESULT result = _hc->device->CreateTexture2D(&desc2, NULL, _rc->EntityIdTexture.GetAddressOf());
+
+
+
+	D3D11_TEXTURE2D_DESC textureDesc;
+	ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+	textureDesc.Width = _hc->window->GetWidth();
+	textureDesc.Height = _hc->window->GetHeight();
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+	HRESULT res = _hc->device->CreateTexture2D(&textureDesc, nullptr, _rc->HbaoTexture.GetAddressOf());
 }
 
 void RenderInitSystem::CompileShaders() const
@@ -441,7 +464,9 @@ void RenderInitSystem::CreateDepthAndStencils() const
 
 void RenderInitSystem::CreateShaderResourceViewsAndRenderTargets() const
 {
-	
+	auto res = _hc->device->CreateRenderTargetView(_rc->HbaoTexture.Get(), nullptr, _rc->HbaoRtv.GetAddressOf());
+
+
 	//Shadow maps -->
 
 
@@ -453,6 +478,11 @@ void RenderInitSystem::CreateShaderResourceViewsAndRenderTargets() const
 
 
 	HRESULT hr = _hc->device->CreateShaderResourceView(_rc->TexturePCF, &shaderResourceViewDesc_, &_rc->ShadowMapResourceView);
+
+	shaderResourceViewDesc_.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	hr = _hc->device->CreateShaderResourceView(_rc->HbaoTexture.Get(), &shaderResourceViewDesc_, _rc->HbaoSrv.GetAddressOf());
+
+	//hr = _hc->device->CreateShaderResourceView(_hc->depthStencilBuffer.Get(), &shaderResourceViewDesc_, _hc->depthStencilSrv.GetAddressOf());
 
 	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
 	renderTargetViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
@@ -495,4 +525,14 @@ void RenderInitSystem::CreateRasterizerStates() const
 
 	desc.CullMode = D3D11_CULL_NONE;
 	_hc->device->CreateRasterizerState(&desc, _rc->CullNoneRasterizerState.GetAddressOf());
+}
+
+void RenderInitSystem::CreateHbao() const
+{
+
+	_rc->CustomHeap.new_ = ::operator new;
+	_rc->CustomHeap.delete_ = ::operator delete;
+
+	_rc->status = GFSDK_SSAO_CreateContext_D3D11(_hc->device.Get(), &_rc->pAOContext, &_rc->CustomHeap);
+	assert(_rc->status == GFSDK_SSAO_OK); // HBAO+ requires feature level 11_0 or above
 }

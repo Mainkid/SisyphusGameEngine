@@ -31,6 +31,7 @@ Texture2D<float4> EmissiveTex : register(t3);
 Texture2D<float4> NormalTex : register(t4);
 Texture2D<float4> PositionTex : register(t5);
 Texture2D<float4> InstanceIDTex : register(t6);
+Texture2D AoTex : register(t7);
 Texture2D shadowTexture : register(t8);
 Texture2D skyboxTexture : register(t9);
 Texture2DArray depthMapTexture : register(t10);
@@ -168,9 +169,10 @@ float4 PS_Ambient(PS_IN input) : SV_Target
     float3 pixelColor = DiffuseTex.Sample(textureSampler, input.col.xy);
     float3 instanceID =InstanceIDTex.Sample(textureSampler, input.col.xy);
     float3 skyBoxColor = skyboxTexture.Sample(textureSampler, input.col.xy);
+    float ssaoParam = AoTex.Sample(textureSampler, input.col.xy).r;
     float3 resColor;
 
     float lightIntensity = lightData.color.w;
-    resColor = pixelColor * lightData.color.xyz * (instanceID.x > 0)*lightIntensity + skyBoxColor*(instanceID.x<0);
+    resColor = pixelColor * lightData.color.xyz * (instanceID.x > 0)*lightIntensity*ssaoParam + skyBoxColor*(instanceID.x<0);
     return float4(resColor, 1.0f);
 }

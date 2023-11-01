@@ -9,6 +9,7 @@
 #include "../../../Scene/GameObjectHelper.h"
 #include "../../../Components/MeshComponent.h"
 #include "../../ResourceService.h"
+#include "../../../Core/ECS/Events/SyHotReloadEvent.h"
 #include "../../../Core/ECS/Events/SySceneLoadEvent.h"
 
 
@@ -299,6 +300,11 @@ void HudViewportSystem::DrawMainMenuBar()
 				delete[]szFile;
 				delete[]szFileTitle;
 
+			}
+
+			if (ImGui::MenuItem("Hot Reload"))
+			{
+				CallEvent<SyHotReloadEvent>("SyHotreloadEvent");
 			}
 			
 			ImGui::EndMenu();

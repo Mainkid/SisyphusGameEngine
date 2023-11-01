@@ -25,7 +25,7 @@ SyResult ShadowMapGenerationSystem::Run()
     float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     ID3D11ShaderResourceView* srvNull[] = { nullptr,nullptr,nullptr,nullptr,nullptr };
 
-    ID3D11ShaderResourceView* resources[] = { rc->GBuffer->DiffuseSrv.Get(),rc->GBuffer->NormalSrv.Get(),rc->GBuffer->PositionSrv.Get(),rc->GBuffer->IdSrv.Get(),rc->GBuffer->HbaoSrv.Get() };
+    ID3D11ShaderResourceView* resources[] = { rc->GBuffer->DiffuseSrv.Get(),rc->GBuffer->NormalAndDepthSrv.Get(),rc->GBuffer->PositionSrv.Get(),rc->GBuffer->IdSrv.Get(),rc->GBuffer->DepthSrv.Get() };
     //hc->context->ClearRenderTargetView(engine->rtv.Get(), bgColor);
     //hc->renderTarget->ClearRenderTarget(hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL);
 
