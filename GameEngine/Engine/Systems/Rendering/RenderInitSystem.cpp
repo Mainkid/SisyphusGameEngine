@@ -266,6 +266,19 @@ void RenderInitSystem::CompileShaders() const
 	_rc->GaussianBlurY->Initialize(L"./Engine/Assets/Shaders/GaussianBlur.hlsl",
 	                               COMPILE_VERTEX | COMPILE_PIXEL | COMPILE_GEOM, USE_POSITION | USE_COLOR, "VS_Blur",
 	                               "PS_BlurY", "GSMain");
+
+	_rc->IrradianceMapGenerator = std::make_unique<Shader>();
+	_rc->IrradianceMapGenerator->Initialize(L"./Engine/Assets/Shaders/IrradianceMapGenerator.hlsl",
+		COMPILE_COMPUTE,USE_NONE,"","","","CSMain");
+
+	_rc->EnvironmentPrefilter = std::make_unique<Shader>();
+	_rc->EnvironmentPrefilter->Initialize(L"./Engine/Assets/Shaders/EnvironmentPrefilter.hlsl",
+		COMPILE_COMPUTE, USE_NONE, "", "", "", "CSMain");
+
+	_rc->IblLookUpGenerator = std::make_unique<Shader>();
+	_rc->IblLookUpGenerator->Initialize(L"./Engine/Assets/Shaders/IblLookUpTexture.hlsl",
+		COMPILE_COMPUTE, USE_NONE, "", "", "", "CSMain");
+
 }
 
 void RenderInitSystem::CreateBlendStates() const

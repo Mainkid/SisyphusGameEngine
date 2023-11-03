@@ -10,9 +10,11 @@
 #include "../../../Components/MeshComponent.h"
 #include "../../ResourceService.h"
 #include "../../../Core/ECS/Events/SyHotReloadEvent.h"
+#include "../../../Core/ECS/Events/SyImageBasedLightingUpdateEvent.h"
 #include "../../../Core/ECS/Events/SyPlayModeEndedEvent.h"
 #include "../../../Core/ECS/Events/SyPlayModeStartedEvent.h"
 #include "../../../Core/ECS/Events/SySceneLoadEvent.h"
+#include "../../../Components/ImageBasedLightingComponent.h"
 
 
 SyResult HudViewportSystem::Init()
@@ -369,6 +371,34 @@ void HudViewportSystem::DrawMainMenuBar()
 
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Graphics"))
+		{
+			if (ImGui::BeginMenu("Add..."))
+			{
+				auto viewTemp = _ecs->view<ImageBasedLightingComponent>();
+				ImGui::BeginDisabled(!viewTemp.empty());
+				if (ImGui::MenuItem("Image Based Lighting"))
+				{
+					auto ent = _ecs->create();
+					ImageBasedLightingComponent& iblComp = _ecs->emplace<ImageBasedLightingComponent>(ent);
+				}
+				ImGui::EndDisabled();
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::MenuItem("Bake Lighting"))
+			{
+				
+			}
+			if (ImGui::MenuItem("Update Image Based Lighting"))
+			{
+				CallEvent<SyImageBasedLightingUpdateEvent>("SyImageBasedLightingUpdateEvent");
+			}
+
+			ImGui::EndMenu();
+		}
+
+
 		ImGui::EndMainMenuBar();
 	}
 }

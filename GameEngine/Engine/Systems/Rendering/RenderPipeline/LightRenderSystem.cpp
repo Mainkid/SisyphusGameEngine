@@ -2,6 +2,7 @@
 #include "../../EngineContext.h"
 #include "../../HardwareContext.h"
 #include "../RenderContext.h"
+#include "../../../Components/ImageBasedLightingComponent.h"
 #include "../../../Scene/CameraHelper.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
 #include "../../Components/TransformComponent.h"
@@ -24,7 +25,7 @@ SyResult LightRenderSystem::Run()
     CB_LightBuffer lightBuffer;
 
     float bgColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    ID3D11ShaderResourceView* srvNull[] = { nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr };
+    ID3D11ShaderResourceView* srvNull[] = { nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr };
 
     ID3D11ShaderResourceView* resources[] = 
     { rc->GBuffer->DiffuseSrv.Get(),
@@ -125,7 +126,7 @@ SyResult LightRenderSystem::Run()
         hc->context->Unmap(rc->LightConstBuffer->buffer.Get(), 0);
         hc->context->VSSetConstantBuffers(0, 1, rc->LightConstBuffer->buffer.GetAddressOf());
         hc->context->PSSetConstantBuffers(0, 1, rc->LightConstBuffer->buffer.GetAddressOf());
-
+        
 
         hc->context->OMSetBlendState(rc->LightBlendState.Get(), nullptr, 0xffffffff);
         hc->context->PSSetSamplers(0, 1, rc->SamplerState.GetAddressOf());
@@ -135,8 +136,20 @@ SyResult LightRenderSystem::Run()
         //hc->renderTarget->SetRenderTarget(hc->depthStencilView.Get());
         hc->context->PSSetShaderResources(0, 7, resources);
 
+       
+
         if (light.LightType == ELightType::Ambient || light.LightType == ELightType::Directional)
         {
+            auto irradianceView = _ecs->view<ImageBasedLightingComponent>();
+            if (!irradianceView.empty())
+            {
+                ImageBasedLightingComponent& iblComp = _ecs->get<ImageBasedLightingComponent>(irradianceView.front());
+
+                hc->context->PSSetShaderResources(11, 1, iblComp.IrradianceCubeMapSrv.GetAddressOf());
+                hc->context->PSSetShaderResources(12, 1, iblComp.IblLookUpSrv.GetAddressOf());
+                hc->context->PSSetShaderResources(13, 1, iblComp.FilteredEnvironmentSrv.GetAddressOf());
+            }
+
             hc->context->PSSetSamplers(1, 1, light.ShadowMapSampler.GetAddressOf());
             hc->context->RSSetState(rc->CullBackRasterizerState.Get());
             hc->context->OMSetDepthStencilState(rc->OffStencilState.Get(), 0);
@@ -152,7 +165,10 @@ SyResult LightRenderSystem::Run()
                 hc->context->PSSetShader(rc->AmbientLightShader->pixelShader.Get(), nullptr, 0);
                 hc->context->PSSetShaderResources(7, 1, rc->HbaoSrv.GetAddressOf());
             	hc->context->PSSetShaderResources(9, 1, rc->GBuffer->SkyboxSrv.GetAddressOf());
-                //hc->context->PSSetShaderResources(7, 1, hc->depthStencilView.GetAddressOf());
+
+                
+               
+
             }
 
             hc->context->IASetInputLayout(rc->DirLightShader->layout.Get());
@@ -161,6 +177,7 @@ SyResult LightRenderSystem::Run()
             hc->context->IASetVertexBuffers(0, 1, rc->VertexQuadBuffer->buffer.GetAddressOf(),
                 strides, offsets);
             hc->context->DrawIndexed(6, 0, 0);
+            
         }
         else if (light.LightType == ELightType::PointLight)
         {
@@ -260,7 +277,7 @@ SyResult LightRenderSystem::Run()
             hc->context->DrawIndexed(6, 0, 0);
         }
     }
-    hc->context->PSSetShaderResources(0, 10, srvNull);
+    hc->context->PSSetShaderResources(0, 13, srvNull);
     return SyResult();
 }
 

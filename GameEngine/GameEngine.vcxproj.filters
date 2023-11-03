@@ -8,6 +8,9 @@
     <FxCompile Include="Engine\Assets\Shaders\StencilPassShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\TextureShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\GaussianBlur.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\IrradianceMapGenerator.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\EnvironmentPrefilter.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\IblLookUpTexture.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp" />
@@ -79,6 +82,7 @@
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\PrepareEventsSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\HbaoRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\ImageBasedLightingSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -195,6 +199,9 @@
     <ClInclude Include="Engine\Core\ECS\Events\SyHotReloadEvent.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeStartedEvent.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeEndedEvent.h" />
+    <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
+    <ClInclude Include="Engine\Systems\Rendering\ImageBasedLightingSystem.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyImageBasedLightingUpdateEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
@@ -214,6 +221,7 @@
     <None Include="Engine\Assets\Shaders\ToneMapping.hlsl" />
     <None Include="Engine\Assets\Shaders\EditorGridShader.hlsl" />
     <None Include="cpp.hint" />
+    <None Include="Engine\Assets\Shaders\PBRHelpers.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png">

@@ -10,6 +10,7 @@
 #include "../../Components/RBodyComponent.h"
 #include "../Systems/TransformHelper.h"
 #include "../../Tools/Data/Vector.h"
+#include "../Components/ImageBasedLightingComponent.h"
 
 
 entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, Vector3 pos)

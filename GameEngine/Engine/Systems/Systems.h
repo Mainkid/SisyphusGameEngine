@@ -21,6 +21,7 @@
 #include "Rendering/RenderPipeline/ShadowRenderSystem.h"
 #include "Rendering/PreRenderSystem.h"
 #include "Rendering/RenderInitSystem.h"
+#include "Rendering/ImageBasedLightingSystem.h"
 #include "Rendering/RenderPipeline/SkyboxRenderSystem.h"
 #include "Rendering/RenderPipeline/OpaqueRenderSystem.h"
 #include "Rendering/RenderPipeline/LightRenderSystem.h"
@@ -30,4 +31,5 @@
 #include "Rendering/PostViewportRenderSystem.h"
 #include "Rendering/RenderPipeline/EditorGridRenderSystem.h"
 #include "Rendering/RenderPipeline/HbaoRenderSystem.h"
+
 #include "../Systems/PrepareEventsSystem.h"

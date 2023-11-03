@@ -15,6 +15,7 @@ struct RenderContext : public IService
 	ID3D11RenderTargetView* Rtvs[7];
 	ID3D11RenderTargetView* EditorBillboardRtvs[2];
 
+
 	std::unique_ptr<Shader> OpaqueShader;
 	std::unique_ptr<Shader> DirLightShader;
 	std::unique_ptr<Shader> AmbientLightShader;
@@ -31,6 +32,9 @@ struct RenderContext : public IService
 	std::unique_ptr<Shader> EditorGridRenderer;
 	std::unique_ptr<Shader> GaussianBlurX;
 	std::unique_ptr<Shader> GaussianBlurY;
+	std::unique_ptr<Shader> IrradianceMapGenerator;
+	std::unique_ptr<Shader> EnvironmentPrefilter;
+	std::unique_ptr<Shader> IblLookUpGenerator;
 
 
 	std::shared_ptr<Mesh> CubeMesh;
@@ -100,6 +104,7 @@ struct RenderContext : public IService
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> SkyboxTexture;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SkyboxSRV;
+	int SkyBoxResolution = 512;
 
 	std::unique_ptr<Buffer> ShadowConstBuffer;
 	std::unique_ptr<Buffer> ShadowPointlightConstBuffer;

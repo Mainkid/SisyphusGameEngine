@@ -90,7 +90,7 @@ void EngineCore::StartUpSystems()
 
 	_systems.Add<LightSystem>();
 	_systems.Add<MeshSystem>();
-
+	
 	_systems.Add<LightSystem>();
 
 	_systems.Add<EditorBillboardSystem>();
@@ -98,6 +98,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<PreRenderSystem>();
 	_systems.Add<ShadowRenderSystem>();
 	_systems.Add<SkyboxRenderSystem>();
+	_systems.Add<ImageBasedLightingSystem>();
 	_systems.Add<OpaqueRenderSystem>();
 	_systems.Add<HbaoRenderSystem>();
 	_systems.Add<ShadowMapGenerationSystem>();

@@ -95,3 +95,8 @@ public:
     Vector4 GroupCount;
     Vector4 eyePos;
 };
+
+struct CB_SimpleVector4
+{
+    Vector4 params;
+};

@@ -636,6 +636,7 @@
     <ClCompile Include="Engine\Core\ECS\SystemsGroup.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.cpp" />
     <ClCompile Include="Engine\Systems\ErrorLoggingSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\ImageBasedLightingSystem.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -652,8 +653,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
     <ClInclude Include="Engine\Core\ECS\Event.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SyHotReloadEvent.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyImageBasedLightingUpdateEvent.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeStartedEvent.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeEndedEvent.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SySceneLoadEvent.h" />
@@ -736,6 +739,7 @@
     <ClInclude Include="Engine\Tools\Data\Vector.h" />
     <ClInclude Include="Engine\Tools\MathHelper.h" />
     <ClInclude Include="Engine\Systems\MaterialUpdateSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\ImageBasedLightingSystem.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ToneMappingRenderSystem.h" />
     <ClInclude Include="Engine\Systems\ResourceSystem.h" />
@@ -767,6 +771,10 @@
     <ClInclude Include="vendor\WICTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Engine\Assets\Shaders\PBRHelpers.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DeploymentContent>
+    </None>
     <None Include="Engine\Assets\Shaders\ToneMapping.hlsl">
       <FileType>Document</FileType>
     </None>
@@ -777,7 +785,16 @@
     <None Include="Engine\Assets\Shaders\EditorGridShader.hlsl">
       <FileType>Document</FileType>
     </None>
+    <FxCompile Include="Engine\Assets\Shaders\EnvironmentPrefilter.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Engine\Assets\Shaders\GaussianBlur.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Engine\Assets\Shaders\IblLookUpTexture.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Engine\Assets\Shaders\IrradianceMapGenerator.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Engine\Assets\Shaders\OpaqueShader.hlsl">
