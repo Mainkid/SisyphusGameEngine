@@ -210,6 +210,8 @@
     <Image Include="Engine\Assets\SkyBox\skybox_4.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_5.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_6.png" />
+    <Image Include="..\..\..\..\Downloads\skybox.jpg" />
+    <Image Include="Engine\Assets\SkyBox\skybox.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Assets\Shaders\LightShader.hlsl" />

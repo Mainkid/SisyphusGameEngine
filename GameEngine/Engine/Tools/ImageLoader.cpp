@@ -3,6 +3,7 @@
 #include "ImageLoader.h"
 #include "../Systems/HardwareContext.h"
 #include "../Core/ServiceLocator.h"
+#include "filesystem"
 
 
 
@@ -64,5 +65,63 @@ void* ImageLoader::LoadImageFromFile(const char* filename, int* out_width, int* 
 	*out_width = image_width;
 	*out_height = image_height;
 	return image_data;
+}
+
+std::vector<void*> ImageLoader::LoadSkyboxFromFile(const char* filename, int* out_width, int* out_height)
+{
+	std::filesystem::path path= filename;
+	std::string extension = path.extension().string();
+
+
+	//if (extension == "png" || extension == "jpg" || extension == "jpeg" || extension == "bmp")
+	
+
+
+	std::vector<void*> skyboxEdges;
+	int image_width = 0;
+	int image_height = 0;
+	int skybox_dim = 0;
+	int channels = 4;
+	unsigned char* image_data;
+
+
+	image_data = stbi_load(filename, &image_width, &image_height,nullptr,4);
+
+	skybox_dim = image_width / 4.0f;
+
+	unsigned char* edgeXPlus = new unsigned char[skybox_dim * skybox_dim * channels];
+	unsigned char* edgeXMinus = new unsigned char[skybox_dim * skybox_dim * channels];
+	unsigned char* edgeYPlus = new unsigned char[skybox_dim * skybox_dim * channels];
+	unsigned char* edgeYMinus = new unsigned char[skybox_dim * skybox_dim * channels];
+	unsigned char* edgeZPlus = new unsigned char[skybox_dim * skybox_dim * channels];
+	unsigned char* edgeZMinus = new unsigned char[skybox_dim * skybox_dim * channels];
+
+	for (int i = 0; i < skybox_dim; i++)
+		for (int j = 0; j < skybox_dim * channels; j += channels)
+		{
+			for (int k = 0; k < channels; k++)
+			{
+				edgeXPlus[i * skybox_dim * channels + j + k] = image_data[skybox_dim * channels * image_width + image_width * channels * i + j + k];
+				edgeXMinus[i * skybox_dim * channels + j + k] = image_data[skybox_dim * channels * image_width + skybox_dim * channels * 2 + image_width * channels * i + j + k];
+				edgeYPlus[i * skybox_dim * channels + j + k] = image_data[skybox_dim * channels + image_width * channels * i + j + k];
+				edgeYMinus[i * skybox_dim * channels + j + k] = image_data[skybox_dim * channels * image_width * 2 + skybox_dim * channels + image_width * channels * i + j + k];
+				edgeZMinus[i * skybox_dim * channels + j + k] = image_data[skybox_dim * channels * image_width + skybox_dim * channels + image_width * channels * i + j + k];
+				edgeZPlus[i * skybox_dim * channels + j + k] = image_data[skybox_dim * channels * image_width + skybox_dim * channels * 3 + image_width * channels * i + j + k];
+
+			}
+		}
+
+	skyboxEdges.push_back(edgeXMinus);
+	skyboxEdges.push_back(edgeXPlus);
+	skyboxEdges.push_back(edgeYPlus);
+	skyboxEdges.push_back(edgeYMinus);
+	skyboxEdges.push_back(edgeZMinus);
+	skyboxEdges.push_back(edgeZPlus);
+
+	*out_width = skybox_dim;
+	*out_height = skybox_dim;
+	std::string out = "out.png";
+
+	return skyboxEdges;
 }
 

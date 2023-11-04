@@ -104,7 +104,7 @@ void RenderInitSystem::InitSkybox() const
 	textureDesc_.MipLevels = 1;
 	textureDesc_.ArraySize = 6;
 
-	textureDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	textureDesc_.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	textureDesc_.SampleDesc.Count = 1;
 	textureDesc_.SampleDesc.Quality = 0;
 	textureDesc_.Usage = D3D11_USAGE_DEFAULT;
@@ -112,17 +112,16 @@ void RenderInitSystem::InitSkybox() const
 	textureDesc_.CPUAccessFlags = 0;
 	textureDesc_.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
-
+	int width = 0;
+	int height = 0;
+	auto arr=ImageLoader::LoadSkyboxFromFile("./Engine/Assets/SkyBox/skybox.jpg", &width, &height);
+	
 	D3D11_SUBRESOURCE_DATA data[6];
 	for (int i = 0; i < 6; i++)
 	{
-		std::string file = "./Engine/Assets/SkyBox/skybox_";
-		file += std::to_string(i + 1);
-		file += ".png";
-		int width = 0;
-		int height = 0;
-		data[i].pSysMem = ImageLoader::LoadImageFromFile(file.c_str(), &width, &height);
-		data[i].SysMemPitch = sizeof(char) * width * 4;
+
+		data[i].pSysMem = arr[i];
+		data[i].SysMemPitch = sizeof(char) * width *4;
 		data[i].SysMemSlicePitch = 0;
 	}
 	HRESULT result = _hc->device->CreateTexture2D(&textureDesc_, data, _rc->SkyboxTexture.GetAddressOf());

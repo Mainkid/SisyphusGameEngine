@@ -856,6 +856,8 @@
     <None Include="vendor\DirectXTK\Inc\SimpleMath.inl" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Downloads\skybox.jpg" />
+    <Image Include="Engine\Assets\SkyBox\skybox.jpg" />
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_2.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_3.png" />
