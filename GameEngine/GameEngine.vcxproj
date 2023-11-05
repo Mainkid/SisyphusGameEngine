@@ -623,7 +623,7 @@
     <ClCompile Include="Engine\Systems\Rendering\RenderInitSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\PostViewportRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\HardwareInitSystem.cpp" />
-    <ClCompile Include="Engine\Systems\PhysicsSystem.cpp" />
+    <ClCompile Include="Engine\Systems\RigidBodySystem.cpp" />
     <ClCompile Include="Engine\Components\RBodyComponent.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.cpp" />
@@ -724,7 +724,7 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderHelper.h" />
     <ClInclude Include="Engine\Systems\HardwareInitSystem.h" />
     <ClInclude Include="Engine\Systems\HardwareContext.h" />
-    <ClInclude Include="Engine\Systems\PhysicsSystem.h" />
+    <ClInclude Include="Engine\Systems\RigidBodySystem.h" />
     <ClInclude Include="Engine\Components\RBodyComponent.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.h" />

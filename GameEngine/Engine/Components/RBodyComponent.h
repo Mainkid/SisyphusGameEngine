@@ -1,5 +1,6 @@
 #pragma once
 #include "../Tools/Data/Vector.h"
+#include "../Tools/ErrorLogger.h"
 #pragma region forward declaration
 namespace physx
 {
@@ -13,53 +14,60 @@ namespace physx
 
 struct SyRBodyMaterial
 {
-	float staticFriction =	1.0f;
-	float dynamicFriction = 1.0f;
-	float restitution =		0.3f;
-	float density =			0.0001f;
+	float staticFriction	= 1.0f;
+	float dynamicFriction	= 1.0f;
+	float restitution		= 0.3f;
+	float density			= 0.0001f;
 };
 enum SyRBodyType
 {
-	RB_TYPE_STATIC = 0,
-	RB_TYPE_DYNAMIC = 1
-};
-enum SyRBodyShapeType
-{
-	RB_SHAPE_TYPE_BOX = 0,
-	RB_SHAPE_TYPE_SPHERE = 1
+	SY_RB_TYPE_STATIC	= 0,
+	SY_RB_TYPE_DYNAMIC	= 1
 };
 
-struct SyRBodyShapeDescBase
+enum SyPrimitiveColliderType
 {
-	SyVector3 origin = {0.0f, 0.0f, 0.0f};
-	SyVector3 rotation = { 0.0f, 0.0f, 0.0f };
+	SY_RB_SHAPE_TYPE_BOX = 0,
+	SY_RB_SHAPE_TYPE_SPHERE = 1
 };
 
-struct SyRBodyBoxShapeDesc : SyRBodyShapeDescBase
+struct SyRbTransform
 {
-	SyVector3 halfExt = {1.0f, 1.0f, 1.0f};
+	SyVector3 Origin				= {0.0f, 0.0f, 0.0f};
+	SyVector3 Rotation				= {0.0f, 0.0f, 0.0f};
 };
-struct SyRBodySphereShapeDesc : SyRBodyShapeDescBase
-{
-	float radius = 1.0f;
-};
+
 struct SyRBodyComponent
 {
-	SyRBodyComponent(	const SyRBodyType&			rbType_ = RB_TYPE_DYNAMIC,
-						const SyRBodyShapeType&		rbShapeType_ = RB_SHAPE_TYPE_BOX,
-						const SyRBodyShapeDescBase& rbDefaultShapeDesc_ = SyRBodyBoxShapeDesc(),
-						const SyRBodyMaterial&		rbMaterial_ = SyRBodyMaterial());
+	SyRBodyComponent(	const SyRBodyType&			rbType,
+						const SyRbTransform&		rbTransform,
+						const SyRBodyMaterial&		rbMaterial,
+						bool						manuallySetMass = true,
+						float						mass			= 1.0f);
 	
 	~SyRBodyComponent();
 private:
-	SyRBodyType					rbType;
-	physx::PxRigidActor*		rbActor = nullptr;
-	SyRBodyShapeType			rbShapeType;
-	physx::PxShape*				rbShape = nullptr;
-	SyRBodyMaterial				rbMaterial;
-	static physx::PxPhysics*	physics;
-	static physx::PxScene*		scene;
+	//fields initialized in constructor
 
-	friend class SyPhysicsSystem;
+	SyRBodyType			_rbType;
+	SyRBodyMaterial		_rbMaterial;
+	bool				_manuallySetMass;
+	float				_mass;
+	SyVector3			_origin;
+	SyVector3			_rotation;
+	//fields initialized in SyPhysicsSystem::Init
+	
+	//physx::PxRigidActor*	_rbActor = nullptr;
+	std::size_t hash;
+	
+	static	physx::PxPhysics*	_physics;
+	static	physx::PxScene*		_scene;
+
+	friend class SyRigidBodySystem;
+};
+
+struct SyRbCreateOnNextUpdateTag
+{
+	
 };
 

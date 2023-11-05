@@ -13,7 +13,6 @@
 #define SY_PI 3.14f
 #define SY_PI2 SY_PI / 2
 
-
 int main()
 {
     //std::unique_ptr<Material> material = std::make_unique<Material>();

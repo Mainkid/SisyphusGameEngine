@@ -102,11 +102,36 @@ void GameObjectHelper::RemoveChild(entt::registry* ecs, entt::entity parent, ent
 	ecs->get<TransformComponent>(parent).children.erase(child);
 }
 
+SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::entity entity, const SyRBodyType& rbType,
+	const SyRbTransform& rbLocalTransform, const SyRBodyMaterial& rbMaterial, bool manuallySetMass, float mass)
+{
+	SyResult result;
+	auto* transformComponent = ecs->try_get<TransformComponent>(entity);
+	if (transformComponent == nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("Entity %d lacks Transform Component. You can't attach RigidBody Component to it.", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks Transform Component. You can't attach RigidBody Component to it.", (int)entity);
+		return result;
+	}
+	SyRbTransform rbGlobalTransform;
+	rbGlobalTransform.Origin = transformComponent->position + rbLocalTransform.Origin;
+	rbGlobalTransform.Rotation = transformComponent->rotation + rbLocalTransform.Rotation;
+	ecs->emplace<SyRBodyComponent>(	entity,
+									rbType,
+									rbGlobalTransform,
+									rbMaterial,
+									manuallySetMass,
+									mass);
+	ecs->emplace<SyRbCreateOnNextUpdateTag>(entity);
+}
 
-entt::entity GameObjectHelper::CreateStaticBox(entt::registry* ecs, 
-                                               const SyVector3& position, 
-                                               const SyVector3& rotation, 
-                                               const SyVector3& scale)
+
+entt::entity GameObjectHelper::CreateStaticBox(	entt::registry* ecs, 
+                                                const SyVector3& position, 
+                                                const SyVector3& rotation, 
+                                                const SyVector3& scale,
+                                                const SyRBodyMaterial& material)
 {
 	auto ent = Create(ecs, "StaticBox");
 
@@ -117,19 +142,22 @@ entt::entity GameObjectHelper::CreateStaticBox(entt::registry* ecs,
 	tf.localRotation = rotation;
 	tf.localScale = scale;
 
-	SyRBodyBoxShapeDesc boxDesc;
-	boxDesc.origin = position;
-	boxDesc.rotation = rotation;
-	boxDesc.halfExt = scale;
-	ecs->emplace<SyRBodyComponent>(ent, RB_TYPE_STATIC, RB_SHAPE_TYPE_BOX, boxDesc);
+	SyRbTransform boxDesc;
+	boxDesc.RbType = SY_RB_TYPE_STATIC;
+	boxDesc.rbShapeType = SY_RB_SHAPE_TYPE_BOX;
+	boxDesc.Origin = position;
+	boxDesc.Rotation = rotation;
+	boxDesc.HalfExtent = scale;
+	ecs->emplace<SyRBodyComponent>(ent, boxDesc, material);
 
 	return ent;
 }
 
 entt::entity GameObjectHelper::CreateDynamicBox(entt::registry* ecs, 
-	const SyVector3& position, 
-	const SyVector3& rotation, 
-	const SyVector3& scale)
+												const SyVector3& position, 
+												const SyVector3& rotation, 
+												const SyVector3& scale,
+												const SyRBodyMaterial& material)
 {
 	auto ent = Create(ecs, "DynamicBox");
 
@@ -140,11 +168,13 @@ entt::entity GameObjectHelper::CreateDynamicBox(entt::registry* ecs,
 	tc.localRotation = rotation;
 	tc.localScale = scale;
 
-	SyRBodyBoxShapeDesc boxDesc;
-	boxDesc.origin = position;
-	boxDesc.rotation = rotation;
-	boxDesc.halfExt = scale;
-	ecs->emplace<SyRBodyComponent>(ent, RB_TYPE_DYNAMIC, RB_SHAPE_TYPE_BOX, boxDesc);
+	SyRbTransform boxDesc;
+	boxDesc.RbType = SY_RB_TYPE_DYNAMIC;
+	boxDesc.rbShapeType = SY_RB_SHAPE_TYPE_BOX;
+	boxDesc.Origin = position;
+	boxDesc.Rotation = rotation;
+	boxDesc.HalfExtent = scale;
+	ecs->emplace<SyRBodyComponent>(ent, boxDesc, material);
 	return ent;
 }
 
