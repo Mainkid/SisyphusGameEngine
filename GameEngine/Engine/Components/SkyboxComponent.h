@@ -6,10 +6,15 @@
 #endif
 #include <windows.h>
 #include <wrl.h>
-using namespace Microsoft::WRL;
+#include <boost/uuid/uuid.hpp>
+#include <boost/functional/hash.hpp>
+
+
 struct SkyboxComponent
 {
-	std::unique_ptr<Buffer> vertexBuffer;
-	std::unique_ptr<Buffer> indexBuffer;
-	ComPtr<ID3D11ShaderResourceView> cubeMapSRV;
+	std::unique_ptr<Buffer> VertexBuffer;
+	std::unique_ptr<Buffer> IndexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CubeMapSRV;
+	boost::uuids::uuid CubemapTexture;
+	uint32_t Hash = 0;
 };

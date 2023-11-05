@@ -83,6 +83,7 @@
     <ClCompile Include="Engine\Systems\PrepareEventsSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\HbaoRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\ImageBasedLightingSystem.cpp" />
+    <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -202,6 +203,7 @@
     <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
     <ClInclude Include="Engine\Systems\Rendering\ImageBasedLightingSystem.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SyImageBasedLightingUpdateEvent.h" />
+    <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

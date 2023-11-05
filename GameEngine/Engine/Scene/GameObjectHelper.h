@@ -36,4 +36,6 @@ public:
 	static entt::entity CreateMesh(entt::registry* ecs, boost::uuids::uuid uuid, Vector3 pos=Vector3::Zero);
 
 	static entt::entity CreateParticleSystem(entt::registry* ecs);
+
+	static entt::entity CreateSkybox(entt::registry* ecs);
 };

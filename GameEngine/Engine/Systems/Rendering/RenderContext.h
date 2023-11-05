@@ -9,9 +9,36 @@
 #include "../../Components/Mesh.h"
 #include "../../vendor/HBAO/GFSDK_SSAO.h"
 
+struct RenderHelperData
+{
+	ID3D11RenderTargetView* NullRtv[20] =
+	{
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+	};
+
+	ID3D11ShaderResourceView* NullSrv[20] =
+	{
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+	};
+
+	UINT strides16[1] = { 16 };
+	UINT strides32[1] = { 32 };
+	UINT strides48[1] = { 48 };
+	UINT strides64[1] = { 64 };
+	UINT strides80[1] = { 80 };
+	UINT offsets0[1] = { 0 };
+
+	float bgColor0000[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float bgColor0001[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+};
+
 
 struct RenderContext : public IService
 {
+	
+
 	ID3D11RenderTargetView* Rtvs[7];
 	ID3D11RenderTargetView* EditorBillboardRtvs[2];
 
@@ -125,4 +152,6 @@ struct RenderContext : public IService
 	GFSDK_SSAO_CustomHeap CustomHeap;
 	GFSDK_SSAO_Status status;
 	GFSDK_SSAO_Context_D3D11* pAOContext;
+
+	RenderHelperData RhData;
 };

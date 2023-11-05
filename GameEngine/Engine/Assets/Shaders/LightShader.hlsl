@@ -188,8 +188,7 @@ float4 PS_Ambient(PS_IN input) : SV_Target
     //Specular
     const float maxReflectionLoad = 9;
     float3 prefilteredColor = prefilteredEnvironmentTexture.SampleLevel(textureSampler, lightDir, roughness * maxReflectionLoad);
-    //prefilteredColor = pow(prefilteredColor, 1.0 / 2.2f);
-    float2 envBRDF = iblLookUpTexture.Sample(textureSampler, float2(max(dot(normal, toEye), 0.0f), roughness));
+    float2 envBRDF = iblLookUpTexture.Sample(textureSampler, float2(max(dot(normal, -toEye), 0.0f), roughness));
     float3 specular = prefilteredColor * (kS * envBRDF.x + envBRDF.y);
 
     resColor = (instanceID.x > 0) * ssaoParam * lightIntensity*

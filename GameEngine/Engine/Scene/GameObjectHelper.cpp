@@ -11,6 +11,7 @@
 #include "../Systems/TransformHelper.h"
 #include "../../Tools/Data/Vector.h"
 #include "../Components/ImageBasedLightingComponent.h"
+#include "../Components/SkyboxComponent.h"
 
 
 entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, Vector3 pos)
@@ -183,5 +184,14 @@ entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 {
 	auto ent = Create(ecs, "ParticleObject");
 	ecs->emplace<ParticleComponent>(ent);
+	return ent;
+}
+
+entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs)
+{
+	auto ent = ecs->create();
+	ecs->emplace<GameObjectComp>(ent, "Skybox");
+	ecs->emplace<SkyboxComponent>(ent);
+
 	return ent;
 }

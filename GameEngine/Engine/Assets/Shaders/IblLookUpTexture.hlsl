@@ -1,8 +1,11 @@
-#pragma once
+//#include "PBRHelpers.hlsli"
 #define THREADS 8
 #define PI 3.14159265f
-#define IMAGE_SIZE 512
 
+cbuffer mycBuffer : register(b0)
+{
+    float4 params;
+};
 
 RWTexture2D<float4> lookUpTexture;
 
@@ -29,6 +32,22 @@ float3 toWorldCoords(uint3 globalId, float size)
 }
 
 
+float NormalDistributionGGXTR(float3 normalVec, float3 halfwayVec, float roughness)
+{
+    float a = roughness * roughness;
+    float a2 = a * a; // a2 = a^2
+    float NdotH = max(dot(normalVec, halfwayVec), 0.0); // NdotH = normalVec.halfwayVec
+    float NdotH2 = NdotH * NdotH; // NdotH2 = NdotH^2
+    float nom = a2;
+    float denom = (NdotH2 * (a2 - 1.0f) + 1.0f);
+    denom = PI * denom * denom;
+
+    return nom / denom;
+}
+
+
+
+
 
 float2 Hammersley(uint i, uint N)
 {
@@ -40,6 +59,7 @@ float2 Hammersley(uint i, uint N)
     float rdi = float(bits) * 2.3283064365386963e-10;
     return float2(float(i) / float(N), rdi);
 }
+
 
 // From the filament docs. Geometric Shadowing function
 // https://google.github.io/filament/Filament.html#toc4.4.2
@@ -65,7 +85,7 @@ float3 ImportanceSampleGGX(float2 Xi, float roughness, float3 N)
     H.z = cosTheta;
 
     // Tangent to world space
-    float3 upVector = abs(N.z) < 0.9999f ? float3(0.0, 0.0, 1.0) : float3(1.0, 0.0, 0.0);
+    float3 upVector = abs(N.z) < 0.9999999f ? float3(0.0, 0.0, 1.0) : float3(1.0, 0.0, 0.0);
     float3 tangentX = normalize(cross(upVector, N));
     float3 tangentY = cross(N, tangentX);
     return tangentX * H.x + tangentY * H.y + N * H.z;
@@ -117,7 +137,7 @@ float2 integrateBRDF(float roughness, float NoV)
 void CSMain(int3 dispatchThreadID : SV_DispatchThreadID)
 {
     // Normalized pixel coordinates (from 0 to 1)
-    float2 uv = float2(dispatchThreadID.xy + 1) / float2(IMAGE_SIZE,IMAGE_SIZE);
+    float2 uv = float2(dispatchThreadID.xy+1 ) / float2(params.x, params.x);
     float mu = uv.x;
     float a = uv.y;
 

@@ -48,15 +48,21 @@ SyResult ImageBasedLightingSystem::Run()
 		for (auto& ent : view)
 		{
 			ImageBasedLightingComponent& iblComp = _ecs->get<ImageBasedLightingComponent>(ent);
+			CB_SimpleVector4 buffer;
+			buffer.params.x = _irradianceResolution;
+			D3D11_MAPPED_SUBRESOURCE mappedResource;
+			HRESULT res = _hc->context->Map(_rc->LightConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+			CopyMemory(mappedResource.pData, &buffer, sizeof(CB_SimpleVector4));
+			_hc->context->Unmap(_rc->LightConstBuffer->buffer.Get(), 0);
+			_hc->context->CSSetConstantBuffers(0, 1, _rc->LightConstBuffer->buffer.GetAddressOf());
 
 
-			float bgcolor[] = { 0.0f,0.0f,0.0f,0.0f };
-			_hc->context->ClearRenderTargetView(iblComp.IrradianceCubeMapRtv.Get(), bgcolor);
+			_hc->context->ClearRenderTargetView(iblComp.IrradianceCubeMapRtv.Get(), _rc->RhData.bgColor0000);
 			_hc->context->CSSetSamplers(0, 1, _rc->SamplerState.GetAddressOf());
 			_hc->context->CSSetShaderResources(0, 1, _rc->SkyboxSRV.GetAddressOf());
 			_hc->context->CSSetUnorderedAccessViews(0, 1, iblComp.IrradianceCubeMapUav.GetAddressOf(), nullptr);
 			_hc->context->CSSetShader(_rc->IrradianceMapGenerator->computeShader.Get(), nullptr, 0);
-			_hc->context->Dispatch(6, 6, 6);
+			_hc->context->Dispatch(sqrt(_irradianceResolution)+1, sqrt(_irradianceResolution)+1, 1);
 
 
 			float maxMipLevel = CreateFilteredCubeMap(iblComp, _rc->SkyBoxResolution);
@@ -85,7 +91,11 @@ SyResult ImageBasedLightingSystem::Run()
 				_hc->context->Dispatch(std::max(mipWidth / threadCount, 1), std::max(1, mipWidth / threadCount), 1);
 			}
 
-
+			buffer.params.x = _lookUpTextureResolution;
+			_hc->context->Map(_rc->LightConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+			CopyMemory(mappedResource.pData, &buffer, sizeof(CB_SimpleVector4));
+			_hc->context->Unmap(_rc->LightConstBuffer->buffer.Get(), 0);
+			_hc->context->CSSetConstantBuffers(0, 1, _rc->LightConstBuffer->buffer.GetAddressOf());
 
 			_hc->context->CSSetSamplers(0, 1, _rc->SamplerState.GetAddressOf());
 			_hc->context->CSSetUnorderedAccessViews(0, 1, iblComp.IblLookUpUav.GetAddressOf(), nullptr);
@@ -119,7 +129,7 @@ void ImageBasedLightingSystem::InitializeResources(ImageBasedLightingComponent& 
 	textureDesc_.MipLevels = 1;
 	textureDesc_.ArraySize = 6;
 	
-	textureDesc_.Format = DXGI_FORMAT_R8G8B8A8_TYPELESS;
+	textureDesc_.Format = DXGI_FORMAT_R32G32B32A32_TYPELESS;
 	textureDesc_.SampleDesc.Count = 1;
 	textureDesc_.SampleDesc.Quality = 0;
 	textureDesc_.Usage = D3D11_USAGE_DEFAULT;
@@ -130,7 +140,7 @@ void ImageBasedLightingSystem::InitializeResources(ImageBasedLightingComponent& 
 	HRESULT result = _hc->device->CreateTexture2D(&textureDesc_,nullptr , iblComp.IrradianceCubeMapTex.GetAddressOf());
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	srvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
 	srvDesc.TextureCube.MostDetailedMip = 0;
 	srvDesc.TextureCube.MipLevels = 1;
@@ -138,7 +148,7 @@ void ImageBasedLightingSystem::InitializeResources(ImageBasedLightingComponent& 
 	result = _hc->device->CreateShaderResourceView(iblComp.IrradianceCubeMapTex.Get(), &srvDesc, iblComp.IrradianceCubeMapSrv.GetAddressOf());
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-	uavDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	uavDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
 	uavDesc.Texture2DArray.ArraySize = 6;
 	uavDesc.Texture2DArray.FirstArraySlice = 0;
@@ -147,7 +157,7 @@ void ImageBasedLightingSystem::InitializeResources(ImageBasedLightingComponent& 
 	result = _hc->device->CreateUnorderedAccessView(iblComp.IrradianceCubeMapTex.Get(), &uavDesc, iblComp.IrradianceCubeMapUav.GetAddressOf());
 
 	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	rtvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
 	rtvDesc.Texture2DArray.FirstArraySlice = 0;
 	rtvDesc.Texture2DArray.MipSlice = 0;
@@ -192,7 +202,7 @@ float ImageBasedLightingSystem::CreateFilteredCubeMap(ImageBasedLightingComponen
 	textureDesc2_.MipLevels = log2(cubeMapResolution)+1;
 	textureDesc2_.ArraySize = 6;
 
-	textureDesc2_.Format = DXGI_FORMAT_R8G8B8A8_TYPELESS;
+	textureDesc2_.Format = DXGI_FORMAT_R32G32B32A32_TYPELESS;
 	textureDesc2_.SampleDesc.Count = 1;
 	textureDesc2_.SampleDesc.Quality = 0;
 	textureDesc2_.Usage = D3D11_USAGE_DEFAULT;
@@ -210,7 +220,7 @@ float ImageBasedLightingSystem::CreateFilteredCubeMap(ImageBasedLightingComponen
 	textureDesc3_.MipLevels = 1;
 	textureDesc3_.ArraySize = 1;
 
-	textureDesc3_.Format = DXGI_FORMAT_R8G8B8A8_TYPELESS;
+	textureDesc3_.Format = DXGI_FORMAT_R32G32B32A32_TYPELESS;
 	textureDesc3_.SampleDesc.Count = 1;
 	textureDesc3_.SampleDesc.Quality = 0;
 	textureDesc3_.Usage = D3D11_USAGE_DEFAULT;
@@ -224,13 +234,13 @@ float ImageBasedLightingSystem::CreateFilteredCubeMap(ImageBasedLightingComponen
 	result = _hc->device->CreateTexture2D(&textureDesc3_, nullptr, iblComp.IblLookUpTexture.GetAddressOf());
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-	uavDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	uavDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
 	uavDesc.Texture2D.MipSlice = 0;
 	result = _hc->device->CreateUnorderedAccessView(iblComp.IblLookUpTexture.Get(), &uavDesc, iblComp.IblLookUpUav.GetAddressOf());
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	srvDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.TextureCube.MostDetailedMip = 0;
 	srvDesc.TextureCube.MipLevels = 1;
@@ -245,7 +255,7 @@ float ImageBasedLightingSystem::CreateFilteredCubeMap(ImageBasedLightingComponen
 		iblComp.FilteredEnvironmentCubeMapUavs.push_back(nullptr);
 
 		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-		uavDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		uavDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
 		uavDesc.Texture2DArray.ArraySize = 6;
 		uavDesc.Texture2DArray.FirstArraySlice = 0;
@@ -255,7 +265,7 @@ float ImageBasedLightingSystem::CreateFilteredCubeMap(ImageBasedLightingComponen
 	}
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc2 = {};
-	srvDesc2.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	srvDesc2.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	srvDesc2.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
 	srvDesc2.TextureCube.MostDetailedMip = 0;
 	srvDesc2.TextureCube.MipLevels = log2(cubeMapResolution)+1;

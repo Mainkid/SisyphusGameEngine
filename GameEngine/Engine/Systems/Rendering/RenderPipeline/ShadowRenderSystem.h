@@ -16,8 +16,8 @@ public:
 	SyResult Destroy() override;
 private:
 	void BlurShadowMap(LightComponent& lc);
-	EngineContext* ec;
-	RenderContext* rc;
-	HardwareContext* hc;
+	EngineContext* _ec = nullptr;
+	RenderContext* _rc = nullptr;
+	HardwareContext* _hc = nullptr;
 	Matrix pointlightShadowProjectionMat;
 };

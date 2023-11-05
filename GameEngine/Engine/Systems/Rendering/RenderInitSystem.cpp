@@ -115,6 +115,8 @@ void RenderInitSystem::InitSkybox() const
 	int width = 0;
 	int height = 0;
 	auto arr=ImageLoader::LoadSkyboxFromFile("./Engine/Assets/SkyBox/cubemap.hdr", &width, &height);
+
+	_rc->SkyBoxResolution = width;
 	
 	D3D11_SUBRESOURCE_DATA data[6];
 	for (int i = 0; i < 6; i++)

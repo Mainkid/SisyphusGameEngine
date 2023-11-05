@@ -3,6 +3,10 @@
 #define HALF_PI 1.5707963267948966192313216916398
 #define THREADS 6
 
+cbuffer mycBuffer : register(b0)
+{
+    float4 params;
+}
 
 
 TextureCube environmentMap : register(t0);
@@ -36,7 +40,7 @@ float3 toWorldCoords(uint3 globalId, float size)
 void CSMain(int3 dispatchThreadID : SV_DispatchThreadID,
 uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
 {
-    const float imgSize = 32.0;
+    float imgSize = params.x;
     uint3 globalId = dispatchThreadID;
     float3 N = normalize(toWorldCoords(globalId, imgSize));
 
