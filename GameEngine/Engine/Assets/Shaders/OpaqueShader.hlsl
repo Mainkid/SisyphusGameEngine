@@ -11,17 +11,15 @@ cbuffer mycBuffer : register(b0)
     float4 roughnessVec;
     float4 emissiveVec;
     float4 specularVec;
-    
     float4 instanceID;
 };
 
 Texture2D albedoTex : TEXTURE : register(t0);
-Texture2D specularTex : TEXTURE: register(t1);
-Texture2D roughnessTex : TEXTURE : register(t2);
-Texture2D metallicTex : TEXTURE : register(t3);
-Texture2D emissiveTex : TEXTURE : register(t4);
-Texture2D normalMapTex : TEXTURE : register(t5);
-Texture2D opacityTex : TEXTURE : register(t6);
+Texture2D roughnessTex : TEXTURE : register(t1);
+Texture2D metallicTex : TEXTURE : register(t2);
+Texture2D emissiveTex : TEXTURE : register(t3);
+Texture2D normalMapTex : TEXTURE : register(t4);
+Texture2D opacityTex : TEXTURE : register(t5);
 SamplerState objSamplerState : SAMPLER : register(s0);
 
 struct VS_IN
@@ -47,12 +45,11 @@ struct GBuffer
 {
     float4 Albedo : SV_Target0;
     float4 Metallic : SV_Target1;
-    float4 Specular : SV_Target2;
-    float4 Roughness : SV_Target3;
-    float4 Emissive : SV_Target4;
-    float4 Normals : SV_Target5;
-    float4 Position : SV_Target6;
-    float4 InstanceID : SV_Target7;
+    float4 Roughness : SV_Target2;
+    float4 Emissive : SV_Target3;
+    float4 Normals : SV_Target4;
+    float4 Position : SV_Target5;
+    float4 InstanceID : SV_Target6;
 };
 
 PS_IN VSMain(VS_IN input)
@@ -83,7 +80,6 @@ GBuffer PSMain(PS_IN input) : SV_Target
     
     
     float3 pixelColor = albedoTex.Sample(objSamplerState, input.col.xy).xyz * (albedoVec.w < 0) + albedoVec.xyz * (albedoVec.w >= 0);
-    float3 specularColor = specularTex.Sample(objSamplerState, input.col.xy).xyz * (specularVec.w < 0) + specularVec.xyz * (specularVec.w >= 0);
     float3 metallicColor = metallicTex.Sample(objSamplerState, input.col.xy).xyz * (metallicVec.w < 0) + metallicVec.xyz * (metallicVec.w >= 0);
     float roughness = roughnessTex.Sample(objSamplerState, input.col.xy).r * (roughnessVec.w < 0) + roughnessVec.xyz * (roughnessVec.w >= 0);
     float4 emissive = emissiveTex.Sample(objSamplerState, input.col.xy) * (emissiveVec.w < 0) + emissiveVec.xyzw * (emissiveVec.w >= 0);
@@ -101,9 +97,8 @@ GBuffer PSMain(PS_IN input) : SV_Target
     output.Normals = float4(normal * (roughnessVec.g < 0) + input.normals.xyz * (roughnessVec.g >= 0), 1.0f);
     output.Position = float4(input.posW.xyz, 1.0f);
     output.Albedo = float4(pixelColor, 1.0f);
-    output.Specular = float4(specularColor, 1);
-    output.Metallic = float4(metallicColor, 1);
-    output.Roughness = float4(roughness, roughness, roughness, 1);
+    output.Metallic = float4(metallicColor, roughness);
+    //output.Roughness = float4(roughness, roughness, roughness, 1);
     output.Emissive = emissive;
     output.InstanceID = instanceID;
     //output.Depth = float4(input.posH.z / input.posH.w, input.posH.z / input.posH.w, input.posH.z / input.posH.w, 1.0f);

@@ -148,11 +148,11 @@ entt::entity GameObjectHelper::CreateDynamicBox(entt::registry* ecs,
 	return ent;
 }
 
-entt::entity GameObjectHelper::CreateLight(entt::registry* ecs, LightType lightType,Vector3 pos)
+entt::entity GameObjectHelper::CreateLight(entt::registry* ecs, ELightType lightType,Vector3 pos)
 {
 	entt::entity ent;
 
-	if (lightType == LightType::PointLight)
+	if (lightType == ELightType::PointLight)
 	{
 		ent = Create(ecs, "PointLight",pos);
 		ecs->emplace<EditorBillboardComponent>(ent, "Engine/Assets/Sprites/PointLightSprite.png");
@@ -165,8 +165,8 @@ entt::entity GameObjectHelper::CreateLight(entt::registry* ecs, LightType lightT
 	}
 	ecs->emplace<LightComponent>(ent, lightType);
 
-	ecs->get<LightComponent>(ent).lightBehavior = LightBehavior::Static;
-	ecs->get<LightComponent>(ent).paramsRadiusAndAttenuation = Vector4(1, 0, 0, 1);
+	ecs->get<LightComponent>(ent).LightBehavior = LightBehavior::Static;
+	ecs->get<LightComponent>(ent).ParamsRadiusAndAttenuation = Vector4(1, 0, 0, 1);
 	return ent;
 }
 

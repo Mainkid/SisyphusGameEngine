@@ -699,7 +699,7 @@
     <ClInclude Include="Engine\Core\Keys.h" />
     <ClInclude Include="Engine\Core\Rendering\GBuffer.h" />
     <ClInclude Include="Engine\Core\Rendering\Lights\LightData.h" />
-    <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h" />
+    <ClInclude Include="Engine\Core\Rendering\Lights\ELightType.h" />
     <ClInclude Include="Engine\Obsolete\RenderPipeline.h" />
     <ClInclude Include="Engine\Systems\PrepareEventsSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\ContentBrowserTypes.h" />
@@ -790,6 +790,9 @@
     <None Include="Engine\Assets\Shaders\EditorGridShader.hlsl">
       <FileType>Document</FileType>
     </None>
+    <FxCompile Include="Engine\Assets\Shaders\GaussianBlur.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Engine\Assets\Shaders\OpaqueShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

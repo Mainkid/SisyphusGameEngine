@@ -64,25 +64,25 @@ SyResult HudPropertiesSystem::Run()
         if (lc)
         {
             ImGui::Text("Light");
-            Vector4 vec4D = lc->paramsRadiusAndAttenuation;
-            Vector4 color = lc->color;
-            float col3[3] = { lc->color.x,lc->color.y,lc->color.z };
+            Vector4 vec4D = lc->ParamsRadiusAndAttenuation;
+            Vector4 color = lc->Color;
+            float col3[3] = { lc->Color.x,lc->Color.y,lc->Color.z };
             ImGui::PushItemWidth(100);
             ImGui::ColorEdit3("Light Color", col3);
-            ImGui::DragFloat("Light Intensity", &lc->color.w);
+            ImGui::DragFloat("Light Intensity", &lc->Color.w);
 
-            switch (lc->lightType)
+            switch (lc->LightType)
             {
             
-                case LightType::PointLight:
-                    ImGui::DragFloat("Light Radius",&lc->paramsRadiusAndAttenuation.x);
-                    ImGui::Checkbox("Bake Shadows", &lc->castShadows);
+                case ELightType::PointLight:
+                    ImGui::DragFloat("Light Radius",&lc->ParamsRadiusAndAttenuation.x);
+                    ImGui::Checkbox("Bake Shadows", &lc->CastShadows);
                 break;
             }
             ImGui::PopItemWidth();
-            lc->color.x = col3[0];
-            lc->color.y = col3[1];
-            lc->color.z = col3[2];
+            lc->Color.x = col3[0];
+            lc->Color.y = col3[1];
+            lc->Color.z = col3[2];
         }
     }
     else if (ec->hudData.selectedContent.uuid!=boost::uuids::nil_uuid())

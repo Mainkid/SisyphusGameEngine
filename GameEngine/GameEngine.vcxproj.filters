@@ -7,6 +7,7 @@
     <FxCompile Include="Engine\Assets\Shaders\SpotLightShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\StencilPassShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\TextureShader.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\GaussianBlur.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp" />
@@ -109,7 +110,7 @@
     <ClInclude Include="Engine\Core\Keys.h" />
     <ClInclude Include="Engine\Core\Rendering\GBuffer.h" />
     <ClInclude Include="Engine\Core\Rendering\Lights\LightData.h" />
-    <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h" />
+    <ClInclude Include="Engine\Core\Rendering\Lights\ELightType.h" />
     <ClInclude Include="Engine\Obsolete\RenderPipeline.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\ContentBrowserTypes.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.h" />

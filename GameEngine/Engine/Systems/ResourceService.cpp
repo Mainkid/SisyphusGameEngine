@@ -108,12 +108,11 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			mat->specularValue = Vector4(fileData["specularVec"][0], fileData["specularVec"][1], fileData["specularVec"][2], fileData["specularVec"][3]);
 
 			mat->resources[0] = mat->albedoSRV->textureSRV.Get();
-			mat->resources[1] = mat->specularSRV->textureSRV.Get();
-			mat->resources[2] = mat->roughnessSRV->textureSRV.Get();
-			mat->resources[3] = mat->metallicSRV->textureSRV.Get();
-			mat->resources[4] = mat->emissiveSRV->textureSRV.Get();
-			mat->resources[5] = mat->normalmapSRV->textureSRV.Get();
-			mat->resources[6] = mat->opacitySRV->textureSRV.Get();
+			mat->resources[1] = mat->roughnessSRV->textureSRV.Get();
+			mat->resources[2] = mat->metallicSRV->textureSRV.Get();
+			mat->resources[3] = mat->emissiveSRV->textureSRV.Get();
+			mat->resources[4] = mat->normalmapSRV->textureSRV.Get();
+			mat->resources[5] = mat->opacitySRV->textureSRV.Get();
 
 
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(mat);

@@ -28,12 +28,11 @@ cbuffer mycBuffer : register(b0)
 
 Texture2D<float4> DiffuseTex : register(t0);
 Texture2D<float4> MetallicTex : register(t1);
-Texture2D<float4> SpecularTex : register(t2);
-Texture2D<float4> RoughnessTex : register(t3);
-Texture2D<float4> EmissiveTex : register(t4);
-Texture2D<float4> NormalTex : register(t5);
-Texture2D<float4> PositionTex : register(t6);
-Texture2D<float4> InstanceIDTex : register(t7);
+Texture2D<float4> RoughnessTex : register(t2);
+Texture2D<float4> EmissiveTex : register(t3);
+Texture2D<float4> NormalTex : register(t4);
+Texture2D<float4> PositionTex : register(t5);
+Texture2D<float4> InstanceIDTex : register(t6);
 TextureCube cubeMap : register(t8);
 
 SamplerState textureSampler : SAMPLER : register(s0);
@@ -80,8 +79,7 @@ float4 PS_PointLight(PS_IN input) : SV_Target
     float3 worldPos =PositionTex.Sample(textureSampler, input.col.xy);
     float3 normal = NormalTex.Sample(textureSampler, input.col.xy);
     float3 metallicColor = MetallicTex.Sample(textureSampler, input.col.xy);
-    float3 specularColor = SpecularTex.Sample(textureSampler, input.col.xy);
-    float roughnessColor = RoughnessTex.Sample(textureSampler, input.col.xy).r;
+    float roughnessColor = MetallicTex.Sample(textureSampler, input.col.xy).a;
     float4 emissiveColor = EmissiveTex.Sample(textureSampler, input.col.xy);
     //float shadowVal = clamp(ShadowMap.Sample(textureSampler, input.col.xy), 0, 1);
     normal = normalize(normal);

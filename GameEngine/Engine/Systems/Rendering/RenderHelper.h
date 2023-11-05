@@ -11,18 +11,18 @@ public:
     {
         HardwareContext* hc = ServiceLocator::instance()->Get<HardwareContext>();
         RenderContext* rc = ServiceLocator::instance()->Get<RenderContext>();
-        hc->context->CopyResource(rc->gBuffer->depthCpuTexture.Get(), rc->gBuffer->depthTexture.Get());
+        hc->context->CopyResource(rc->GBuffer->_idCpuTexture.Get(), rc->GBuffer->_idTexture.Get());
 
         D3D11_MAPPED_SUBRESOURCE ResourceDesc = {};
-        hc->context->Map(rc->gBuffer->depthCpuTexture.Get(), 0, D3D11_MAP_READ, 0, &ResourceDesc);
+        hc->context->Map(rc->GBuffer->_idCpuTexture.Get(), 0, D3D11_MAP_READ, 0, &ResourceDesc);
         int const BytesPerPixel = sizeof(FLOAT);
-        hc->context->Unmap(rc->gBuffer->depthCpuTexture.Get(), 0);
+        hc->context->Unmap(rc->GBuffer->_idCpuTexture.Get(), 0);
         if (ResourceDesc.pData)
         {
-            int res = *((float*)ResourceDesc.pData + (clickX + clickY * (rc->gBuffer->t_width)) * 4);
-            int res2 = *((float*)ResourceDesc.pData + (clickX + clickY * (rc->gBuffer->t_width)) * 4 +1);
-            int res3 = *((float*)ResourceDesc.pData + (clickX + clickY * (rc->gBuffer->t_width)) * 4 + 2);
-            int res4 = *((float*)ResourceDesc.pData + (clickX + clickY * (rc->gBuffer->t_width)) * 4 + 3);
+            int res = *((float*)ResourceDesc.pData + (clickX + clickY * (rc->GBuffer->_width)) * 4);
+            int res2 = *((float*)ResourceDesc.pData + (clickX + clickY * (rc->GBuffer->_width)) * 4 +1);
+            int res3 = *((float*)ResourceDesc.pData + (clickX + clickY * (rc->GBuffer->_width)) * 4 + 2);
+            int res4 = *((float*)ResourceDesc.pData + (clickX + clickY * (rc->GBuffer->_width)) * 4 + 3);
             return DirectX::SimpleMath::Vector4(res,res2,res3,res4);
         }
         return DirectX::SimpleMath::Vector4(- 1,-1,-1,-1);
@@ -30,7 +30,7 @@ public:
     static DirectX::SimpleMath::Vector2 GetRtvResolution()
     {
         RenderContext* rc = ServiceLocator::instance()->Get<RenderContext>();
-        return DirectX::SimpleMath::Vector2(rc->gBuffer->t_width, rc->gBuffer->t_height);
+        return DirectX::SimpleMath::Vector2(rc->GBuffer->_width, rc->GBuffer->_height);
     }
 };
 
