@@ -7,10 +7,6 @@
 
 using namespace mono;
 
-SyMonoObj::~SyMonoObj()
-{
-	Destroy();
-}
 
 SyResult SyMonoObj::Create(const SyMonoRuntime& runtime)
 {

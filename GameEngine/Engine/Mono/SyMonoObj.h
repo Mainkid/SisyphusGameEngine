@@ -13,7 +13,7 @@ namespace mono
 	class SyMonoObj
 	{
 	public:
-		virtual ~SyMonoObj();
+		virtual ~SyMonoObj() = default;
 
 		SyResult Create(const SyMonoRuntime& runtime);
 		SyResult Destroy();
