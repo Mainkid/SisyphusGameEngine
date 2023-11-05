@@ -114,14 +114,14 @@ void RenderInitSystem::InitSkybox() const
 
 	int width = 0;
 	int height = 0;
-	auto arr=ImageLoader::LoadSkyboxFromFile("./Engine/Assets/SkyBox/skybox.jpg", &width, &height);
+	auto arr=ImageLoader::LoadSkyboxFromFile("./Engine/Assets/SkyBox/cubemap.hdr", &width, &height);
 	
 	D3D11_SUBRESOURCE_DATA data[6];
 	for (int i = 0; i < 6; i++)
 	{
 
 		data[i].pSysMem = arr[i];
-		data[i].SysMemPitch = sizeof(char) * width *4;
+		data[i].SysMemPitch = sizeof(float) * width *4;
 		data[i].SysMemSlicePitch = 0;
 	}
 	HRESULT result = _hc->device->CreateTexture2D(&textureDesc_, data, _rc->SkyboxTexture.GetAddressOf());

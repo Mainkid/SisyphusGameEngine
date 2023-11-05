@@ -57,7 +57,7 @@ uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
             // Spherical to World Space in two steps...
             float3 tempVec = cos(phi) * right + sin(phi) * up;
             float3 sampleVector = cos(theta) * N + sin(theta) * tempVec;
-            colorIrradiance += environmentMap.SampleLevel(sampler_, sampleVector,0).rgb * cos(theta) * sin(theta);
+            colorIrradiance += pow(environmentMap.SampleLevel(sampler_, sampleVector, 0).rgb * cos(theta) * sin(theta), 1.0 / 2.2f);
             sampleCount++;
         }
     }

@@ -141,9 +141,9 @@ uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
     float3 R = normalize(toWorldCoords(globalId, mipImageSize));
 
     // Don't need to integrate for roughness == 0, since it's a perfect reflector
-    if (u_params.x <= 0.01)
+    if (u_params.x <= 0.00)
     {
-        float4 color = environmentMap.SampleLevel(sampler_, R, 0);
+        float4 color = pow(environmentMap.SampleLevel(sampler_, R, 0), 1.0 / 2.2f);
         prefilteredCubeMap[globalId] = color;
         return;
     }
