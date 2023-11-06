@@ -651,6 +651,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Components\ColliderComponent.h" />
     <ClInclude Include="Engine\Core\ECS\Event.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SySceneLoadEvent.h" />
     <ClInclude Include="Engine\Core\ResourcePath.h" />

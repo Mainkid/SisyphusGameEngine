@@ -27,11 +27,6 @@ enum SyRBodyType
 	SY_RB_TYPE_DYNAMIC	= 1
 };
 
-enum SyPrimitiveColliderType
-{
-	SY_RB_SHAPE_TYPE_BOX = 0,
-	SY_RB_SHAPE_TYPE_SPHERE = 1
-};
 
 struct SyRbTransform
 {
@@ -67,6 +62,7 @@ private:
 	static	physx::PxPhysics*	_physics;
 	static	physx::PxScene*		_scene;
 
+	friend class SyPrimitiveColliderComponent;
 	friend class SyRigidBodySystem;
 };
 

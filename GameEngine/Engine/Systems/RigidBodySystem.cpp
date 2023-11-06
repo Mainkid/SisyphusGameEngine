@@ -130,7 +130,7 @@ SyResult SyRigidBodySystem::InitComponent(const entt::entity& entity, SyRBodyCom
 		result.message = xstring("Unknown Rigid Body type in SyRbComponent. Entity: %d.", (unsigned)entity);
 		return result;
 	};
-	static const float UNIT_SPHERE_RADIUS = powf(4 / 3 / PxPi, 1 / 3); //radius of a sphere with volume equal to 1
+	static const float UNIT_SPHERE_RADIUS = powf(4.0f / 3 / PxPi, 1.0f / 3); //radius of a sphere with volume equal to 1
 	rbComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
 																	PxSphereGeometry(UNIT_SPHERE_RADIUS),
 																	*_physics->createMaterial(
