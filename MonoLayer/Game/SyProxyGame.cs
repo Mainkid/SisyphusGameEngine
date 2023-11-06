@@ -1,53 +1,41 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
-using SyEngine.Game.Comps;
+using SyEngine.Core;
+using SyEngine.Core.Comps;
 using SyEngine.Logger;
 
 namespace SyEngine.Game
 {
-internal class SyProxyGame
+public class SyProxyGame
 {
-    private readonly SyGameContext _context;
+    private SyProxyEcs _proxyEcs;
 
-    private readonly SyEcs     _ecs;
-    private readonly SyEcsSync _ecsSync;
-
-    public SyProxyGame()
+    internal void EgInit(SyProxyEcs proxyEcs, SyGameConfigBase config)
     {
+        SyLog.Info(ELogTag.ProxyGame, "game init starts..");
         try
         {
-            _context = new SyGameContext();
+            _proxyEcs = proxyEcs;
+            _proxyEcs.Ecs.SetSystems(config.GetSystems());
 
-            _ecs     = new SyEcs(_context);
-            _ecsSync = new SyEcsSync(_ecs, _context);
-
-            _ecs.AddSingletonInternal<TimeData>();
+            _proxyEcs.Ecs.AddSingletonRaw<TimeData>();
+            
+            SyLog.Info(ELogTag.ProxyGame, "game init done");
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            SyLog.Err(ELogTag.ProxyGame, e.Message);
         }
     }
 
-    public void EG_SetConfig(SyGameConfigBase config)
+    internal void EgLoopInit()
     {
-        SyLog.Debug(ELogTag.ProxyGame, "config received");
+        SyLog.Info(ELogTag.ProxyGame, "game loop init starts..");
         try
         {
-            _ecs.SetSystems(config.GetSystems());
-        }
-        catch (Exception e)
-        {
-            SyLog.Err(ELogTag.ProxyGame, e.ToString());
-        }
-    }
-
-    public void EG_Init()
-    {
-        try
-        {
-            _ecs.InitSystems();
-            _ecsSync.SyncEngineWithGame();
+            _proxyEcs.Ecs.InitSystems();
+            _proxyEcs.Sync.SyncEngineWithGame();
+            
+            SyLog.Info(ELogTag.ProxyGame, "game loop init done");
         }
         catch (Exception e)
         {
@@ -55,13 +43,13 @@ internal class SyProxyGame
         }
     }
 
-    public void EG_Run(TimeData timeData)
+    internal void EgLoopRun(TimeData timeData)
     {
         try
         {
-            _ecs.GetSingleton<TimeData>() = timeData;
-            _ecs.RunSystems();
-            _ecsSync.SyncEngineWithGame();
+            _proxyEcs.Ecs.GetSingleton<TimeData>() = timeData;
+            _proxyEcs.Ecs.RunSystems();
+            _proxyEcs.Sync.SyncEngineWithGame();
         }
         catch (Exception e)
         {
@@ -69,67 +57,14 @@ internal class SyProxyGame
         }
     }
 
-    public void EG_Destroy()
+    internal void EgLoopDestroy()
     {
+        SyLog.Info(ELogTag.ProxyGame, "game loop destroy starts..");
         try
         {
-            _ecs.DestroySystems();
-        }
-        catch (Exception e)
-        {
-            SyLog.Err(ELogTag.ProxyGame, e.ToString());
-        }
-    }
-
-
-    //-----------------------------------------------------------
-    //-----------------------------------------------------------
-    [MethodImpl(MethodImplOptions.InternalCall)]
-    public static extern uint GE_CreateEngineEntity();
-    
-    [MethodImpl(MethodImplOptions.InternalCall)]
-    public static extern void GE_DestroyEngineEntity(uint engineEnt);
-    
-    //-----------------------------------------------------------
-    //-----------------------------------------------------------
-    [MethodImpl(MethodImplOptions.InternalCall)]
-    public static extern uint GE_AddTransformComp(uint engineEnt);
-    
-    [MethodImpl(MethodImplOptions.InternalCall)]
-    public static extern uint GE_RemoveTransformComp(uint engineEnt);
-    
-    
-    [MethodImpl(MethodImplOptions.InternalCall)]
-    public static extern void GE_UpdateTransformComp(uint engineEnt, TransformComp comp);
-    
-    public void EG_UpdateTransformComp(uint engineEnt, TransformComp comp)
-    {
-        try
-        {
-            _ecsSync.ReceiveTransformFromEngine(engineEnt, comp);
-        }
-        catch (Exception e)
-        {
-            SyLog.Err(ELogTag.ProxyGame, e.ToString());
-        }
-    }
-
-    //-----------------------------------------------------------
-    //-----------------------------------------------------------
-    [MethodImpl(MethodImplOptions.InternalCall)]
-    public static extern void GE_AddMeshComp(uint engineEnt);
-    
-    [MethodImpl(MethodImplOptions.InternalCall)]
-    public static extern void GE_RemoveMeshComp(uint engineEnt);
-    
-    [MethodImpl(MethodImplOptions.InternalCall)]
-    public static extern void GE_UpdateMeshComp(uint engineEnt, MeshComp comp);
-
-    public void EG_UpdateMeshComp(uint engineEnt, MeshComp comp)
-    {
-        try
-        {
-            //_ecsSync.ReceiveMeshFromEngine(engineEnt, comp);
+            _proxyEcs.Ecs.DestroySystems();
+            
+            SyLog.Info(ELogTag.ProxyGame, "game loop destroy done");
         }
         catch (Exception e)
         {

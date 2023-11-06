@@ -24,6 +24,8 @@ namespace mono
 		MonoObject* GetInstance() const;
 
 	protected:
+		void BindCallback(const std::string& name, const void* cb);
+
 		virtual const std::string& GetMonoClassName() = 0;
 		virtual const std::string& GetNamespace() = 0;
 		virtual bool IsUserClass() = 0;

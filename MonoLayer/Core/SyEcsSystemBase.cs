@@ -1,4 +1,4 @@
-﻿namespace SyEngine.Game
+﻿namespace SyEngine.Core
 {
     public abstract class SyEcsSystemBase
     {

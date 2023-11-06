@@ -10,6 +10,7 @@ internal class SyProxyLogger
 
 internal enum ELogTag
 {
+	ProxyEcs,
 	ProxyGame,
 	Ecs,
 }

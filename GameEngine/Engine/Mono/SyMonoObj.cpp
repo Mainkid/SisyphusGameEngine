@@ -56,6 +56,14 @@ MonoObject* SyMonoObj::GetInstance() const
 	return mono_gchandle_get_target(_gcHandle);
 }
 
+void SyMonoObj::BindCallback(const std::string& name, const void* cb)
+{
+	std::string fullName = GetNamespace() + std::string(".") +
+		GetMonoClassName() + std::string("::") +
+		name;
+	mono_add_internal_call(fullName.c_str(), cb);
+}
+
 bool SyMonoObj::IsValid() const
 {
 	return _isValid;

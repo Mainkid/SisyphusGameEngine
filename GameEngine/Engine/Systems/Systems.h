@@ -30,4 +30,4 @@
 #include "Rendering/PostViewportRenderSystem.h"
 #include "Rendering/RenderPipeline/EditorGridRenderSystem.h"
 #include "../Systems/PrepareEventsSystem.h"
-#include "../Mono/Systems/MonoSyncGameSystem.h"
+#include "../Mono/Systems/MonoSyncSystem.h"

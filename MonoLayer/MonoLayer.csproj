@@ -39,17 +39,18 @@
         <Reference Include="System.Xml"/>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Game\Comps\MeshComp.cs" />
-        <Compile Include="Game\Comps\SingletonHolderComp.cs" />
-        <Compile Include="Game\Comps\TimeData.cs" />
-        <Compile Include="Game\Comps\TransformComp.cs" />
-        <Compile Include="Game\Datas\SyVector3.cs" />
-        <Compile Include="Game\Helpers\HashHelper.cs" />
-        <Compile Include="Game\SyEcs.cs" />
-        <Compile Include="Game\SyEcsSync.cs" />
-        <Compile Include="Game\SyEcsSystemBase.cs" />
+        <Compile Include="Core\Comps\MeshComp.cs" />
+        <Compile Include="Core\Comps\SingletonsTag.cs" />
+        <Compile Include="Core\Comps\TimeData.cs" />
+        <Compile Include="Core\Comps\TransformComp.cs" />
+        <Compile Include="Core\Datas\SyVector3.cs" />
+        <Compile Include="Core\Helpers\HashHelper.cs" />
+        <Compile Include="Core\ProxyComps\ProxyTransformComp.cs" />
+        <Compile Include="Core\SyEcs.cs" />
+        <Compile Include="Core\SyEcsSync.cs" />
+        <Compile Include="Core\SyEcsSystemBase.cs" />
+        <Compile Include="Core\SyProxyEcs.cs" />
         <Compile Include="Game\SyGameConfigBase.cs" />
-        <Compile Include="Game\SyGameContext.cs" />
         <Compile Include="Game\SyProxyGame.cs" />
         <Compile Include="LeoEcs\components.cs" />
         <Compile Include="LeoEcs\entities.cs" />

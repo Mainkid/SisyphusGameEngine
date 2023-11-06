@@ -31,7 +31,7 @@ namespace mono
 				_name.c_str(),
 				sizeof...(TParams));
 			if (_method == nullptr)
-				return SyResult{ SY_RESCODE_ERROR, SyComplexString("failed to find method %s", _name)};
+				return SyResult{ SY_RESCODE_ERROR, SyComplexString("failed to find method %s", _name.c_str())};
 			return {};
 		}
 
@@ -59,23 +59,6 @@ namespace mono
 			{
 				void* packedParams[paramsCount];
 				FillParams(packedParams, 0, params...);
-
-
-				//
-				//auto tuple = std::tie(params...);
-				//
-				//packedParams[0] = &std::get<0>(tuple);
-				//if constexpr (paramsCount > 1)
-				//	packedParams[1] = &std::get<1>(tuple);
-				//if constexpr (paramsCount > 2)
-				//	packedParams[2] = &std::get<2>(tuple);
-				//if constexpr (paramsCount > 3)
-				//	packedParams[3] = &std::get<3>(tuple);
-				//if constexpr (paramsCount > 4)
-				//	packedParams[4] = &std::get<4>(tuple);
-				//if constexpr (paramsCount > 5)
-				//	packedParams[5] = &std::get<5>(tuple);
-
 				result = mono_runtime_invoke(_method, _target->GetInstance(), packedParams, &exc);
 			}
 			return exc == nullptr ? result : nullptr;

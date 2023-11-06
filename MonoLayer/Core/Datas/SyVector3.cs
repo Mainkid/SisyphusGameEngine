@@ -1,4 +1,4 @@
-﻿namespace SyEngine.Game.Datas
+﻿namespace SyEngine.Core.Datas
 {
 public struct SyVector3
 {

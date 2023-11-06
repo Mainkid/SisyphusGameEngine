@@ -80,13 +80,14 @@
     <ClCompile Include="Engine\Systems\PrepareEventsSystem.cpp" />
     <ClCompile Include="Engine\Mono\SyMono.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoGame.cpp" />
-    <ClCompile Include="Engine\Mono\Objects\SyMonoGameConfig.cpp" />
     <ClCompile Include="Engine\Mono\SyMonoObj.cpp" />
     <ClCompile Include="Engine\Mono\SyMonoRuntime.cpp" />
     <ClCompile Include="Engine\Mono\SyMonoProxyDatas.h" />
-    <ClCompile Include="Engine\Mono\Systems\MonoSyncGameSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Systems\MonoSyncSystem.cpp" />
     <ClCompile Include="Engine\Mono\Components\MonoSyncComp.h" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoLogger.cpp" />
+    <ClCompile Include="Engine\Mono\Objects\SyMonoEcs.cpp" />
+    <ClCompile Include="Engine\Mono\Objects\SyMonoGameConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -202,16 +203,17 @@
     <ClInclude Include="Engine\Mono\ISyMonoGameCallbackReceiver.h" />
     <ClInclude Include="Engine\Mono\SyMono.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoGame.h" />
-    <ClInclude Include="Engine\Mono\Objects\SyMonoGameConfig.h" />
     <ClInclude Include="Engine\Mono\SyMonoObj.h" />
     <ClInclude Include="Engine\Mono\SyMonoRuntime.h" />
-    <ClInclude Include="Engine\Mono\Systems\MonoSyncGameSystem.h" />
+    <ClInclude Include="Engine\Mono\Systems\MonoSyncSystem.h" />
     <ClInclude Include="Engine\Mono\SyMonoMethod.h" />
     <ClInclude Include="Engine\Core\ECS\Event.h" />
     <ClInclude Include="Engine\Systems\PrepareEventsSystem.h" />
     <ClInclude Include="Engine\Tools\MathHelper.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoLogger.h" />
+    <ClInclude Include="Engine\Mono\Objects\SyMonoEcs.h" />
+    <ClInclude Include="Engine\Mono\Objects\SyMonoGameConfig.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

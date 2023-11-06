@@ -1,4 +1,4 @@
-﻿namespace SyEngine.Game.Comps
+﻿namespace SyEngine.Core.Comps
 {
 public struct MeshComp
 {

@@ -91,7 +91,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<InputSystem>();
 	_systems.Add<ResourceSystem>();
 
-	_systems.Add<MonoSyncGameSystem>();
+	_systems.Add<MonoSyncSystem>();
 
 	//Add Resource System here
 	_systems.Add<SyPhysicsSystem>();

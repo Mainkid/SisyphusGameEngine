@@ -56,6 +56,11 @@ void SyMono::HotReload()
 	}
 }
 
+SyMonoEcs* SyMono::GetEcs()
+{
+	return &_ecs;
+}
+
 SyMonoGame* SyMono::GetGame()
 {
 	return &_game;
@@ -69,24 +74,25 @@ SyResult SyMono::InitImpl()
 
 SyResult SyMono::DestroyImpl()
 {
-	SY_RESULT_CHECK_EXT(_game.Destroy(), "game");
 	SY_RESULT_CHECK_EXT(_gameConfig.Destroy(), "game config");
+	SY_RESULT_CHECK_EXT(_game.Destroy(), "game");
+	SY_RESULT_CHECK_EXT(_ecs.Destroy(), "ecs");
+	SY_RESULT_CHECK_EXT(_logger.Destroy(), "logger");
 	return {};
 }
 
 SyResult SyMono::HotReloadImpl()
 {
-	SY_RESULT_CHECK_EXT(_game.Destroy(), "game destroy");
-	SY_RESULT_CHECK_EXT(_gameConfig.Destroy(), "game config destroy");
-	SY_RESULT_CHECK_EXT(_logger.Destroy(), "logger destroy");
+	SY_RESULT_CHECK(DestroyImpl());
 
 	SY_RESULT_CHECK_EXT(_runtime.Reload(), "runtime reload");
 
 	SY_RESULT_CHECK_EXT(_logger.Create(_runtime), "logger create");
-	SY_RESULT_CHECK_EXT(_gameConfig.Create(_runtime), "game config create");
+	SY_RESULT_CHECK_EXT(_ecs.Create(_runtime), "ecs create");
 	SY_RESULT_CHECK_EXT(_game.Create(_runtime), "game create");
+	SY_RESULT_CHECK_EXT(_gameConfig.Create(_runtime), "game config create");
 
-	_game.EG_SetConfig.Invoke(_gameConfig.GetInstance());
+	_game.EgInit.Invoke(_ecs.GetInstance(), _gameConfig.GetInstance());
 
 	return {};
 }
@@ -97,7 +103,7 @@ void SyMono::ForceDestroy()
 
 	_logger = {};
 	_game = {};
-	_gameConfig = {};
+	_ecs = {};
 
 	SY_LOG_MONO(SY_LOGLEVEL_WARNING, "force destroy");
 }

@@ -29,6 +29,12 @@ namespace mono
 		ProxyVector3 Position;
 		ProxyVector3 Rotation;
 		ProxyVector3 Scale;
+		ProxyVector3 LocalPosition;
+		ProxyVector3 LocalRotation;
+		ProxyVector3 LocalScale;
+
+		bool HasParent;
+		uint32_t ParentEngineEnt;
 	};
 
 	struct ProxyMeshComp

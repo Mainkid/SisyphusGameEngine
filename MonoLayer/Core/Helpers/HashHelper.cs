@@ -1,4 +1,4 @@
-﻿namespace SyEngine.Game.Helpers
+﻿namespace SyEngine.Core.Helpers
 {
 public static class HashHelper
 {

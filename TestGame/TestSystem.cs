@@ -1,11 +1,14 @@
 ﻿using Leopotam.EcsLite;
-using SyEngine.Game;
-using SyEngine.Game.Comps;
-using SyEngine.Game.Datas;
+using SyEngine.Core;
+using SyEngine.Core.Comps;
+using SyEngine.Core.Datas;
 using SyEngine.Logger;
 
 namespace TestGame
 {
+struct ParentTag : SyEcs.IComp { }
+struct ChildTag : SyEcs.IComp { }
+
 public class TestSystem : SyEcsSystemBase
 {
 	private EcsFilter _filter;
@@ -16,13 +19,19 @@ public class TestSystem : SyEcsSystemBase
 	//-----------------------------------------------------------
 	public override void Init()
 	{
-		_filter = Ecs.BuildFilter<TransformComp>().End();
+		_filter = Ecs.BuildFilter<ParentTag>().Inc<TransformComp>().End();
 
-		int ent = Ecs.CreateEntity();
-		Ecs.AddTransformComp(ent).Position = new SyVector3(-5, 0, 10);
-		Ecs.AddMeshComp(ent);
-		
-		SyLog.Debug(ELogTag.Test, $"ent g{ent} initial tf {Ecs.GetComp<TransformComp>(ent)}");
+		int parentEnt = Ecs.CreateEntity();
+		Ecs.AddTransformComp(parentEnt).LocalPosition = new SyVector3(-5, 0, 10);
+		Ecs.AddMeshComp(parentEnt);
+		Ecs.AddComp<ParentTag>(parentEnt);
+
+		int     childEnt = Ecs.CreateEntity();
+		ref var childTf  = ref Ecs.AddTransformComp(childEnt);
+		childTf.LocalPosition = new SyVector3(-5, 10, 10);
+		childTf.ParentEnt     = parentEnt;
+		Ecs.AddMeshComp(childEnt);
+		Ecs.AddComp<ChildTag>(childEnt);
 	}
 
 	public override void Run()
@@ -36,7 +45,7 @@ public class TestSystem : SyEcsSystemBase
 			foreach (int ent in _filter)
 			{
 				ref var tf = ref Ecs.GetComp<TransformComp>(ent);
-				tf.Position.X += 1;
+				tf.LocalPosition.X += 1;
 				SyLog.Debug(ELogTag.Test, $"ent g{ent} tf {tf}");
 
 				if (tf.Position.X >= 5f)
