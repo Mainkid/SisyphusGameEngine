@@ -11,6 +11,7 @@
 #include "MaterialUpdateSystem.h"
 #include "ResourceSystem.h"
 #include "ErrorLoggingSystem.h"
+#include "SkyboxSystem.h"
 #include "Rendering/HUD/HudPropertiesSystem.h"
 #include "Rendering/HUD/HudContentBrowserSystem.h"
 #include "Rendering/HUD/HudHierarchySystem.h"
@@ -21,6 +22,7 @@
 #include "Rendering/RenderPipeline/ShadowRenderSystem.h"
 #include "Rendering/PreRenderSystem.h"
 #include "Rendering/RenderInitSystem.h"
+#include "Rendering/ImageBasedLightingSystem.h"
 #include "Rendering/RenderPipeline/SkyboxRenderSystem.h"
 #include "Rendering/RenderPipeline/OpaqueRenderSystem.h"
 #include "Rendering/RenderPipeline/LightRenderSystem.h"
@@ -29,4 +31,6 @@
 #include "Rendering/RenderPipeline/ToneMappingRenderSystem.h"
 #include "Rendering/PostViewportRenderSystem.h"
 #include "Rendering/RenderPipeline/EditorGridRenderSystem.h"
+#include "Rendering/RenderPipeline/HbaoRenderSystem.h"
+
 #include "../Systems/PrepareEventsSystem.h"

@@ -7,6 +7,7 @@
 #include "../../Core/ServiceLocator.h"
 #include "../../Tools/ImageLoader.h"
 #include "../MeshLoader.h"
+#include "../../vendor/HBAO/GFSDK_SSAO.h"
 
 SyResult RenderInitSystem::Init()
 {
@@ -40,7 +41,7 @@ SyResult RenderInitSystem::Init()
 	_rc->Rtvs[1] = _rc->GBuffer->MetallicRtv.Get();
 	_rc->Rtvs[2] = _rc->GBuffer->SpecularRtv.Get();
 	_rc->Rtvs[3] = _rc->GBuffer->EmissiveRtv.Get();
-	_rc->Rtvs[4] = _rc->GBuffer->NormalRtv.Get();
+	_rc->Rtvs[4] = _rc->GBuffer->NormalAndDepthRtv.Get();
 	_rc->Rtvs[5] = _rc->GBuffer->PositionRtv.Get();
 	_rc->Rtvs[6] = _rc->GBuffer->IdRtv.Get();
 	//_rc->Rtvs[4] = _rc->GBuffer->SpecularRtv.Get();
@@ -74,6 +75,10 @@ SyResult RenderInitSystem::Init()
 
 	CompileShaders();
 
+	CreateHbao();
+
+	
+
 
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "RenderInit system initialization successful. ");
 	return SyResult();
@@ -92,42 +97,43 @@ SyResult RenderInitSystem::Destroy()
 
 void RenderInitSystem::InitSkybox() const
 {
-	int resolution = 512;
-	D3D11_TEXTURE2D_DESC textureDesc_ = {};
-	textureDesc_.Width = resolution;
-	textureDesc_.Height = resolution;
-	textureDesc_.MipLevels = 1;
-	textureDesc_.ArraySize = 6;
+	//int resolution = 512;
+	//D3D11_TEXTURE2D_DESC textureDesc_ = {};
+	//textureDesc_.Width = resolution;
+	//textureDesc_.Height = resolution;
+	//textureDesc_.MipLevels = 1;
+	//textureDesc_.ArraySize = 6;
 
-	textureDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	textureDesc_.SampleDesc.Count = 1;
-	textureDesc_.SampleDesc.Quality = 0;
-	textureDesc_.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc_.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	textureDesc_.CPUAccessFlags = 0;
-	textureDesc_.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	//textureDesc_.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	//textureDesc_.SampleDesc.Count = 1;
+	//textureDesc_.SampleDesc.Quality = 0;
+	//textureDesc_.Usage = D3D11_USAGE_DEFAULT;
+	//textureDesc_.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	//textureDesc_.CPUAccessFlags = 0;
+	//textureDesc_.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
+	//int width = 0;
+	//int height = 0;
+	//auto arr=ImageLoader::LoadSkyboxFromFile("./Engine/Assets/SkyBox/cubemap.hdr", &width, &height);
 
-	D3D11_SUBRESOURCE_DATA data[6];
-	for (int i = 0; i < 6; i++)
-	{
-		std::string file = "./Engine/Assets/SkyBox/skybox_";
-		file += std::to_string(i + 1);
-		file += ".png";
-		int width = 0;
-		int height = 0;
-		data[i].pSysMem = ImageLoader::LoadImageFromFile(file.c_str(), &width, &height);
-		data[i].SysMemPitch = sizeof(char) * width * 4;
-		data[i].SysMemSlicePitch = 0;
-	}
-	HRESULT result = _hc->device->CreateTexture2D(&textureDesc_, data, _rc->SkyboxTexture.GetAddressOf());
+	//_rc->SkyBoxResolution = width;
+	//
+	//D3D11_SUBRESOURCE_DATA data[6];
+	//for (int i = 0; i < 6; i++)
+	//{
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = textureDesc_.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = 1;
-	result = _hc->device->CreateShaderResourceView(_rc->SkyboxTexture.Get(), &srvDesc, _rc->SkyboxSRV.GetAddressOf());
+	//	data[i].pSysMem = arr[i];
+	//	data[i].SysMemPitch = sizeof(float) * width *4;
+	//	data[i].SysMemSlicePitch = 0;
+	//}
+	//HRESULT result = _hc->device->CreateTexture2D(&textureDesc_, data, _rc->SkyboxTexture.GetAddressOf());
+
+	//D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	//srvDesc.Format = textureDesc_.Format;
+	//srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+	//srvDesc.Texture2D.MostDetailedMip = 0;
+	//srvDesc.Texture2D.MipLevels = 1;
+	//result = _hc->device->CreateShaderResourceView(_rc->SkyboxTexture.Get(), &srvDesc, _rc->SkyboxSRV.GetAddressOf());
 }
 
 void RenderInitSystem::CreateTextures() const
@@ -165,6 +171,24 @@ void RenderInitSystem::CreateTextures() const
 	desc2.CPUAccessFlags = 0;
 
 	HRESULT result = _hc->device->CreateTexture2D(&desc2, NULL, _rc->EntityIdTexture.GetAddressOf());
+
+
+
+	D3D11_TEXTURE2D_DESC textureDesc;
+	ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+	textureDesc.Width = _hc->window->GetWidth();
+	textureDesc.Height = _hc->window->GetHeight();
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+	HRESULT res = _hc->device->CreateTexture2D(&textureDesc, nullptr, _rc->HbaoTexture.GetAddressOf());
 }
 
 void RenderInitSystem::CompileShaders() const
@@ -243,6 +267,19 @@ void RenderInitSystem::CompileShaders() const
 	_rc->GaussianBlurY->Initialize(L"./Engine/Assets/Shaders/GaussianBlur.hlsl",
 	                               COMPILE_VERTEX | COMPILE_PIXEL | COMPILE_GEOM, USE_POSITION | USE_COLOR, "VS_Blur",
 	                               "PS_BlurY", "GSMain");
+
+	_rc->IrradianceMapGenerator = std::make_unique<Shader>();
+	_rc->IrradianceMapGenerator->Initialize(L"./Engine/Assets/Shaders/IrradianceMapGenerator.hlsl",
+		COMPILE_COMPUTE,USE_NONE,"","","","CSMain");
+
+	_rc->EnvironmentPrefilter = std::make_unique<Shader>();
+	_rc->EnvironmentPrefilter->Initialize(L"./Engine/Assets/Shaders/EnvironmentPrefilter.hlsl",
+		COMPILE_COMPUTE, USE_NONE, "", "", "", "CSMain");
+
+	_rc->IblLookUpGenerator = std::make_unique<Shader>();
+	_rc->IblLookUpGenerator->Initialize(L"./Engine/Assets/Shaders/IblLookUpTexture.hlsl",
+		COMPILE_COMPUTE, USE_NONE, "", "", "", "CSMain");
+
 }
 
 void RenderInitSystem::CreateBlendStates() const
@@ -441,7 +478,9 @@ void RenderInitSystem::CreateDepthAndStencils() const
 
 void RenderInitSystem::CreateShaderResourceViewsAndRenderTargets() const
 {
-	
+	auto res = _hc->device->CreateRenderTargetView(_rc->HbaoTexture.Get(), nullptr, _rc->HbaoRtv.GetAddressOf());
+
+
 	//Shadow maps -->
 
 
@@ -453,6 +492,11 @@ void RenderInitSystem::CreateShaderResourceViewsAndRenderTargets() const
 
 
 	HRESULT hr = _hc->device->CreateShaderResourceView(_rc->TexturePCF, &shaderResourceViewDesc_, &_rc->ShadowMapResourceView);
+
+	shaderResourceViewDesc_.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	hr = _hc->device->CreateShaderResourceView(_rc->HbaoTexture.Get(), &shaderResourceViewDesc_, _rc->HbaoSrv.GetAddressOf());
+
+	//hr = _hc->device->CreateShaderResourceView(_hc->depthStencilBuffer.Get(), &shaderResourceViewDesc_, _hc->depthStencilSrv.GetAddressOf());
 
 	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
 	renderTargetViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
@@ -495,4 +539,14 @@ void RenderInitSystem::CreateRasterizerStates() const
 
 	desc.CullMode = D3D11_CULL_NONE;
 	_hc->device->CreateRasterizerState(&desc, _rc->CullNoneRasterizerState.GetAddressOf());
+}
+
+void RenderInitSystem::CreateHbao() const
+{
+
+	_rc->CustomHeap.new_ = ::operator new;
+	_rc->CustomHeap.delete_ = ::operator delete;
+
+	_rc->status = GFSDK_SSAO_CreateContext_D3D11(_hc->device.Get(), &_rc->pAOContext, &_rc->CustomHeap);
+	assert(_rc->status == GFSDK_SSAO_OK); // HBAO+ requires feature level 11_0 or above
 }

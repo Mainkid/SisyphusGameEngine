@@ -12,16 +12,16 @@
 
 SyResult OpaqueRenderSystem::Init()
 {
-	ec = ServiceLocator::instance()->Get<EngineContext>();
-	rc = ServiceLocator::instance()->Get<RenderContext>();
-    hc = ServiceLocator::instance()->Get<HardwareContext>();
+	_ec = ServiceLocator::instance()->Get<EngineContext>();
+	_rc = ServiceLocator::instance()->Get<RenderContext>();
+    _hc = ServiceLocator::instance()->Get<HardwareContext>();
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "OpaqueRender system initialization successful.");
     return SyResult();
 }
 
 SyResult OpaqueRenderSystem::Run()
 {
-    hc->context->RSSetState(rc->CullBackRasterizerState.Get());
+    _hc->context->RSSetState(_rc->CullBackRasterizerState.Get());
 
     auto view =_ecs->view<TransformComponent, MeshComponent>();
     auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
@@ -61,24 +61,24 @@ SyResult OpaqueRenderSystem::Run()
             dataOpaque.instanseID.y = i;
 
             D3D11_MAPPED_SUBRESOURCE mappedResource;
-            HRESULT res = hc->context->Map(rc->OpaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+            HRESULT res = _hc->context->Map(_rc->OpaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
             CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_BaseEditorBuffer));
-            hc->context->Unmap(rc->OpaqueConstBuffer->buffer.Get(), 0);
-            hc->context->VSSetConstantBuffers(0, 1, rc->OpaqueConstBuffer->buffer.GetAddressOf());
-            hc->context->PSSetConstantBuffers(0, 1, rc->OpaqueConstBuffer->buffer.GetAddressOf());
+            _hc->context->Unmap(_rc->OpaqueConstBuffer->buffer.Get(), 0);
+            _hc->context->VSSetConstantBuffers(0, 1, _rc->OpaqueConstBuffer->buffer.GetAddressOf());
+            _hc->context->PSSetConstantBuffers(0, 1, _rc->OpaqueConstBuffer->buffer.GetAddressOf());
 
-            hc->context->OMSetRenderTargets(7, rc->Rtvs, hc->depthStencilView.Get());
-            hc->context->IASetInputLayout(rc->OpaqueShader->layout.Get());
-            hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-            hc->context->IASetIndexBuffer(meshComp.model->meshes[i]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-            hc->context->IASetVertexBuffers(0, 1, meshComp.model->meshes[i]->vertexBuffer->buffer.GetAddressOf(),
+            _hc->context->OMSetRenderTargets(7, _rc->Rtvs, _hc->depthStencilView.Get());
+            _hc->context->IASetInputLayout(_rc->OpaqueShader->layout.Get());
+            _hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+            _hc->context->IASetIndexBuffer(meshComp.model->meshes[i]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+            _hc->context->IASetVertexBuffers(0, 1, meshComp.model->meshes[i]->vertexBuffer->buffer.GetAddressOf(),
                 meshComp.strides, meshComp.offsets);
-            hc->context->PSSetSamplers(0, 1, meshComp.materials[i]->albedoSRV->textureSamplerState.GetAddressOf());
-            hc->context->OMSetDepthStencilState(hc->depthStencilState.Get(), 0);
-            hc->context->VSSetShader(rc->OpaqueShader->vertexShader.Get(), nullptr, 0);
-            hc->context->PSSetShader(rc->OpaqueShader->pixelShader.Get(), nullptr, 0);
-            hc->context->PSSetShaderResources(0, 6, meshComp.materials[i]->resources);
-            hc->context->DrawIndexed(meshComp.model->meshes[i]->indexBuffer->size, 0, 0);
+            _hc->context->PSSetSamplers(0, 1, meshComp.materials[i]->albedoSRV->textureSamplerState.GetAddressOf());
+            _hc->context->OMSetDepthStencilState(_hc->depthStencilState.Get(), 0);
+            _hc->context->VSSetShader(_rc->OpaqueShader->vertexShader.Get(), nullptr, 0);
+            _hc->context->PSSetShader(_rc->OpaqueShader->pixelShader.Get(), nullptr, 0);
+            _hc->context->PSSetShaderResources(0, 6, meshComp.materials[i]->resources);
+            _hc->context->DrawIndexed(meshComp.model->meshes[i]->indexBuffer->size, 0, 0);
         }
     }
     return SyResult();

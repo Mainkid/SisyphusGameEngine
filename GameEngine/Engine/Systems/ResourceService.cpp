@@ -1,5 +1,9 @@
 #include "ResourceService.h"
+
+#include "HardwareContext.h"
+#include "../Components/SkyboxResource.h"
 #include "../Core/ECS/Events/SySceneLoadEvent.h"
+#include "../Tools/ImageLoader.h"
 
 ResourceService::ResourceService()
 {
@@ -24,6 +28,10 @@ void ResourceService::LoadBaseAssets()
 	baseResourceDB[EAssetType::ASSET_MESH].uuid =  GetUUIDFromPath(baseModel);
 	baseResourceDB[EAssetType::ASSET_MESH].resource = LoadResource(GetUUIDFromPath(baseModel));
 	resourceLibrary[GetUUIDFromPath(baseModel)].resource = baseResourceDB[EAssetType::ASSET_MESH].resource;
+
+	baseResourceDB[EAssetType::ASSET_CUBEMAP].uuid = GetUUIDFromPath(baseCubemap);
+	baseResourceDB[EAssetType::ASSET_CUBEMAP].resource = LoadResource(GetUUIDFromPath(baseCubemap));
+	resourceLibrary[GetUUIDFromPath(baseCubemap)].resource = baseResourceDB[EAssetType::ASSET_CUBEMAP].resource;
 
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Base assets loaded successfuly!");
 }
@@ -148,6 +156,51 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>( model);
 			return model;
+		}
+		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_CUBEMAP)
+		{
+			auto _hc = ServiceLocator::instance()->Get<HardwareContext>();
+			auto skyboxResource = std::make_shared<SkyboxResource>();
+
+			std::string filePath = FindFilePathByUUID(uuid);
+			int width = 0;
+			int height = 0;
+			auto cubeMapArray = ImageLoader::LoadSkyboxFromFile(filePath.c_str(), &width, &height);
+			skyboxResource->Resolution = width;
+			D3D11_TEXTURE2D_DESC textureDesc_ = {};
+			textureDesc_.Width = width;
+			textureDesc_.Height = width;
+			textureDesc_.MipLevels = 1;
+			textureDesc_.ArraySize = 6;
+
+			textureDesc_.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			textureDesc_.SampleDesc.Count = 1;
+			textureDesc_.SampleDesc.Quality = 0;
+			textureDesc_.Usage = D3D11_USAGE_DEFAULT;
+			textureDesc_.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+			textureDesc_.CPUAccessFlags = 0;
+			textureDesc_.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+
+			D3D11_SUBRESOURCE_DATA data[6];
+			for (int i = 0; i < 6; i++)
+			{
+
+				data[i].pSysMem = cubeMapArray[i];
+				data[i].SysMemPitch = sizeof(float) * width * 4;
+				data[i].SysMemSlicePitch = 0;
+			}
+			HRESULT result = _hc->device->CreateTexture2D(&textureDesc_, data, skyboxResource->cubemapTexture.GetAddressOf());
+			
+			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+			srvDesc.Format = textureDesc_.Format;
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+			srvDesc.Texture2D.MostDetailedMip = 0;
+			srvDesc.Texture2D.MipLevels = 1;
+			result = _hc->device->CreateShaderResourceView(skyboxResource->cubemapTexture.Get(), &srvDesc, skyboxResource->textureSRV.GetAddressOf());
+			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(skyboxResource);
+			return skyboxResource;
+
 		}
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_NONE)
 		{

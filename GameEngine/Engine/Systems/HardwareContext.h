@@ -24,6 +24,7 @@ struct HardwareContext : public IService
     ComPtr <ID3D11RasterizerState> rastState;
     ComPtr <ID3D11Texture2D> depthStencilBuffer;
     ComPtr <ID3D11DepthStencilView> depthStencilView;
+    ComPtr <ID3D11ShaderResourceView> depthStencilSrv;
     ComPtr <ID3D11DepthStencilState> depthStencilState;
 
     std::unique_ptr<DisplayWin32> window;
