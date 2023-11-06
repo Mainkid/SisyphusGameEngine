@@ -7,7 +7,7 @@ using namespace physx;
 
 
 SyRBodyComponent::SyRBodyComponent( const SyRBodyType&      rbType,
-                                    const SyRbTransform&      rbTransform,
+                                    const SyRbTransform&    rbTransform,
                                     const SyRBodyMaterial&  rbMaterial,
                                     bool                    manuallySetMass,
                                     float                   mass)

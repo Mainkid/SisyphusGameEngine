@@ -12,7 +12,7 @@
 #include "../../Tools/Data/Vector.h"
 
 
-entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, Vector3 pos)
+entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, SyVector3 pos = Vector3::Zero)
 {
 	auto ent = ecs->create();
 	ecs->emplace<GameObjectComp>(ent, name);
@@ -124,59 +124,60 @@ SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::enti
 									manuallySetMass,
 									mass);
 	ecs->emplace<SyRbCreateOnNextUpdateTag>(entity);
+	return result;
 }
 
 
-entt::entity GameObjectHelper::CreateStaticBox(	entt::registry* ecs, 
-                                                const SyVector3& position, 
-                                                const SyVector3& rotation, 
-                                                const SyVector3& scale,
-                                                const SyRBodyMaterial& material)
-{
-	auto ent = Create(ecs, "StaticBox");
-
-	ecs->emplace<MeshComponent>(ent);
-
-	auto& tf = ecs->get<TransformComponent>(ent);
-	tf.localPosition = position;
-	tf.localRotation = rotation;
-	tf.localScale = scale;
-
-	SyRbTransform boxDesc;
-	boxDesc.RbType = SY_RB_TYPE_STATIC;
-	boxDesc.rbShapeType = SY_RB_SHAPE_TYPE_BOX;
-	boxDesc.Origin = position;
-	boxDesc.Rotation = rotation;
-	boxDesc.HalfExtent = scale;
-	ecs->emplace<SyRBodyComponent>(ent, boxDesc, material);
-
-	return ent;
-}
-
-entt::entity GameObjectHelper::CreateDynamicBox(entt::registry* ecs, 
-												const SyVector3& position, 
-												const SyVector3& rotation, 
-												const SyVector3& scale,
-												const SyRBodyMaterial& material)
-{
-	auto ent = Create(ecs, "DynamicBox");
-
-	ecs->emplace<MeshComponent>(ent);
-
-	auto& tc = ecs->get<TransformComponent>(ent);
-	tc.localPosition = position;
-	tc.localRotation = rotation;
-	tc.localScale = scale;
-
-	SyRbTransform boxDesc;
-	boxDesc.RbType = SY_RB_TYPE_DYNAMIC;
-	boxDesc.rbShapeType = SY_RB_SHAPE_TYPE_BOX;
-	boxDesc.Origin = position;
-	boxDesc.Rotation = rotation;
-	boxDesc.HalfExtent = scale;
-	ecs->emplace<SyRBodyComponent>(ent, boxDesc, material);
-	return ent;
-}
+// entt::entity GameObjectHelper::CreateStaticBox(	entt::registry* ecs, 
+//                                                 const SyVector3& position, 
+//                                                 const SyVector3& rotation, 
+//                                                 const SyVector3& scale,
+//                                                 const SyRBodyMaterial& material)
+// {
+// 	auto ent = Create(ecs, "StaticBox");
+//
+// 	ecs->emplace<MeshComponent>(ent);
+//
+// 	auto& tf = ecs->get<TransformComponent>(ent);
+// 	tf.localPosition = position;
+// 	tf.localRotation = rotation;
+// 	tf.localScale = scale;
+//
+// 	SyRbTransform boxDesc;
+// 	boxDesc.RbType = SY_RB_TYPE_STATIC;
+// 	boxDesc.rbShapeType = SY_RB_SHAPE_TYPE_BOX;
+// 	boxDesc.Origin = position;
+// 	boxDesc.Rotation = rotation;
+// 	boxDesc.HalfExtent = scale;
+// 	ecs->emplace<SyRBodyComponent>(ent, boxDesc, material);
+//
+// 	return ent;
+// }
+//
+// entt::entity GameObjectHelper::CreateDynamicBox(entt::registry* ecs, 
+// 												const SyVector3& position, 
+// 												const SyVector3& rotation, 
+// 												const SyVector3& scale,
+// 												const SyRBodyMaterial& material)
+// {
+// 	auto ent = Create(ecs, "DynamicBox");
+//
+// 	ecs->emplace<MeshComponent>(ent);
+//
+// 	auto& tc = ecs->get<TransformComponent>(ent);
+// 	tc.localPosition = position;
+// 	tc.localRotation = rotation;
+// 	tc.localScale = scale;
+//
+// 	SyRbTransform boxDesc;
+// 	boxDesc.RbType = SY_RB_TYPE_DYNAMIC;
+// 	boxDesc.rbShapeType = SY_RB_SHAPE_TYPE_BOX;
+// 	boxDesc.Origin = position;
+// 	boxDesc.Rotation = rotation;
+// 	boxDesc.HalfExtent = scale;
+// 	ecs->emplace<SyRBodyComponent>(ent, boxDesc, material);
+// 	return ent;
+// }
 
 entt::entity GameObjectHelper::CreateLight(entt::registry* ecs, ELightType lightType,Vector3 pos)
 {

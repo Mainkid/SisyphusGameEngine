@@ -1,4 +1,6 @@
 #pragma once
+#include <boost/function_types/property_tags.hpp>
+
 #include "../Tools/Data/Vector.h"
 #include "../Tools/ErrorLogger.h"
 #pragma region forward declaration
@@ -41,7 +43,7 @@ struct SyRBodyComponent
 {
 	SyRBodyComponent(	const SyRBodyType&			rbType,
 						const SyRbTransform&		rbTransform,
-						const SyRBodyMaterial&		rbMaterial,
+						const SyRBodyMaterial&		rbMaterial		= SyRBodyMaterial(),
 						bool						manuallySetMass = true,
 						float						mass			= 1.0f);
 	
@@ -56,8 +58,10 @@ private:
 	SyVector3			_origin;
 	SyVector3			_rotation;
 	//fields initialized in SyPhysicsSystem::Init
-	
-	//physx::PxRigidActor*	_rbActor = nullptr;
+
+	//actor, containing collider shape of the rigid body, sphere by default
+	physx::PxRigidActor*	_rbActor = nullptr;
+	physx::PxShape*			_rbShape = nullptr;
 	std::size_t hash;
 	
 	static	physx::PxPhysics*	_physics;

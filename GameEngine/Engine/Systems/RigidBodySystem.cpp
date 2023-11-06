@@ -50,8 +50,8 @@ SyResult SyRigidBodySystem::Run()
 	auto toInitView = _ecs->view<SyRBodyComponent, TransformComponent, SyRbCreateOnNextUpdateTag>();
 	for (auto& entity : toInitView)
 	{
-		auto rbComponent = _ecs->get<SyRBodyComponent>(entity);
-		auto tComponent = _ecs->get<TransformComponent>(entity);
+		auto& rbComponent = _ecs->get<SyRBodyComponent>(entity);
+		auto& tComponent = _ecs->get<TransformComponent>(entity);
 		if (InitComponent(entity, rbComponent, tComponent).code != SY_RESCODE_OK)
 		{
 			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to initialize RigidBody Component on entity %d", (int)entity);
@@ -84,6 +84,7 @@ SyResult SyRigidBodySystem::Run()
 		{
 			result.code = SY_RESCODE_ERROR;
 			result.message = "rbComponent.rbActor is nullptr.";
+			_ecs->remove<SyRBodyComponent>(entity);
 			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
 			continue;
 		}
@@ -129,6 +130,28 @@ SyResult SyRigidBodySystem::InitComponent(const entt::entity& entity, SyRBodyCom
 		result.message = xstring("Unknown Rigid Body type in SyRbComponent. Entity: %d.", (unsigned)entity);
 		return result;
 	};
+	static const float UNIT_SPHERE_RADIUS = powf(4 / 3 / PxPi, 1 / 3); //radius of a sphere with volume equal to 1
+	rbComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
+																	PxSphereGeometry(UNIT_SPHERE_RADIUS),
+																	*_physics->createMaterial(
+																		rbComponent._rbMaterial.staticFriction,
+																		rbComponent._rbMaterial.dynamicFriction,
+																		rbComponent._rbMaterial.restitution));
+	if (rbComponent._manuallySetMass)
+		rbComponent._rbMaterial.density = 1 / rbComponent._mass;
+	//rbComponent._rbShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
+	//rbComponent._rbShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
+	if (rbComponent._rbType == SY_RB_TYPE_DYNAMIC)
+	{
+		bool updateMassResult = PxRigidBodyExt::updateMassAndInertia(	*static_cast<PxRigidBody*>(rbComponent._rbActor),
+																		rbComponent._rbMaterial.density);
+		if (updateMassResult == false)
+		{
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::updateMassAndInertia returned false");
+			return result;
+		}
+	}
+
 	// switch (rbComponent._rbShapeType)
 	// {
 	// case SY_RB_SHAPE_TYPE_BOX:
@@ -180,14 +203,11 @@ SyResult SyRigidBodySystem::InitComponent(const entt::entity& entity, SyRBodyCom
 	// 	
 	// 	return result;
 	// }
-	if (rbComponent._rbType == SY_RB_TYPE_DYNAMIC)
+	if (_scene->addActor(*rbComponent._rbActor) == false)
 	{
-		bool updateMassResult = PxRigidBodyExt::updateMassAndInertia(*static_cast<PxRigidBody*>(rbComponent._rbActor), rbComponent._rbMaterial.density);
-		if (updateMassResult == false)
-		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::updateMassAndInertia returned false");
-			return result;
-		}
-	}
-	_scene->addActor(*rbComponent._rbActor);
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("scene->addActor returned false for RigidBody component on entity %d", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "scene->addActor returned false for RigidBody component on entity %d", (int)entity);
+	};
+	return result;
 }

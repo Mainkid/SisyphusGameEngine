@@ -9,7 +9,7 @@
 class GameObjectHelper
 {
 public:
-	static entt::entity Create(entt::registry* ecs, const std::string& name, Vector3 pos=Vector3::Zero);
+	static entt::entity Create(entt::registry* ecs, const std::string& name, SyVector3 pos);
 
 	static void Destroy(entt::registry* ecs, entt::entity ent);
 
@@ -22,8 +22,8 @@ public:
 	static SyResult AddRigidBodyComponent(	entt::registry*			ecs,
 											entt::entity			entity,
 											const SyRBodyType&		rbType,
-											const SyRbTransform&	rbLocalTransform,
-											const SyRBodyMaterial&	rbMaterial,
+											const SyRbTransform&	rbLocalTransform = { {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} },
+											const SyRBodyMaterial&	rbMaterial		= SyRBodyMaterial(),
 											bool					manuallySetMass = true,
 											float					mass			= 1.0);
 	
