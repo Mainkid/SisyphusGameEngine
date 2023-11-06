@@ -1,0 +1,1020 @@
+{
+  "entities": [
+    {
+      "id": 13,
+      "struct GameObjectComp": {
+        "Name": "Mesh",
+        "Tag": "None"
+      },
+      "struct MeshComponent": {
+        "materialUUIDs": [
+          {
+            "data": [
+              179,
+              253,
+              30,
+              100,
+              20,
+              150,
+              65,
+              87,
+              143,
+              68,
+              151,
+              63,
+              163,
+              229,
+              210,
+              17
+            ]
+          }
+        ],
+        "modelUUID": {
+          "data": [
+            109,
+            150,
+            25,
+            98,
+            201,
+            148,
+            77,
+            176,
+            185,
+            169,
+            37,
+            135,
+            28,
+            65,
+            226,
+            153
+          ]
+        }
+      },
+      "struct TransformComponent": {
+        "localPosition": {
+          "x": 0.0,
+          "y": 3.0,
+          "z": 5.0
+        },
+        "localRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "parent": 4294967295,
+        "position": {
+          "x": 0.0,
+          "y": 3.0,
+          "z": 5.0
+        },
+        "rotation": {
+          "x": -0.0,
+          "y": 0.0,
+          "z": -0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      }
+    },
+
+    {
+      "id": 12,
+      "struct GameObjectComp": {
+        "Name": "Mesh",
+        "Tag": "None"
+      },
+      "struct MeshComponent": {
+        "materialUUIDs": [
+          {
+            "data": [
+              65,
+              145,
+              207,
+              237,
+              213,
+              57,
+              64,
+              207,
+              179,
+              129,
+              62,
+              72,
+              77,
+              105,
+              251,
+              168
+            ]
+          }
+        ],
+        "modelUUID": {
+          "data": [
+            109,
+            150,
+            25,
+            98,
+            201,
+            148,
+            77,
+            176,
+            185,
+            169,
+            37,
+            135,
+            28,
+            65,
+            226,
+            153
+          ]
+        }
+      },
+      "struct TransformComponent": {
+        "localPosition": {
+          "x": -3.0,
+          "y": 3.0,
+          "z": 5.0
+        },
+        "localRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "parent": 4294967295,
+        "position": {
+          "x": -3.0,
+          "y": 3.0,
+          "z": 5.0
+        },
+        "rotation": {
+          "x": -0.0,
+          "y": 0.0,
+          "z": -0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      }
+    },
+    {
+      "id": 11,
+      "struct GameObjectComp": {
+        "Name": "Mesh",
+        "Tag": "None"
+      },
+      "struct MeshComponent": {
+        "materialUUIDs": [
+          {
+            "data": [
+              168,
+              33,
+              109,
+              229,
+              122,
+              165,
+              68,
+              151,
+              164,
+              112,
+              37,
+              89,
+              145,
+              43,
+              216,
+              127
+            ]
+          }
+        ],
+        "modelUUID": {
+          "data": [
+            109,
+            150,
+            25,
+            98,
+            201,
+            148,
+            77,
+            176,
+            185,
+            169,
+            37,
+            135,
+            28,
+            65,
+            226,
+            153
+          ]
+        }
+      },
+      "struct TransformComponent": {
+        "localPosition": {
+          "x": -6.0,
+          "y": 3.0,
+          "z": 5.0
+        },
+        "localRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "parent": 4294967295,
+        "position": {
+          "x": -6.0,
+          "y": 3.0,
+          "z": 5.0
+        },
+        "rotation": {
+          "x": -0.0,
+          "y": 0.0,
+          "z": -0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      }
+    },
+    {
+      "id": 10,
+      "struct GameObjectComp": {
+        "Name": "Mesh",
+        "Tag": "None"
+      },
+      "struct MeshComponent": {
+        "materialUUIDs": [
+          {
+            "data": [
+              80,
+              102,
+              162,
+              54,
+              234,
+              1,
+              67,
+              189,
+              190,
+              10,
+              15,
+              72,
+              142,
+              239,
+              55,
+              202
+            ]
+          }
+        ],
+        "modelUUID": {
+          "data": [
+            109,
+            150,
+            25,
+            98,
+            201,
+            148,
+            77,
+            176,
+            185,
+            169,
+            37,
+            135,
+            28,
+            65,
+            226,
+            153
+          ]
+        }
+      },
+      "struct TransformComponent": {
+        "localPosition": {
+          "x": 3.0,
+          "y": 3.0,
+          "z": 5.0
+        },
+        "localRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "parent": 4294967295,
+        "position": {
+          "x": 3.0,
+          "y": 3.0,
+          "z": 5.0
+        },
+        "rotation": {
+          "x": -0.0,
+          "y": 0.0,
+          "z": -0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      }
+    },
+    {
+      "id": 9,
+      "struct GameObjectComp": {
+        "Name": "Mesh",
+        "Tag": "None"
+      },
+      "struct MeshComponent": {
+        "materialUUIDs": [
+          {
+            "data": [
+              114,
+              49,
+              231,
+              187,
+              153,
+              248,
+              75,
+              242,
+              170,
+              211,
+              178,
+              34,
+              231,
+              221,
+              28,
+              175
+            ]
+          }
+        ],
+        "modelUUID": {
+          "data": [
+            109,
+            150,
+            25,
+            98,
+            201,
+            148,
+            77,
+            176,
+            185,
+            169,
+            37,
+            135,
+            28,
+            65,
+            226,
+            153
+          ]
+        }
+      },
+      "struct TransformComponent": {
+        "localPosition": {
+          "x": 6.0,
+          "y": 3.0,
+          "z": 5.0
+        },
+        "localRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "parent": 4294967295,
+        "position": {
+          "x": 6.0,
+          "y": 3.0,
+          "z": 5.0
+        },
+        "rotation": {
+          "x": -0.0,
+          "y": 0.0,
+          "z": -0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      }
+    },
+    {
+      "id": 8,
+      "struct GameObjectComp": {
+        "Name": "Mesh",
+        "Tag": "None"
+      },
+      "struct MeshComponent": {
+        "materialUUIDs": [
+          {
+            "data": [
+              71,
+              141,
+              57,
+              185,
+              37,
+              168,
+              74,
+              137,
+              154,
+              180,
+              194,
+              8,
+              232,
+              222,
+              87,
+              21
+            ]
+          }
+        ],
+        "modelUUID": {
+          "data": [
+            109,
+            150,
+            25,
+            98,
+            201,
+            148,
+            77,
+            176,
+            185,
+            169,
+            37,
+            135,
+            28,
+            65,
+            226,
+            153
+          ]
+        }
+      },
+      "struct TransformComponent": {
+        "localPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "parent": 4294967295,
+        "position": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "rotation": {
+          "x": -0.0,
+          "y": 0.0,
+          "z": -0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      }
+    },
+    {
+      "id": 7,
+      "struct GameObjectComp": {
+        "Name": "Mesh",
+        "Tag": "None"
+      },
+      "struct MeshComponent": {
+        "materialUUIDs": [
+          {
+            "data": [
+              95,
+              42,
+              63,
+              171,
+              22,
+              139,
+              77,
+              56,
+              135,
+              92,
+              49,
+              3,
+              27,
+              132,
+              207,
+              118
+            ]
+          }
+        ],
+        "modelUUID": {
+          "data": [
+            109,
+            150,
+            25,
+            98,
+            201,
+            148,
+            77,
+            176,
+            185,
+            169,
+            37,
+            135,
+            28,
+            65,
+            226,
+            153
+          ]
+        }
+      },
+      "struct TransformComponent": {
+        "localPosition": {
+          "x": 3.0,
+          "y": 0.0,
+          "z": 5.0
+        },
+        "localRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "parent": 4294967295,
+        "position": {
+          "x": 3.0,
+          "y": 0.0,
+          "z": 5.0
+        },
+        "rotation": {
+          "x": -0.0,
+          "y": 0.0,
+          "z": -0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      }
+    },
+    {
+      "id": 1048582,
+      "struct GameObjectComp": {
+        "Name": "Mesh",
+        "Tag": "None"
+      },
+      "struct MeshComponent": {
+        "materialUUIDs": [
+          {
+            "data": [
+              32,
+              195,
+              4,
+              222,
+              119,
+              37,
+              69,
+              192,
+              165,
+              21,
+              158,
+              246,
+              79,
+              206,
+              13,
+              189
+            ]
+          }
+        ],
+        "modelUUID": {
+          "data": [
+            109,
+            150,
+            25,
+            98,
+            201,
+            148,
+            77,
+            176,
+            185,
+            169,
+            37,
+            135,
+            28,
+            65,
+            226,
+            153
+          ]
+        }
+      },
+      "struct TransformComponent": {
+        "localPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 5.0
+        },
+        "localRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "parent": 4294967295,
+        "position": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 5.0
+        },
+        "rotation": {
+          "x": -0.0,
+          "y": 0.0,
+          "z": -0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      }
+    },
+    {
+      "id": 16,
+      "struct GameObjectComp": {
+        "Name": "Mesh",
+        "Tag": "None"
+      },
+      "struct MeshComponent": {
+        "materialUUIDs": [
+          {
+            "data": [
+              177,
+              172,
+              166,
+              4,
+              112,
+              108,
+              74,
+              172,
+              152,
+              51,
+              2,
+              63,
+              9,
+              202,
+              86,
+              12
+            ]
+          }
+        ],
+        "modelUUID": {
+          "data": [
+            109,
+            150,
+            25,
+            98,
+            201,
+            148,
+            77,
+            176,
+            185,
+            169,
+            37,
+            135,
+            28,
+            65,
+            226,
+            153
+          ]
+        }
+      },
+      "struct TransformComponent": {
+        "localPosition": {
+          "x": -3.0,
+          "y": 0.0,
+          "z": 5.0
+        },
+        "localRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "parent": 4294967295,
+        "position": {
+          "x": -3.0,
+          "y": 0.0,
+          "z": 5.0
+        },
+        "rotation": {
+          "x": -0.0,
+          "y": 0.0,
+          "z": -0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      }
+    },
+    {
+      "id": 3,
+      "struct EditorBillboardComponent": {
+        "texturePath": "Engine/Assets/Sprites/DirLightSprite.png"
+      },
+      "struct GameObjectComp": {
+        "Name": "DirectionalLight",
+        "Tag": "None"
+      },
+      "struct LightComponent": {
+        "Color": {
+          "w": 3.0,
+          "x": 0.15000000596046448,
+          "y": 0.15000000596046448,
+          "z": 0.15000000596046448
+        },
+        "LightBehavior": 0,
+        "LightType": 0,
+        "ParamsRadiusAndAttenuation": {
+          "w": 1.0,
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      },
+      "struct TransformComponent": {
+        "localPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "parent": 4294967295,
+        "position": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "rotation": {
+          "x": -0.0,
+          "y": 0.0,
+          "z": -0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      }
+    },
+    {
+      "id": 14,
+      "struct GameObjectComp": {
+        "Name": "Mesh",
+        "Tag": "None"
+      },
+      "struct MeshComponent": {
+        "materialUUIDs": [
+          {
+            "data": [
+              79,
+              238,
+              252,
+              141,
+              164,
+              161,
+              74,
+              124,
+              132,
+              92,
+              244,
+              171,
+              163,
+              255,
+              192,
+              131
+            ]
+          }
+        ],
+        "modelUUID": {
+          "data": [
+            109,
+            150,
+            25,
+            98,
+            201,
+            148,
+            77,
+            176,
+            185,
+            169,
+            37,
+            135,
+            28,
+            65,
+            226,
+            153
+          ]
+        }
+      },
+      "struct TransformComponent": {
+        "localPosition": {
+          "x": -6.0,
+          "y": 0.0,
+          "z": 5.0
+        },
+        "localRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "parent": 4294967295,
+        "position": {
+          "x": -6.0,
+          "y": 0.0,
+          "z": 5.0
+        },
+        "rotation": {
+          "x": -0.0,
+          "y": 0.0,
+          "z": -0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      }
+    },
+    {
+      "id": 15,
+      "struct GameObjectComp": {
+        "Name": "Mesh",
+        "Tag": "None"
+      },
+      "struct MeshComponent": {
+        "materialUUIDs": [
+          {
+            "data": [
+              146,
+              103,
+              136,
+              108,
+              130,
+              145,
+              67,
+              164,
+              140,
+              21,
+              252,
+              240,
+              50,
+              83,
+              255,
+              105
+            ]
+          }
+        ],
+        "modelUUID": {
+          "data": [
+            109,
+            150,
+            25,
+            98,
+            201,
+            148,
+            77,
+            176,
+            185,
+            169,
+            37,
+            135,
+            28,
+            65,
+            226,
+            153
+          ]
+        }
+      },
+      "struct TransformComponent": {
+        "localPosition": {
+          "x": 6.0,
+          "y": 0.0,
+          "z": 5.0
+        },
+        "localRotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "localScale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "parent": 4294967295,
+        "position": {
+          "x": 6.0,
+          "y": 0.0,
+          "z": 5.0
+        },
+        "rotation": {
+          "x": -0.0,
+          "y": 0.0,
+          "z": -0.0
+        },
+        "scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      }
+    },
+    {
+      "id": 228,
+      "struct GameObjectComp": {
+        "Name": "GameObject",
+        "Tag": "None"
+      },
+      "struct ImageBasedLightingComponent": {
+        "IsOn": false
+      },
+      "struct SkyboxComponent": {
+        "uuid": {
+          "data": [
+            114,
+            2,
+            233,
+            207,
+            193,
+            107,
+            74,
+            95,
+            186,
+            225,
+            0,
+            83,
+            138,
+            45,
+            188,
+            190
+          ]
+        }
+      }
+    }
+  ]
+}

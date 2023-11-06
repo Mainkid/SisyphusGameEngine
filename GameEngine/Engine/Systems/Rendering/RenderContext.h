@@ -7,11 +7,41 @@
 #include "../../Core/Graphics/Shader.h"
 #include "../../Core/IService.h"
 #include "../../Components/Mesh.h"
+#include "../../vendor/HBAO/GFSDK_SSAO.h"
+
+struct RenderHelperData
+{
+	ID3D11RenderTargetView* NullRtv[20] =
+	{
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+	};
+
+	ID3D11ShaderResourceView* NullSrv[20] =
+	{
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+	};
+
+	UINT strides16[1] = { 16 };
+	UINT strides32[1] = { 32 };
+	UINT strides48[1] = { 48 };
+	UINT strides64[1] = { 64 };
+	UINT strides80[1] = { 80 };
+	UINT offsets0[1] = { 0 };
+
+	float bgColor0000[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float bgColor0001[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+};
+
 
 struct RenderContext : public IService
 {
+	
+
 	ID3D11RenderTargetView* Rtvs[7];
 	ID3D11RenderTargetView* EditorBillboardRtvs[2];
+
 
 	std::unique_ptr<Shader> OpaqueShader;
 	std::unique_ptr<Shader> DirLightShader;
@@ -29,6 +59,9 @@ struct RenderContext : public IService
 	std::unique_ptr<Shader> EditorGridRenderer;
 	std::unique_ptr<Shader> GaussianBlurX;
 	std::unique_ptr<Shader> GaussianBlurY;
+	std::unique_ptr<Shader> IrradianceMapGenerator;
+	std::unique_ptr<Shader> EnvironmentPrefilter;
+	std::unique_ptr<Shader> IblLookUpGenerator;
 
 
 	std::shared_ptr<Mesh> CubeMesh;
@@ -96,11 +129,26 @@ struct RenderContext : public IService
 	    SkyBox
 	*/
 
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> SkyboxTexture;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SkyboxSRV;
 
 	std::unique_ptr<Buffer> ShadowConstBuffer;
 	std::unique_ptr<Buffer> ShadowPointlightConstBuffer;
 
 	std::set<std::unique_ptr<Material>> MaterialSet;
+
+
+	/*
+	 *	Ambient Occlusion
+	 */
+
+	GFSDK_SSAO_Parameters HbaoParams;
+	GFSDK_SSAO_InputData_D3D11 Input;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> HbaoTexture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> HbaoSrv;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> HbaoRtv;
+	
+	GFSDK_SSAO_CustomHeap CustomHeap;
+	GFSDK_SSAO_Status status;
+	GFSDK_SSAO_Context_D3D11* pAOContext;
+
+	RenderHelperData RhData;
 };

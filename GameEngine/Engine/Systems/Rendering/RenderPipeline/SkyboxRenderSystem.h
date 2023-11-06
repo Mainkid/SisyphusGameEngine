@@ -1,4 +1,5 @@
 #pragma once
+#include "../../ResourceService.h"
 #include "../../Core/ECS/SystemBase.h"
 
 struct EngineContext;
@@ -13,9 +14,10 @@ public:
 	SyResult Run() override;
 	SyResult Destroy() override;
 private:
-	EngineContext* ec;
-	RenderContext* rc;
-	HardwareContext* hc;
+	EngineContext* _ec;
+	RenderContext* _rc;
+	HardwareContext* _hc;
+	ResourceService* _rs;
 
 
 };

@@ -2,6 +2,7 @@
 #include "EngineContext.h"
 #include "../Core/ServiceLocator.h"
 #include "TransformHelper.h"
+#include "../Core/ECS/Events/SyHotReloadEvent.h"
 #include "../Scene/GameObjectHelper.h"
 #include "../Core/ECS/Events/SySceneLoadEvent.h"
 
@@ -19,6 +20,13 @@ SyResult TransformSystem::Run()
 	auto view = _ecs->view<TransformComponent>();
 
 	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SySceneLoadEvent);
+
+	auto view2 = SY_GET_THIS_FRAME_EVENT_VIEW(SyHotReloadEvent);
+
+	if (view2.size_hint()>0)
+	{
+		std::cout << std::endl;
+	}
 
 	//NOT WORKING!!!
 	// 
