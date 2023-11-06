@@ -11,6 +11,7 @@ struct LightData
 cbuffer mycBuffer : register(b0)
 {
     row_major float4x4 world;
+    row_major float4x4 view;
     row_major float4x4 worldView;
     row_major float4x4 worldViewProj;
     row_major float4x4 worldViewInverseT;
@@ -64,7 +65,7 @@ float4 PS_ShadowMapGenerator(PS_IN input) : SV_Target
     float3 worldPos = WorldPosTex.Sample(textureSampler, input.col.xy);
     float3 normal = NormalTex.Sample(textureSampler, input.col.xy);
     float lightIntesity = 1.0f;
-    normal = (normal.xyz - float3(0.5f, 0.5f, 0.5f)) * 2.0f;
+    //normal = (normal.xyz - float3(0.5f, 0.5f, 0.5f)) * 2.0f;
     normal = normalize(normal);
     
     //www

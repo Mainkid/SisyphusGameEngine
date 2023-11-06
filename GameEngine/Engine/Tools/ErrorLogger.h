@@ -2,7 +2,6 @@
 #include <string>
 #include "ComplexString.h"
 #include "../Core/IService.h"
-#include <map>
 #include <vector>
 #include "../Core/ServiceLocator.h"
 #include <iostream>
@@ -73,6 +72,7 @@ struct SyErrorLogger : IService
 	template <typename ...Args>
 	SyResult Log(const std::string& channelName_, SyElLogLevel logLevel_, const std::string& filePath_, const std::string& funName_, int line_, std::string message_, Args... args_)
 	{
+		SyResult result;
 		auto fileNamePos = filePath_.find_last_of('\\') + 1;
 		auto fileName = filePath_.substr(fileNamePos);
 		if (channelNameMap.contains(channelName_))
@@ -101,9 +101,15 @@ struct SyErrorLogger : IService
 			messagePool.push_back(newMessage);
 			counter++;
 		}
-		return SyResult();
+		else
+		{
+			result.code = SY_RESCODE_ERROR;
+			result.message = xstring("Channel %s is not registered. ", channelName_.c_str());
+			SY_LOG_ERLG(SY_LOGLEVEL_ERROR, "Channel %s is not registered in error logger. ", channelName_.c_str());
+		}
+		return result;
 	}
-	SyResult AddChannel(const std::string& channelName_)
+	SyResult RegisterChannel(const std::string& channelName_)
 	{
 		SyResult result;
 		if (channelNameMap.contains(channelName_))

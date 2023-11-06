@@ -7,6 +7,7 @@ cbuffer mycBuffer : register(b0)
 {
     
     row_major float4x4 world;
+    row_major float4x4 view;
     row_major float4x4 worldView;
     row_major float4x4 worldViewProj;
     row_major float4x4 worldViewInverseT;
@@ -23,8 +24,6 @@ struct GS_OUT
 {
     float4 pos : SV_Position;
     uint arrInd : SV_RenderTargetArrayIndex;
-
-
 };
 
 struct VertexInputType
@@ -54,10 +53,9 @@ void GSMain(triangle GS_IN p[3], in uint id : SV_GSInstanceID, inout TriangleStr
         gs.pos = mul(float4(p[i].pos.xyz, 1.0f), cascData.viewProj[id]);
         gs.arrInd = id;
         stream.Append(gs);
-
     }
-    stream.RestartStrip();
     
+    stream.RestartStrip();
 }
 
 
@@ -75,4 +73,11 @@ GS_IN
     output.pos.w = 1.0f;
 	
     return output;
+}
+
+float4 PS_Main(GS_OUT output) :SV_Target
+{
+    float z = output.pos.z / output.pos.w;
+    return float4(z, z * z, 0, 1);
+
 }

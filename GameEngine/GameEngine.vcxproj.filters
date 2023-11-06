@@ -7,6 +7,10 @@
     <FxCompile Include="Engine\Assets\Shaders\SpotLightShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\StencilPassShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\TextureShader.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\GaussianBlur.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\IrradianceMapGenerator.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\EnvironmentPrefilter.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\IblLookUpTexture.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp" />
@@ -68,8 +72,18 @@
     <ClCompile Include="Engine\Core\ECS\SystemsGroup.cpp" />
     <ClCompile Include="Engine\Scene\CameraHelper.cpp" />
     <ClCompile Include="Engine\Serialization\SerializableOuters.h" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ToneMappingRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\MaterialUpdateSystem.cpp" />
+    <ClCompile Include="Engine\Systems\ResourceSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\HUD\ResourceHelper.cpp" />
+    <ClCompile Include="Engine\Systems\ResourceService.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.cpp" />
     <ClCompile Include="Engine\Systems\ErrorLoggingSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\PrepareEventsSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\HbaoRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\ImageBasedLightingSystem.cpp" />
+    <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -93,7 +107,7 @@
     <ClInclude Include="Engine\Core\Keys.h" />
     <ClInclude Include="Engine\Core\Rendering\GBuffer.h" />
     <ClInclude Include="Engine\Core\Rendering\Lights\LightData.h" />
-    <ClInclude Include="Engine\Core\Rendering\Lights\LightType.h" />
+    <ClInclude Include="Engine\Core\Rendering\Lights\ELightType.h" />
     <ClInclude Include="Engine\Obsolete\RenderPipeline.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\ContentBrowserTypes.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudContentBrowserSystem.h" />
@@ -154,6 +168,16 @@
     <ClInclude Include="vendor\DirectXTK\Inc\SimpleMath.h" />
     <ClInclude Include="vendor\stb_image.h" />
     <ClInclude Include="vendor\WICTextureLoader.h" />
+    <ClInclude Include="Engine\Components\Material.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ToneMappingRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\MaterialUpdateSystem.h" />
+    <ClInclude Include="Engine\Systems\ResourceSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\HUD\ResourceHelper.h" />
+    <ClInclude Include="Engine\Systems\ResourceInfo.h" />
+    <ClInclude Include="Engine\Systems\ResourceService.h" />
+    <ClInclude Include="Engine\Components\ResourceBase.h" />
+    <ClInclude Include="Engine\Components\Texture.h" />
+    <ClInclude Include="Engine\Components\Model.h" />
     <ClInclude Include="Engine\Serialization\Serializer.hpp" />
     <ClInclude Include="Engine\Serialization\SerializableMacros.h" />
     <ClInclude Include="vendor\nlohmann_json\json.hpp" />
@@ -164,7 +188,23 @@
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.h" />
     <ClInclude Include="Engine\Tools\ComplexString.h" />
     <ClInclude Include="Engine\Systems\ErrorLoggingSystem.h" />
+    <ClInclude Include="Matrix4x4.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.h" />
+    <ClInclude Include="Engine\Core\ResourcePath.h" />
     <ClInclude Include="Engine\Tools\Data\RingBuffer.h" />
+    <ClInclude Include="Engine\Core\ECS\Event.h" />
+    <ClInclude Include="Engine\Systems\PrepareEventsSystem.h" />
+    <ClInclude Include="Engine\Tools\MathHelper.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SySceneLoadEvent.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\HbaoRenderSystem.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyHotReloadEvent.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeStartedEvent.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeEndedEvent.h" />
+    <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
+    <ClInclude Include="Engine\Systems\Rendering\ImageBasedLightingSystem.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyImageBasedLightingUpdateEvent.h" />
+    <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
+    <ClInclude Include="Engine\Components\SkyboxResource.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
@@ -173,6 +213,8 @@
     <Image Include="Engine\Assets\SkyBox\skybox_4.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_5.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_6.png" />
+    <Image Include="..\..\..\..\Downloads\skybox.jpg" />
+    <Image Include="Engine\Assets\SkyBox\skybox.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Assets\Shaders\LightShader.hlsl" />
@@ -180,7 +222,11 @@
     <None Include="Engine\Assets\Shaders\Skybox.hlsl" />
     <None Include="Engine\Assets\Shaders\ShadowPointlightShader.hlsl" />
     <None Include="Engine\Assets\Shaders\ShadowPointLightGenerator.hlsl" />
+    <None Include="Engine\Assets\Shaders\PBR_Functions.hlsli" />
+    <None Include="Engine\Assets\Shaders\ToneMapping.hlsl" />
+    <None Include="Engine\Assets\Shaders\EditorGridShader.hlsl" />
     <None Include="cpp.hint" />
+    <None Include="Engine\Assets\Shaders\PBRHelpers.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png">

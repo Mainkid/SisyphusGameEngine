@@ -16,12 +16,7 @@ SyResult SyHudConsoleSystem::Init()
 				{'E', true},
 				{'C', true}};
 
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "HUD console system initialization successful. ");
-	SY_LOG_HUD(SY_LOGLEVEL_WARNING, "Example warning! ");
-	SY_LOG_HUD(SY_LOGLEVEL_ERROR, "Example error! ");
-	SY_LOG_HUD(SY_LOGLEVEL_CRITICAL, "Example critical! ");
-	SY_EL->AddChannel("FUCK");
-	SY_LOG("FUCK", SY_LOGLEVEL_DEBUG, "Example fuck!");
+
     return SyResult();
 }
 
@@ -75,28 +70,32 @@ SyResult SyHudConsoleSystem::Run()
 	ImGui::SameLine();
 	ImGui::BeginChild("Settings", ImVec2(0, 0), true);
 	ImGui::TextUnformatted("Show:");
-	ImGui::BeginTable("options", 1);
-	ImGui::TableNextColumn();
-	ImGui::Selectable("INFO", &(filters.find('I')->second));
-	ImGui::TableNextColumn();
-	ImGui::Selectable("DEBUG", &(filters.find('D')->second));
-	ImGui::TableNextColumn();
-	ImGui::Selectable("WARNING", &(filters.find('W')->second));
-	ImGui::TableNextColumn();
-	ImGui::Selectable("ERROR", &(filters.find('E')->second));
-	ImGui::TableNextColumn();
-	ImGui::Selectable("CRITICAL", &(filters.find('C')->second));
-	ImGui::TableNextColumn();
-	ImGui::Separator();
-	ImGui::TextUnformatted("");
-	//ImGui::TextUnformatted("");
-	if (ImGui::Button("Clear", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+
+	if (ImGui::BeginTable("options", 1))
 	{
-		messageBuffer.Clear();
+		ImGui::TableNextColumn();
+		ImGui::Selectable("INFO", &(filters.find('I')->second));
+		ImGui::TableNextColumn();
+		ImGui::Selectable("DEBUG", &(filters.find('D')->second));
+		ImGui::TableNextColumn();
+		ImGui::Selectable("WARNING", &(filters.find('W')->second));
+		ImGui::TableNextColumn();
+		ImGui::Selectable("ERROR", &(filters.find('E')->second));
+		ImGui::TableNextColumn();
+		ImGui::Selectable("CRITICAL", &(filters.find('C')->second));
+		ImGui::TableNextColumn();
+		ImGui::Separator();
+		ImGui::TextUnformatted("");
+		//ImGui::TextUnformatted("");
+		if (ImGui::Button("Clear", ImVec2(ImGui::GetContentRegionMax().x, 0)))
+		{
+			messageBuffer.Clear();
+		}
+		ImGui::EndTable();
 	}
-	ImGui::EndTable();
 	ImGui::EndChild();
 	ImGui::End();
+	
 	return result;
 }
 

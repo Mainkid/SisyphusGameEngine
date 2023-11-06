@@ -3,15 +3,20 @@
 #include "../../../vendor/entt/entt.hpp"
 #include "../Tools/Data/Vector.h"
 #include "../../Components/LightComponent.h"
+#include "../Tools/ErrorLogger.h"
 
 class GameObjectHelper
 {
 public:
-	static entt::entity Create(entt::registry* ecs, const std::string& name);
+	static entt::entity Create(entt::registry* ecs, const std::string& name, Vector3 pos=Vector3::Zero);
 
 	static void Destroy(entt::registry* ecs, entt::entity ent);
 
 	static void SetParent(entt::registry* ecs, entt::entity child, entt::entity parent);
+
+	static void AddChild(entt::registry* ecs, entt::entity child, entt::entity parent);
+
+	static void RemoveChild(entt::registry* rcs, entt::entity child, entt::entity parent);
 
 
 	static entt::entity CreateStaticBox(entt::registry* ecs,
@@ -26,7 +31,13 @@ public:
 		const SyVector3& scale = { 1.0f, 1.0f, 1.0f }
 	);
 
-	static entt::entity CreateLight(entt::registry* ecs, LightType lightType);
+	static entt::entity CreateLight(entt::registry* ecs, ELightType lightType, Vector3 pos = Vector3::Zero);
+
+	static entt::entity CreateMesh(entt::registry* ecs, boost::uuids::uuid uuid, Vector3 pos=Vector3::Zero);
 
 	static entt::entity CreateParticleSystem(entt::registry* ecs);
+
+	static entt::entity CreateSkybox(entt::registry* ecs,boost::uuids::uuid uuid = boost::uuids::nil_uuid());
+
+	
 };

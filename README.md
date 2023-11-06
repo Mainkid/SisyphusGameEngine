@@ -1,48 +1,47 @@
-# GameEngine
-My very own game engine.
+# SisyphusEngine
+Open source 3D Game Engine
 
 
 ## Features
-- ECS architectural pattern.
-- Phong shading.
+#### Graphics:
 - Deferred rendering.
+- PBR shading model (+Image Based Lighting).
 - Directional, Spot, Point lights.
-- Cascaded Shadow Mapping for Directional lights.
-- Basic GUI functionality (Hierarchy Window, Content Browser, Viewport, etc.)
-- Mouse picking and interactive guizmo tools.
-- GPU-particle system implementation (with Bitonic sort algorithm, HL-vectors based shading).
+- Cascaded Variance Shadow Mapping for Directional lights.
+- Hard shadows for point/spot lights (Static and Dynamic).
+- Material system.
+- HBAO+.
+- Custom skybox (via custom skybox loader).
+- Tonemapping + postprocessing features.
 
-## Installation
-```bash
-git clone --recurse-submodules https://github.com/Mainkid/GameEngine.git
-mkdir GameEngine/bin
-cd GameEngine/bin
-cmake ../GameEngine
-```
-Physx
-1) GameEngine\vendor\PhysX\physx\generate_projects.bat - start and choose installation preset (checked on x64 VC17 (MSVS 2022), so pick preset #2)
-2) GameEngine\vendor\PhysX\physx\compiler\vc17win64\PhysxSDK.sln - open with MSVS, RMB->Build on CMakePredefinedTargets\ALL_BUILD in Solution Explorer
-3) Just build GameEngine.sln project, in MSVS log check that all necessary .dll and .lib files has been distributed properly.
-   
+#### Core:
+- ECS architectural pattern.
+- Basic GUI functionality (Hierarchy Window, Content Browser, Viewport, etc.)
+- Resource System.
+- Custom Logging System.
+- Event System.
+- C# scripting via Mono (WIP).
+- PhysX as Physics System (WIP).
+
+
 ## Screenshots
-![alt text](GameEngine/info/engineGUI.png)
-![alt text](GameEngine/info/particles.gif)
+![alt text](GameEngine/info/Engine_1.png)
+![alt text](GameEngine/info/Engine_2.png)
 
 ## Upcoming features
-### Shadows:
-- Spotlight, point light shadow mapping
-- PCF
 ### Rendering:
-- Skybox
-- Materials
-- PBR
 - Transparency support
-- Global illumination
-- Antialiasing
-- Gamma correction :)
-### GPU:
-- Fexible particle system editor
-### Engine Functionality:
-- Playmode
-- Native scripting
-- Data serialization
+- GPU particles system
+- Frustrum culling
+- LODs
+### Core:
+- Animation system
+- Audio System
+- AI (GOAP, Behavior Trees)
+- Game UI editor
+- 
+
+## Credits:
+- Andrew Osipov. Telegram: https://t.me/Mainkidd0 (Render programmer, GUI programmer)
+- Nikita Yastrebov. Telegram: https://t.me/circleoffate (Core-systems programmer, AI programmer)
+- Roman Starikov. Telegram: https://t.me/rosdvp (Engine Architect, Core-systems programmer)

@@ -19,11 +19,11 @@ class SyPhysicsSystem :
 {
     std::shared_ptr<physx::PxDefaultAllocator>		allocator = nullptr;
     std::shared_ptr<physx::PxDefaultErrorCallback>	errorCallback = nullptr;
-    physx::PxFoundation*                            foundation = nullptr;
+    physx::PxFoundation* foundation = nullptr;
 
 public:
-    physx::PxPhysics*                               physics = nullptr;
-    physx::PxScene*                                 scene = nullptr;
+    physx::PxPhysics* physics = nullptr;
+    physx::PxScene* scene = nullptr;
     SyVector3                                       gravity = { 0.0f, -9.81f, 0.0f };
     float                                           stepsPerSecond = 60.0f;
 
@@ -31,4 +31,3 @@ public:
     SyResult Run();
     SyResult Destroy();
 };
-

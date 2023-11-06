@@ -5,35 +5,40 @@
 #include "../RenderContext.h"
 #include "../../../Scene/CameraHelper.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
+#include "../../../../vendor/ImGuizmo/ImGuizmo.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Components/MeshComponent.h"
 
 
 SyResult OpaqueRenderSystem::Init()
 {
-	ec = ServiceLocator::instance()->Get<EngineContext>();
-	rc = ServiceLocator::instance()->Get<RenderContext>();
-    hc = ServiceLocator::instance()->Get<HardwareContext>();
+	_ec = ServiceLocator::instance()->Get<EngineContext>();
+	_rc = ServiceLocator::instance()->Get<RenderContext>();
+    _hc = ServiceLocator::instance()->Get<HardwareContext>();
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "OpaqueRender system initialization successful.");
     return SyResult();
 }
 
 SyResult OpaqueRenderSystem::Run()
 {
-    hc->context->RSSetState(rc->cullBackRS.Get());
+    _hc->context->RSSetState(_rc->CullBackRasterizerState.Get());
 
-    auto [camera, cameraTf] = CameraHelper::Find(_ecs);
-
-    auto view = _ecs->view<TransformComponent, MeshComponent>();
+    auto view =_ecs->view<TransformComponent, MeshComponent>();
+    auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
+   
     for (auto& entity : view)
     {
         CB_BaseEditorBuffer dataOpaque;
-        TransformComponent& transformComp = view.get<TransformComponent>(entity);
-        MeshComponent& meshComp = view.get<MeshComponent>(entity);
-        //dataOpaque.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
+        TransformComponent& transformComp = _ecs->get<TransformComponent>(entity);
+        MeshComponent& meshComp = _ecs->get<MeshComponent>(entity);
+        
         dataOpaque.baseData.world = transformComp.transformMatrix;
 
-        dataOpaque.baseData.worldViewProj = transformComp.transformMatrix * camera.view * camera.projection;
+        dataOpaque.baseData.view =camera.view;
+
+        dataOpaque.baseData.worldViewProj =
+            transformComp.transformMatrix *
+            camera.view * camera.projection;
 
         dataOpaque.baseData.worldView = transformComp.transformMatrix * camera.view;
 
@@ -42,29 +47,38 @@ SyResult OpaqueRenderSystem::Run()
                 DirectX::XMMatrixInverse(nullptr,
                     transformComp.transformMatrix));
 
-        dataOpaque.instanseID = (uint32_t)entity;
+        dataOpaque.instanseID.x = (uint32_t)entity;
+        dataOpaque.instanseID.z = (uint32_t)EAssetType::ASSET_MESH;
 
-        D3D11_MAPPED_SUBRESOURCE mappedResource;
-        HRESULT res = hc->context->Map(rc->opaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-        CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_BaseEditorBuffer));
-        hc->context->Unmap(rc->opaqueConstBuffer->buffer.Get(), 0);
-        hc->context->VSSetConstantBuffers(0, 1, rc->opaqueConstBuffer->buffer.GetAddressOf());
-        hc->context->PSSetConstantBuffers(0, 1, rc->opaqueConstBuffer->buffer.GetAddressOf());
-
-        for (int i = 0; i < meshComp.meshes.size(); i++)
+        for (int i = 0; i < meshComp.model->meshes.size(); i++)
         {
-            hc->context->OMSetRenderTargets(5, rc->rtvs, hc->depthStencilView.Get());
-            hc->context->IASetInputLayout(rc->opaqueShader->layout.Get());
-            hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-            hc->context->IASetIndexBuffer(meshComp.meshes[i]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-            hc->context->IASetVertexBuffers(0, 1, meshComp.meshes[i]->vertexBuffer->buffer.GetAddressOf(),
+            
+            dataOpaque.materialData.albedo = meshComp.materials[i]->albedoValue;
+            dataOpaque.materialData.emissive = meshComp.materials[i]->emissiveValue;
+            dataOpaque.materialData.metallic = meshComp.materials[i]->metallicValue;
+            dataOpaque.materialData.roughness = meshComp.materials[i]->roughnessValue;
+            dataOpaque.materialData.specular = meshComp.materials[i]->specularValue;
+            dataOpaque.instanseID.y = i;
+
+            D3D11_MAPPED_SUBRESOURCE mappedResource;
+            HRESULT res = _hc->context->Map(_rc->OpaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+            CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_BaseEditorBuffer));
+            _hc->context->Unmap(_rc->OpaqueConstBuffer->buffer.Get(), 0);
+            _hc->context->VSSetConstantBuffers(0, 1, _rc->OpaqueConstBuffer->buffer.GetAddressOf());
+            _hc->context->PSSetConstantBuffers(0, 1, _rc->OpaqueConstBuffer->buffer.GetAddressOf());
+
+            _hc->context->OMSetRenderTargets(7, _rc->Rtvs, _hc->depthStencilView.Get());
+            _hc->context->IASetInputLayout(_rc->OpaqueShader->layout.Get());
+            _hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+            _hc->context->IASetIndexBuffer(meshComp.model->meshes[i]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+            _hc->context->IASetVertexBuffers(0, 1, meshComp.model->meshes[i]->vertexBuffer->buffer.GetAddressOf(),
                 meshComp.strides, meshComp.offsets);
-            hc->context->PSSetSamplers(0, 1, meshComp.samplerState.GetAddressOf());
-            hc->context->OMSetDepthStencilState(hc->depthStencilState.Get(), 0);
-            hc->context->VSSetShader(rc->opaqueShader->vertexShader.Get(), nullptr, 0);
-            hc->context->PSSetShader(rc->opaqueShader->pixelShader.Get(), nullptr, 0);
-            hc->context->PSSetShaderResources(0, 1, meshComp.texture.GetAddressOf());
-            hc->context->DrawIndexed(meshComp.meshes[i]->indexBuffer->size, 0, 0);
+            _hc->context->PSSetSamplers(0, 1, meshComp.materials[i]->albedoSRV->textureSamplerState.GetAddressOf());
+            _hc->context->OMSetDepthStencilState(_hc->depthStencilState.Get(), 0);
+            _hc->context->VSSetShader(_rc->OpaqueShader->vertexShader.Get(), nullptr, 0);
+            _hc->context->PSSetShader(_rc->OpaqueShader->pixelShader.Get(), nullptr, 0);
+            _hc->context->PSSetShaderResources(0, 6, meshComp.materials[i]->resources);
+            _hc->context->DrawIndexed(meshComp.model->meshes[i]->indexBuffer->size, 0, 0);
         }
     }
     return SyResult();

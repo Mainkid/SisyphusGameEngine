@@ -5,6 +5,7 @@
 #include "../../../../vendor/ImGuizmo/ImGuizmo.h"
 #include "../../../Systems/HardwareContext.h"
 #include "../../../Core/ServiceLocator.h"
+#include "../../../Tools/MathHelper.h"
 
 SyResult HudPreRenderSystem::Init()
 {
@@ -44,8 +45,8 @@ SyResult HudPreRenderSystem::Run()
     if (windowHeight != io.DisplaySize.y || windowWidth != io.DisplaySize.x)
     {
         CleanupRenderTarget();
-    	windowWidth  = std::max(static_cast<int>(io.DisplaySize.x), 0);
-        windowHeight = std::max(static_cast<int>(io.DisplaySize.y), 0);
+    	windowWidth  = SyMathHelper::Max(static_cast<int>(io.DisplaySize.x), 0);
+        windowHeight = SyMathHelper::Max(static_cast<int>(io.DisplaySize.y), 0);
         hc->swapChain->ResizeBuffers(0, windowWidth, windowHeight, DXGI_FORMAT_UNKNOWN, 0);
         CreateRenderTarget();
     }
@@ -55,6 +56,8 @@ SyResult HudPreRenderSystem::Run()
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
     ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+
+
 
     /*for (auto& widget : widgets)
     {

@@ -1,10 +1,16 @@
 cbuffer mycBuffer : register(b0)
 {
     row_major float4x4 world;
+    row_major float4x4 view;
     row_major float4x4 worldView;
     row_major float4x4 worldViewProj;
     row_major float4x4 worldViewInverseT;
-    uint instanceID;
+    float4 albedoVec;
+    float4 metallicVec;
+    float4 roughnessVec;
+    float4 emissiveVec;
+    float4 specularVec;
+    float4 instanceID;
 
 };
 
@@ -61,7 +67,7 @@ GBuffer PSMain(PS_IN input) : SV_Target
 
     clip(pixelColor.a - 1.0f);
     output.Diffuse = pixelColor;
-    output.InstanceIDs = float4(instanceID, 4, 5, 1.0f);
+    output.InstanceIDs = float4(instanceID.x, 0, 0, 1.0f);
     
     return output;
 }

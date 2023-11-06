@@ -1,10 +1,10 @@
 #include "EngineCore.h"
+#include "../Components/EditorBillboardComponent.h"
+#include "../Components/GameObjectComp.h"
+#include "../Components/MeshComponent.h"
+#include "../Components/TransformComponent.h"
+#include "../Components/ImageBasedLightingComponent.h"
 
-
-//EngineCore::EngineCore(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height)
-//{
-//	window = std::make_unique<DisplayWin32>(appName, hInstance, width, height);
-//}
 
 EngineCore::EngineCore()
 {
@@ -56,7 +56,17 @@ void EngineCore::StartUp()
 	ServiceLocator::instance()->Register<HardwareContext>();
 	ServiceLocator::instance()->Register<SyErrorLogger>();
 	ServiceLocator::instance()->Register<EngineContext>();
+	ServiceLocator::instance()->Register<ResourceService>();
 	_context = ServiceLocator::instance()->Get<EngineContext>();
+
+	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+	ser.AddEcsCompMeta<GameObjectComp>();
+	ser.AddEcsCompMeta<TransformComponent>();
+	ser.AddEcsCompMeta<MeshComponent>();
+	ser.AddEcsCompMeta<LightComponent>();
+	ser.AddEcsCompMeta<EditorBillboardComponent>();
+	ser.AddEcsCompMeta<SkyboxComponent>();
+	ser.AddEcsCompMeta<ImageBasedLightingComponent>();
 
 	StartUpSystems();
 }
@@ -71,7 +81,7 @@ void EngineCore::StartUpSystems()
 
 	
 	_systems.Add<InputSystem>();
-	//Add Resource System here
+	_systems.Add<ResourceSystem>();
 	_systems.Add<SyPhysicsSystem>();
 
 	_systems.Add<TransformSystem>();
@@ -82,7 +92,7 @@ void EngineCore::StartUpSystems()
 
 	_systems.Add<LightSystem>();
 	_systems.Add<MeshSystem>();
-
+	_systems.Add<SkyboxSystem>();
 	_systems.Add<LightSystem>();
 
 	_systems.Add<EditorBillboardSystem>();
@@ -90,12 +100,14 @@ void EngineCore::StartUpSystems()
 	_systems.Add<PreRenderSystem>();
 	_systems.Add<ShadowRenderSystem>();
 	_systems.Add<SkyboxRenderSystem>();
+	_systems.Add<ImageBasedLightingSystem>();
 	_systems.Add<OpaqueRenderSystem>();
+	_systems.Add<HbaoRenderSystem>();
 	_systems.Add<ShadowMapGenerationSystem>();
 	_systems.Add<LightRenderSystem>();
 	_systems.Add<EditorBillboardRenderSystem>();
-	//Add Tonemapping here
-	//Add EditorGridSystem here
+	_systems.Add<ToneMappingRenderSystem>();
+	_systems.Add<EditorGridRenderSystem>();
 	_systems.Add<PostViewportRenderSystem>();
 
 	_systems.Add<HudPreRenderSystem>();
@@ -106,7 +118,8 @@ void EngineCore::StartUpSystems()
 	_systems.Add<SyHudConsoleSystem>();
 	_systems.Add<SyErrorLoggingSystem>();
 	_systems.Add<HudPostRenderSystem>();
-
+	_systems.Add<SyPrepareEventsSystem>();
+	
 	_systems.Init();
 }
 
@@ -118,5 +131,6 @@ void EngineCore::ShutDown()
 	ServiceLocator::instance()->Unregister<RenderContext>();
 	ServiceLocator::instance()->Unregister<HardwareContext>();
 	ServiceLocator::instance()->Unregister<SyErrorLogger>();
+	ServiceLocator::instance()->Unregister<ResourceService>();
 }
 

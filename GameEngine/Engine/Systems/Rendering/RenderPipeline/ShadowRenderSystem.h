@@ -1,6 +1,7 @@
 #pragma once
 #include "../../Core/ECS/SystemBase.h"
 #include "SimpleMath.h"
+#include "../../../Components/LightComponent.h"
 
 struct EngineContext;
 struct HardwareContext;
@@ -14,9 +15,9 @@ public:
 	SyResult Run() override;
 	SyResult Destroy() override;
 private:
-	EngineContext* ec;
-	RenderContext* rc;
-	HardwareContext* hc;
-
+	void BlurShadowMap(LightComponent& lc);
+	EngineContext* _ec = nullptr;
+	RenderContext* _rc = nullptr;
+	HardwareContext* _hc = nullptr;
 	Matrix pointlightShadowProjectionMat;
 };

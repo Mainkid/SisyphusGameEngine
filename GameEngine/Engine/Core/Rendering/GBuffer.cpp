@@ -3,13 +3,13 @@
 
 GBuffer::GBuffer(Microsoft::WRL::ComPtr<ID3D11Device> _device)
 {
-    this->device = _device;
+    this->_device = _device;
 }
 
 void GBuffer::Initialize(int width, int height)
 {
-    this->t_height = height;
-    this->t_width = width;
+    this->_height = height;
+    this->_width = width;
     D3D11_TEXTURE2D_DESC textureDesc;
     ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE2D_DESC));
     textureDesc.Width = width;
@@ -24,26 +24,34 @@ void GBuffer::Initialize(int width, int height)
     textureDesc.CPUAccessFlags = 0;
     textureDesc.MiscFlags = 0;
 
-    HRESULT res =device->CreateTexture2D(&textureDesc, nullptr, diffuseTexture.GetAddressOf());
-    res = device->CreateTexture2D(&textureDesc, nullptr, normalTexture.GetAddressOf());
-    res = device->CreateTexture2D(&textureDesc, nullptr, positionTexture.GetAddressOf());
-    res = device->CreateTexture2D(&textureDesc, nullptr, depthTexture.GetAddressOf());
-    res = device->CreateTexture2D(&textureDesc, nullptr, specularTexture.GetAddressOf());
-    res = device->CreateTexture2D(&textureDesc, nullptr, skyboxTexture.GetAddressOf());
+    HRESULT res =_device->CreateTexture2D(&textureDesc, nullptr, _diffuseTexture.GetAddressOf());
+    res = _device->CreateTexture2D(&textureDesc, nullptr, _metallicTexture.GetAddressOf());
+    res = _device->CreateTexture2D(&textureDesc, nullptr, _specularTexture.GetAddressOf());
+    res = _device->CreateTexture2D(&textureDesc, nullptr, _depthTexture.GetAddressOf());
+    res = _device->CreateTexture2D(&textureDesc, nullptr, _emissiveTexture.GetAddressOf());
+    res = _device->CreateTexture2D(&textureDesc, nullptr, _normalAndDepthTexture.GetAddressOf());
+    res = _device->CreateTexture2D(&textureDesc, nullptr, _positionTexture.GetAddressOf());
+    res = _device->CreateTexture2D(&textureDesc, nullptr, _idTexture.GetAddressOf());
+    res = _device->CreateTexture2D(&textureDesc, nullptr, _skyboxTexture.GetAddressOf());
+    res = _device->CreateTexture2D(&textureDesc, nullptr, _hdrBufferTexture.GetAddressOf());
 
     textureDesc.BindFlags = 0;
     textureDesc.Usage = D3D11_USAGE_STAGING;
     textureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 
-    res = device->CreateTexture2D(&textureDesc, nullptr, depthCpuTexture.GetAddressOf());
+    res = _device->CreateTexture2D(&textureDesc, nullptr, _idCpuTexture.GetAddressOf());
 
     
-    res = device->CreateRenderTargetView(diffuseTexture.Get(), nullptr, diffuseRTV.GetAddressOf());
-    res = device->CreateRenderTargetView(normalTexture.Get(),nullptr,normalRTV.GetAddressOf());
-    res = device->CreateRenderTargetView(positionTexture.Get(), nullptr, positionRTV.GetAddressOf());
-    res = device->CreateRenderTargetView(depthTexture.Get(), nullptr, depthRTV.GetAddressOf());
-    res = device->CreateRenderTargetView(specularTexture.Get(), nullptr, specularRTV.GetAddressOf());
-    res = device->CreateRenderTargetView(skyboxTexture.Get(), nullptr, skyboxRTV.GetAddressOf());
+    res = _device->CreateRenderTargetView(_diffuseTexture.Get(), nullptr, DiffuseRtv.GetAddressOf());
+    res = _device->CreateRenderTargetView(_metallicTexture.Get(), nullptr, MetallicRtv.GetAddressOf());
+    res = _device->CreateRenderTargetView(_specularTexture.Get(), nullptr, SpecularRtv.GetAddressOf());
+    res = _device->CreateRenderTargetView(_depthTexture.Get(), nullptr, DepthRtv.GetAddressOf());
+    res = _device->CreateRenderTargetView(_emissiveTexture.Get(), nullptr, EmissiveRtv.GetAddressOf());
+    res = _device->CreateRenderTargetView(_normalAndDepthTexture.Get(),nullptr,NormalAndDepthRtv.GetAddressOf());
+    res = _device->CreateRenderTargetView(_positionTexture.Get(), nullptr, PositionRtv.GetAddressOf());
+    res = _device->CreateRenderTargetView(_idTexture.Get(), nullptr, IdRtv.GetAddressOf());
+    res = _device->CreateRenderTargetView(_skyboxTexture.Get(), nullptr, SkyboxRtv.GetAddressOf());
+    res = _device->CreateRenderTargetView(_hdrBufferTexture.Get(), nullptr, HdrBufferRtv.GetAddressOf());
 
     D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc1;
     ZeroMemory(&shaderResourceViewDesc1, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
@@ -52,13 +60,18 @@ void GBuffer::Initialize(int width, int height)
     shaderResourceViewDesc1.Texture2D.MostDetailedMip=0;
     shaderResourceViewDesc1.Texture2D.MipLevels = 1;
 
-    res = device->CreateShaderResourceView(diffuseTexture.Get(), &shaderResourceViewDesc1, diffuseSRV.GetAddressOf());
-    res = device->CreateShaderResourceView(normalTexture.Get(), &shaderResourceViewDesc1, normalSRV.GetAddressOf());
-    res = device->CreateShaderResourceView(positionTexture.Get(), &shaderResourceViewDesc1, positionSRV.GetAddressOf());
-    res = device->CreateShaderResourceView(depthTexture.Get(), &shaderResourceViewDesc1, depthSRV.GetAddressOf());
-    res = device->CreateShaderResourceView(specularTexture.Get(), &shaderResourceViewDesc1, specularSRV.GetAddressOf());
-    res = device->CreateShaderResourceView(skyboxTexture.Get(), &shaderResourceViewDesc1, skyboxSRV.GetAddressOf());
-    
+    res = _device->CreateShaderResourceView(_diffuseTexture.Get(), &shaderResourceViewDesc1, DiffuseSrv.GetAddressOf());
+    res = _device->CreateShaderResourceView(_metallicTexture.Get(), &shaderResourceViewDesc1, MetallicSrv.GetAddressOf());
+    res = _device->CreateShaderResourceView(_specularTexture.Get(), &shaderResourceViewDesc1, DepthSrv.GetAddressOf());
+    res = _device->CreateShaderResourceView(_depthTexture.Get(), &shaderResourceViewDesc1, DepthSrv.GetAddressOf());
+    res = _device->CreateShaderResourceView(_emissiveTexture.Get(), &shaderResourceViewDesc1, EmissiveSrv.GetAddressOf());
+
+
+    res = _device->CreateShaderResourceView(_normalAndDepthTexture.Get(), &shaderResourceViewDesc1, NormalAndDepthSrv.GetAddressOf());
+    res = _device->CreateShaderResourceView(_positionTexture.Get(), &shaderResourceViewDesc1, PositionSrv.GetAddressOf());
+    res = _device->CreateShaderResourceView(_idTexture.Get(), &shaderResourceViewDesc1, IdSrv.GetAddressOf());
+    res = _device->CreateShaderResourceView(_skyboxTexture.Get(), &shaderResourceViewDesc1, SkyboxSrv.GetAddressOf());
+    res = _device->CreateShaderResourceView(_hdrBufferTexture.Get(), &shaderResourceViewDesc1, HdrBufferSrv.GetAddressOf());
 
 
 

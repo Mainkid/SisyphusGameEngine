@@ -6,16 +6,37 @@ class CB_BaseBuffer
 {
 public:
     DirectX::SimpleMath::Matrix world;
+    DirectX::SimpleMath::Matrix view;
     DirectX::SimpleMath::Matrix worldView;
     DirectX::SimpleMath::Matrix worldViewProj;
     DirectX::SimpleMath::Matrix worldViewInverseTranspose;
+};
+
+class CB_MaterialData
+{
+public:
+    DirectX::SimpleMath::Vector4 albedo;
+    DirectX::SimpleMath::Vector4 metallic;
+    DirectX::SimpleMath::Vector4 roughness;
+    DirectX::SimpleMath::Vector4 emissive;
+    DirectX::SimpleMath::Vector4 specular;
 };
 
 class CB_BaseEditorBuffer
 {
 public:
     CB_BaseBuffer baseData;
-    uint32_t instanseID;
+    CB_MaterialData materialData;
+    DirectX::SimpleMath::Vector4 instanseID;
+    
+};
+
+class CB_GridEditorBuffer
+{
+public:
+    CB_BaseBuffer baseData;
+    DirectX::SimpleMath::Matrix viewProjs[4];
+    DirectX::SimpleMath::Vector4 eyePos;
 };
 
 class CB_LightBuffer
@@ -73,4 +94,9 @@ public:
     CB_viewProjBuffer viewProjBuff;
     Vector4 GroupCount;
     Vector4 eyePos;
+};
+
+struct CB_SimpleVector4
+{
+    Vector4 params;
 };

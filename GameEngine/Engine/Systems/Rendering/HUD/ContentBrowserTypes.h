@@ -1,29 +1,25 @@
 #pragma once
 #include <map>
 #include <filesystem>
+#include "../../ResourceInfo.h"
 
-enum class EContent
-{
-	None,
-	Folder,
-	Mesh,
-	Image
+
+
+
+
+static const std::map<EAssetType, std::filesystem::path> cb_iconsPathsDB{
+	{EAssetType::ASSET_NONE,"Engine/Assets/HUD/ContentBrowser/meshIcon.png"},
+	{EAssetType::ASSET_FOLDER, "Engine/Assets/HUD/ContentBrowser/folderIcon.png"},
+	{EAssetType::ASSET_TEXTURE, "Engine/Assets/HUD/ContentBrowser/imageIcon.png"},
+	{EAssetType::ASSET_MESH, "Engine/Assets/HUD/ContentBrowser/meshIcon.png"},
+	{EAssetType::ASSET_MATERIAL, "Engine/Assets/HUD/ContentBrowser/materialIcon.png"}
 };
 
-
-
-static std::map<EContent, std::filesystem::path> cb_iconsPathsDB{
-	{EContent::None,"Engine/Assets/HUD/ContentBrowser/meshIcon.png"},
-	{EContent::Folder, "Engine/Assets/HUD/ContentBrowser/folderIcon.png"},
-	{EContent::Image, "Engine/Assets/HUD/ContentBrowser/imageIcon.png"},
-	{EContent::Mesh, "Engine/Assets/HUD/ContentBrowser/meshIcon.png"}
-};
-
-static std::map<std::string, EContent> cb_extensionsDB{
-
-	{"",EContent::Folder},
-	{".obj",EContent::Mesh},
-	{".fbx",EContent::Mesh},
-	{".png",EContent::Image},
-	{".jpeg",EContent::Image},
-};
+//static std::map<std::string, EAsset> cb_extensionsDB{
+//
+//	{"",EContent::Folder},
+//	{".obj",EContent::Mesh},
+//	{".fbx",EContent::Mesh},
+//	{".png",EContent::Image},
+//	{".jpeg",EContent::Image},
+//};

@@ -3,6 +3,7 @@
 #include <memory>
 #include "SimpleMath.h"
 #include "../Core/Graphics/Buffer.h"
+#include "Material.h"
 
 class EngineCore;
 

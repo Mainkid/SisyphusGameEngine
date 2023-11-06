@@ -14,35 +14,50 @@ public:
     GBuffer(Microsoft::WRL::ComPtr<ID3D11Device> _device);
     void Initialize(int height, int width);
     
+    //Diffuse color (RGBA)
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> DiffuseSrv;
 
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> diffuseSRV;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> normalSRV;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> positionSRV;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> depthSRV;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> specularSRV;
-    Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> skyboxSRV;
+    //Metallic (RGB) + Roughness (A)
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> MetallicSrv;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SpecularSrv;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> DepthSrv;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> EmissiveSrv;
+    //Normals (RGB) + Depth (A)
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> NormalAndDepthSrv;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> PositionSrv;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> IdSrv;
+    Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> SkyboxSrv;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> HdrBufferSrv;
     
    
 
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> diffuseRTV;
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> normalRTV;
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> positionRTV;
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> depthRTV;
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> specularRTV;
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> skyboxRTV;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> DiffuseRtv;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> MetallicRtv;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> SpecularRtv;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> DepthRtv;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> EmissiveRtv;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> NormalAndDepthRtv;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> PositionRtv;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> IdRtv;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> SkyboxRtv;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> HdrBufferRtv;
 private:
-    int t_height;
-    int t_width;
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> diffuseTexture;
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> normalTexture;
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> positionTexture;
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> depthTexture;
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> specularTexture;
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> depthCpuTexture;
-    Microsoft::WRL::ComPtr<ID3D11Texture2D> skyboxTexture;
+    int _height;
+    int _width;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> _diffuseTexture;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> _metallicTexture;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> _specularTexture;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> _depthTexture;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> _emissiveTexture;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> _normalAndDepthTexture;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> _positionTexture;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> _idTexture;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> _idCpuTexture;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> _skyboxTexture;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> _hdrBufferTexture;
 
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> depthCpuSRV;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> _idCpuSrv;
 
-    Microsoft::WRL::ComPtr<ID3D11Device> device;
+    Microsoft::WRL::ComPtr<ID3D11Device> _device;
     
 };
