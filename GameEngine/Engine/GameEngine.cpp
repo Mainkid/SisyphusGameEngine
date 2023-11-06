@@ -26,7 +26,7 @@ int main()
 
     EngineCore::instance()->StartUp();
 
-    
+
 
     entt::registry* ecs = &ServiceLocator::instance()->Get<EngineContext>()->ecs;
     
