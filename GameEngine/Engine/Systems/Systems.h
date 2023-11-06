@@ -6,7 +6,7 @@
 #include "TransformSystem.h"
 #include "MeshSystem.h"
 #include "LightSystem.h"
-#include "RigidBodySystem.h"
+#include "RBSystem.h"
 #include "HardwareInitSystem.h"
 #include "MaterialUpdateSystem.h"
 #include "ResourceSystem.h"

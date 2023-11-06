@@ -103,7 +103,7 @@ void GameObjectHelper::RemoveChild(entt::registry* ecs, entt::entity parent, ent
 }
 
 SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::entity entity, const SyRBodyType& rbType,
-	const SyRbTransform& rbLocalTransform, const SyRBodyMaterial& rbMaterial, bool manuallySetMass, float mass)
+	const SyRbTransform& rbLocalTransform, float mass)
 {
 	SyResult result;
 	auto* transformComponent = ecs->try_get<TransformComponent>(entity);
@@ -120,8 +120,6 @@ SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::enti
 	ecs->emplace<SyRBodyComponent>(	entity,
 									rbType,
 									rbGlobalTransform,
-									rbMaterial,
-									manuallySetMass,
 									mass);
 	ecs->emplace<SyRbCreateOnNextUpdateTag>(entity);
 	return result;

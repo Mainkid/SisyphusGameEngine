@@ -84,7 +84,7 @@ void EngineCore::StartUpSystems()
 	
 	_systems.Add<InputSystem>();
 	_systems.Add<ResourceSystem>();
-	_systems.Add<SyRigidBodySystem>();
+	_systems.Add<SyRBodySystem>();
 
 	_systems.Add<TransformSystem>();
 

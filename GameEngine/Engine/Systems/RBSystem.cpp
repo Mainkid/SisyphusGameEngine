@@ -1,9 +1,10 @@
 #include "PxPhysicsAPI.h"
-#include "RigidBodySystem.h"
+#include "RBSystem.h"
 #include "EngineContext.h"
 #include "../Components/RBodyComponent.h"
 #include "../Tools/ErrorLogger.h"
 #include "../Components/TransformComponent.h"
+#include "../Tools/MathHelper.h"
 
 
 using namespace physx;
@@ -11,7 +12,7 @@ using namespace physx;
 PxPhysics* SyRBodyComponent::_physics;
 PxScene* SyRBodyComponent::_scene;
 
-SyResult SyRigidBodySystem::Init() 
+SyResult SyRBodySystem::Init() 
 {
 	allocator = std::make_shared<PxDefaultAllocator>();
 	errorCallback = std::make_shared<PxDefaultErrorCallback>();
@@ -22,12 +23,12 @@ SyResult SyRigidBodySystem::Init()
 		exit(-1);
 	}
 	_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *_foundation, PxTolerancesScale(), true, nullptr);
+	SyRBodyComponent::_physics = _physics;
 	if (_physics == nullptr)
 	{
 		SY_LOG_PHYS(SY_LOGLEVEL_CRITICAL, "PxCreatePhysics returned nullptr. ");
 		exit(-1);
 	}
-	SyRBodyComponent::_physics = _physics;
 	PxSceneDesc sceneDesc(_physics->getTolerancesScale());
 	sceneDesc.gravity = _gravity;
 	sceneDesc.cpuDispatcher = PxDefaultCpuDispatcherCreate(2);
@@ -37,7 +38,7 @@ SyResult SyRigidBodySystem::Init()
 	return SyResult();
 }
 
-SyResult SyRigidBodySystem::Run()
+SyResult SyRBodySystem::Run()
 {
 	SyResult result;
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
@@ -104,7 +105,7 @@ SyResult SyRigidBodySystem::Run()
 	return SyResult();
 }
 
-SyResult SyRigidBodySystem::Destroy()
+SyResult SyRBodySystem::Destroy()
 {
 	PX_RELEASE(_scene);
 	PX_RELEASE(_physics);
@@ -113,7 +114,7 @@ SyResult SyRigidBodySystem::Destroy()
 	return SyResult();
 }
 
-SyResult SyRigidBodySystem::InitComponent(const entt::entity& entity, SyRBodyComponent& rbComponent, TransformComponent& tComponent)
+SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyComponent& rbComponent, TransformComponent& tComponent)
 {
 	SyResult result;
 	switch (rbComponent._rbType)
@@ -130,21 +131,17 @@ SyResult SyRigidBodySystem::InitComponent(const entt::entity& entity, SyRBodyCom
 		result.message = xstring("Unknown Rigid Body type in SyRbComponent. Entity: %d.", (unsigned)entity);
 		return result;
 	};
-	static const float UNIT_SPHERE_RADIUS = powf(4.0f / 3 / PxPi, 1.0f / 3); //radius of a sphere with volume equal to 1
+	static const float UNIT_SPHERE_RADIUS = powf(3.0f / 4 / SyMathHelper::PI, 1.0f / 3); //radius of a sphere with volume equal to 1
 	rbComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
 																	PxSphereGeometry(UNIT_SPHERE_RADIUS),
-																	*_physics->createMaterial(
-																		rbComponent._rbMaterial.staticFriction,
-																		rbComponent._rbMaterial.dynamicFriction,
-																		rbComponent._rbMaterial.restitution));
-	if (rbComponent._manuallySetMass)
-		rbComponent._rbMaterial.density = 1 / rbComponent._mass;
+																	*_physics->createMaterial(0.0f, 0.0f, 0.0f));
+	float density = 1.0f / rbComponent._mass; 
 	//rbComponent._rbShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
 	//rbComponent._rbShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 	if (rbComponent._rbType == SY_RB_TYPE_DYNAMIC)
 	{
 		bool updateMassResult = PxRigidBodyExt::updateMassAndInertia(	*static_cast<PxRigidBody*>(rbComponent._rbActor),
-																		rbComponent._rbMaterial.density);
+																		density);
 		if (updateMassResult == false)
 		{
 			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::updateMassAndInertia returned false");

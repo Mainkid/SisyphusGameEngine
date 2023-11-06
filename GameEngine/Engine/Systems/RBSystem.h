@@ -17,7 +17,7 @@ namespace physx
 struct SyRBodyComponent;
 #pragma endregion
 
-class SyRigidBodySystem :
+class SyRBodySystem :
     public SystemBase
 {
     std::shared_ptr<physx::PxDefaultAllocator>		allocator = nullptr;
@@ -35,4 +35,6 @@ public:
 
 private:
     SyResult InitComponent(const entt::entity& entity, SyRBodyComponent& rbComponent, TransformComponent& tComponent);
+
+    friend class SyCollisionSystem;
 };

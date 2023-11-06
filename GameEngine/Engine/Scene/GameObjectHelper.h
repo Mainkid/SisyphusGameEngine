@@ -23,21 +23,17 @@ public:
 											entt::entity			entity,
 											const SyRBodyType&		rbType,
 											const SyRbTransform&	rbLocalTransform = { {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} },
-											const SyRBodyMaterial&	rbMaterial		= SyRBodyMaterial(),
-											bool					manuallySetMass = true,
 											float					mass			= 1.0);
 	
 	static entt::entity CreateStaticBox(entt::registry* ecs,
 										const SyVector3& position,
 										const SyVector3& rotation = SyVector3(), 
-										const SyVector3& scale = { 1.0f, 1.0f, 1.0f },
-										const SyRBodyMaterial& material = SyRBodyMaterial());
+										const SyVector3& scale = { 1.0f, 1.0f, 1.0f });
 
 	static entt::entity CreateDynamicBox(	entt::registry* ecs, 
 											const SyVector3& position, 
 											const SyVector3& rotation = SyVector3(), 
-											const SyVector3& scale = { 1.0f, 1.0f, 1.0f },
-											const SyRBodyMaterial& material = SyRBodyMaterial()										);
+											const SyVector3& scale = { 1.0f, 1.0f, 1.0f });
 
 	static entt::entity CreateLight(entt::registry* ecs, ELightType lightType, Vector3 pos = Vector3::Zero);
 
