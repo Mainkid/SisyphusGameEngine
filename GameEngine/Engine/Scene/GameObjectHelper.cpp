@@ -180,7 +180,7 @@ entt::entity GameObjectHelper::CreateMesh(entt::registry* ecs, boost::uuids::uui
 
 entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 {
-	auto ent = Create(ecs, "ParticleObject");
+	auto ent = Create(ecs, "ParticleSystem");
 	ecs->emplace<ParticleComponent>(ent);
 	return ent;
 }
