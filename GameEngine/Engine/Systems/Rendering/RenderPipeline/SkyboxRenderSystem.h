@@ -1,4 +1,5 @@
 #pragma once
+#include "../../ResourceService.h"
 #include "../../Core/ECS/SystemBase.h"
 
 struct EngineContext;
@@ -16,6 +17,7 @@ private:
 	EngineContext* _ec;
 	RenderContext* _rc;
 	HardwareContext* _hc;
+	ResourceService* _rs;
 
 
 };

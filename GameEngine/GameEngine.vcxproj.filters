@@ -204,6 +204,7 @@
     <ClInclude Include="Engine\Systems\Rendering\ImageBasedLightingSystem.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SyImageBasedLightingUpdateEvent.h" />
     <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
+    <ClInclude Include="Engine\Components\SkyboxResource.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

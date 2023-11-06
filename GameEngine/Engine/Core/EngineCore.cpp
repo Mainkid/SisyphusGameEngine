@@ -3,6 +3,7 @@
 #include "../Components/GameObjectComp.h"
 #include "../Components/MeshComponent.h"
 #include "../Components/TransformComponent.h"
+#include "../Components/ImageBasedLightingComponent.h"
 
 
 EngineCore::EngineCore()
@@ -64,7 +65,8 @@ void EngineCore::StartUp()
 	ser.AddEcsCompMeta<MeshComponent>();
 	ser.AddEcsCompMeta<LightComponent>();
 	ser.AddEcsCompMeta<EditorBillboardComponent>();
-
+	ser.AddEcsCompMeta<SkyboxComponent>();
+	ser.AddEcsCompMeta<ImageBasedLightingComponent>();
 
 	StartUpSystems();
 }
@@ -90,7 +92,7 @@ void EngineCore::StartUpSystems()
 
 	_systems.Add<LightSystem>();
 	_systems.Add<MeshSystem>();
-	
+	_systems.Add<SkyboxSystem>();
 	_systems.Add<LightSystem>();
 
 	_systems.Add<EditorBillboardSystem>();

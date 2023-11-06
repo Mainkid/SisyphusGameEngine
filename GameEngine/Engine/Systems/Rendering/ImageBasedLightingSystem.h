@@ -1,4 +1,5 @@
 #pragma once
+#include "../ResourceService.h"
 #include "../../Core/ECS/SystemBase.h"
 
 struct ImageBasedLightingComponent;
@@ -18,6 +19,7 @@ private:
 	RenderContext* _rc = nullptr;
 	EngineContext* _ec = nullptr;
 	HardwareContext* _hc = nullptr;
+	ResourceService* _rs = nullptr;
 
 	const int _irradianceResolution = 32;
 	const int _lookUpTextureResolution = 512;

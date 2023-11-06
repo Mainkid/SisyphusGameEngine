@@ -6,18 +6,23 @@
 #include "../../../Scene/CameraHelper.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
+#include "..\..\..\Components\SkyboxComponent.h"
 
 SyResult SkyboxRenderSystem::Init()
 {
     _ec = ServiceLocator::instance()->Get<EngineContext>();
     _rc = ServiceLocator::instance()->Get<RenderContext>();
     _hc = ServiceLocator::instance()->Get<HardwareContext>();
+    _rs = ServiceLocator::instance()->Get<ResourceService>();
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "SkyboxRender system initialization successful. ");
     return SyResult();
 }
 
 SyResult SkyboxRenderSystem::Run()
 {
+    entt::entity skyboxEnt = _ecs->view<SkyboxComponent>().front();
+    SkyboxComponent& skybox = _ecs->get<SkyboxComponent>(skyboxEnt);
+
 
     _hc->context->RSSetState(_rc->CullFrontRasterizerState.Get());
     CB_BaseEditorBuffer dataOpaque;
@@ -26,7 +31,7 @@ SyResult SkyboxRenderSystem::Run()
 
     dataOpaque.baseData.world = camera.view * camera.projection;
 
-
+   
 
     
     D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -43,7 +48,7 @@ SyResult SkyboxRenderSystem::Run()
     _hc->context->IASetVertexBuffers(0, 1, _rc->CubeMesh->vertexBuffer->buffer.GetAddressOf(),
        _rc->RhData.strides80, _rc->RhData.offsets0);
     _hc->context->PSSetSamplers(0, 1, _rc->SamplerState.GetAddressOf());
-    _hc->context->PSSetShaderResources(0, 1, _rc->SkyboxSRV.GetAddressOf());
+    _hc->context->PSSetShaderResources(0, 1,skybox.SkyboxRes->textureSRV.GetAddressOf());
     _hc->context->VSSetShader(_rc->SkyBoxShader->vertexShader.Get(), nullptr, 0);
     _hc->context->PSSetShader(_rc->SkyBoxShader->pixelShader.Get(), nullptr, 0);
     

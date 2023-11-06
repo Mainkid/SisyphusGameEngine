@@ -12,6 +12,7 @@
 #include "../../Tools/Data/Vector.h"
 #include "../Components/ImageBasedLightingComponent.h"
 #include "../Components/SkyboxComponent.h"
+#include "../Systems/ResourceService.h"
 
 
 entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, Vector3 pos)
@@ -187,11 +188,16 @@ entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 	return ent;
 }
 
-entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs)
+entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs, boost::uuids::uuid uuid)
 {
 	auto ent = ecs->create();
-	ecs->emplace<GameObjectComp>(ent, "Skybox");
+	ecs->emplace<GameObjectComp>(ent);
 	ecs->emplace<SkyboxComponent>(ent);
+	ecs->emplace<ImageBasedLightingComponent>(ent);
+	
+	if (uuid == boost::uuids::nil_uuid())
+		uuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_CUBEMAP].uuid;
+	ecs->get<SkyboxComponent>(ent).uuid = uuid;
 
 	return ent;
 }

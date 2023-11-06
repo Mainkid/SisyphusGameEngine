@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include <wrl.h>
+#include "../Serialization/Serializable.h"
 
 struct ImageBasedLightingComponent
 {
@@ -19,4 +20,5 @@ struct ImageBasedLightingComponent
 	std::vector<Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView>> FilteredEnvironmentCubeMapUavs;
 	bool IsInitialized = false;
 	bool IsOn = false;
+	SER_COMP(ImageBasedLightingComponent, IsOn);
 };

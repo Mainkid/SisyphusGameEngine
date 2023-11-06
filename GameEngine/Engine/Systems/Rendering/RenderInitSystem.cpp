@@ -97,43 +97,43 @@ SyResult RenderInitSystem::Destroy()
 
 void RenderInitSystem::InitSkybox() const
 {
-	int resolution = 512;
-	D3D11_TEXTURE2D_DESC textureDesc_ = {};
-	textureDesc_.Width = resolution;
-	textureDesc_.Height = resolution;
-	textureDesc_.MipLevels = 1;
-	textureDesc_.ArraySize = 6;
+	//int resolution = 512;
+	//D3D11_TEXTURE2D_DESC textureDesc_ = {};
+	//textureDesc_.Width = resolution;
+	//textureDesc_.Height = resolution;
+	//textureDesc_.MipLevels = 1;
+	//textureDesc_.ArraySize = 6;
 
-	textureDesc_.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	textureDesc_.SampleDesc.Count = 1;
-	textureDesc_.SampleDesc.Quality = 0;
-	textureDesc_.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc_.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	textureDesc_.CPUAccessFlags = 0;
-	textureDesc_.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	//textureDesc_.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	//textureDesc_.SampleDesc.Count = 1;
+	//textureDesc_.SampleDesc.Quality = 0;
+	//textureDesc_.Usage = D3D11_USAGE_DEFAULT;
+	//textureDesc_.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	//textureDesc_.CPUAccessFlags = 0;
+	//textureDesc_.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
-	int width = 0;
-	int height = 0;
-	auto arr=ImageLoader::LoadSkyboxFromFile("./Engine/Assets/SkyBox/cubemap.hdr", &width, &height);
+	//int width = 0;
+	//int height = 0;
+	//auto arr=ImageLoader::LoadSkyboxFromFile("./Engine/Assets/SkyBox/cubemap.hdr", &width, &height);
 
-	_rc->SkyBoxResolution = width;
-	
-	D3D11_SUBRESOURCE_DATA data[6];
-	for (int i = 0; i < 6; i++)
-	{
+	//_rc->SkyBoxResolution = width;
+	//
+	//D3D11_SUBRESOURCE_DATA data[6];
+	//for (int i = 0; i < 6; i++)
+	//{
 
-		data[i].pSysMem = arr[i];
-		data[i].SysMemPitch = sizeof(float) * width *4;
-		data[i].SysMemSlicePitch = 0;
-	}
-	HRESULT result = _hc->device->CreateTexture2D(&textureDesc_, data, _rc->SkyboxTexture.GetAddressOf());
+	//	data[i].pSysMem = arr[i];
+	//	data[i].SysMemPitch = sizeof(float) * width *4;
+	//	data[i].SysMemSlicePitch = 0;
+	//}
+	//HRESULT result = _hc->device->CreateTexture2D(&textureDesc_, data, _rc->SkyboxTexture.GetAddressOf());
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = textureDesc_.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = 1;
-	result = _hc->device->CreateShaderResourceView(_rc->SkyboxTexture.Get(), &srvDesc, _rc->SkyboxSRV.GetAddressOf());
+	//D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	//srvDesc.Format = textureDesc_.Format;
+	//srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+	//srvDesc.Texture2D.MostDetailedMip = 0;
+	//srvDesc.Texture2D.MipLevels = 1;
+	//result = _hc->device->CreateShaderResourceView(_rc->SkyboxTexture.Get(), &srvDesc, _rc->SkyboxSRV.GetAddressOf());
 }
 
 void RenderInitSystem::CreateTextures() const

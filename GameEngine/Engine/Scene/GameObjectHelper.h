@@ -37,5 +37,7 @@ public:
 
 	static entt::entity CreateParticleSystem(entt::registry* ecs);
 
-	static entt::entity CreateSkybox(entt::registry* ecs);
+	static entt::entity CreateSkybox(entt::registry* ecs,boost::uuids::uuid uuid = boost::uuids::nil_uuid());
+
+	
 };

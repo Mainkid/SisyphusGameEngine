@@ -2,9 +2,12 @@
 #include "../../Core/ServiceLocator.h"
 #include "../EngineContext.h"
 #include "../HardwareContext.h"
+#include "../ResourceService.h"
 #include "RenderContext.h"
 #include "../../Components/ImageBasedLightingComponent.h"
+#include "../../Components/SkyboxComponent.h"
 #include "../../Core/ECS/Events/SyImageBasedLightingUpdateEvent.h"
+#include "../../Core/ECS/Events/SySceneLoadEvent.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
 #include "../../Scene/CameraHelper.h"
 
@@ -13,7 +16,7 @@ SyResult ImageBasedLightingSystem::Init()
 	_hc = ServiceLocator::instance()->Get<HardwareContext>();
 	_ec = ServiceLocator::instance()->Get<EngineContext>();
 	_rc = ServiceLocator::instance()->Get<RenderContext>();
-
+	_rs = ServiceLocator::instance()->Get<ResourceService>();
 
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "ImageBasedLighting system initialization successful.");
 	return SyResult();
@@ -24,7 +27,11 @@ SyResult ImageBasedLightingSystem::Run()
 	ID3D11ShaderResourceView* nullSrv[1] = { nullptr };
 	ID3D11UnorderedAccessView* nullUav[1] = { nullptr };
 	auto view = _ecs->view<ImageBasedLightingComponent>();
+	entt::entity skyboxEnt = _ecs->view<SkyboxComponent>().front();
+	SkyboxComponent& skybox = _ecs->get<SkyboxComponent>(skyboxEnt);
+	auto skyboxSrv = skybox.SkyboxRes->textureSRV;
 	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyImageBasedLightingUpdateEvent);
+	auto loadEventView = SY_GET_THIS_FRAME_EVENT_VIEW(SySceneLoadEvent);
 	for (auto& ent : view)
 	{
 		ImageBasedLightingComponent& iblComp = _ecs->get<ImageBasedLightingComponent>(ent);
@@ -35,7 +42,7 @@ SyResult ImageBasedLightingSystem::Run()
 		}
 	}
 
-	if (eventView.size_hint() > 0)
+	if (eventView.size_hint() > 0 || loadEventView.size_hint()>0)
 	{
 		_rc->Viewport.Width = static_cast<float>(_hc->window->GetWidth());
 		_rc->Viewport.Height = static_cast<float>(_hc->window->GetHeight());
@@ -47,6 +54,10 @@ SyResult ImageBasedLightingSystem::Run()
 
 		for (auto& ent : view)
 		{
+			entt::entity skyboxEnt = _ecs->view<SkyboxComponent>().front();
+			SkyboxComponent& skybox = _ecs->get<SkyboxComponent>(skyboxEnt);
+
+			
 			ImageBasedLightingComponent& iblComp = _ecs->get<ImageBasedLightingComponent>(ent);
 			CB_SimpleVector4 buffer;
 			buffer.params.x = _irradianceResolution;
@@ -56,27 +67,27 @@ SyResult ImageBasedLightingSystem::Run()
 			_hc->context->Unmap(_rc->LightConstBuffer->buffer.Get(), 0);
 			_hc->context->CSSetConstantBuffers(0, 1, _rc->LightConstBuffer->buffer.GetAddressOf());
 
-
+			
 			_hc->context->ClearRenderTargetView(iblComp.IrradianceCubeMapRtv.Get(), _rc->RhData.bgColor0000);
 			_hc->context->CSSetSamplers(0, 1, _rc->SamplerState.GetAddressOf());
-			_hc->context->CSSetShaderResources(0, 1, _rc->SkyboxSRV.GetAddressOf());
+			_hc->context->CSSetShaderResources(0, 1,skyboxSrv.GetAddressOf());
 			_hc->context->CSSetUnorderedAccessViews(0, 1, iblComp.IrradianceCubeMapUav.GetAddressOf(), nullptr);
 			_hc->context->CSSetShader(_rc->IrradianceMapGenerator->computeShader.Get(), nullptr, 0);
 			_hc->context->Dispatch(sqrt(_irradianceResolution)+1, sqrt(_irradianceResolution)+1, 1);
 
 
-			float maxMipLevel = CreateFilteredCubeMap(iblComp, _rc->SkyBoxResolution);
+			float maxMipLevel = CreateFilteredCubeMap(iblComp, skybox.SkyboxRes->Resolution);
 			int threadCount = 8;
 
 			for (int mipLevel = 0; mipLevel <= maxMipLevel; mipLevel++)
 			{
-				int mipWidth = static_cast<int>(_rc->SkyBoxResolution) >> static_cast<int>(mipLevel);
+				int mipWidth = static_cast<int>(skybox.SkyboxRes->Resolution) >> static_cast<int>(mipLevel);
 				float roughness = mipLevel / maxMipLevel;
 
 				CB_SimpleVector4 buffer;
 				buffer.params.x = roughness;
 				buffer.params.y = mipLevel;
-				buffer.params.z = _rc->SkyBoxResolution;
+				buffer.params.z = skybox.SkyboxRes->Resolution;
 
 				D3D11_MAPPED_SUBRESOURCE mappedResource;
 				HRESULT res = _hc->context->Map(_rc->LightConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -85,7 +96,7 @@ SyResult ImageBasedLightingSystem::Run()
 				_hc->context->CSSetConstantBuffers(0, 1, _rc->LightConstBuffer->buffer.GetAddressOf());
 
 				_hc->context->CSSetSamplers(0, 1, _rc->SamplerState.GetAddressOf());
-				_hc->context->CSSetShaderResources(0, 1, _rc->SkyboxSRV.GetAddressOf());
+				_hc->context->CSSetShaderResources(0, 1, skyboxSrv.GetAddressOf());
 				_hc->context->CSSetUnorderedAccessViews(0, 1, iblComp.FilteredEnvironmentCubeMapUavs[mipLevel].GetAddressOf(), nullptr);
 				_hc->context->CSSetShader(_rc->EnvironmentPrefilter->computeShader.Get(), nullptr, 0);
 				_hc->context->Dispatch(std::max(mipWidth / threadCount, 1), std::max(1, mipWidth / threadCount), 1);

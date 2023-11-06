@@ -11,6 +11,7 @@
 #include "MaterialUpdateSystem.h"
 #include "ResourceSystem.h"
 #include "ErrorLoggingSystem.h"
+#include "SkyboxSystem.h"
 #include "Rendering/HUD/HudPropertiesSystem.h"
 #include "Rendering/HUD/HudContentBrowserSystem.h"
 #include "Rendering/HUD/HudHierarchySystem.h"

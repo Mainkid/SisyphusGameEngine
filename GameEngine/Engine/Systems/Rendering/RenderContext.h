@@ -129,9 +129,6 @@ struct RenderContext : public IService
 	    SkyBox
 	*/
 
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> SkyboxTexture;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SkyboxSRV;
-	int SkyBoxResolution = 512;
 
 	std::unique_ptr<Buffer> ShadowConstBuffer;
 	std::unique_ptr<Buffer> ShadowPointlightConstBuffer;

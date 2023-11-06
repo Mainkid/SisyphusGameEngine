@@ -1,4 +1,7 @@
 #pragma once
+#include <boost/container_hash/hash.hpp>
+
+#include "../Components/SkyboxComponent.h"
 #include "../Core/ECS/SystemBase.h"
 
 struct HardwareContext;
@@ -15,5 +18,7 @@ private:
 	HardwareContext* _hc = nullptr;
 	EngineContext* _ec = nullptr;
 	ResourceService* _rs = nullptr;
+
+	boost::hash<boost::uuids::uuid> _hasher;
 };
 

@@ -656,6 +656,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
+    <ClInclude Include="Engine\Components\SkyboxResource.h" />
     <ClInclude Include="Engine\Core\ECS\Event.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SyHotReloadEvent.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SyImageBasedLightingUpdateEvent.h" />
