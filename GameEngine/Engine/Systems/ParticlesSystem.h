@@ -24,5 +24,6 @@ private:
 	RenderContext* _rc = nullptr;
 
 	void InitRenderResources(ParticleComponent& pc);
+	void InitBuffers(ParticleComponent& pc);
 };
 
