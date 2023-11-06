@@ -13,12 +13,13 @@
 #define SY_PI 3.14f
 #define SY_PI2 SY_PI / 2
 
+
 int main()
 {
     EngineCore::instance()->StartUp();
-    entt::registry* ecs = &ServiceLocator::instance()->Get<EngineContext>()->ecs;    
+    
+    entt::registry* ecs = &ServiceLocator::instance()->Get<EngineContext>()->ecs;
     EngineContext* ec = EngineCore::instance()->ec;
- 
     auto lightDir = GameObjectHelper::CreateLight(ecs, ELightType::Directional);
 
     auto light = GameObjectHelper::CreateLight(ecs, ELightType::Ambient);
@@ -38,7 +39,7 @@ int main()
 
     auto obj = GameObjectHelper::Create(ecs, "RigidBody", { 0.0f, 0.0f, 0.0f });
     auto result = GameObjectHelper::AddRigidBodyComponent(ecs, obj, SY_RB_TYPE_DYNAMIC);
-
+    
     //---------- Serialization test ----------------
     // ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
     // ser.AddEcsCompMeta<GameObjectComp>();

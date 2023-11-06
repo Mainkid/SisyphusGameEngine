@@ -704,6 +704,7 @@
     <ClInclude Include="Engine\Components\LightComponent.h" />
     <ClInclude Include="Engine\Core\Rendering\RenderTarget.h" />
     <ClInclude Include="Engine\Tools\ComplexString.h" />
+    <ClInclude Include="Engine\Tools\Data\FlagBitmask.h" />
     <ClInclude Include="Engine\Tools\Data\RingBuffer.h" />
     <ClInclude Include="Engine\Tools\ErrorLogger.h" />
     <ClInclude Include="Engine\Tools\ImageLoader.h" />
