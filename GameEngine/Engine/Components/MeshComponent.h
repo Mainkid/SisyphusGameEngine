@@ -16,10 +16,19 @@
 #include <string>
 #include <wtypes.h>
 #include "../Serialization/Serializable.h"
+#include "../Tools/Data/FlagBitmask.h"
 
 using namespace DirectX::SimpleMath;
 
 class EngineCore;
+
+enum EMeshComponentFlags
+{
+	ERenderMesh = 1,
+	EColliderMesh = 1 << 1
+};
+
+DEFINE_BITWISE_OPERATORS(EMeshComponentFlags)
 
 struct MeshComponent
 {
@@ -38,6 +47,7 @@ struct MeshComponent
 	std::vector<boost::uuids::uuid> materialUUIDs = {};
 	std::vector<std::shared_ptr<Material>> materials = {};
 	boost::uuids::uuid modelUUID;
+	uint32_t flags = EMeshComponentFlags::ERenderMesh;
 	UINT strides[1] = { 80 };
 	UINT offsets[1] = { 0 };
 	uint32_t hashMaterial = 0;
