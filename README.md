@@ -25,8 +25,8 @@ Open source 3D Game Engine
 
 
 ## Screenshots
-![alt text](GameEngine/info/engineGUI.png)
-![alt text](GameEngine/info/particles.gif)
+![alt text](GameEngine/info/Engine_1.png)
+![alt text](GameEngine/info/Engine_2.png)
 
 ## Upcoming features
 ### Rendering:
