@@ -20,8 +20,6 @@ SyResult HbaoRenderSystem::Init()
 	_rc->HbaoParams.Blur.Radius = GFSDK_SSAO_BLUR_RADIUS_4;
 	_rc->HbaoParams.Blur.Sharpness = 16.0f;
 
-
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "HBAO render system initialization successful.");
 	return SyResult();
 }
 
@@ -47,6 +45,5 @@ SyResult HbaoRenderSystem::Run()
 
 SyResult HbaoRenderSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "HBAO render system destruction successful.");
 	return SyResult();
 }

@@ -14,7 +14,7 @@ SyResult ShadowMapGenerationSystem::Init()
     _ec = ServiceLocator::instance()->Get<EngineContext>();
     _hc = ServiceLocator::instance()->Get<HardwareContext>();
     _rc = ServiceLocator::instance()->Get<RenderContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowMapGeneration system initialization successful. ");
+ 
     return SyResult();
 }
 
@@ -133,6 +133,5 @@ SyResult ShadowMapGenerationSystem::Run()
 
 SyResult ShadowMapGenerationSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowMapGeneration system destruction successful. ");
     return SyResult();
 }

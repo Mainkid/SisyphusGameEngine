@@ -15,7 +15,6 @@ SyResult HudPropertiesSystem::Init()
 {
     this->windowID = "Properties";
     this->ec = ServiceLocator::instance()->Get<EngineContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudProperties system initialization successful.");
     this->rs = ServiceLocator::instance()->Get<ResourceService>();
     rs->updateContentBrowser.AddRaw(this, &HudPropertiesSystem::UpdateHudProperties);
     return SyResult();

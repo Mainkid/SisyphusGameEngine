@@ -14,7 +14,7 @@ SyResult LightRenderSystem::Init()
     _hc = ServiceLocator::instance()->Get<HardwareContext>();
     _ec = ServiceLocator::instance()->Get<EngineContext>();
     _rc = ServiceLocator::instance()->Get<RenderContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "LightRender system initialization successful.");
+ 
     return SyResult();
     
 }
@@ -278,7 +278,6 @@ SyResult LightRenderSystem::Run()
 
 SyResult LightRenderSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "LightRender system destruction successful.");
     return SyResult();
 }
 

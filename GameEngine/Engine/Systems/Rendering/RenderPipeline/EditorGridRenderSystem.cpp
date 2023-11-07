@@ -15,7 +15,6 @@ SyResult EditorGridRenderSystem::Init()
 	_hc = ServiceLocator::instance()->Get<HardwareContext>();
 	_grid1M = CreateGrid(1, _minGridSize);
 	_grid10M = CreateGrid(10, _maxGridSize);
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorGridRender system initialization successful.");
 	return SyResult();
 }
 
@@ -82,7 +81,6 @@ SyResult EditorGridRenderSystem::Run()
 
 SyResult EditorGridRenderSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorGridRender system destruction successful.");
 	return SyResult();
 }
 

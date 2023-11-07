@@ -2,7 +2,6 @@
 
 SyResult InputSystem::Init()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Input system initialization successful. ");
 	return SyResult();
 }
 
@@ -21,7 +20,6 @@ SyResult InputSystem::Run()
 
 SyResult InputSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Input system destruction successful. ");
 	return SyResult();
 }
 
