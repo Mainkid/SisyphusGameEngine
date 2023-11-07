@@ -7,10 +7,11 @@
 struct Particle
 {
     float4 position;
-    float4 initialPos;
+    float4 size;
     float4 velocity;
     float4 lifetime;
-    bool4 state;
+    float4 color;
+    float4 state;
 };
 
 struct ParticleListItem
@@ -73,6 +74,7 @@ struct PixelInput
     float3 worldPos : POS;
     float3 normal : POSITION;
     float2 uv:COL;
+    float4 color : NOR;
     //float4 UV : POSITION;
 };
 
@@ -139,9 +141,6 @@ LightingO AccumulateLighting(in LightingO o, float3 lightDir, float3 lightCol, f
         o.basis_col0 += lightCol * weights.x;
         o.basis_col1 += lightCol * weights.y;
         o.basis_col2 += lightCol * weights.z;
-        //o.basis_col0 = 1;
-        //o.basis_col1 = 1;
-        //o.basis_col2 = 1;
     }
     else
     {
@@ -179,7 +178,7 @@ PixelInput DefaultVS(VertexInput input)
     Particle particle = Particles[index];
     
     float4 worldPosition;
-    const float size = 0.05f;
+    const float size = particle.size.x;
     
     worldPosition = float4(particle.position.xyz, 1);
     worldPosition = mul(worldPosition, View);
@@ -208,57 +207,57 @@ PixelInput DefaultVS(VertexInput input)
     
     
     
-    for (int i = 0; i < lightCount; i++)
-    {
-        float3 dir = light[i].Dir.xyz;
-        float distance = -1;
-        float att = light[i].Color.w;
+    //for (int i = 0; i < lightCount; i++)
+    //{
+    //    float3 dir = light[i].Dir.xyz;
+    //    float distance = -1;
+    //    float att = light[i].Color.w;
   
-        if (light[i].additiveParams.r>0)
-        {
-            dir = particle.position.xyz - light[i].Pos.xyz;
-            distance = length(dir);
-            dir = normalize(dir);
-            float att = 1.0f / dot(light[i].additiveParams.yzw, float3(1.0f, distance * light[i].additiveParams.r, distance * distance * light[i].additiveParams.r));
-        }
-        if (distance<light[i].additiveParams.r)
-            output.lightO = AccumulateLighting(output.lightO, dir, light[i].Color.xyz, att, ((light[i].Dir.xyz == float3(0, 0, 0)).x && (light[i].Pos.xyz == float3(0, 0, 0)).x).x);
+    //    if (light[i].additiveParams.r>0)
+    //    {
+    //        dir = particle.position.xyz - light[i].Pos.xyz;
+    //        distance = length(dir);
+    //        dir = normalize(dir);
+    //        float att = 1.0f / dot(light[i].additiveParams.yzw, float3(1.0f, distance * light[i].additiveParams.r, distance * distance * light[i].additiveParams.r));
+    //    }
+    //    if (distance<light[i].additiveParams.r)
+    //        output.lightO = AccumulateLighting(output.lightO, dir, light[i].Color.xyz, att, ((light[i].Dir.xyz == float3(0, 0, 0)).x && (light[i].Pos.xyz == float3(0, 0, 0)).x).x);
 
-    }
+    //}
     
 
-    float bias = 0.001f;
-    float3 projectTexCoord;
-    float depthValue;
-    float lightDepthValue;
-    int layer = 3;
-    float depthVal = abs(mul(float4(particle.position.xyz, 1), View).z);
-    for (i = 0; i < 4; i++)
-        if (depthVal < distances[i].x)
-        {
-            layer = i;
-            break;
-        }
+    //float bias = 0.001f;
+    //float3 projectTexCoord;
+    //float depthValue;
+    //float lightDepthValue;
+    //int layer = 3;
+    //float depthVal = abs(mul(float4(particle.position.xyz, 1), View).z);
+    //for (i = 0; i < 4; i++)
+    //    if (depthVal < distances[i].x)
+    //    {
+    //        layer = i;
+    //        break;
+    //    }
     
-    float4 posLight = float4(particle.position.xyz, 1);
-    posLight = mul(posLight, viewProj[layer]);
-    
-    
-    projectTexCoord.x = posLight.x / posLight.w / 2.0f + 0.5f;
-    projectTexCoord.y = -posLight.y / posLight.w / 2.0f + 0.5f;
-    projectTexCoord.z = layer;
-    depthValue = depthMapTexture.SampleLevel(textureSampler, projectTexCoord, 1);
-    lightDepthValue = posLight.z / posLight.w - bias;
+    //float4 posLight = float4(particle.position.xyz, 1);
+    //posLight = mul(posLight, viewProj[layer]);
     
     
+    //projectTexCoord.x = posLight.x / posLight.w / 2.0f + 0.5f;
+    //projectTexCoord.y = -posLight.y / posLight.w / 2.0f + 0.5f;
+    //projectTexCoord.z = layer;
+    //depthValue = depthMapTexture.SampleLevel(textureSampler, projectTexCoord, 1);
+    //lightDepthValue = posLight.z / posLight.w - bias;
     
     
-    if (lightDepthValue > depthValue)
-    {
-        output.lightO.basis_col0 = output.lightO.ambient;
-        output.lightO.basis_col1 = output.lightO.ambient;
-        output.lightO.basis_col2 = output.lightO.ambient;
-    }
+    
+    
+    //if (lightDepthValue > depthValue)
+    //{
+    //    output.lightO.basis_col0 = output.lightO.ambient;
+    //    output.lightO.basis_col1 = output.lightO.ambient;
+    //    output.lightO.basis_col2 = output.lightO.ambient;
+    //}
     
     
     output.normal = normalize(-viewDirection);
@@ -267,6 +266,7 @@ PixelInput DefaultVS(VertexInput input)
    
     worldPosition = mul(worldPosition, Projection);
     output.Position = worldPosition;
+    output.color = particle.color;
     //output.UV = 0;
     return output;
 
@@ -286,7 +286,10 @@ void TriangleGS(triangle PixelInput input[3], inout TriangleStream<PixelInput> s
 PixelOutput DefaultPS(PixelInput input) : SV_Target
 {
     PixelOutput output = (PixelOutput) 0;
-
+    output.Color = float4(input.color);
+    return output;
+    
+    
     float3 n = normalize(-input.normal);
     float3 w;
     float3 hl2_basis0 = mul(basisX, cameraRot).xyz;
@@ -305,8 +308,7 @@ PixelOutput DefaultPS(PixelInput input) : SV_Target
     float4 pixelColor = textureDiffuse.Sample(textureSampler, input.uv.xy);
     clip(pixelColor.a -1.0f);
     output.Color = float4(pixelColor.xyz*diffuse, 1);
-	
-    return output;
+    
 }
 
 

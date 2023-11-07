@@ -640,6 +640,7 @@
     <ClCompile Include="Engine\Systems\Rendering\ImageBasedLightingSystem.cpp" />
     <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
     <ClCompile Include="Engine\Systems\ParticlesSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -755,6 +756,7 @@
     <ClInclude Include="Engine\Systems\ErrorLoggingSystem.h" />
     <ClInclude Include="Engine\Systems\ParticlesSystem.h" />
     <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />

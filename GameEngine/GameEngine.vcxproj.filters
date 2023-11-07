@@ -85,6 +85,7 @@
     <ClCompile Include="Engine\Systems\Rendering\ImageBasedLightingSystem.cpp" />
     <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
     <ClCompile Include="Engine\Systems\ParticlesSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -207,6 +208,7 @@
     <ClInclude Include="Engine\Core\ECS\Events\SyImageBasedLightingUpdateEvent.h" />
     <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

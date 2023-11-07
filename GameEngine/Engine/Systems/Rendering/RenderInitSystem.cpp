@@ -280,6 +280,31 @@ void RenderInitSystem::CompileShaders() const
 	_rc->IblLookUpGenerator->Initialize(L"./Engine/Assets/Shaders/IblLookUpTexture.hlsl",
 		COMPILE_COMPUTE, USE_NONE, "", "", "", "CSMain");
 
+	_rc->SimpleParticle = std::make_unique<Shader>();
+	_rc->SimpleParticle->Initialize(L"./Engine/Assets/Shaders/ParticleSystem/SimpleParticle.hlsl",
+		COMPILE_COMPUTE | COMPILE_GEOM | COMPILE_VERTEX | COMPILE_PIXEL,
+		USE_VERTEXID, "DefaultVS", "DefaultPS", "TriangleGS", "DefaultCS");
+
+	_rc->ParticleUpdate = std::make_unique<Shader>();
+	_rc->ParticleUpdate->Initialize(L"./Engine/Assets/Shaders/ParticleSystem/ParticleUpdateShader.hlsl",
+		COMPILE_COMPUTE, USE_NONE);
+
+	_rc->ParticleEmitter = std::make_unique<Shader>();
+	_rc->ParticleEmitter->Initialize(L"./Engine/Assets/Shaders/ParticleSystem/ParticleEmitter.hlsl",
+		COMPILE_COMPUTE, USE_NONE);
+
+	_rc->BitonicSort = std::make_unique<Shader>();
+	_rc->BitonicSort->Initialize(L"./Engine/Assets/Shaders/ParticleSystem/BitonicSort.hlsl",
+		COMPILE_COMPUTE, USE_NONE,"","","","BitonicSort");
+
+	_rc->MatrixTranspose = std::make_unique<Shader>();
+	_rc->MatrixTranspose->Initialize(L"./Engine/Assets/Shaders/ParticleSystem/BitonicSort.hlsl",
+		COMPILE_COMPUTE, USE_NONE,"","","", "MatrixTranspose");
+
+	_rc->MultiplyBy6Shader = std::make_unique<Shader>();
+	_rc->MultiplyBy6Shader->Initialize(L"./Engine/Assets/Shaders/ParticleSystem/Multiply6Shader.hlsl",
+		COMPILE_COMPUTE, USE_NONE);
+
 }
 
 void RenderInitSystem::CreateBlendStates() const

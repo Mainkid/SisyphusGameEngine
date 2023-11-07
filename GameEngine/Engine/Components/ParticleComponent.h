@@ -5,8 +5,19 @@
 #include "../Systems/HardwareContext.h"
 #include "../Components/Particle.h"
 
+struct CB
+{
+	UINT iLevel;
+	UINT iLevelMask;
+	UINT iWidth;
+	UINT iHeight;
+};
+
 struct ParticleComponent
 {
+	
+
+
 	boost::uuids::uuid SharedParticlesDataUuid;					//Particles Data Resource;
 	std::shared_ptr<SharedParticlesData> SharedParticlesDataResource;
 	std::vector<Particle> ParticlesList;
@@ -14,6 +25,9 @@ struct ParticleComponent
 
 	uint32_t GroupSizeX;
 	uint32_t GroupSizeY;
+	uint32_t NumParticles;
+	float TimeFromStart;
+	float ParticlesToEmit = 0.0f;
 
 	std::unique_ptr<Buffer> PoolBuffer;
 	std::unique_ptr<Buffer> DeadListBuffer;
@@ -25,6 +39,7 @@ struct ParticleComponent
 	std::unique_ptr<Buffer> SortGpuConstBuffer;
 	std::unique_ptr<Buffer> TmpGpuBuffer;
 	std::unique_ptr<Buffer> IndexBuffer;
+	Microsoft::WRL::ComPtr< ID3D11Buffer> CounterCpuBuffer;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> PoolBufferSrv;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SortBufferSrv;
@@ -32,12 +47,20 @@ struct ParticleComponent
     Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> DeadListUav;
     Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> SortBufferUav;
     Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> CounterUav;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CounterSrv;
 	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> TmpGpuBufferUav;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> TmpGpuBufferSrv;
 
-	std::vector<int> Indices;
+	std::vector<SortListParticle> data = std::vector<SortListParticle>(1);
 
+	std::vector<int> Indices;
+	std::vector<int> IndexList;
 	size_t Hash;
+
+	SER_COMP(ParticleComponent, SharedParticlesDataUuid
+		//IsLooping, StartDelayTime, StartLifeTime,
+		//StartSpeed, StartSize, StartColor, MaxParticles, RateOverTime, ParticleBursts
+	)
 
 //public:
 //    struct CB

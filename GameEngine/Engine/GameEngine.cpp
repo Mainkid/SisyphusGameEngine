@@ -74,6 +74,22 @@ int main()
     ecs->get<TransformComponent>(lightPoint2).position = Vector3(3, 0, 0);
     ecs->get<LightComponent>(lightPoint2).LightBehavior = LightBehavior::Movable;
 
+    GameObjectHelper::CreateParticleSystem(ecs);
+
+
+
+    ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+
+    SharedParticlesData spd;
+    spd.MaxParticles = 1000;
+    spd.RateOverTime.Fvalue = 1;
+    spd.StartColor.V3value = Vector3(1, 1, 1);
+    spd.StartSize.Fvalue = 1;
+    spd.StartSpeed.Fvalue = 0.1f;
+    spd.Duration = 5;
+    spd.IsLooping = true;
+    spd.StartLifeTime.Fvalue = 5.0f;
+    auto json = ser.Serialize<SharedParticlesData>(spd);
 
     //auto model = GameObjectHelper::CreateMesh(ecs, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath("./Game/Assets/fbx/artifact.fbx"));
     //ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
@@ -85,7 +101,7 @@ int main()
 
     //auto json = ser.Serialize<GameObjectComp>(*ecs);
     //std::ofstream file;
-    //file.open("scene.json", std::ios::trunc);
+    //file.open("baseParticles.ps", std::ios::trunc);
     //file << std::setw(1) << json;
     //file.close();
 

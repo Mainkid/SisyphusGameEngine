@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "SimpleMath.h"
 #include "../../Core/Rendering/Lights/LightData.h"
+#include "../../Components/Particle.h"
 
 class CB_BaseBuffer
 {
@@ -88,12 +89,24 @@ public:
     
 };
 
+struct CB_SharedParticlesData
+{
+    Vector4 deltaTime;
+    Vector4 startPosition;
+    Vector4 startSize;
+    Vector4 startColor;
+    Vector4 startLifeTime;
+    Vector4 startVelocity;
+};
+
 class CB_ComputeShader
 {
 public:
     CB_viewProjBuffer viewProjBuff;
     Vector4 GroupCount;
     Vector4 eyePos;
+    CB_SharedParticlesData SharedParticlesData;
+    
 };
 
 struct CB_SimpleVector4

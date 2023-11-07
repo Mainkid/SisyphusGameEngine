@@ -3,20 +3,23 @@
 #include "SimpleMath.h"
 #include <random>
 #include "../../boost/boost/uuid/uuid.hpp"
+#include "../Serialization/Serializable.h"
 
 struct ParticleInputDataF
 {
     float Fvalue;                                     // Single Float Input;
-    std::pair<float,float> RandomBetweenConstsF; // Random Between Two Constants;
+    std::vector<float> RandomBetweenConstsF; // Random Between Two Constants;
     //CurveClass curve;                               // TODO: Add Curves;
+
+	SER_DATA(ParticleInputDataF, Fvalue, RandomBetweenConstsF);
 };
 
 struct ParticleInputDataV3
 {
     DirectX::SimpleMath::Vector3 V3value;
-    std::pair<DirectX::SimpleMath::Vector3,
-        DirectX::SimpleMath::Vector3> RandomBetweenConstsV;
+    std::vector<DirectX::SimpleMath::Vector3> RandomBetweenConstsV;
 
+    SER_DATA(ParticleInputDataV3, V3value, RandomBetweenConstsV);
 };
 
 struct ParticleBurst
@@ -25,6 +28,8 @@ struct ParticleBurst
     ParticleInputDataF Count;                         // Particles to emmit;
     //Interval;
     float Probability;                                // Probability of the burst;
+
+    SER_DATA(ParticleBurst, Time, Count, Probability);
 };
 
 struct SharedParticlesData:public ResourceBase
@@ -45,16 +50,20 @@ struct SharedParticlesData:public ResourceBase
 
     //Shape
 
+    SER_DATA(SharedParticlesData, Duration,
+        IsLooping, StartDelayTime, StartLifeTime,
+        StartSpeed, StartSize, StartColor, MaxParticles, RateOverTime, ParticleBursts
+    )
 };
 
 struct Particle
 {
-    boost::uuids::uuid ParticleSystemUuid;
-	DirectX::SimpleMath::Vector3 Position;
-	DirectX::SimpleMath::Vector3 Color;
-	DirectX::SimpleMath::Vector3 Velocity;
-	float LifeTime;  
-	float Duration;
+    DirectX::SimpleMath::Vector4 pos = DirectX::SimpleMath::Vector4::Zero;
+    DirectX::SimpleMath::Vector4 size = DirectX::SimpleMath::Vector4::Zero;
+    DirectX::SimpleMath::Vector4 velocity = DirectX::SimpleMath::Vector4(1, 0, 0, 0);
+    DirectX::SimpleMath::Vector4 lifeTime = DirectX::SimpleMath::Vector4(0.0f, 5.0f, 5.0, 1.0f);
+    DirectX::SimpleMath::Vector4 color = DirectX::SimpleMath::Vector4(1, 1, 1, 1);
+    DirectX::SimpleMath::Vector4 state = DirectX::SimpleMath::Vector4(false, false, false, false);
 };
 
 struct SortListParticle

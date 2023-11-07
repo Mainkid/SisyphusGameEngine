@@ -63,9 +63,10 @@ public:
 
 private:
 	const std::string baseTexture = ".\\Engine\\Assets\\Resources\\Textures\\default_albedo.png";
-	const std::string baseCubemap = ".\\Engine\\Assets\\Resources\\Cubemaps\\StandardCubeMap.hdr";
+	const std::string baseCubemap = ".\\Engine\\Assets\\Resources\\Cubemaps\\cubemap.hdr";
 	const std::string baseMaterial = ".\\Engine\\Assets\\Resources\\Materials\\baseMaterial.mat";
 	const std::string baseModel = ".\\Engine\\Assets\\Resources\\Cube.fbx";
+	const std::string baseParticle = ".\\Engine\\Assets\\Resources\\ParticleSystem\\baseParticles.ps";
 	
 	
 };
