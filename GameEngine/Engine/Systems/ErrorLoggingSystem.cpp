@@ -1,7 +1,7 @@
 #include "ErrorLoggingSystem.h"
 #include <filesystem>
 
-unsigned SyErrorLoggingSystem::logDirCapacity = 10;
+unsigned SyErrorLoggingSystem::logDirCapacity = 2;
 
 void SyErrorLoggingSystem::SetLogDirectoryCapacity(unsigned newCapacity_)
 {
@@ -44,12 +44,13 @@ SyResult SyErrorLoggingSystem::Init()
 
 	std::filesystem::path logDir_(logDir);
 	unsigned fileCtr = 0;
-	std::vector<std::filesystem::directory_entry> logFiles;
+	std::vector<std::filesystem::path> logFiles;
 	logFiles.reserve(2 * logDirCapacity);
 	for (auto& logDirEntry : std::filesystem::directory_iterator(logDir_))
-		logFiles.push_back(logDirEntry);
-	for (auto i = 0; i != logFiles.size() - logDirCapacity; i++)
-		std::filesystem::remove(logFiles[i]);
+		logFiles.push_back(logDirEntry.path());
+	if (logFiles.size() > logDirCapacity)
+		for (auto i = 0; i < logDirCapacity; i++)
+			std::filesystem::remove(logFiles[i]);
 
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Error logging system initialization successful. ");
 	return SyResult();
