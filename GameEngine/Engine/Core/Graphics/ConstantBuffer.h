@@ -97,6 +97,7 @@ struct CB_SharedParticlesData
     Vector4 startColor;
     Vector4 startLifeTime;
     Vector4 startVelocity;
+    Vector4 shapeRadiusAndAngle;
 };
 
 class CB_ComputeShader

@@ -32,6 +32,12 @@ struct ParticleBurst
     SER_DATA(ParticleBurst, Time, Count, Probability);
 };
 
+enum EParticleEmitShape
+{
+	Sphere,
+    Cone
+};
+
 struct SharedParticlesData:public ResourceBase
 {
     //Base parameters
@@ -49,10 +55,16 @@ struct SharedParticlesData:public ResourceBase
     std::vector<ParticleBurst> ParticleBursts;        // Particles Bursts;
 
     //Shape
+    EParticleEmitShape ParticleEmitShape;
+    float Angle;
+    float Radius;
+
+
 
     SER_DATA(SharedParticlesData, Duration,
         IsLooping, StartDelayTime, StartLifeTime,
-        StartSpeed, StartSize, StartColor, MaxParticles, RateOverTime, ParticleBursts
+        StartSpeed, StartSize, StartColor, MaxParticles, RateOverTime, ParticleBursts,
+        ParticleEmitShape, Angle, Radius
     )
 };
 
@@ -64,6 +76,8 @@ struct Particle
     DirectX::SimpleMath::Vector4 lifeTime = DirectX::SimpleMath::Vector4(0.0f, 5.0f, 5.0, 1.0f);
     DirectX::SimpleMath::Vector4 color = DirectX::SimpleMath::Vector4(1, 1, 1, 1);
     DirectX::SimpleMath::Vector4 state = DirectX::SimpleMath::Vector4(false, false, false, false);
+    DirectX::SimpleMath::Vector4 shapeAngleRadius = DirectX::SimpleMath::Vector4(0, 0, 0, 0);
+
 };
 
 struct SortListParticle

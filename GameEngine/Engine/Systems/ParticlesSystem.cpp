@@ -4,6 +4,7 @@
 #include "EngineContext.h"
 #include "ResourceService.h"
 #include "../Core/Graphics/ConstantBuffer.h"
+#include "../Tools/ImageLoader.h"
 #include "Rendering/RenderContext.h"
 
 SyResult ParticlesSystem::Init()
@@ -12,6 +13,8 @@ SyResult ParticlesSystem::Init()
     _rc = ServiceLocator::instance()->Get<RenderContext>();
     _hc = ServiceLocator::instance()->Get<HardwareContext>();
     _rs = ServiceLocator::instance()->Get<ResourceService>();
+
+   
 
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "Particles system initialization successful. ");
     return SyResult();

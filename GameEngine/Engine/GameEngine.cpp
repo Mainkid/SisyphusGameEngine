@@ -89,17 +89,20 @@ int main()
     spd.Duration = 5;
     spd.IsLooping = true;
     spd.StartLifeTime.Fvalue = 5.0f;
-    auto json = ser.Serialize<SharedParticlesData>(spd);
+    spd.Angle = 30;
+    spd.Radius = 1;
+    spd.ParticleEmitShape = EParticleEmitShape::Sphere;
+    //auto json = ser.Serialize<SharedParticlesData>(spd);
 
-    //auto model = GameObjectHelper::CreateMesh(ecs, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath("./Game/Assets/fbx/artifact.fbx"));
-    //ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
-    //ser.AddEcsCompMeta<GameObjectComp>();
-    //ser.AddEcsCompMeta<TransformComponent>();
-    //ser.AddEcsCompMeta<MeshComponent>();
-    //ser.AddEcsCompMeta<LightComponent>();
-    //ser.AddEcsCompMeta<EditorBillboardComponent>();
+    ////auto model = GameObjectHelper::CreateMesh(ecs, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath("./Game/Assets/fbx/artifact.fbx"));
+    ////ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+    ////ser.AddEcsCompMeta<GameObjectComp>();
+    ////ser.AddEcsCompMeta<TransformComponent>();
+    ////ser.AddEcsCompMeta<MeshComponent>();
+    ////ser.AddEcsCompMeta<LightComponent>();
+    ////ser.AddEcsCompMeta<EditorBillboardComponent>();
 
-    //auto json = ser.Serialize<GameObjectComp>(*ecs);
+    ////auto json = ser.Serialize<GameObjectComp>(*ecs);
     //std::ofstream file;
     //file.open("baseParticles.ps", std::ios::trunc);
     //file << std::setw(1) << json;

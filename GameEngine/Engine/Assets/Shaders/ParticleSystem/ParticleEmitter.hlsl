@@ -10,6 +10,7 @@ struct SharedParticleData
     float4 startColor;
     float4 startLifeTime;
     float4 startVelocity;
+    float4 shapeRadiusAngle;
 };
 
 struct Particle
@@ -20,12 +21,18 @@ struct Particle
     float4 lifetime;
     float4 color;
     float4 state;
+    float4 shapeRadiusAngle;
 };
 
 
 RWStructuredBuffer<Particle> pool : register(u1);
 ConsumeStructuredBuffer<int> deadList : register(u2);
 Buffer<uint> particlesCounter : register(t0);
+Texture2D<float4> noiseTex : register(t1);
+
+SamplerState textureSampler : SAMPLER : register(s0);
+
+
 //AppendStructuredBuffer<int> sortList : register(u3);
 
 cbuffer Params : register(b0)
@@ -41,6 +48,36 @@ cbuffer Params : register(b0)
 // Compute Shader code  |
 //=======================
 
+float rand(float co,float2 seed)
+{
+    return 0.5 + (frac(sin(dot(float2(sin(co), cos(particleData.deltaTime.x)), float2(12.9898, 78.233))) * 43758.5453)) * 0.5;
+}
+
+float3 randVec3(float co)
+{
+    float3 vec=noiseTex.SampleLevel(textureSampler, float2(sin(co) * 0.5f + 0.5f, sin(particleData.deltaTime.x) * 0.5f + 0.5f),0);
+    vec -= float3(0.5f, 0.5f, 0.5f);
+    vec = vec * 2;
+    return normalize(vec);
+
+}
+
+void EmitParticle(int index)
+{
+    pool[index].lifetime.xy = float2(0, particleData.startLifeTime.x);
+    pool[index].state.x = true;
+    pool[index].color = particleData.startColor;
+    pool[index].position = particleData.startPosition;
+    pool[index].size = particleData.startSize;
+    
+    if (particleData.shapeRadiusAngle.x == 0) // Sphere
+    {
+        pool[index].velocity.xyz = randVec3(index);
+        pool[index].position.xyz += randVec3(sqrt(index)) * particleData.shapeRadiusAngle.y;
+    }
+    
+        
+}
 
 [numthreads(1, 1, 1)]
 void CSMain(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
@@ -51,11 +88,7 @@ void CSMain(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
     if (particlesCounter[0] < maxParticles)
     {
         int index = deadList.Consume();
-        pool[index].lifetime.xy = float2(0, particleData.startLifeTime.x);
-        pool[index].state.x = true;
-        pool[index].color = particleData.startColor;
-        pool[index].position = particleData.startPosition;
-        pool[index].size = particleData.startSize;
+        EmitParticle(index);
     }
 }
 

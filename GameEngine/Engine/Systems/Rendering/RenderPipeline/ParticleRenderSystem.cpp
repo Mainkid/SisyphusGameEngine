@@ -12,6 +12,11 @@ SyResult ParticleRenderSystem::Init()
     _ec = ServiceLocator::instance()->Get<EngineContext>();
     _rc = ServiceLocator::instance()->Get<RenderContext>();
     _hc = ServiceLocator::instance()->Get<HardwareContext>();
+
+    int width, height;
+    ImageLoader::LoadTextureFromFile(".//Engine//Assets//Resources//Textures//noise.png", _noiseTextureSrv.GetAddressOf(), &width, &height);
+
+
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "Particle Render System initialization successful.");
     return SyResult();
 }
@@ -53,6 +58,8 @@ SyResult ParticleRenderSystem::Run()
         dataGroup.SharedParticlesData.startPosition = Vector4(tc.localPosition);
         dataGroup.SharedParticlesData.startSize = Vector4(pc.SharedParticlesDataResource->StartSize.Fvalue);
         dataGroup.SharedParticlesData.startVelocity = Vector4(pc.SharedParticlesDataResource->StartSpeed.Fvalue);
+        dataGroup.SharedParticlesData.shapeRadiusAndAngle = Vector4(pc.SharedParticlesDataResource->ParticleEmitShape,
+            pc.SharedParticlesDataResource->Radius, pc.SharedParticlesDataResource->Angle, 1);
 
         HRESULT res = _hc->context->Map(pc.GroupCountConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
         CopyMemory(mappedResource.pData, &dataGroup, sizeof(CB_ComputeShader));
@@ -75,14 +82,16 @@ SyResult ParticleRenderSystem::Run()
             _hc->context->CSSetUnorderedAccessViews(2, 1, pc.DeadListUav.GetAddressOf(), nullptr);
         }
         _hc->context->CSSetShaderResources(0, 1, pc.CounterSrv.GetAddressOf());
+        _hc->context->CSSetShaderResources(1, 1, _noiseTextureSrv.GetAddressOf());
+        _hc->context->CSSetSamplers(0, 1, _rc->SamplerState.GetAddressOf());
 
         if (pc.ParticlesToEmit >= 1.0f )
         {
             _hc->context->Dispatch(int(pc.ParticlesToEmit), 1, 1);
             pc.ParticlesToEmit = pc.ParticlesToEmit-int(pc.ParticlesToEmit);
         }
-        _hc->context->CSSetShaderResources(0, 1, _rc->RhData.NullSrv);
-        
+        _hc->context->CSSetShaderResources(0, 2, _rc->RhData.NullSrv);
+       
 
         pc.ParticlesToEmit += pc.SharedParticlesDataResource->RateOverTime.Fvalue * _ec->deltaTime;
 

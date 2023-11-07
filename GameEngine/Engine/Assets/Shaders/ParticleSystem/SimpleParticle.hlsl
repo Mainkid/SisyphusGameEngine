@@ -12,6 +12,7 @@ struct Particle
     float4 lifetime;
     float4 color;
     float4 state;
+    float4 shapeRadiusAngle;
 };
 
 struct ParticleListItem

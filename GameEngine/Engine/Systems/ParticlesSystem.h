@@ -31,6 +31,7 @@ private:
 	const UINT MATRIX_WIDTH = BITONIC_BLOCK_SIZE;
 	const UINT MATRIX_HEIGHT = NUM_ELEMENTS / BITONIC_BLOCK_SIZE;
 
+
 	void InitRenderResources(ParticleComponent& pc);
 	void Clear(ParticleComponent& pc);
 	void InitBuffers(ParticleComponent& pc);

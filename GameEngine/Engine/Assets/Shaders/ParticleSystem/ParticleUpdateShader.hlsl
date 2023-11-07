@@ -10,6 +10,7 @@ struct SharedParticleData
     float4 startColor;
     float4 startLifeTime;
     float4 startVelocity;
+    float4 shapeRadiusAngle;
 };
 
 struct Particle
@@ -20,6 +21,7 @@ struct Particle
     float4 lifetime;
     float4 color;
     float4 state;
+    float4 shapeRadiusAngle;
 };
 
 struct ParticleListItem
@@ -59,7 +61,7 @@ void CSMain(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
     if (index < size - 1 && pool[index].state.x)
     {
         pool[index].position.xyz += 
-        particleData.startVelocity.xyz *particleData.startVelocity.w*particleData.deltaTime.x;
+        pool[index].velocity *particleData.startVelocity.w*particleData.deltaTime.x;
         pool[index].lifetime.x += particleData.deltaTime.x;
         
         if (pool[index].lifetime.x > pool[index].lifetime.y)
