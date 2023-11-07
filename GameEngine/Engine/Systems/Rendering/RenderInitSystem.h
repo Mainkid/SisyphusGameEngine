@@ -22,6 +22,7 @@ private:
 	void CreateDepthAndStencils() const;
 	void CreateShaderResourceViewsAndRenderTargets() const;
 	void CreateRasterizerStates() const;
+	void CreateHbao() const;
 	EngineContext* _ec = nullptr;
 	RenderContext* _rc = nullptr;
 	HardwareContext* _hc = nullptr;

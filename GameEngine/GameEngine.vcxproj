@@ -116,11 +116,12 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;GFSDK_SSAO_D3D11.win64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>
@@ -389,6 +390,7 @@
       <SDLCheck>true</SDLCheck>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\HbaoRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\LightRenderSystem.cpp">
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -637,6 +639,8 @@
     <ClCompile Include="Engine\Core\ECS\SystemsGroup.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.cpp" />
     <ClCompile Include="Engine\Systems\ErrorLoggingSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\ImageBasedLightingSystem.cpp" />
+    <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -653,8 +657,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
+    <ClInclude Include="Engine\Components\SkyboxResource.h" />
     <ClInclude Include="Engine\Components\ColliderComponent.h" />
     <ClInclude Include="Engine\Core\ECS\Event.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyHotReloadEvent.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyImageBasedLightingUpdateEvent.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeStartedEvent.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeEndedEvent.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SySceneLoadEvent.h" />
     <ClInclude Include="Engine\Core\ResourcePath.h" />
     <ClInclude Include="Engine\Systems\CollisionSystem.h" />
@@ -698,6 +708,7 @@
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudPropertiesSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudViewportSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorBillboardRenderSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\HbaoRenderSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\LightRenderSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\OpaqueRenderSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowRenderSystem.h" />
@@ -736,6 +747,7 @@
     <ClInclude Include="Engine\Tools\Data\Vector.h" />
     <ClInclude Include="Engine\Tools\MathHelper.h" />
     <ClInclude Include="Engine\Systems\MaterialUpdateSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\ImageBasedLightingSystem.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ToneMappingRenderSystem.h" />
     <ClInclude Include="Engine\Systems\ResourceSystem.h" />
@@ -745,6 +757,7 @@
     <ClInclude Include="Engine\Core\ECS\SystemsGroup.h" />
     <ClInclude Include="Engine\Systems\Rendering\HUD\HudConsoleSystem.h" />
     <ClInclude Include="Engine\Systems\ErrorLoggingSystem.h" />
+    <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
@@ -767,6 +780,10 @@
     <ClInclude Include="vendor\WICTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Engine\Assets\Shaders\PBRHelpers.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+    </None>
     <None Include="Engine\Assets\Shaders\ToneMapping.hlsl">
       <FileType>Document</FileType>
     </None>
@@ -777,7 +794,16 @@
     <None Include="Engine\Assets\Shaders\EditorGridShader.hlsl">
       <FileType>Document</FileType>
     </None>
+    <FxCompile Include="Engine\Assets\Shaders\EnvironmentPrefilter.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Engine\Assets\Shaders\GaussianBlur.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Engine\Assets\Shaders\IblLookUpTexture.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Engine\Assets\Shaders\IrradianceMapGenerator.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Engine\Assets\Shaders\OpaqueShader.hlsl">
@@ -839,6 +865,8 @@
     <None Include="vendor\DirectXTK\Inc\SimpleMath.inl" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Downloads\skybox.jpg" />
+    <Image Include="Engine\Assets\SkyBox\skybox.jpg" />
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_2.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_3.png" />

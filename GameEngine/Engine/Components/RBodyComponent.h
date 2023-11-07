@@ -30,7 +30,6 @@ struct SyRbTransform
 struct SyRBodyComponent
 {
 	SyRBodyComponent(	const SyRBodyType&			rbType,
-						const SyRbTransform&		rbTransform,
 						float						mass			= 1.0f);
 	
 	~SyRBodyComponent();
@@ -39,13 +38,10 @@ private:
 
 	SyRBodyType			_rbType;
 	float				_mass;
-	SyVector3			_origin;
-	SyVector3			_rotation;
 	
 	//fields initialized in SyPhysicsSystem::Init
-
+	
 	physx::PxRigidActor*	_rbActor = nullptr;
-	physx::PxShape*			_rbShape = nullptr;
 	std::size_t hash;
 
 	static physx::PxPhysics* _physics;

@@ -12,19 +12,19 @@ struct SyColliderMaterial
     float staticFriction	= 1.0f;
     float dynamicFriction	= 1.0f;
     float restitution		= 0.3f;
-    float density			= 0.0001f;
+    float density			= 0.001f;
 };
 
 enum SyPrimitiveColliderType
 {
-    SY_RB_SHAPE_TYPE_BOX = 0,
-    SY_RB_SHAPE_TYPE_SPHERE = 1,
-    SY_RB_SHAPE_TYPE_CAPSULE = 2
+    SY_COL_SHAPE_TYPE_BOX = 0,
+    SY_COL_SHAPE_TYPE_SPHERE = 1,
+    SY_COL_SHAPE_TYPE_CAPSULE = 2
 };
 
 struct SyPrimitiveColliderShapeDesc
 {
-    SyVector3   HalfExtent; //for box
+    SyVector3   Extent; //for box
     float       Radius; //for sphere and capsule
     float       HalfHeight; //for capsule
 };
@@ -56,6 +56,10 @@ private:
     float                   _halfHeight;    //for capsule
     SyColliderMaterial      _material;
     unsigned                _flags;
+
+    //members initialized in CollisionSystem::InitComponentP
+    
+    physx::PxShape*			_rbShape = nullptr;
     
     friend class SyCollisionSystem;
 };

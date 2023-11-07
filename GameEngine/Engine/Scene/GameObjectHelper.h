@@ -4,6 +4,7 @@
 #include "../Tools/Data/Vector.h"
 #include "../../Components/LightComponent.h"
 #include "../Components/RBodyComponent.h"
+#include "../Components/ColliderComponent.h"
 #include "../Tools/ErrorLogger.h"
 
 class GameObjectHelper
@@ -22,22 +23,22 @@ public:
 	static SyResult AddRigidBodyComponent(	entt::registry*			ecs,
 											entt::entity			entity,
 											const SyRBodyType&		rbType,
-											const SyRbTransform&	rbLocalTransform = { {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} },
 											float					mass			= 1.0);
+	static SyResult AddPrimitiveColliderComponent(	entt::registry*						ecs,
+													entt::entity						entity,
+													SyPrimitiveColliderType				colliderType,
+													const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
+													const SyColliderMaterial& 			material = SyColliderMaterial(),
+													unsigned							flags = 0);
 	
-	static entt::entity CreateStaticBox(entt::registry* ecs,
-										const SyVector3& position,
-										const SyVector3& rotation = SyVector3(), 
-										const SyVector3& scale = { 1.0f, 1.0f, 1.0f });
-
-	static entt::entity CreateDynamicBox(	entt::registry* ecs, 
-											const SyVector3& position, 
-											const SyVector3& rotation = SyVector3(), 
-											const SyVector3& scale = { 1.0f, 1.0f, 1.0f });
-
 	static entt::entity CreateLight(entt::registry* ecs, ELightType lightType, Vector3 pos = Vector3::Zero);
 
 	static entt::entity CreateMesh(entt::registry* ecs, boost::uuids::uuid uuid, Vector3 pos=Vector3::Zero);
-
+	static SyResult AddMeshComponent(entt::registry* ecs, entt::entity entity, boost::uuids::uuid uuid); 
+	static SyResult AddCubeMeshComponent(entt::registry* ecs, entt::entity entity);
 	static entt::entity CreateParticleSystem(entt::registry* ecs);
+
+	static entt::entity CreateSkybox(entt::registry* ecs,boost::uuids::uuid uuid = boost::uuids::nil_uuid());
+
+	
 };

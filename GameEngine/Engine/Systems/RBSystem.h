@@ -5,7 +5,7 @@
 #include "../Core/ECS/SystemBase.h"
 
 
-# pragma region forward declaration
+#pragma region forward declaration
 namespace physx
 {
     class PxDefaultAllocator;

@@ -10,6 +10,9 @@
 #include "../../Components/RBodyComponent.h"
 #include "../Systems/TransformHelper.h"
 #include "../../Tools/Data/Vector.h"
+#include "../Components/ImageBasedLightingComponent.h"
+#include "../Components/SkyboxComponent.h"
+#include "../Systems/ResourceService.h"
 
 
 entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, SyVector3 pos = Vector3::Zero)
@@ -102,8 +105,7 @@ void GameObjectHelper::RemoveChild(entt::registry* ecs, entt::entity parent, ent
 	ecs->get<TransformComponent>(parent).children.erase(child);
 }
 
-SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::entity entity, const SyRBodyType& rbType,
-	const SyRbTransform& rbLocalTransform, float mass)
+SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::entity entity, const SyRBodyType& rbType, float mass)
 {
 	SyResult result;
 	auto* transformComponent = ecs->try_get<TransformComponent>(entity);
@@ -114,68 +116,31 @@ SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::enti
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks Transform Component. You can't attach RigidBody Component to it.", (int)entity);
 		return result;
 	}
-	SyRbTransform rbGlobalTransform;
-	rbGlobalTransform.Origin = transformComponent->position + rbLocalTransform.Origin;
-	rbGlobalTransform.Rotation = transformComponent->rotation + rbLocalTransform.Rotation;
 	ecs->emplace<SyRBodyComponent>(	entity,
 									rbType,
-									rbGlobalTransform,
 									mass);
 	ecs->emplace<SyRbCreateOnNextUpdateTag>(entity);
 	return result;
 }
 
+SyResult GameObjectHelper::AddPrimitiveColliderComponent(entt::registry* ecs, entt::entity entity,
+	SyPrimitiveColliderType colliderType, const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
+	const SyColliderMaterial& material, unsigned flags)
+{
+	SyResult result;
+	auto* rbComponent = ecs->try_get<SyRBodyComponent>(entity);
+	if (rbComponent == nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("Entity %d lacks RigidBody Component. You can't attach PrimitiveCollider Component to it.", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks RigidBody Component. You can't attach PrimitiveCollider Component to it..", (int)entity);
+		return result;
+	}
+	ecs->emplace<SyPrimitiveColliderComponent>(entity, colliderType, colliderShapeDesc,  material, flags);
+	ecs->emplace<SyColliderCreateOnNextUpdateTag>(entity);
+	return result;
+}
 
-// entt::entity GameObjectHelper::CreateStaticBox(	entt::registry* ecs, 
-//                                                 const SyVector3& position, 
-//                                                 const SyVector3& rotation, 
-//                                                 const SyVector3& scale,
-//                                                 const SyRBodyMaterial& material)
-// {
-// 	auto ent = Create(ecs, "StaticBox");
-//
-// 	ecs->emplace<MeshComponent>(ent);
-//
-// 	auto& tf = ecs->get<TransformComponent>(ent);
-// 	tf.localPosition = position;
-// 	tf.localRotation = rotation;
-// 	tf.localScale = scale;
-//
-// 	SyRbTransform boxDesc;
-// 	boxDesc.RbType = SY_RB_TYPE_STATIC;
-// 	boxDesc.rbShapeType = SY_RB_SHAPE_TYPE_BOX;
-// 	boxDesc.Origin = position;
-// 	boxDesc.Rotation = rotation;
-// 	boxDesc.HalfExtent = scale;
-// 	ecs->emplace<SyRBodyComponent>(ent, boxDesc, material);
-//
-// 	return ent;
-// }
-//
-// entt::entity GameObjectHelper::CreateDynamicBox(entt::registry* ecs, 
-// 												const SyVector3& position, 
-// 												const SyVector3& rotation, 
-// 												const SyVector3& scale,
-// 												const SyRBodyMaterial& material)
-// {
-// 	auto ent = Create(ecs, "DynamicBox");
-//
-// 	ecs->emplace<MeshComponent>(ent);
-//
-// 	auto& tc = ecs->get<TransformComponent>(ent);
-// 	tc.localPosition = position;
-// 	tc.localRotation = rotation;
-// 	tc.localScale = scale;
-//
-// 	SyRbTransform boxDesc;
-// 	boxDesc.RbType = SY_RB_TYPE_DYNAMIC;
-// 	boxDesc.rbShapeType = SY_RB_SHAPE_TYPE_BOX;
-// 	boxDesc.Origin = position;
-// 	boxDesc.Rotation = rotation;
-// 	boxDesc.HalfExtent = scale;
-// 	ecs->emplace<SyRBodyComponent>(ent, boxDesc, material);
-// 	return ent;
-// }
 
 entt::entity GameObjectHelper::CreateLight(entt::registry* ecs, ELightType lightType,Vector3 pos)
 {
@@ -207,9 +172,35 @@ entt::entity GameObjectHelper::CreateMesh(entt::registry* ecs, boost::uuids::uui
 	return entt::entity();
 }
 
+SyResult GameObjectHelper::AddMeshComponent(entt::registry* ecs, entt::entity entity, boost::uuids::uuid uuid)
+{
+	MeshComponent& mesh = ecs->emplace<MeshComponent>(entity);
+	mesh.modelUUID = uuid;
+	return SyResult();
+}
+
+SyResult GameObjectHelper::AddCubeMeshComponent(entt::registry* ecs, entt::entity entity)
+{
+	return AddMeshComponent(ecs, entity, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Cube.fbx"));
+}
+
 entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 {
 	auto ent = Create(ecs, "ParticleObject");
 	ecs->emplace<ParticleComponent>(ent);
+	return ent;
+}
+
+entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs, boost::uuids::uuid uuid)
+{
+	auto ent = ecs->create();
+	ecs->emplace<GameObjectComp>(ent);
+	ecs->emplace<SkyboxComponent>(ent);
+	ecs->emplace<ImageBasedLightingComponent>(ent);
+	
+	if (uuid == boost::uuids::nil_uuid())
+		uuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_CUBEMAP].uuid;
+	ecs->get<SkyboxComponent>(ent).uuid = uuid;
+
 	return ent;
 }

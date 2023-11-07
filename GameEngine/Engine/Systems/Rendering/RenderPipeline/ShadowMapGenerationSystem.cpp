@@ -11,9 +11,9 @@
 
 SyResult ShadowMapGenerationSystem::Init()
 {
-    ec = ServiceLocator::instance()->Get<EngineContext>();
-    hc = ServiceLocator::instance()->Get<HardwareContext>();
-    rc = ServiceLocator::instance()->Get<RenderContext>();
+    _ec = ServiceLocator::instance()->Get<EngineContext>();
+    _hc = ServiceLocator::instance()->Get<HardwareContext>();
+    _rc = ServiceLocator::instance()->Get<RenderContext>();
     SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowMapGeneration system initialization successful. ");
     return SyResult();
 }
@@ -22,21 +22,16 @@ SyResult ShadowMapGenerationSystem::Run()
 {
     CB_LightBuffer lightBuffer;
 
-    float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    ID3D11ShaderResourceView* srvNull[] = { nullptr,nullptr,nullptr,nullptr,nullptr };
 
-    ID3D11ShaderResourceView* resources[] = { rc->GBuffer->DiffuseSrv.Get(),rc->GBuffer->NormalSrv.Get(),rc->GBuffer->PositionSrv.Get(),rc->GBuffer->IdSrv.Get(),rc->GBuffer->HbaoSrv.Get() };
-    //hc->context->ClearRenderTargetView(engine->rtv.Get(), bgColor);
-    //hc->renderTarget->ClearRenderTarget(hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL);
 
-    hc->context->ClearRenderTargetView(rc->ShadowMapRTV, bgColor);
-    UINT strides[1] = { 32 };
-    UINT offsets[1] = { 0 };
+    ID3D11ShaderResourceView* resources[] = { _rc->GBuffer->DiffuseSrv.Get(),_rc->GBuffer->NormalAndDepthSrv.Get(),_rc->GBuffer->PositionSrv.Get(),_rc->GBuffer->IdSrv.Get(),_rc->GBuffer->DepthSrv.Get() };
 
-    UINT stridesLight[1] = { 48 };
-    UINT offsetsLight[1] = { 0 };
 
-    hc->context->OMSetBlendState(rc->LightBlendState.Get(), nullptr, 0xffffffff);
+    _hc->context->ClearRenderTargetView(_rc->ShadowMapRTV, _rc->RhData.bgColor0001);
+
+
+
+    _hc->context->OMSetBlendState(_rc->LightBlendState.Get(), nullptr, 0xffffffff);
 
     auto [camera, cameraTf] = CameraHelper::Find(_ecs);
 
@@ -47,17 +42,17 @@ SyResult ShadowMapGenerationSystem::Run()
         TransformComponent& tc = view.get<TransformComponent>(entity);
         if (light.LightType == ELightType::Directional)
         {
-            lightBuffer.lightData.Pos = Vector4(tc.position.x, tc.position.y, tc.position.z, 1);
+            lightBuffer.lightData.Pos = Vector4(tc._position.x, tc._position.y, tc._position.z, 1);
             lightBuffer.lightData.Color = light.Color;
             lightBuffer.lightData.Dir = Vector4::Transform(Vector4::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation));
             lightBuffer.lightData.additiveParams = light.ParamsRadiusAndAttenuation;
             lightBuffer.eyePos = Vector4(
-                cameraTf.position.x,
-                cameraTf.position.y,
-                cameraTf.position.z,
+                cameraTf._position.x,
+                cameraTf._position.y,
+                cameraTf._position.z,
                 1.0f);
 
-            hc->context->ClearDepthStencilView(hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1, 0);
+            _hc->context->ClearDepthStencilView(_hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1, 0);
 
             if (light.LightType == ELightType::Directional || light.LightType == ELightType::Ambient)
             {
@@ -75,7 +70,7 @@ SyResult ShadowMapGenerationSystem::Run()
             }
             else if (light.LightType == ELightType::PointLight)
             {
-                lightBuffer.lightData.Pos = Vector4(tc.position.x, tc.position.y, tc.position.z, 1);
+                lightBuffer.lightData.Pos = Vector4(tc._position.x, tc._position.y, tc._position.z, 1);
                 lightBuffer.lightData.additiveParams = light.ParamsRadiusAndAttenuation;
                 lightBuffer.baseData.world = Matrix::CreateScale(light.ParamsRadiusAndAttenuation.x,
                     light.ParamsRadiusAndAttenuation.x,light.ParamsRadiusAndAttenuation.x)*tc.transformMatrix;
@@ -84,55 +79,55 @@ SyResult ShadowMapGenerationSystem::Run()
 
 
             D3D11_MAPPED_SUBRESOURCE mappedResource;
-            HRESULT res = hc->context->Map(rc->LightConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+            HRESULT res = _hc->context->Map(_rc->LightConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
             CopyMemory(mappedResource.pData, &lightBuffer, sizeof(CB_LightBuffer));
-            hc->context->Unmap(rc->LightConstBuffer->buffer.Get(), 0);
-            hc->context->VSSetConstantBuffers(0, 1, rc->LightConstBuffer->buffer.GetAddressOf());
-            hc->context->PSSetConstantBuffers(0, 1, rc->LightConstBuffer->buffer.GetAddressOf());
+            _hc->context->Unmap(_rc->LightConstBuffer->buffer.Get(), 0);
+            _hc->context->VSSetConstantBuffers(0, 1, _rc->LightConstBuffer->buffer.GetAddressOf());
+            _hc->context->PSSetConstantBuffers(0, 1, _rc->LightConstBuffer->buffer.GetAddressOf());
 
 
-            //hc->context->OMSetBlendState(rc->LightBlendState.Get(), nullptr, 0xffffffff);
-            hc->context->PSSetSamplers(0, 1, rc->SamplerState.GetAddressOf());
-            hc->context->PSSetSamplers(1, 1, rc->SamplerDepthState.GetAddressOf());
-            hc->context->OMSetRenderTargets(1, &rc->ShadowMapRTV, nullptr);
+            //_hc->context->OMSetBlendState(_rc->LightBlendState.Get(), nullptr, 0xffffffff);
+            _hc->context->PSSetSamplers(0, 1, _rc->SamplerState.GetAddressOf());
+            _hc->context->PSSetSamplers(1, 1, _rc->SamplerDepthState.GetAddressOf());
+            _hc->context->OMSetRenderTargets(1, &_rc->ShadowMapRTV, nullptr);
             
 
             if (light.LightType == ELightType::Directional)
             {
-                hc->context->PSSetShaderResources(0, 5, resources);
-                hc->context->RSSetState(rc->CullBackRasterizerState.Get());
-                hc->context->OMSetDepthStencilState(rc->OffStencilState.Get(), 0);
-                hc->context->VSSetShader(rc->ShadowMapGenerator->vertexShader.Get(), nullptr, 0);
-                hc->context->PSSetShader(rc->ShadowMapGenerator->pixelShader.Get(), nullptr, 0);
-                hc->context->PSSetShaderResources(5, 1, light.ShadowResourceView.GetAddressOf());
-                //hc->context->PSSetShaderResources(6, 1, &rc->SkyboxSRV);
-                hc->context->IASetInputLayout(rc->ShadowMapGenerator->layout.Get());
-                hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
-                hc->context->IASetIndexBuffer(rc->IndexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-                hc->context->IASetVertexBuffers(0, 1, rc->VertexQuadBuffer->buffer.GetAddressOf(),
-                    strides, offsets);
-                hc->context->DrawIndexed(6, 0, 0);
+                _hc->context->PSSetShaderResources(0, 5, resources);
+                _hc->context->RSSetState(_rc->CullBackRasterizerState.Get());
+                _hc->context->OMSetDepthStencilState(_rc->OffStencilState.Get(), 0);
+                _hc->context->VSSetShader(_rc->ShadowMapGenerator->vertexShader.Get(), nullptr, 0);
+                _hc->context->PSSetShader(_rc->ShadowMapGenerator->pixelShader.Get(), nullptr, 0);
+                _hc->context->PSSetShaderResources(5, 1, light.ShadowResourceView.GetAddressOf());
+                //_hc->context->PSSetShaderResources(6, 1, &_rc->SkyboxSRV);
+                _hc->context->IASetInputLayout(_rc->ShadowMapGenerator->layout.Get());
+                _hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
+                _hc->context->IASetIndexBuffer(_rc->IndexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+                _hc->context->IASetVertexBuffers(0, 1, _rc->VertexQuadBuffer->buffer.GetAddressOf(),
+                    _rc->RhData.strides32, _rc->RhData.offsets0);
+                _hc->context->DrawIndexed(6, 0, 0);
             }
             else if (light.LightType == ELightType::PointLight)
             {
-                hc->context->RSSetState(rc->CullBackRasterizerState.Get());
-                hc->context->OMSetDepthStencilState(rc->OffStencilState.Get(), 0);
-                hc->context->VSSetShader(rc->ShadowMapPointLightGenerator->vertexShader.Get(), nullptr, 0);
-                hc->context->PSSetShader(rc->ShadowMapPointLightGenerator->pixelShader.Get(), nullptr, 0);
-                hc->context->PSSetShaderResources(0, 1, light.ShadowCubeMapSrv.GetAddressOf());
-                hc->context->PSSetShaderResources(1, 1, rc->GBuffer->PositionSrv.GetAddressOf());
-                //hc->context->PSSetShaderResources(6, 1, &rc->SkyboxSRV);
-                hc->context->IASetInputLayout(rc->ShadowMapPointLightGenerator->layout.Get());
-                hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
-                hc->context->IASetIndexBuffer(rc->IndexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-                hc->context->IASetVertexBuffers(0, 1, rc->VertexQuadBuffer->buffer.GetAddressOf(),
-                    strides, offsets);
-                hc->context->DrawIndexed(6, 0, 0);
+                _hc->context->RSSetState(_rc->CullBackRasterizerState.Get());
+                _hc->context->OMSetDepthStencilState(_rc->OffStencilState.Get(), 0);
+                _hc->context->VSSetShader(_rc->ShadowMapPointLightGenerator->vertexShader.Get(), nullptr, 0);
+                _hc->context->PSSetShader(_rc->ShadowMapPointLightGenerator->pixelShader.Get(), nullptr, 0);
+                _hc->context->PSSetShaderResources(0, 1, light.ShadowCubeMapSrv.GetAddressOf());
+                _hc->context->PSSetShaderResources(1, 1, _rc->GBuffer->PositionSrv.GetAddressOf());
+                //_hc->context->PSSetShaderResources(6, 1, &_rc->SkyboxSRV);
+                _hc->context->IASetInputLayout(_rc->ShadowMapPointLightGenerator->layout.Get());
+                _hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
+                _hc->context->IASetIndexBuffer(_rc->IndexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+                _hc->context->IASetVertexBuffers(0, 1, _rc->VertexQuadBuffer->buffer.GetAddressOf(),
+                    _rc->RhData.strides32, _rc->RhData.offsets0);
+                _hc->context->DrawIndexed(6, 0, 0);
             }
         }
     }
-    hc->context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
-    hc->context->PSSetShaderResources(0, 5, srvNull);
+    _hc->context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
+    _hc->context->PSSetShaderResources(0, 5, _rc->RhData.NullSrv);
     return SyResult();
 }
 

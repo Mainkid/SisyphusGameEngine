@@ -1,4 +1,4 @@
-# GameEngine
+# SisyphusEngine
 Open source 3D Game Engine
 
 

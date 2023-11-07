@@ -52,4 +52,4 @@ struct EngineContext : public IService
 	
 };
 
-//TODO: Перенести resourceLibrary в ResourceService;
+//TODO: РџРµСЂРµРЅРµСЃС‚Рё resourceLibrary РІ ResourceService;

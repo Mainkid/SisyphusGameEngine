@@ -13,6 +13,39 @@ SyResult SyCollisionSystem::Init()
 	return SyResult();
 }
 
+SyResult SyCollisionSystem::Run()
+{
+	SyResult result;
+	if(ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
+		return SyResult();
+	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
+	if (deltaTime == 0)
+	{
+		result.code = SY_RESCODE_UNEXPECTED;
+		result.message = "EngineContext.deltaTime == 0";
+		return result;
+	}
+	auto toInitView = _ecs->view<SyRBodyComponent, SyPrimitiveColliderComponent, SyColliderCreateOnNextUpdateTag>();
+
+	for (auto& entity : toInitView)
+	{
+		auto& rbComponent = _ecs->get<SyRBodyComponent>(entity);
+		auto& cComponent = _ecs->get<SyPrimitiveColliderComponent>(entity);
+		if (InitComponentP(entity, rbComponent, cComponent).code != SY_RESCODE_OK)
+		{
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to initialize PrimitiveCollider component on entity %d", (int)entity);
+			_ecs->remove<SyRBodyComponent>(entity);
+		}
+		_ecs->remove<SyColliderCreateOnNextUpdateTag>(entity);
+	}
+	return result;
+}
+
+SyResult SyCollisionSystem::Destroy()
+{
+	return SyResult();
+}
+
 SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyComponent& rbComponent,
                                            SyPrimitiveColliderComponent& cComponent)
 {
@@ -21,27 +54,26 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyCo
 																	cComponent._material.dynamicFriction,
 																	cComponent._material.restitution);
 	float shapeVolume = 0.0f;
-	rbComponent._rbActor->detachShape(*rbComponent._rbShape);
-	rbComponent._rbShape->release();
+	//rbComponent._rbActor->detachShape(*rbComponent._rbShape);
 	switch (cComponent._colliderType)
     {
-    case SY_RB_SHAPE_TYPE_BOX:
-    	rbComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
+    case SY_COL_SHAPE_TYPE_BOX:
+		
+    	cComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
 																		PxBoxGeometry(cComponent._extent),
 																		pxMaterial);
 		shapeVolume = SyMathHelper::CalculateBoxVolume(cComponent._extent);
 		break;
-    case SY_RB_SHAPE_TYPE_SPHERE:
-    	rbComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
+    case SY_COL_SHAPE_TYPE_SPHERE:
+    	cComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
 																		PxSphereGeometry(cComponent._radius),
 																		pxMaterial);
 		shapeVolume = SyMathHelper::CalculateSphereVolume(cComponent._radius);
 		break;
-    case SY_RB_SHAPE_TYPE_CAPSULE:
-    	rbComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
+    case SY_COL_SHAPE_TYPE_CAPSULE:
+    	cComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
 																		PxCapsuleGeometry(cComponent._radius, cComponent._halfHeight),
 																		pxMaterial);
-		shapeVolume = SyMathHelper::CalculateCapsuleVolume(cComponent._radius, cComponent._halfHeight);
 		break;
     default:
     		result.code = SY_RESCODE_ERROR;
@@ -49,17 +81,14 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyCo
     		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Unknown shape type detected in Collider Component on entity %d", (int)entity);
     	break;
     }
-	if (cComponent._flags & SyColliderFlags::SY_COL_SET_MASS_MANUALLY)
-		cComponent._material.density = shapeVolume / rbComponent._mass;
-	if (rbComponent._rbType == SY_RB_TYPE_DYNAMIC)
+	bool updateMassResult = true;
+	if (!(cComponent._flags & SyColliderFlags::SY_COL_SET_MASS_MANUALLY) && rbComponent._rbType == SY_RB_TYPE_DYNAMIC)
+		updateMassResult = PxRigidBodyExt::updateMassAndInertia(	*static_cast<PxRigidBody*>(rbComponent._rbActor),
+																	cComponent._material.density);
+	if (updateMassResult == false)
 	{
-		bool updateMassResult = PxRigidBodyExt::updateMassAndInertia(	*static_cast<PxRigidBody*>(rbComponent._rbActor),
-																		cComponent._material.density);
-		if (updateMassResult == false)
-		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::updateMassAndInertia returned false");
-			return result;
-		}
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::updateMassAndInertia returned false");
+		return result;
 	}
 	return result;
 }

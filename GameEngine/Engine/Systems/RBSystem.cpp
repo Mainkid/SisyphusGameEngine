@@ -41,6 +41,8 @@ SyResult SyRBodySystem::Init()
 SyResult SyRBodySystem::Run()
 {
 	SyResult result;
+	if(ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
+		return SyResult();
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
 	if (deltaTime == 0)
 	{
@@ -107,7 +109,6 @@ SyResult SyRBodySystem::Run()
 
 SyResult SyRBodySystem::Destroy()
 {
-	PX_RELEASE(_scene);
 	PX_RELEASE(_physics);
 	PX_RELEASE(_foundation);
 	SY_LOG_PHYS(SY_LOGLEVEL_INFO, "Physics system destruction successful. ");
@@ -119,11 +120,11 @@ SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyCompone
 	SyResult result;
 	switch (rbComponent._rbType)
 	{
-	case SY_RB_TYPE_STATIC: rbComponent._rbActor = _physics->createRigidStatic(PxTransform(rbComponent._origin, 
-														SyVector3::EulerToPxQuat(rbComponent._rotation)));
+	case SY_RB_TYPE_STATIC: rbComponent._rbActor = _physics->createRigidStatic(PxTransform(tComponent._position, 
+														SyVector3::EulerToPxQuat(tComponent._rotation)));
 		break;
-	case SY_RB_TYPE_DYNAMIC: rbComponent._rbActor = _physics->createRigidDynamic(PxTransform(rbComponent._origin, 
-														SyVector3::EulerToPxQuat(rbComponent._rotation)));
+	case SY_RB_TYPE_DYNAMIC: rbComponent._rbActor = _physics->createRigidDynamic(PxTransform(tComponent._position, 
+														SyVector3::EulerToPxQuat(tComponent._rotation)));
 		break;
 	default:
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Unknown Rigid Body type in SyRbComponent. Entity: %d.", (unsigned)entity);
@@ -131,75 +132,16 @@ SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyCompone
 		result.message = xstring("Unknown Rigid Body type in SyRbComponent. Entity: %d.", (unsigned)entity);
 		return result;
 	};
-	static const float UNIT_SPHERE_RADIUS = powf(3.0f / 4 / SyMathHelper::PI, 1.0f / 3); //radius of a sphere with volume equal to 1
-	rbComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
-																	PxSphereGeometry(UNIT_SPHERE_RADIUS),
-																	*_physics->createMaterial(0.0f, 0.0f, 0.0f));
-	float density = 1.0f / rbComponent._mass; 
-	//rbComponent._rbShape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, false);
-	//rbComponent._rbShape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, false);
 	if (rbComponent._rbType == SY_RB_TYPE_DYNAMIC)
 	{
-		bool updateMassResult = PxRigidBodyExt::updateMassAndInertia(	*static_cast<PxRigidBody*>(rbComponent._rbActor),
-																		density);
+		bool updateMassResult = PxRigidBodyExt::setMassAndUpdateInertia(	*static_cast<PxRigidBody*>(rbComponent._rbActor),
+																			rbComponent._mass);
 		if (updateMassResult == false)
 		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::updateMassAndInertia returned false");
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::setMassAndUpdateInertia returned false");
 			return result;
 		}
 	}
-
-	// switch (rbComponent._rbShapeType)
-	// {
-	// case SY_RB_SHAPE_TYPE_BOX:
-	// {
-	// 	auto boxDesc = static_cast<const SyRBodyBoxShapeDesc&>(rbComponent._rbShapeDesc);
-	// 	PxRigidActorExt::createExclusiveShape(*(rbComponent._rbActor),
-	// 		PxBoxGeometry(boxDesc.HalfExtent),
-	// 		*physics->createMaterial(
-	// 			rbComponent._rbMaterial.staticFriction,
-	// 			rbComponent._rbMaterial.dynamicFriction,
-	// 			rbComponent._rbMaterial.restitution));
-	// }
-	// break;
-	// case SY_RB_SHAPE_TYPE_SPHERE:
-	// 	auto sphereDesc = static_cast<const SyRBodySphereShapeDesc&>(rbComponent._rbShapeDesc);
-	// 	PxRigidActorExt::createExclusiveShape(*(rbComponent._rbActor),
-	// 		PxSphereGeometry(sphereDesc.Radius),
-	// 		*physics->createMaterial(
-	// 			rbComponent._rbMaterial.staticFriction,
-	// 			rbComponent._rbMaterial.dynamicFriction,
-	// 			rbComponent._rbMaterial.restitution));
-	// break;
-	// case SY_RB_SHAPE_TYPE_TRIMESH:
-	// 		auto trimeshDesc = static_cast<const SyRBodyTrimeshShapeDesc&>(rbComponent._rbShapeDesc);
-	// 		PxTriangleMeshDesc meshDesc;
-	// 		meshDesc.points.count		= trimeshDesc.NumVertices;
-	// 		meshDesc.points.data		= trimeshDesc.FirstVertex;
-	// 		meshDesc.points.stride		= trimeshDesc.VERTEX_STRIDE;
-	// 		meshDesc.triangles.count	= trimeshDesc.NumTriangles;
-	// 		meshDesc.triangles.data		= trimeshDesc.FirstIndex;
-	// 		meshDesc.triangles.stride	= trimeshDesc.TRIANGLE_STRIDE;
-	// 		PxTolerancesScale scale;
-	// 		PxCookingParams params(scale);
-	// 		PxDefaultMemoryOutputStream writeBuffer;
-	// 		PxTriangleMeshCookingResult::Enum cookingResult;
-	// 		bool trimeshCookingStatus = PxCookTriangleMesh(params, meshDesc, writeBuffer, &cookingResult);
-	// 		if (trimeshCookingStatus != true)
-	// 		{
-	// 			SY_LOGLEVEL_ERROR("Failed to cook triangle mesh in SyRbComponent. Entity: %d.", (unsigned)entity);
-	// 			result.code = SY_RESCODE_ERROR;
-	// 			result.message = xstring("Failed to cook triangle mesh in SyRbComponent. Entity: %d.", (unsigned)entity);
-	// 			return result;
-	// 		}
-	// 		PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
-	// 		auto* triMesh = physics->createTriangleMesh(readBuffer);
-	// 	break;
-	// default:
-	// 	SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Unknown rigid body shape type.");
-	// 	
-	// 	return result;
-	// }
 	if (_scene->addActor(*rbComponent._rbActor) == false)
 	{
 		result.code = SY_RESCODE_ERROR;

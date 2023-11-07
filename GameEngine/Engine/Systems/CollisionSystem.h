@@ -5,7 +5,7 @@ struct TransformComponent;
 struct SyPrimitiveColliderComponent;
 struct SyRBodyComponent;
 
-class SyCollisionSystem : SystemBase
+class SyCollisionSystem : public SystemBase
 {
 public:
     SyResult Init() override;

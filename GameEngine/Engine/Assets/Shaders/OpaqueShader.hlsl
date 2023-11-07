@@ -45,7 +45,7 @@ struct GBuffer
 {
     float4 Albedo : SV_Target0;
     float4 Metallic : SV_Target1;
-    float4 Roughness : SV_Target2;
+    float Depth : SV_Target2;
     float4 Emissive : SV_Target3;
     float4 Normals : SV_Target4;
     float4 Position : SV_Target5;
@@ -94,13 +94,14 @@ GBuffer PSMain(PS_IN input) : SV_Target
     //normal = input.normals;
     //normal = input.normals;
     
-    output.Normals = float4(normal * (roughnessVec.g < 0) + input.normals.xyz * (roughnessVec.g >= 0), 1.0f);
+    output.Normals = float4(normal * (roughnessVec.g < 0) + input.normals.xyz * (roughnessVec.g >= 0), input.posH.z/input.posH.w);
     output.Position = float4(input.posW.xyz, 1.0f);
     output.Albedo = float4(pixelColor, 1.0f);
     output.Metallic = float4(metallicColor, roughness);
     //output.Roughness = float4(roughness, roughness, roughness, 1);
     output.Emissive = emissive;
     output.InstanceID = instanceID;
+    output.Depth = input.posH.z / input.posH.w;
     //output.Depth = float4(input.posH.z / input.posH.w, input.posH.z / input.posH.w, input.posH.z / input.posH.w, 1.0f);
     //output.Specular = float4(0.5f, 0.5f, 0.5f, 50.0f);
       

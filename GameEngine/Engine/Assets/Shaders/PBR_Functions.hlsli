@@ -1,4 +1,4 @@
-static const float PI = 3.14159265f;
+#define PI 3.14159265f
 
 // GGX/Trowbridge-
 //Reitz Normal
@@ -38,10 +38,15 @@ float3 F(float3 F0, float3 V, float3 H)
 
 }
 
+float3 FwithRoughness(float cosTheta, float3 F0, float roughness)
+{
+    return F0 + (max(float3(1.0 - roughness, 1.0 - roughness, 1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}
+
 float3 PBR(float3 N, float3 V, float3 L, float3 H, float3 F0, float3 lightColor, float3 albedo, float roughness, float3 metallic, float4 emmisive, float lightIntensity)
 {
     float alpha = roughness;
-    float3 metallicMesh = metallic;
+    float3 metallicMesh = float3(metallic.x, metallic.x, metallic.x);
     float4 emissivityMesh = emmisive;
     float3 albedoMesh = albedo;
     

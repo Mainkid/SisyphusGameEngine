@@ -31,10 +31,16 @@ Texture2D<float4> EmissiveTex : register(t3);
 Texture2D<float4> NormalTex : register(t4);
 Texture2D<float4> PositionTex : register(t5);
 Texture2D<float4> InstanceIDTex : register(t6);
+Texture2D AoTex : register(t7);
 Texture2D shadowTexture : register(t8);
 Texture2D skyboxTexture : register(t9);
 Texture2DArray depthMapTexture : register(t10);
-//Texture2D depthTexture : register(t10);
+
+
+//IBL Stuff
+TextureCube irradianceTexture : register(t11);
+Texture2D iblLookUpTexture : register(t12);
+TextureCube prefilteredEnvironmentTexture : register(t13);
 
 
 SamplerState textureSampler : SAMPLER : register(s0);
@@ -105,7 +111,6 @@ float4 PS_Directional(PS_IN input) : SV_Target
 {
     
     float3 albedoColor = DiffuseTex.Sample(textureSampler, input.col.xy);
-    //pixelColor = pow(pixelColor, 1.0f / 2.2f);
     float3 worldPos = PositionTex.Sample(textureSampler, input.col.xy);
     float3 normal = NormalTex.Sample(textureSampler, input.col.xy);
     float3 metallicColor = MetallicTex.Sample(textureSampler, input.col.xy);
@@ -119,8 +124,7 @@ float4 PS_Directional(PS_IN input) : SV_Target
     float lightIntesity = lightData.color.w;
     float specularAlpha = 50.0f;
     float3 H = normalize(toEye + lightVec);
-    
-    //PCF --->
+
     float blendArea = 0.2f;
     
     float3 projectTexCoord;
@@ -140,19 +144,11 @@ float4 PS_Directional(PS_IN input) : SV_Target
     
    
     float shadowSum1 = SampleVarianceShadowMap(worldPos,layer);
-    //float shadowSum2 = calcShadowValue(worldPos, layer2, bias);
-    
-    //float lerpValue = 1-clamp((-depthVal+distances[layer].x) / blendArea, 0, 1);
-    //return float4(lerpValue, 0, 0, 1);
-    //shadowSum1 = lerp(shadowSum1, shadowSum2, lerpValue);
-    //<--- PCF
-    
-    //depthValue = depthMapTexture.Sample(textureSampler, projectTexCoord).r;
-    //shadowSum = lightDepthValue > depthValue;
+
     
     lightIntesity = lightIntesity;
     float3 F0 = float3(0.04, 0.04, 0.04);
-    F0 = lerp(F0, albedoColor, (metallicColor.r + metallicColor.g + metallicColor.b) / 3.0f);
+    F0 = lerp(F0, albedoColor, metallicColor);
     float3 instanceID = InstanceIDTex.Sample(textureSampler, input.col.xy);
     float3 resColor = PBR(normal, toEye, lightVec, H, F0,
     lightData.color.xyz, albedoColor, roughnessColor, metallicColor, emissiveColor, lightIntesity) * (instanceID.x > 0);
@@ -164,13 +160,38 @@ float4 PS_Directional(PS_IN input) : SV_Target
 
 float4 PS_Ambient(PS_IN input) : SV_Target
 {
-    
+    float3 worldPos = PositionTex.Sample(textureSampler, input.col.xy);
+    float3 toEye = normalize(eyePos.xyz - worldPos.xyz);
+    float roughness = MetallicTex.Sample(textureSampler, input.col.xy).w;
+    float3 metallic = MetallicTex.Sample(textureSampler, input.col.xy).rgb;
     float3 pixelColor = DiffuseTex.Sample(textureSampler, input.col.xy);
     float3 instanceID =InstanceIDTex.Sample(textureSampler, input.col.xy);
     float3 skyBoxColor = skyboxTexture.Sample(textureSampler, input.col.xy);
+    float ssaoParam = AoTex.Sample(textureSampler, input.col.xy).r;
     float3 resColor;
-
     float lightIntensity = lightData.color.w;
-    resColor = pixelColor * lightData.color.xyz * (instanceID.x > 0)*lightIntensity + skyBoxColor*(instanceID.x<0);
+
+
+    //Diffuse
+    float3 normal = normalize(NormalTex.Sample(textureSampler, input.col).rgb);
+    float3 F0 = float3(0.04, 0.04, 0.04);
+    F0 = lerp(F0, pixelColor,metallic);
+
+    float3 kS = FwithRoughness(max(dot(normal, toEye), 0.0f), F0, roughness);
+    float3 lightDir = reflect(-toEye, normal);
+    
+    float3 kD = 1.0 - kS;
+    kD *= 1.0 - metallic;   
+    float3 irradiance = irradianceTexture.Sample(textureSampler, normal).rgb;
+    float3 diffuse = kD * irradiance * pixelColor;
+
+    //Specular
+    const float maxReflectionLoad = 9;
+    float3 prefilteredColor = prefilteredEnvironmentTexture.SampleLevel(textureSampler, lightDir, roughness * maxReflectionLoad);
+    float2 envBRDF = iblLookUpTexture.Sample(textureSampler, float2(max(dot(normal, -toEye), 0.0f), roughness));
+    float3 specular = prefilteredColor * (kS * envBRDF.x + envBRDF.y);
+
+    resColor = (instanceID.x > 0) * ssaoParam * lightIntensity*
+    (diffuse + specular) + skyBoxColor * (instanceID.x < 0);
     return float4(resColor, 1.0f);
 }

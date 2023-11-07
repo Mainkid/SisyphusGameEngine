@@ -62,6 +62,13 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
             c_entryPoint, "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
             0, computeBC.GetAddressOf(), errorPixelCode.GetAddressOf());
 
+         if (FAILED(res))
+         {
+             if (errorVertexCode != nullptr)
+                 OutputDebugStringA((char*)errorPixelCode->GetBufferPointer());
+            
+         }
+
          res = hc->device->CreateComputeShader(
              this->computeBC->GetBufferPointer(),
              this->computeBC->GetBufferSize(),

@@ -28,19 +28,38 @@ int main()
     auto lightPoint = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
     ecs->get<LightComponent>(lightPoint).ParamsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
     ecs->get<LightComponent>(lightPoint).Color = Vector4(1, 1, 0.0f, 3.0f);
-    ecs->get<TransformComponent>(lightPoint).position = Vector3(3, 0, 0);
+    ecs->get<TransformComponent>(lightPoint)._position = Vector3(3, 0, 0);
 
     auto lightPoint2 = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
 
     ecs->get<LightComponent>(lightPoint2).ParamsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
     ecs->get<LightComponent>(lightPoint2).Color = Vector4(1, 0, 0.0f, 3.0f);
-    ecs->get<TransformComponent>(lightPoint2).position = Vector3(3, 0, 0);
+    ecs->get<TransformComponent>(lightPoint2)._position = Vector3(3, 0, 0);
     ecs->get<LightComponent>(lightPoint2).LightBehavior = LightBehavior::Movable;
 
-    auto obj = GameObjectHelper::Create(ecs, "RigidBody", { 0.0f, 0.0f, 0.0f });
-    auto result = GameObjectHelper::AddRigidBodyComponent(ecs, obj, SY_RB_TYPE_DYNAMIC);
-    
+    auto base = GameObjectHelper::Create(ecs, "Base", { 0.0f, -5.0f, 13.0f });
+    ecs->get<TransformComponent>(base).localScale = {10.0f, 1.0f, 10.0f};
+    auto result1 = GameObjectHelper::AddRigidBodyComponent(ecs, base, SY_RB_TYPE_STATIC);
+    auto result2 = GameObjectHelper::AddCubeMeshComponent(ecs, base);
+    SyPrimitiveColliderShapeDesc baseColDesc;
+    baseColDesc.Extent = { 10.0f, 1.0f, 10.0f };
+    auto result3 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, base,
+                                                            SY_COL_SHAPE_TYPE_BOX,
+                                                            baseColDesc,
+                                                            SyColliderMaterial());
+
+    auto cube = GameObjectHelper::Create(ecs, "Cube", {0.0f, 5.0f, 8.0f});
+    auto result4 = GameObjectHelper::AddRigidBodyComponent(ecs, cube, SY_RB_TYPE_DYNAMIC, 10);
+    auto result5 = GameObjectHelper::AddCubeMeshComponent(ecs, cube);
+    SyPrimitiveColliderShapeDesc cubeColDesc;
+    cubeColDesc.Extent = {1.0f, 1.0f, 1.0f};
+    auto result6 = GameObjectHelper::AddPrimitiveColliderComponent( ecs, cube,
+                                                                     SY_COL_SHAPE_TYPE_BOX,
+                                                                     cubeColDesc,
+                                                                     SyColliderMaterial(),
+                                                                     SyColliderFlags::SY_COL_SET_MASS_MANUALLY);
     //---------- Serialization test ----------------
+
     // ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
     // ser.AddEcsCompMeta<GameObjectComp>();
     // ser.AddEcsCompMeta<TransformComponent>();

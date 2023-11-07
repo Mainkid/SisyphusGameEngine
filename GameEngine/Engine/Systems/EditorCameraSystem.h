@@ -7,7 +7,7 @@ struct TransformComponent;
 struct EngineContext;
 struct HardwareContext;
 
-using namespace DirectX::SimpleMath;
+
 class EditorCameraSystem : public SystemBase
 {
 public:
@@ -19,9 +19,9 @@ private:
 	void UpdateProjectionMatrix(CameraComponent& cc);
 	void SetLookAtPos(Vector3 pos, TransformComponent& tc);
 	void ProcessInput(CameraComponent& cc, TransformComponent& tc);
-	std::hash<CameraComponent> hasher;
+	std::hash<CameraComponent> _hasher;
 
-	EngineContext* ec;
-	HardwareContext* hc;
+	EngineContext* _ec = nullptr;
+	HardwareContext* _hc = nullptr;
 };
 
