@@ -48,11 +48,9 @@ SyResult SyErrorLoggingSystem::Init()
 	logFiles.reserve(2 * logDirCapacity);
 	for (auto& logDirEntry : std::filesystem::directory_iterator(logDirPath))
 		logFiles.push_back(logDirEntry.path());
-	int d = (int)logFiles.size() - logDirCapacity;
 	for (auto i = 0; i < (int)logFiles.size() - (int)logDirCapacity; i++)
 			std::filesystem::remove(logFiles[i]);
 
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Error logging system initialization successful. ");
 	return SyResult();
 }
 
@@ -83,7 +81,6 @@ SyResult SyErrorLoggingSystem::Run()
 SyResult SyErrorLoggingSystem::Destroy()
 {
 	Run();
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Error logging system destruction successful. ");
 	return SyResult();
 }
 

@@ -14,7 +14,6 @@ SyResult SkyboxSystem::Init()
 	_ec = ServiceLocator::instance()->Get<EngineContext>();
 	_rs = ServiceLocator::instance()->Get<ResourceService>();
 	GameObjectHelper::CreateSkybox(_ecs);
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Skybox system initialization successful.");
 	return SyResult();
 }
 
@@ -37,6 +36,5 @@ SyResult SkyboxSystem::Run()
 
 SyResult SkyboxSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Skybox system destruction successful.");
 	return SyResult();
 }
