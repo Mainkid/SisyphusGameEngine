@@ -42,14 +42,14 @@ SyResult SyErrorLoggingSystem::Init()
 		fout = std::ofstream(logPath);
 	}
 
-	std::filesystem::path logDir_(logDir);
+	std::filesystem::path logDirPath(logDir);
 	unsigned fileCtr = 0;
 	std::vector<std::filesystem::path> logFiles;
 	logFiles.reserve(2 * logDirCapacity);
-	for (auto& logDirEntry : std::filesystem::directory_iterator(logDir_))
+	for (auto& logDirEntry : std::filesystem::directory_iterator(logDirPath))
 		logFiles.push_back(logDirEntry.path());
-	if (logFiles.size() > logDirCapacity)
-		for (auto i = 0; i < logDirCapacity; i++)
+	int d = (int)logFiles.size() - logDirCapacity;
+	for (auto i = 0; i < (int)logFiles.size() - (int)logDirCapacity; i++)
 			std::filesystem::remove(logFiles[i]);
 
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Error logging system initialization successful. ");
