@@ -90,6 +90,7 @@ int main()
     //file.close();
 
     //---------- Serialization test ----------------
+
     // ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
     // ser.AddEcsCompMeta<GameObjectComp>();
     // ser.AddEcsCompMeta<TransformComponent>();

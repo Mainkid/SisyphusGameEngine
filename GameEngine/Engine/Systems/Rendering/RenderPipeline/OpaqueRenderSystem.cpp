@@ -15,7 +15,7 @@ SyResult OpaqueRenderSystem::Init()
 	_ec = ServiceLocator::instance()->Get<EngineContext>();
 	_rc = ServiceLocator::instance()->Get<RenderContext>();
     _hc = ServiceLocator::instance()->Get<HardwareContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "OpaqueRender system initialization successful.");
+
     return SyResult();
 }
 
@@ -86,6 +86,5 @@ SyResult OpaqueRenderSystem::Run()
 
 SyResult OpaqueRenderSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "OpaqueRender system destruction successful.");
     return SyResult();
 }

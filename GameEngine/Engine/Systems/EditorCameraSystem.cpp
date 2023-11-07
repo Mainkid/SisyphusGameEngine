@@ -17,7 +17,6 @@ SyResult EditorCameraSystem::Init()
 	auto tc = _ecs->emplace<TransformComponent>(id);
 	CameraComponent& cc = _ecs->emplace<CameraComponent>(id);
 	SetLookAtPos(Vector3(-1, 0, 0), tc);
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboard system initialization successful. ");
 	return SyResult();
 }
 
@@ -47,7 +46,6 @@ SyResult EditorCameraSystem::Run()
 
 SyResult EditorCameraSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorCamera system destruction successful. ");
 	return SyResult();
 }
 

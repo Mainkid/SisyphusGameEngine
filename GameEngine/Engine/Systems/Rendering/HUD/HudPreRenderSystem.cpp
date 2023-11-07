@@ -32,7 +32,6 @@ SyResult HudPreRenderSystem::Init()
 
     ImGui_ImplWin32_Init(hc->window->GetHWND());
     ImGui_ImplDX11_Init(hc->device.Get(), hc->context.Get());
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudPreRender system initialization successful.");
     return SyResult();
 }
 
@@ -87,7 +86,6 @@ SyResult HudPreRenderSystem::Destroy()
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
 
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudPreRender system destruction successful.");
     return SyResult();
 }
 

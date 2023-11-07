@@ -16,7 +16,6 @@ SyResult ShadowRenderSystem::Init()
     _rc = ServiceLocator::instance()->Get<RenderContext>();
     _hc = ServiceLocator::instance()->Get<HardwareContext>();
    
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowRender system initialization successful. ");
     return SyResult();
 }
 
@@ -194,7 +193,6 @@ SyResult ShadowRenderSystem::Run()
 
 SyResult ShadowRenderSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowRender system destruction successful. ");
     return SyResult();
 }
 

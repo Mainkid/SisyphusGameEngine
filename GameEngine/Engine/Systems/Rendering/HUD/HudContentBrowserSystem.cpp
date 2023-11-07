@@ -19,13 +19,11 @@ SyResult HudContentBrowserSystem::Init()
 
     rs->updateContentBrowser.AddRaw(this, &HudContentBrowserSystem::UpdatePathFileViewsEvent);
     InitImagesSRV();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudContentBrowser system initialization successful.");
     return SyResult();
 }
 
 SyResult HudContentBrowserSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudContentBrowser system destruction successful.");
     return SyResult();
 }
 
