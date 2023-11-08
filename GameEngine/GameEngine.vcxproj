@@ -645,6 +645,7 @@
     <ClCompile Include="Engine\Mono\Objects\SyMonoLogger.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoEcs.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoGameConfig.cpp" />
+    <ClCompile Include="Engine\Mono\Objects\SyMonoEditor.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -760,6 +761,7 @@
     <ClInclude Include="Engine\Mono\Objects\SyMonoLogger.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoEcs.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoGameConfig.h" />
+    <ClInclude Include="Engine\Mono\Objects\SyMonoEditor.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />

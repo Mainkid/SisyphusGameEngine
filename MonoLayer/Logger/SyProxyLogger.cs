@@ -12,6 +12,7 @@ internal enum ELogTag
 {
 	ProxyEcs,
 	ProxyGame,
+	ProxyEditor,
 	Ecs,
 }
 }

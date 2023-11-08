@@ -11,7 +11,7 @@ namespace mono
 	class SyMonoGame;
 }
 
-class MonoSyncSystem : public SystemBase, mono::ISyMonoGameCallbackReceiver
+class MonoSyncSystem : public SystemBase, mono::ISyMonoEcsCallbackReceiver
 {
 public:
 	SyResult Init() override;

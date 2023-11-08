@@ -2,6 +2,7 @@
 #include "../Core/IService.h"
 #include "SyMonoRuntime.h"
 #include "Objects/SyMonoEcs.h"
+#include "Objects/SyMonoEditor.h"
 #include "Objects/SyMonoGame.h"
 #include "Objects/SyMonoGameConfig.h"
 #include "Objects/SyMonoLogger.h"
@@ -19,6 +20,7 @@ namespace mono
 		void HotReload();
 
 		SyMonoEcs* GetEcs();
+		SyMonoEditor* GetEditor();
 		SyMonoGame* GetGame();
 
 	private:
@@ -26,6 +28,7 @@ namespace mono
 
 		SyMonoLogger _logger;
 		SyMonoEcs _ecs;
+		SyMonoEditor _editor;
 		SyMonoGame _game;
 		SyMonoGameConfig _gameConfig;
 

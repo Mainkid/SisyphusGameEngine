@@ -54,7 +54,7 @@ void SyMonoEcs::GeRemoveMeshComp(uint32_t rawEnt)
 
 
 
-void SyMonoEcs::SetCallbackReceiver(ISyMonoGameCallbackReceiver* receiver)
+void SyMonoEcs::SetCallbackReceiver(ISyMonoEcsCallbackReceiver* receiver)
 {
 	_cbReceiver = receiver;
 }

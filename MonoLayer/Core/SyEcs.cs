@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Leopotam.EcsLite;
 using SyEngine.Core.Comps;
 using SyEngine.Core.Datas;
@@ -157,7 +158,7 @@ public class SyEcs
         => _engineEntToGameEnt[engineEnt];
     internal bool ToGameEnt(uint engineEnt, out int gameEnt)
         => _engineEntToGameEnt.TryGetValue(engineEnt, out gameEnt);
-
+    
     //-----------------------------------------------------------
     //-----------------------------------------------------------
     public EcsWorld.Mask BuildFilter<T>() where T : struct

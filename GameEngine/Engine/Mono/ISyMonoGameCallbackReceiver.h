@@ -4,10 +4,10 @@
 
 namespace mono
 {
-	class ISyMonoGameCallbackReceiver
+	class ISyMonoEcsCallbackReceiver
 	{
 	public:
-		virtual ~ISyMonoGameCallbackReceiver() = default;
+		virtual ~ISyMonoEcsCallbackReceiver() = default;
 
 		virtual uint32_t OnCreateEngineEntity() = 0;
 		virtual void OnDestroyEngineEntity(uint32_t rawEnt) = 0;

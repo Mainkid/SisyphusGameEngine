@@ -9,6 +9,13 @@ namespace TestGame
 struct ParentTag : SyEcs.IComp { }
 struct ChildTag : SyEcs.IComp { }
 
+struct TestEditorComp : SyEcs.IComp
+{
+	public int   TestIntVal;
+	public bool  TestBoolVal;
+	public float TestFloatVal;
+}
+
 public class TestSystem : SyEcsSystemBase
 {
 	private EcsFilter _filter;
@@ -25,6 +32,10 @@ public class TestSystem : SyEcsSystemBase
 		Ecs.AddTransformComp(parentEnt).LocalPosition = new SyVector3(-5, 0, 10);
 		Ecs.AddMeshComp(parentEnt);
 		Ecs.AddComp<ParentTag>(parentEnt);
+		ref var testEditorComp = ref Ecs.AddComp<TestEditorComp>(parentEnt);
+		testEditorComp.TestIntVal   = 1;
+		testEditorComp.TestFloatVal = 1.2f;
+		testEditorComp.TestBoolVal  = true;
 
 		int     childEnt = Ecs.CreateEntity();
 		ref var childTf  = ref Ecs.AddTransformComp(childEnt);
@@ -36,6 +47,7 @@ public class TestSystem : SyEcsSystemBase
 
 	public override void Run()
 	{
+		return;
 		float time      = Ecs.GetSingleton<TimeData>().TotalTime;
 		float deltaTime = Ecs.GetSingleton<TimeData>().DeltaTime;
 		
@@ -48,7 +60,7 @@ public class TestSystem : SyEcsSystemBase
 				tf.LocalPosition.X += 1;
 				SyLog.Debug(ELogTag.Test, $"ent g{ent} tf {tf}");
 
-				if (tf.Position.X >= 5f)
+				if (tf.Position.X >= 20f)
 				{
 					SyLog.Debug(ELogTag.Test, $"ent g{ent} destroy");
 					Ecs.DestroyEntity(ent);

@@ -50,6 +50,7 @@
         <Compile Include="Core\SyEcsSync.cs" />
         <Compile Include="Core\SyEcsSystemBase.cs" />
         <Compile Include="Core\SyProxyEcs.cs" />
+        <Compile Include="Editor\SyProxyEditor.cs" />
         <Compile Include="Game\SyGameConfigBase.cs" />
         <Compile Include="Game\SyProxyGame.cs" />
         <Compile Include="LeoEcs\components.cs" />

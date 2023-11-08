@@ -4,7 +4,7 @@
 
 namespace mono
 {
-	class ISyMonoGameCallbackReceiver;
+	class ISyMonoEcsCallbackReceiver;
 	struct ProxyTransformComp;
 	struct ProxyMeshComp;
 
@@ -44,11 +44,11 @@ namespace mono
 		SyMonoMethod<uint32_t, ProxyTransformComp> EgUpdateTransformComp{ "EgUpdateTransformComp" };
 		SyMonoMethod<uint32_t, ProxyTransformComp> EgUpdateMeshComp{ "EgUpdateMeshComp" };
 
-		void SetCallbackReceiver(ISyMonoGameCallbackReceiver* receiver);
+		void SetCallbackReceiver(ISyMonoEcsCallbackReceiver* receiver);
 	private:
 
 
-		ISyMonoGameCallbackReceiver* _cbReceiver = nullptr;
+		ISyMonoEcsCallbackReceiver* _cbReceiver = nullptr;
 
 		SyResult OnAfterCreate() override;
 		SyResult OnBeforeDestroy() override;

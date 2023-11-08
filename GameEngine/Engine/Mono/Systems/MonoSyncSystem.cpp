@@ -80,6 +80,7 @@ SyResult MonoSyncSystem::Destroy()
 uint32_t MonoSyncSystem::OnCreateEngineEntity()
 {
 	auto ent = _ecs->create();
+	_ecs->emplace<GameObjectComp>(ent).Name = "FromC#";
 	_ecs->emplace<MonoSyncComp>(ent);
 
 	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "engine entity e%d created", static_cast<int>(ent));
