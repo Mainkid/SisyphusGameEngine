@@ -1,7 +1,7 @@
 #include "ErrorLoggingSystem.h"
 #include <filesystem>
 
-unsigned SyErrorLoggingSystem::logDirCapacity = 2;
+unsigned SyErrorLoggingSystem::logDirCapacity = 10;
 
 void SyErrorLoggingSystem::SetLogDirectoryCapacity(unsigned newCapacity_)
 {
