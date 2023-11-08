@@ -5,7 +5,6 @@
 #include "../RenderContext.h"
 #include "../../../Scene/CameraHelper.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
-#include "../../../../vendor/ImGuizmo/ImGuizmo.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Components/MeshComponent.h"
 

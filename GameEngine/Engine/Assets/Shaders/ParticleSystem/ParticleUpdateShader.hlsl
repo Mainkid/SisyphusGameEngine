@@ -2,14 +2,21 @@
 #define THREAD_GROUP_Y 24
 #define THREAD_GROUP_TOTAL 768
 
+struct ParticleInputDataF
+{
+    float4 Fvalue;
+    float4 RandomBetweenConstsF;
+    float4 InputType;
+};
+
 struct SharedParticleData
 {
     float4 deltaTime;
     float4 startPosition;
-    float4 startSize;
+    ParticleInputDataF startSize;
     float4 startColor;
-    float4 startLifeTime;
-    float4 startVelocity;
+    ParticleInputDataF startLifeTime;
+    ParticleInputDataF startVelocity;
     float4 shapeRadiusAngle;
 };
 
@@ -61,7 +68,7 @@ void CSMain(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
     if (index < size - 1 && pool[index].state.x)
     {
         pool[index].position.xyz += 
-        pool[index].velocity *particleData.startVelocity.w*particleData.deltaTime.x;
+        pool[index].velocity * pool[index].velocity.w * particleData.deltaTime.x;
         pool[index].lifetime.x += particleData.deltaTime.x;
         
         if (pool[index].lifetime.x > pool[index].lifetime.y)

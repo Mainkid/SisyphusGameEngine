@@ -209,6 +209,7 @@
     <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.h" />
+    <ClInclude Include="vendor\ImGui\curve_v122.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

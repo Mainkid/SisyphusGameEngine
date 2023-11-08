@@ -7,9 +7,15 @@
 #include "../../TransformHelper.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../../Components/LightComponent.h"
+#include "../../../../vendor/ImGui/curve_v122.hpp"
+
+
 #include "json.hpp"
 
 #include <fstream>
+
+
+
 
 SyResult HudPropertiesSystem::Init()
 {
@@ -22,12 +28,17 @@ SyResult HudPropertiesSystem::Init()
     
 }
 
+
 SyResult HudPropertiesSystem::Run()
 {
     ImGui::Begin(windowID.c_str());
     //Widget::Render();
 
+    ShowBezierDemo();
+
     ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    //ImGui::ShowBezierDemo();
 
     if (ec->hudData.selectedEntityIDs.size() != 0)
     {
@@ -36,7 +47,7 @@ SyResult HudPropertiesSystem::Run()
 
         if (tc)
         {
-        auto degToRadians = [](float angle) {return angle * M_PI / 180.0f; };
+        auto degToRadians = [](float angle) {return angle * 3.14159 / 180.0f; };
         ImGui::Text("Transform");
         Vector3 vec3Dx = tc->localPosition;
         float vec3[3]{ vec3Dx.x, vec3Dx.y, vec3Dx.z };

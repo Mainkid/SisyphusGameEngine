@@ -765,6 +765,7 @@
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="vendor\ImGuizmo\ImSequencer.h" />
     <ClInclude Include="vendor\ImGuizmo\ImZoomSlider.h" />
+    <ClInclude Include="vendor\ImGui\curve_v122.hpp" />
     <ClInclude Include="vendor\ImGui\imconfig.h" />
     <ClInclude Include="vendor\ImGui\imgui.h" />
     <ClInclude Include="vendor\ImGui\imgui_impl_dx11.h" />

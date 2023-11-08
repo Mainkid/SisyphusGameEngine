@@ -54,11 +54,17 @@ SyResult ParticleRenderSystem::Run()
 
         D3D11_MAPPED_SUBRESOURCE mappedResource;
         dataGroup.SharedParticlesData.deltaTime = Vector4(_ec->deltaTime);
-        dataGroup.SharedParticlesData.startColor = Vector4(pc.SharedParticlesDataResource->StartColor.V3value);
-        dataGroup.SharedParticlesData.startLifeTime = Vector4(pc.SharedParticlesDataResource->StartLifeTime.Fvalue,1,1,1);
-        dataGroup.SharedParticlesData.startPosition = Vector4(tc.localPosition);
-        dataGroup.SharedParticlesData.startSize = Vector4(pc.SharedParticlesDataResource->StartSize.Fvalue);
-        dataGroup.SharedParticlesData.startVelocity = Vector4(pc.SharedParticlesDataResource->StartSpeed.Fvalue);
+        dataGroup.SharedParticlesData.startColor = Vector4(pc.SharedParticlesDataResource->StartColor.V4value);
+        dataGroup.SharedParticlesData.startLifeTime.Fvalue = Vector4(pc.SharedParticlesDataResource->StartLifeTime.Fvalue,1,1,1);
+        dataGroup.SharedParticlesData.startLifeTime.RandomBetweenConstsF = Vector4(pc.SharedParticlesDataResource->StartLifeTime.RandomBetweenConstsF.f1, pc.SharedParticlesDataResource->StartLifeTime.RandomBetweenConstsF.f2, 1, 1);
+        dataGroup.SharedParticlesData.startLifeTime.InputType = Vector4(pc.SharedParticlesDataResource->StartLifeTime.InputType);
+    	dataGroup.SharedParticlesData.startPosition = Vector4(tc.localPosition);
+        dataGroup.SharedParticlesData.startSize.Fvalue = Vector4(pc.SharedParticlesDataResource->StartSize.Fvalue);
+        dataGroup.SharedParticlesData.startSize.RandomBetweenConstsF = Vector4(pc.SharedParticlesDataResource->StartSize.RandomBetweenConstsF.f1, pc.SharedParticlesDataResource->StartSize.RandomBetweenConstsF.f2, 1, 1);
+        dataGroup.SharedParticlesData.startSize.InputType = Vector4(pc.SharedParticlesDataResource->StartSize.InputType);
+        dataGroup.SharedParticlesData.startVelocity.Fvalue = Vector4(pc.SharedParticlesDataResource->StartSpeed.Fvalue);
+        dataGroup.SharedParticlesData.startVelocity.RandomBetweenConstsF = Vector4(pc.SharedParticlesDataResource->StartSpeed.RandomBetweenConstsF.f1, pc.SharedParticlesDataResource->StartSpeed.RandomBetweenConstsF.f2,1,1);
+        dataGroup.SharedParticlesData.startVelocity.InputType = Vector4(pc.SharedParticlesDataResource->StartSpeed.InputType);
         dataGroup.SharedParticlesData.shapeRadiusAndAngle = Vector4(pc.SharedParticlesDataResource->ParticleEmitShape,
             pc.SharedParticlesDataResource->Radius, pc.SharedParticlesDataResource->Angle, 1);
 

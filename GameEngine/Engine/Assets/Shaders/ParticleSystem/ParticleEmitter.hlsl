@@ -2,18 +2,34 @@
 #define THREAD_GROUP_Y 24
 #define THREAD_GROUP_TOTAL 768
 
+//Shapes
 #define SPHERE_SHAPE 0
 #define CONE_SHAPE 1
 #define BOX_SHAPE 2
+
+//InputTypes
+#define SimpleFloat 0
+#define  RandomBetweenFloats 1
+#define SimpleVector 2
+#define RandomBetweenVectors 3
+#define SimpleCurve 4
+
+
+struct ParticleInputDataF
+{
+    float4 Fvalue;
+    float4 RandomBetweenConstsF;   // x - f1, y - f2
+    float4 InputType;
+};
 
 struct SharedParticleData
 {
     float4 deltaTime;
     float4 startPosition;
-    float4 startSize;
+    ParticleInputDataF startSize;
     float4 startColor;
-    float4 startLifeTime;
-    float4 startVelocity;
+    ParticleInputDataF startLifeTime;
+    ParticleInputDataF startVelocity;
     float4 shapeRadiusAngle;
 };
 
@@ -71,13 +87,27 @@ float2 randVec2(float co)
     return normalize(randVec3(co).xz);
 }
 
+float ProcessFloatInput(ParticleInputDataF inputData, int seed)
+{
+    if (inputData.InputType.x == SimpleFloat)
+    {
+        return inputData.Fvalue.x;
+    }
+    else if (inputData.InputType.x == RandomBetweenFloats)
+    {
+        return lerp(inputData.RandomBetweenConstsF.x, inputData.RandomBetweenConstsF.y, abs(randVec3(particleData.deltaTime.x).x));
+    }
+    return 0;
+}
+
 void EmitParticle(int index)
 {
-    pool[index].lifetime.xy = float2(0, particleData.startLifeTime.x);
+    pool[index].lifetime.xy = float2(0, ProcessFloatInput(particleData.startLifeTime, index));
     pool[index].state.x = true;
     pool[index].color = particleData.startColor;
     pool[index].position = particleData.startPosition;
-    pool[index].size = particleData.startSize;
+    pool[index].size.x = ProcessFloatInput(particleData.startSize,index);
+    pool[index].velocity.w = ProcessFloatInput(particleData.startVelocity, index);
     
     if (particleData.shapeRadiusAngle.x == SPHERE_SHAPE) // Sphere
     {
@@ -86,9 +116,18 @@ void EmitParticle(int index)
     }
     else if (particleData.shapeRadiusAngle.x == CONE_SHAPE)
     {
-        pool[index].position.xz = randVec2(index);
-        pool[index].velocity
-
+        float3 randVec = randVec3(index);
+        float2 offsetSpawnPosition = randVec.xy * particleData.shapeRadiusAngle.y * abs(randVec.z)/1.0f;
+        
+        pool[index].position.xz += offsetSpawnPosition;
+        
+        float lerpRadius = length(offsetSpawnPosition)/particleData.shapeRadiusAngle.y;
+        
+        float2 targetTopOffset = offsetSpawnPosition + normalize(offsetSpawnPosition) * tan(radians(particleData.shapeRadiusAngle.z))*lerpRadius;
+        
+        float3 velocityVec = normalize(float3(targetTopOffset.x, 1.0f, targetTopOffset.y)
+        - float3(offsetSpawnPosition.x, 0, offsetSpawnPosition.y));
+        pool[index].velocity.xyz = velocityVec;
     }
     
     

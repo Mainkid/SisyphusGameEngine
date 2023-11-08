@@ -5,21 +5,47 @@
 #include "../../boost/boost/uuid/uuid.hpp"
 #include "../Serialization/Serializable.h"
 
-struct ParticleInputDataF
+enum EInputType
 {
-    float Fvalue;                                     // Single Float Input;
-    std::vector<float> RandomBetweenConstsF; // Random Between Two Constants;
-    //CurveClass curve;                               // TODO: Add Curves;
-
-	SER_DATA(ParticleInputDataF, Fvalue, RandomBetweenConstsF);
+	SimpleFloat,
+    RandomBetweenFloats,
+    SimpleVector,
+    RandomBetweenVectors,
+    SimpleCurve
 };
 
-struct ParticleInputDataV3
+struct FloatPair
 {
-    DirectX::SimpleMath::Vector3 V3value;
-    std::vector<DirectX::SimpleMath::Vector3> RandomBetweenConstsV;
+    float f1;
+    float f2;
 
-    SER_DATA(ParticleInputDataV3, V3value, RandomBetweenConstsV);
+    SER_DATA(FloatPair, f1,f2);
+};
+
+struct VectorPair
+{
+    DirectX::SimpleMath::Vector4 vec1;
+    DirectX::SimpleMath::Vector4 vec2;
+
+    SER_DATA(VectorPair, vec1, vec2);
+};
+
+struct ParticleInputDataF
+{
+    float Fvalue;                                     
+    FloatPair RandomBetweenConstsF; 
+    EInputType InputType = SimpleFloat;
+
+	SER_DATA(ParticleInputDataF, Fvalue, RandomBetweenConstsF, InputType);
+};
+
+struct ParticleInputDataV4
+{
+    DirectX::SimpleMath::Vector4 V4value;
+    VectorPair RandomBetweenConstsV;
+    EInputType InputType = SimpleVector;
+
+    SER_DATA(ParticleInputDataV4, V4value, RandomBetweenConstsV, InputType);
 };
 
 struct ParticleBurst
@@ -47,7 +73,7 @@ struct SharedParticlesData:public ResourceBase
     ParticleInputDataF StartLifeTime;                 // Lifetime of particles;
     ParticleInputDataF StartSpeed;                    // Speed, applied to the particle when created;
     ParticleInputDataF StartSize;                     // StartSize of particle;
-    ParticleInputDataV3 StartColor;                   // Start Color;
+    ParticleInputDataV4 StartColor;                   // Start Color;
     uint32_t MaxParticles;
 
     //Emission

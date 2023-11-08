@@ -61,7 +61,7 @@ void ParticlesSystem::InitRenderResources(ParticleComponent& pc)
             pc.SharedParticlesDataResource->StartSize.Fvalue,
             pc.SharedParticlesDataResource->StartSize.Fvalue,
             1);
-        pc.ParticlesList[i].color = Vector4(pc.SharedParticlesDataResource->StartColor.V3value);
+        pc.ParticlesList[i].color = Vector4(pc.SharedParticlesDataResource->StartColor.V4value);
         pc.ParticlesList[i].lifeTime = Vector4(0, pc.SharedParticlesDataResource->StartLifeTime.Fvalue, 1, 1);
 
     }

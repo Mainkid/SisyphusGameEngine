@@ -1,10 +1,12 @@
 ﻿#include <iostream>
 #include <uuid.hpp>
+
+#include "Core/EngineCore.h"
 #include "Components/EditorBillboardComponent.h"
 #include "Components/GameObjectComp.h"
 #include "Components/MeshComponent.h"
 #include "Components/TransformComponent.h"
-#include "Core/EngineCore.h"
+
 #include "Scene/GameObjectHelper.h"
 
 #include "SimpleMath.h"
@@ -47,7 +49,6 @@ int main()
     //_ec->scene->registry.get<MeshComponent>(_go).texturePath = "./Engine/Assets/Textures/black_texture.png";
 
     //_ec->scene->registry.get<MeshComponent>(_go1).modelPath = "./Engine/Assets/PBR_test/ssphere.FBX.fbx";
-
     
     //_ec->scene->registry.get<MeshComponent>(_go1).material = _rc->materials[0].get();
     //_ec->scene->registry.get<MeshComponent>(_go1).texturePath = "./Engine/Assets/PBR_test/Crystal_stone_baseColor.jpg";
@@ -83,8 +84,10 @@ int main()
     SharedParticlesData spd;
     spd.MaxParticles = 1000;
     spd.RateOverTime.Fvalue = 1;
-    spd.StartColor.V3value = Vector3(1, 1, 1);
+    spd.StartColor.V4value = Vector4(1, 1, 1,1);
     spd.StartSize.Fvalue = 1;
+    
+    spd.StartSize.InputType = RandomBetweenFloats;
     spd.StartSpeed.Fvalue = 0.1f;
     spd.Duration = 5;
     spd.IsLooping = true;
@@ -92,7 +95,9 @@ int main()
     spd.Angle = 30;
     spd.Radius = 1;
     spd.ParticleEmitShape = EParticleEmitShape::Sphere;
-    //auto json = ser.Serialize<SharedParticlesData>(spd);
+    spd.StartSize.RandomBetweenConstsF.f1 = 0.01f;
+    spd.StartSize.RandomBetweenConstsF.f1 = 0.1f;
+    auto json = ser.Serialize<SharedParticlesData>(spd);
 
     ////auto model = GameObjectHelper::CreateMesh(ecs, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath("./Game/Assets/fbx/artifact.fbx"));
     ////ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
@@ -103,10 +108,10 @@ int main()
     ////ser.AddEcsCompMeta<EditorBillboardComponent>();
 
     ////auto json = ser.Serialize<GameObjectComp>(*ecs);
-    //std::ofstream file;
-    //file.open("baseParticles.ps", std::ios::trunc);
-    //file << std::setw(1) << json;
-    //file.close();
+    std::ofstream file;
+    file.open("baseParticles.ps", std::ios::trunc);
+    file << std::setw(1) << json;
+    file.close();
 
     //---------- Serialization test ----------------
     // ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;

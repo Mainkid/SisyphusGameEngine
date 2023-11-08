@@ -5,9 +5,7 @@
 #include <windows.h>
 #include <WinUser.h>
 #include <iostream>
-#include "../../vendor/ImGui/imgui_impl_win32.h"
-#include "../../vendor/ImGui/imgui.h"
-#include "../../vendor/ImGui/imgui_impl_dx11.h"
+
 
 
 
@@ -26,7 +24,7 @@ public:
 	float GetHeight();
 	float GetWidth();
 	void HandleResize(int width, int height);
-
+	
 private:
 	
 	float clientHeight;

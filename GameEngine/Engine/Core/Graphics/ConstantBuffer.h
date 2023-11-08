@@ -89,14 +89,21 @@ public:
     
 };
 
+struct CB_ParticleInputDataF
+{
+    Vector4 Fvalue;
+    Vector4 RandomBetweenConstsF;
+    Vector4 InputType;
+};
+
 struct CB_SharedParticlesData
 {
     Vector4 deltaTime;
     Vector4 startPosition;
-    Vector4 startSize;
+    CB_ParticleInputDataF startSize;
     Vector4 startColor;
-    Vector4 startLifeTime;
-    Vector4 startVelocity;
+    CB_ParticleInputDataF startLifeTime;
+    CB_ParticleInputDataF startVelocity;
     Vector4 shapeRadiusAndAngle;
 };
 
