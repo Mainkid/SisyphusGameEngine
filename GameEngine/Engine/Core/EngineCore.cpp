@@ -3,11 +3,8 @@
 #include "../Components/GameObjectComp.h"
 #include "../Components/MeshComponent.h"
 #include "../Components/TransformComponent.h"
+#include "../Components/ImageBasedLightingComponent.h"
 
-//EngineCore::EngineCore(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height)
-//{
-//	window = std::make_unique<DisplayWin32>(appName, hInstance, width, height);
-//}
 
 EngineCore::EngineCore()
 {
@@ -69,12 +66,13 @@ void EngineCore::StartUp()
 	ser.AddEcsCompMeta<MeshComponent>();
 	ser.AddEcsCompMeta<LightComponent>();
 	ser.AddEcsCompMeta<EditorBillboardComponent>();
+	ser.AddEcsCompMeta<SkyboxComponent>();
+	ser.AddEcsCompMeta<ImageBasedLightingComponent>();
 	
 	ServiceLocator::instance()->Register<mono::SyMono>();
 	mono::SyMono* mono = ServiceLocator::instance()->Get<mono::SyMono>();
 	mono->Init();
 	mono->HotReload();
-
 
 	StartUpSystems();
 }
@@ -104,7 +102,7 @@ void EngineCore::StartUpSystems()
 
 	_systems.Add<LightSystem>();
 	_systems.Add<MeshSystem>();
-
+	_systems.Add<SkyboxSystem>();
 	_systems.Add<LightSystem>();
 
 	_systems.Add<EditorBillboardSystem>();
@@ -112,7 +110,9 @@ void EngineCore::StartUpSystems()
 	_systems.Add<PreRenderSystem>();
 	_systems.Add<ShadowRenderSystem>();
 	_systems.Add<SkyboxRenderSystem>();
+	_systems.Add<ImageBasedLightingSystem>();
 	_systems.Add<OpaqueRenderSystem>();
+	_systems.Add<HbaoRenderSystem>();
 	_systems.Add<ShadowMapGenerationSystem>();
 	_systems.Add<LightRenderSystem>();
 	_systems.Add<EditorBillboardRenderSystem>();

@@ -9,7 +9,11 @@
 #include "../../../Scene/GameObjectHelper.h"
 #include "../../../Components/MeshComponent.h"
 #include "../../ResourceService.h"
+#include "../../../Core/ECS/Events/SyHotReloadEvent.h"
+#include "../../../Core/ECS/Events/SyPlayModeEndedEvent.h"
+#include "../../../Core/ECS/Events/SyPlayModeStartedEvent.h"
 #include "../../../Core/ECS/Events/SySceneLoadEvent.h"
+#include "../../../Components/ImageBasedLightingComponent.h"
 
 
 SyResult HudViewportSystem::Init()
@@ -20,7 +24,6 @@ SyResult HudViewportSystem::Init()
 	rs = ServiceLocator::instance()->Get<ResourceService>();
 	windowID = "Viewport";
 	InitSRV();
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudViewport system initialization successful.");
 	return SyResult();
 	
 }
@@ -178,7 +181,6 @@ SyResult HudViewportSystem::Run()
 
 SyResult HudViewportSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, " HudViewport system destruction successful.");
 	return SyResult();
 }
 
@@ -300,6 +302,11 @@ void HudViewportSystem::DrawMainMenuBar()
 				delete[]szFileTitle;
 
 			}
+
+			if (ImGui::MenuItem("Hot Reload"))
+			{
+				CallEvent<SyHotReloadEvent>("SyHotreloadEvent");
+			}
 			
 			ImGui::EndMenu();
 		}
@@ -361,6 +368,32 @@ void HudViewportSystem::DrawMainMenuBar()
 
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Graphics"))
+		{
+			if (ImGui::BeginMenu("Add..."))
+			{
+				auto viewTemp = _ecs->view<ImageBasedLightingComponent>();
+				ImGui::BeginDisabled(!viewTemp.empty());
+				if (ImGui::MenuItem("Image Based Lighting"))
+				{
+					
+				}
+				ImGui::EndDisabled();
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::MenuItem("Bake Lighting"))
+			{
+				
+			}
+			if (ImGui::MenuItem("Update Image Based Lighting"))
+			{
+			}
+
+			ImGui::EndMenu();
+		}
+
+
 		ImGui::EndMainMenuBar();
 	}
 }
@@ -412,6 +445,7 @@ void HudViewportSystem::DrawPlayMode(ImVec2 cursorStartPostion)
 	if (ImGui::IsItemClicked())
 	{
 		ec->playModeState = EngineContext::EPlayModeState::PlayMode;
+		CallEvent<SyPlayModeStartedEvent>("SyPlayModeStartedEvent");
 	}
 	offset += dtOffset;
 	ImGui::SameLine(offset);
@@ -433,6 +467,7 @@ void HudViewportSystem::DrawPlayMode(ImVec2 cursorStartPostion)
 		ec->playModeState != EngineContext::EPlayModeState::EditorMode)
 	{
 		ec->playModeState = EngineContext::EPlayModeState::EditorMode;
+		CallEvent<SyPlayModeEndedEvent>("SyPlayModeEndedEvent");
 	}
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();

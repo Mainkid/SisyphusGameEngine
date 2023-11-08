@@ -10,85 +10,81 @@
 
 SyResult EditorGridRenderSystem::Init()
 {
-	ec = ServiceLocator::instance()->Get<EngineContext>();
-	rc = ServiceLocator::instance()->Get<RenderContext>();
-	hc = ServiceLocator::instance()->Get<HardwareContext>();
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorGridRender system initialization successful.");
-	grid1M = CreateGrid(1, minGridSize);
-	grid10M = CreateGrid(10, maxGridSize);
+	_ec = ServiceLocator::instance()->Get<EngineContext>();
+	_rc = ServiceLocator::instance()->Get<RenderContext>();
+	_hc = ServiceLocator::instance()->Get<HardwareContext>();
+	_grid1M = CreateGrid(1, _minGridSize);
+	_grid10M = CreateGrid(10, _maxGridSize);
 	return SyResult();
 }
 
 SyResult EditorGridRenderSystem::Run()
 {
-	
 	CB_GridEditorBuffer dataOpaque;
-	UINT strides[1] = { 16 };
-	UINT offsets[1] = { 0 };
 
-	hc->context->OMSetBlendState(rc->GridBlendState.Get(), nullptr, 0xffffffff);
+	_hc->context->OMSetBlendState(_rc->GridBlendState.Get(), nullptr, 0xffffffff);
 	auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
 
 	dataOpaque.baseData.worldViewProj =
-	camera.view * camera.projection;
-	hc->context->OMSetDepthStencilState(rc->OffStencilState.Get(),0);
-	
+		camera.view * camera.projection;
+	_hc->context->OMSetDepthStencilState(_rc->OffStencilState.Get(), 0);
 
-	dataOpaque.eyePos = Vector4(cameraTransform.position.x, cameraTransform.position.y, cameraTransform.position.z,10);
-	Vector3 vec3 = Vector3((int)dataOpaque.eyePos.x- minGridSize / 2, 0, (int)dataOpaque.eyePos.z-minGridSize/2);
+
+	dataOpaque.eyePos = Vector4(cameraTransform.position.x, cameraTransform.position.y, cameraTransform.position.z, 10);
+	auto vec3 = Vector3((int)dataOpaque.eyePos.x - _minGridSize / 2, 0, (int)dataOpaque.eyePos.z - _minGridSize / 2);
 	dataOpaque.baseData.worldView = Matrix::CreateTranslation(vec3);
 	dataOpaque.baseData.worldViewProj = Matrix::CreateTranslation(vec3) *
-		camera.view*camera.projection;
-	
-	
+		camera.view * camera.projection;
 
-		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		
-		HRESULT res = hc->context->Map(rc->ShadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_GridEditorBuffer));
-		hc->context->Unmap(rc->ShadowConstBuffer->buffer.Get(), 0);
-		hc->context->VSSetConstantBuffers(0, 1, rc->ShadowConstBuffer->buffer.GetAddressOf());
-		hc->context->PSSetConstantBuffers(0, 1, rc->ShadowConstBuffer->buffer.GetAddressOf());
-		hc->renderTarget->SetRenderTarget( hc->depthStencilView.Get());
-		hc->context->IASetInputLayout(rc->EditorGridRenderer->layout.Get());
-		hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-		hc->context->IASetIndexBuffer(grid1M->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-		hc->context->IASetVertexBuffers(0, 1, grid1M->vertexBuffer->buffer.GetAddressOf(),
-			strides, offsets);
-	
-		
-		hc->context->VSSetShader(rc->EditorGridRenderer->vertexShader.Get(), nullptr, 0);
-		hc->context->PSSetShader(rc->EditorGridRenderer->pixelShader.Get(), nullptr, 0);
-		hc->context->DrawIndexed(grid1M->indexBuffer->size, 0, 0);
 
-		dataOpaque.eyePos.w = 10000000;
-		vec3 = Vector3(((int)(dataOpaque.eyePos.x/10))*10 - maxGridSize*10 / 2, 0, ((int)(dataOpaque.eyePos.z/10))*10 - maxGridSize*10 / 2);
-		dataOpaque.baseData.worldView = Matrix::CreateTranslation(vec3);
-		dataOpaque.baseData.worldViewProj = Matrix::CreateTranslation(vec3) *
-			camera.view * camera.projection;
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
-		res = hc->context->Map(rc->ShadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_GridEditorBuffer));
-		hc->context->Unmap(rc->ShadowConstBuffer->buffer.Get(), 0);
-		hc->context->VSSetConstantBuffers(0, 1, rc->ShadowConstBuffer->buffer.GetAddressOf());
-		hc->context->PSSetConstantBuffers(0, 1, rc->ShadowConstBuffer->buffer.GetAddressOf());
+	HRESULT res = _hc->context->Map(_rc->ShadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0,
+	                                &mappedResource);
+	CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_GridEditorBuffer));
+	_hc->context->Unmap(_rc->ShadowConstBuffer->buffer.Get(), 0);
+	_hc->context->VSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
+	_hc->context->PSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
+	_hc->renderTarget->SetRenderTarget(_hc->depthStencilView.Get());
+	_hc->context->IASetInputLayout(_rc->EditorGridRenderer->layout.Get());
+	_hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+	_hc->context->IASetIndexBuffer(_grid1M->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	_hc->context->IASetVertexBuffers(0, 1, _grid1M->vertexBuffer->buffer.GetAddressOf(),
+	                                 _rc->RhData.strides16, _rc->RhData.offsets0);
 
-		hc->context->IASetIndexBuffer(grid10M->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-		hc->context->IASetVertexBuffers(0, 1, grid10M->vertexBuffer->buffer.GetAddressOf(),
-			strides, offsets);
-		hc->context->DrawIndexed(grid10M->indexBuffer->size, 0, 0);
 
-		return SyResult();
+	_hc->context->VSSetShader(_rc->EditorGridRenderer->vertexShader.Get(), nullptr, 0);
+	_hc->context->PSSetShader(_rc->EditorGridRenderer->pixelShader.Get(), nullptr, 0);
+	_hc->context->DrawIndexed(_grid1M->indexBuffer->size, 0, 0);
+
+	dataOpaque.eyePos.w = 10000000;
+	vec3 = Vector3(((int)(dataOpaque.eyePos.x / 10)) * 10 - _maxGridSize * 10 / 2, 0,
+	               ((int)(dataOpaque.eyePos.z / 10)) * 10 - _maxGridSize * 10 / 2);
+	dataOpaque.baseData.worldView = Matrix::CreateTranslation(vec3);
+	dataOpaque.baseData.worldViewProj = Matrix::CreateTranslation(vec3) *
+		camera.view * camera.projection;
+
+	res = _hc->context->Map(_rc->ShadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_GridEditorBuffer));
+	_hc->context->Unmap(_rc->ShadowConstBuffer->buffer.Get(), 0);
+	_hc->context->VSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
+	_hc->context->PSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
+
+	_hc->context->IASetIndexBuffer(_grid10M->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	_hc->context->IASetVertexBuffers(0, 1, _grid10M->vertexBuffer->buffer.GetAddressOf(),
+	                                 _rc->RhData.strides16, _rc->RhData.offsets0);
+	_hc->context->DrawIndexed(_grid10M->indexBuffer->size, 0, 0);
+
+	return SyResult();
 }
 
 
 SyResult EditorGridRenderSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorGridRender system destruction successful.");
 	return SyResult();
 }
 
-std::shared_ptr<Mesh> EditorGridRenderSystem::CreateGrid(float metersPerCell,int width)
+std::shared_ptr<Mesh> EditorGridRenderSystem::CreateGrid(float metersPerCell, int width)
 {
 	using namespace DirectX::SimpleMath;
 
@@ -104,10 +100,10 @@ std::shared_ptr<Mesh> EditorGridRenderSystem::CreateGrid(float metersPerCell,int
 		for (int i = 0; i < (width - 1); i++)
 		{
 			// Line 1 - Upper left.
-			positionX = (float)i*metersPerCell;
-			positionZ = (float)(j + 1)* metersPerCell;
+			positionX = (float)i * metersPerCell;
+			positionZ = (float)(j + 1) * metersPerCell;
 
-			vertices[index]= Vector4(positionX, 0.0f, positionZ,1);
+			vertices[index] = Vector4(positionX, 0.0f, positionZ, 1);
 			indices[index] = index;
 			index++;
 
@@ -131,7 +127,7 @@ std::shared_ptr<Mesh> EditorGridRenderSystem::CreateGrid(float metersPerCell,int
 			positionX = (float)(i + 1) * metersPerCell;
 			positionZ = (float)j * metersPerCell;
 
-			vertices[index]= Vector4(positionX, 0.0f, positionZ, 1);
+			vertices[index] = Vector4(positionX, 0.0f, positionZ, 1);
 			indices[index] = index;
 			index++;
 
@@ -139,7 +135,7 @@ std::shared_ptr<Mesh> EditorGridRenderSystem::CreateGrid(float metersPerCell,int
 			positionX = (float)(i + 1) * metersPerCell;
 			positionZ = (float)j * metersPerCell;
 
-			vertices[index]= Vector4(positionX, 0.0f, positionZ, 1);
+			vertices[index] = Vector4(positionX, 0.0f, positionZ, 1);
 			indices[index] = index;
 			index++;
 
@@ -163,7 +159,7 @@ std::shared_ptr<Mesh> EditorGridRenderSystem::CreateGrid(float metersPerCell,int
 			positionX = (float)i * metersPerCell;
 			positionZ = (float)(j + 1) * metersPerCell;
 
-			vertices[index]= Vector4(positionX, 0.0f, positionZ, 1);
+			vertices[index] = Vector4(positionX, 0.0f, positionZ, 1);
 			indices[index] = index;
 			index++;
 		}

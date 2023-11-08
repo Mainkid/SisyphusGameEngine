@@ -98,6 +98,5 @@ SyResult SyPhysicsSystem::Destroy()
 	PX_RELEASE(scene);
 	PX_RELEASE(physics);
 	PX_RELEASE(foundation);
-	SY_LOG_PHYS(SY_LOGLEVEL_INFO, "Physics system destruction successful. ");
 	return SyResult();
 }

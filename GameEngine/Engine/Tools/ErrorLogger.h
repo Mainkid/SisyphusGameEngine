@@ -2,7 +2,6 @@
 #include <string>
 #include "ComplexString.h"
 #include "../Core/IService.h"
-#include <map>
 #include <vector>
 #include "../Core/ServiceLocator.h"
 #include <iostream>

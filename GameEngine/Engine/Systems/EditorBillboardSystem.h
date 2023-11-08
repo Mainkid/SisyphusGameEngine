@@ -14,6 +14,6 @@ public:
 	SyResult Run() override;
 	SyResult Destroy() override;
 private:
-	std::hash<std::string> hasher;
-	EngineContext* ec;
+	std::hash<std::string> _hasher;
+	EngineContext* _ec = nullptr;
 };

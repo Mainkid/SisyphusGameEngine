@@ -5,29 +5,26 @@
 
 SyResult ToneMappingRenderSystem::Init()
 {
-	ec = ServiceLocator::instance()->Get<EngineContext>();
-	rc = ServiceLocator::instance()->Get<RenderContext>();
-	hc = ServiceLocator::instance()->Get<HardwareContext>();
+	_ec = ServiceLocator::instance()->Get<EngineContext>();
+	_rc = ServiceLocator::instance()->Get<RenderContext>();
+	_hc = ServiceLocator::instance()->Get<HardwareContext>();
 
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "ToneMappingSystem system initialization successful.");
 	return SyResult();
 }
 
 SyResult ToneMappingRenderSystem::Run()
 {
-	UINT strides[1] = { 32 };
-	UINT offsets[1] = { 0 };
-	hc->context->PSSetSamplers(0, 1, rc->SamplerState.GetAddressOf());
-	hc->renderTarget->SetRenderTarget(nullptr);
-	hc->context->PSSetShaderResources(0, 1, rc->GBuffer->HdrBufferSrv.GetAddressOf());
-	hc->context->VSSetShader(rc->ToneMapper->vertexShader.Get(), nullptr, 0);
-	hc->context->PSSetShader(rc->ToneMapper->pixelShader.Get(), nullptr, 0);
-	hc->context->IASetInputLayout(rc->ToneMapper->layout.Get());
-	hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
-	hc->context->IASetIndexBuffer(rc->IndexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-	hc->context->IASetVertexBuffers(0, 1, rc->VertexQuadBuffer->buffer.GetAddressOf(),
-		strides, offsets);
-	hc->context->DrawIndexed(6, 0, 0);
+	_hc->context->PSSetSamplers(0, 1, _rc->SamplerState.GetAddressOf());
+	_hc->renderTarget->SetRenderTarget(nullptr);
+	_hc->context->PSSetShaderResources(0, 1, _rc->GBuffer->HdrBufferSrv.GetAddressOf());
+	_hc->context->VSSetShader(_rc->ToneMapper->vertexShader.Get(), nullptr, 0);
+	_hc->context->PSSetShader(_rc->ToneMapper->pixelShader.Get(), nullptr, 0);
+	_hc->context->IASetInputLayout(_rc->ToneMapper->layout.Get());
+	_hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
+	_hc->context->IASetIndexBuffer(_rc->IndexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	_hc->context->IASetVertexBuffers(0, 1, _rc->VertexQuadBuffer->buffer.GetAddressOf(),
+		_rc->RhData.strides32, _rc->RhData.offsets0);
+	_hc->context->DrawIndexed(6, 0, 0);
 
 	return SyResult();
 

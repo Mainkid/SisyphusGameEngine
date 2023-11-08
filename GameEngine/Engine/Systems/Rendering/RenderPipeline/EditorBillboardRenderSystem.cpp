@@ -1,5 +1,6 @@
 #include "EditorBillboardRenderSystem.h"
 #include "../RenderContext.h"
+#include "../RenderHelper.h"
 #include "../../HardwareContext.h"
 #include "../../EngineContext.h"
 #include "../../../Scene/CameraHelper.h"
@@ -10,36 +11,33 @@
 
 SyResult EditorBillboardRenderSystem::Init()
 {
-	hc = ServiceLocator::instance()->Get<HardwareContext>();
-	rc = ServiceLocator::instance()->Get<RenderContext>();
-    ec = ServiceLocator::instance()->Get<EngineContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboardRender system initialization successful.");
+    _hc = ServiceLocator::instance()->Get<HardwareContext>();
+    _rc = ServiceLocator::instance()->Get<RenderContext>();
+    _ec = ServiceLocator::instance()->Get<EngineContext>();
     return SyResult();
 
 }
 
 SyResult EditorBillboardRenderSystem::Run()
 {
-    ID3D11RenderTargetView* nullRTV[5] = { nullptr,nullptr,nullptr,nullptr,nullptr };
-    hc->context->OMSetRenderTargets(5, nullRTV, nullptr);
-    hc->context->RSSetState(rc->CullBackRasterizerState.Get());
-    hc->context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
-    UINT strides[1] = { 32 };
-    UINT offsets[1] = { 0 };
+
+    _hc->context->OMSetRenderTargets(5, _rc->RhData.NullRtv, nullptr);
+    _hc->context->RSSetState(_rc->CullBackRasterizerState.Get());
+    _hc->context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
 
     auto [camera, cameraTf] = CameraHelper::Find(_ecs);
 
     auto viewBb = _ecs->view<TransformComponent, EditorBillboardComponent>();
 
-    hc->context->OMSetDepthStencilState(hc->depthStencilState.Get(), 0);
-    hc->context->VSSetShader(rc->BillboardShader->vertexShader.Get(), nullptr, 0); //
-    hc->context->PSSetShader(rc->BillboardShader->pixelShader.Get(), nullptr, 0); //
-    hc->context->IASetInputLayout(rc->BillboardShader->layout.Get());
-    hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    hc->context->IASetIndexBuffer(rc->IndexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-    hc->context->IASetVertexBuffers(0, 1, rc->VertexQuadBuffer->buffer.GetAddressOf(),
-        strides, offsets);
-    hc->context->OMSetRenderTargets(2, rc->EditorBillboardRtvs, hc->depthStencilView.Get());
+    _hc->context->OMSetDepthStencilState(_hc->depthStencilState.Get(), 0);
+    _hc->context->VSSetShader(_rc->BillboardShader->vertexShader.Get(), nullptr, 0); //
+    _hc->context->PSSetShader(_rc->BillboardShader->pixelShader.Get(), nullptr, 0); //
+    _hc->context->IASetInputLayout(_rc->BillboardShader->layout.Get());
+    _hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    _hc->context->IASetIndexBuffer(_rc->IndexQuadBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+    _hc->context->IASetVertexBuffers(0, 1, _rc->VertexQuadBuffer->buffer.GetAddressOf(),
+        _rc->RhData.strides32 , _rc->RhData.offsets0);
+    _hc->context->OMSetRenderTargets(2, _rc->EditorBillboardRtvs, _hc->depthStencilView.Get());
 
     for (auto& ent : viewBb)
     {
@@ -64,30 +62,28 @@ SyResult EditorBillboardRenderSystem::Run()
                 DirectX::XMMatrixInverse(nullptr,
                     billboardMat));
 
-        dataOpaque.instanseID = DirectX::SimpleMath::Vector4(int(ent), int(ent), int(EAssetType::ASSET_TEXTURE),1);
+        dataOpaque.instanseID = DirectX::SimpleMath::Vector4(int(ent), int(ent), int(EAssetType::ASSET_TEXTURE), 1);
 
-        D3D11_MAPPED_SUBRESOURCE mappedResource;
-        HRESULT res = hc->context->Map(rc->OpaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-        CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_BaseEditorBuffer));
-        hc->context->Unmap(rc->OpaqueConstBuffer->buffer.Get(), 0);
-        hc->context->VSSetConstantBuffers(0, 1, rc->OpaqueConstBuffer->buffer.GetAddressOf());
-        hc->context->PSSetConstantBuffers(0, 1, rc->OpaqueConstBuffer->buffer.GetAddressOf());
+        D3D11_MAPPED_SUBRESOURCE mappedResou_rce;
+        HRESULT res = _hc->context->Map(_rc->OpaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResou_rce);
+        CopyMemory(mappedResou_rce.pData, &dataOpaque, sizeof(CB_BaseEditorBuffer));
+        _hc->context->Unmap(_rc->OpaqueConstBuffer->buffer.Get(), 0);
+        _hc->context->VSSetConstantBuffers(0, 1, _rc->OpaqueConstBuffer->buffer.GetAddressOf());
+        _hc->context->PSSetConstantBuffers(0, 1, _rc->OpaqueConstBuffer->buffer.GetAddressOf());
         //engine->renderTarget->SetRenderTarget(engine->depthStencilView.Get());
 
-        hc->context->PSSetSamplers(0, 1, billboardComp.samplerState.GetAddressOf());
-        hc->context->PSSetShaderResources(0, 1, billboardComp.texture.GetAddressOf());
-        hc->context->DrawIndexed(6, 0, 0);
+        _hc->context->PSSetSamplers(0, 1, billboardComp.samplerState.GetAddressOf());
+        _hc->context->PSSetShaderResources(0, 1, billboardComp.texture.GetAddressOf());
+        _hc->context->DrawIndexed(6, 0, 0);
 
     }
     ID3D11ShaderResourceView* srvNull = nullptr;
-    hc->context->PSSetShaderResources(0, 1, &srvNull);
-    hc->context->OMSetRenderTargets(2, nullRTV, nullptr);
+    _hc->context->PSSetShaderResources(0, 1, &srvNull);
+    _hc->context->OMSetRenderTargets(2, _rc->RhData.NullRtv, nullptr);
     return SyResult();
 }
 
 SyResult EditorBillboardRenderSystem::Destroy()
 {
-
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboardRender system destruction successful.");
     return SyResult();
 }

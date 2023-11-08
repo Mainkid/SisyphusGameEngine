@@ -6,10 +6,20 @@
 #endif
 #include <windows.h>
 #include <wrl.h>
-using namespace Microsoft::WRL;
+#include <boost/uuid/uuid.hpp>
+#include <boost/functional/hash.hpp>
+#include "../Serialization/Serializable.h"
+
+#include "SkyboxResource.h"
+
+
 struct SkyboxComponent
 {
-	std::unique_ptr<Buffer> vertexBuffer;
-	std::unique_ptr<Buffer> indexBuffer;
-	ComPtr<ID3D11ShaderResourceView> cubeMapSRV;
+	std::unique_ptr<Buffer> VertexBuffer;
+	std::unique_ptr<Buffer> IndexBuffer;
+	std::shared_ptr<SkyboxResource> SkyboxRes;
+	boost::uuids::uuid uuid;
+	size_t Hash;
+	SER_COMP(SkyboxComponent,
+		uuid)
 };

@@ -12,8 +12,8 @@ public:
 	SyResult Run() override;
 	SyResult Destroy() override;
 private:
-	EngineContext* ec;
-	RenderContext* rc;
-	HardwareContext* hc;
+	EngineContext* _ec = nullptr;
+	RenderContext* _rc = nullptr;
+	HardwareContext* _hc = nullptr;
 };
 

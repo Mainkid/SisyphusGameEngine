@@ -6,57 +6,57 @@
 #include "../../../Scene/CameraHelper.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
+#include "..\..\..\Components\SkyboxComponent.h"
 
 SyResult SkyboxRenderSystem::Init()
 {
-    ec = ServiceLocator::instance()->Get<EngineContext>();
-    rc = ServiceLocator::instance()->Get<RenderContext>();
-    hc = ServiceLocator::instance()->Get<HardwareContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "SkyboxRender system initialization successful. ");
+    _ec = ServiceLocator::instance()->Get<EngineContext>();
+    _rc = ServiceLocator::instance()->Get<RenderContext>();
+    _hc = ServiceLocator::instance()->Get<HardwareContext>();
+    _rs = ServiceLocator::instance()->Get<ResourceService>();
     return SyResult();
 }
 
 SyResult SkyboxRenderSystem::Run()
 {
-    float bgcolor[] = { 0.0f,0.0f,0.0f,0.0f };
-    hc->context->RSSetState(rc->CullFrontRasterizerState.Get());
-    //hc->context->ClearDepthStencilView(rc->ShadowStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-    CB_BaseEditorBuffer dataOpaque;
-    //dataOpaque.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
+    entt::entity skyboxEnt = _ecs->view<SkyboxComponent>().front();
+    SkyboxComponent& skybox = _ecs->get<SkyboxComponent>(skyboxEnt);
 
+
+    _hc->context->RSSetState(_rc->CullFrontRasterizerState.Get());
+    CB_BaseEditorBuffer dataOpaque;
+    
     auto [camera, cameraTf] = CameraHelper::Find(_ecs);
 
     dataOpaque.baseData.world = camera.view * camera.projection;
 
-    UINT strides[1] = {80 };
-    UINT offsets[1] = { 0 };
-    ID3D11RenderTargetView* nulls[] = { nullptr };
+   
+
     
     D3D11_MAPPED_SUBRESOURCE mappedResource;
-    HRESULT res = hc->context->Map(rc->OpaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    HRESULT res = _hc->context->Map(_rc->OpaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
     CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_BaseEditorBuffer));
-    hc->context->Unmap(rc->OpaqueConstBuffer->buffer.Get(), 0);
-    hc->context->VSSetConstantBuffers(0, 1, rc->OpaqueConstBuffer->buffer.GetAddressOf());
-    hc->context->PSSetConstantBuffers(0, 1, rc->OpaqueConstBuffer->buffer.GetAddressOf());
-    hc->context->ClearRenderTargetView(rc->GBuffer->SkyboxRtv.Get(), bgcolor);
-    hc->context->OMSetRenderTargets(1,rc->GBuffer->SkyboxRtv.GetAddressOf(), nullptr);
-    hc->context->IASetInputLayout(rc->SkyBoxShader->layout.Get());
-    hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    hc->context->IASetIndexBuffer(rc->CubeMesh->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-    hc->context->IASetVertexBuffers(0, 1, rc->CubeMesh->vertexBuffer->buffer.GetAddressOf(),
-       strides, offsets);
-    hc->context->PSSetSamplers(0, 1, rc->SamplerState.GetAddressOf());
-    hc->context->PSSetShaderResources(0, 1, rc->SkyboxSRV.GetAddressOf());
-    hc->context->VSSetShader(rc->SkyBoxShader->vertexShader.Get(), nullptr, 0);
-    hc->context->PSSetShader(rc->SkyBoxShader->pixelShader.Get(), nullptr, 0);
+    _hc->context->Unmap(_rc->OpaqueConstBuffer->buffer.Get(), 0);
+    _hc->context->VSSetConstantBuffers(0, 1, _rc->OpaqueConstBuffer->buffer.GetAddressOf());
+    _hc->context->PSSetConstantBuffers(0, 1, _rc->OpaqueConstBuffer->buffer.GetAddressOf());
+    _hc->context->ClearRenderTargetView(_rc->GBuffer->SkyboxRtv.Get(), _rc->RhData.bgColor0000);
+    _hc->context->OMSetRenderTargets(1,_rc->GBuffer->SkyboxRtv.GetAddressOf(), nullptr);
+    _hc->context->IASetInputLayout(_rc->SkyBoxShader->layout.Get());
+    _hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    _hc->context->IASetIndexBuffer(_rc->CubeMesh->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+    _hc->context->IASetVertexBuffers(0, 1, _rc->CubeMesh->vertexBuffer->buffer.GetAddressOf(),
+       _rc->RhData.strides80, _rc->RhData.offsets0);
+    _hc->context->PSSetSamplers(0, 1, _rc->SamplerState.GetAddressOf());
+    _hc->context->PSSetShaderResources(0, 1,skybox.SkyboxRes->textureSRV.GetAddressOf());
+    _hc->context->VSSetShader(_rc->SkyBoxShader->vertexShader.Get(), nullptr, 0);
+    _hc->context->PSSetShader(_rc->SkyBoxShader->pixelShader.Get(), nullptr, 0);
     
-    hc->context->DrawIndexed(rc->CubeMesh->indexBuffer->size, 0, 0);
+    _hc->context->DrawIndexed(_rc->CubeMesh->indexBuffer->size, 0, 0);
     
     return SyResult();
 }
 
 SyResult SkyboxRenderSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "SkyboxRender system destruction successful. ");
     return SyResult();
 }

@@ -678,61 +678,93 @@
    }
   },
   {
-   "id": 5,
-   "struct EditorBillboardComponent": {
-    "texturePath": "Engine/Assets/Sprites/PointLightSprite.png"
-   },
+    "id": 5,
+    "struct EditorBillboardComponent": {
+      "texturePath": "Engine/Assets/Sprites/PointLightSprite.png"
+    },
+    "struct GameObjectComp": {
+      "Name": "PointLight",
+      "Tag": "None"
+    },
+    "struct LightComponent": {
+      "Color": {
+        "w": 1.0,
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "LightBehavior": 1,
+      "LightType": 2,
+      "ParamsRadiusAndAttenuation": {
+        "w": 1.0,
+        "x": 24.0,
+        "y": 0.0,
+        "z": 0.0
+      }
+    },
+    "struct TransformComponent": {
+      "localPosition": {
+        "x": 0.0,
+        "y": 0.7825189232826233,
+        "z": 0.13302910327911377
+      },
+      "localRotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "localScale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "parent": 4294967295,
+      "position": {
+        "x": 0.0,
+        "y": 0.7825189232826233,
+        "z": 0.13302910327911377
+      },
+      "rotation": {
+        "x": -0.0,
+        "y": 0.0,
+        "z": -0.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    }
+  },
+  {
+   "id": 228,
    "struct GameObjectComp": {
-    "Name": "PointLight",
+    "Name": "GameObject",
     "Tag": "None"
    },
-   "struct LightComponent": {
-    "Color": {
-     "w": 1.0,
-     "x": 1.0,
-     "y": 1.0,
-     "z": 1.0
-    },
-    "LightBehavior": 1,
-    "LightType": 2,
-    "ParamsRadiusAndAttenuation": {
-     "w": 1.0,
-     "x": 24.0,
-     "y": 0.0,
-     "z": 0.0
-    }
+   "struct ImageBasedLightingComponent": {
+    "IsOn": false
    },
-   "struct TransformComponent": {
-    "localPosition": {
-     "x": 0.0,
-     "y": 0.7825189232826233,
-     "z": 0.13302910327911377
-    },
-    "localRotation": {
-     "x": 0.0,
-     "y": 0.0,
-     "z": 0.0
-    },
-    "localScale": {
-     "x": 1.0,
-     "y": 1.0,
-     "z": 1.0
-    },
-    "parent": 4294967295,
-    "position": {
-     "x": 0.0,
-     "y": 0.7825189232826233,
-     "z": 0.13302910327911377
-    },
-    "rotation": {
-     "x": -0.0,
-     "y": 0.0,
-     "z": -0.0
-    },
-    "scale": {
-     "x": 1.0,
-     "y": 1.0,
-     "z": 1.0
+   "struct SkyboxComponent": {
+    "uuid": {
+     "data": [
+      114,
+      2,
+      233,
+      207,
+      193,
+      107,
+      74,
+      95,
+      186,
+      225,
+      0,
+      83,
+      138,
+      45,
+      188,
+      190
+     ]
     }
    }
   }

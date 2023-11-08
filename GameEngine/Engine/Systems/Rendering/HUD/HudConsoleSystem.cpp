@@ -101,6 +101,5 @@ SyResult SyHudConsoleSystem::Run()
 
 SyResult SyHudConsoleSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "HUD console system destruction successful. ");
 	return SyResult();
 }

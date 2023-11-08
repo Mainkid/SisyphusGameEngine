@@ -8,6 +8,9 @@
     <FxCompile Include="Engine\Assets\Shaders\StencilPassShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\TextureShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\GaussianBlur.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\IrradianceMapGenerator.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\EnvironmentPrefilter.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\IblLookUpTexture.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp" />
@@ -89,6 +92,9 @@
     <ClCompile Include="Engine\Mono\Objects\SyMonoEcs.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoGameConfig.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoEditor.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\HbaoRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\ImageBasedLightingSystem.cpp" />
+    <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -216,6 +222,15 @@
     <ClInclude Include="Engine\Mono\Objects\SyMonoEcs.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoGameConfig.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoEditor.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\HbaoRenderSystem.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyHotReloadEvent.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeStartedEvent.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeEndedEvent.h" />
+    <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
+    <ClInclude Include="Engine\Systems\Rendering\ImageBasedLightingSystem.h" />
+    <ClInclude Include="Engine\Core\ECS\Events\SyImageBasedLightingUpdateEvent.h" />
+    <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
+    <ClInclude Include="Engine\Components\SkyboxResource.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
@@ -224,6 +239,8 @@
     <Image Include="Engine\Assets\SkyBox\skybox_4.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_5.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_6.png" />
+    <Image Include="..\..\..\..\Downloads\skybox.jpg" />
+    <Image Include="Engine\Assets\SkyBox\skybox.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Assets\Shaders\LightShader.hlsl" />
@@ -235,6 +252,7 @@
     <None Include="Engine\Assets\Shaders\ToneMapping.hlsl" />
     <None Include="Engine\Assets\Shaders\EditorGridShader.hlsl" />
     <None Include="cpp.hint" />
+    <None Include="Engine\Assets\Shaders\PBRHelpers.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png">

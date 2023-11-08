@@ -2,6 +2,7 @@
 #include "EngineContext.h"
 #include "../Core/ServiceLocator.h"
 #include "TransformHelper.h"
+#include "../Core/ECS/Events/SyHotReloadEvent.h"
 #include "../Scene/GameObjectHelper.h"
 #include "../Core/ECS/Events/SySceneLoadEvent.h"
 
@@ -9,7 +10,6 @@ SyResult TransformSystem::Init()
 {
 	SyResult result;
 	ec = ServiceLocator::instance()->Get<EngineContext>();
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Transform system initialization successful. ");
 	return result;
 }
 
@@ -19,6 +19,13 @@ SyResult TransformSystem::Run()
 	auto view = _ecs->view<TransformComponent>();
 
 	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SySceneLoadEvent);
+
+	auto view2 = SY_GET_THIS_FRAME_EVENT_VIEW(SyHotReloadEvent);
+
+	if (view2.size_hint()>0)
+	{
+		std::cout << std::endl;
+	}
 
 	//NOT WORKING!!!
 	// 
@@ -61,7 +68,6 @@ SyResult TransformSystem::Run()
 
 SyResult TransformSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Transform system destruction successful. ");
 	return SyResult();
 }
 

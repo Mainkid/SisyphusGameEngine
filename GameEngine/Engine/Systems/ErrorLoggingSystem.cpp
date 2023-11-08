@@ -1,4 +1,17 @@
 #include "ErrorLoggingSystem.h"
+#include <filesystem>
+
+unsigned SyErrorLoggingSystem::logDirCapacity = 10;
+
+void SyErrorLoggingSystem::SetLogDirectoryCapacity(unsigned newCapacity_)
+{
+	logDirCapacity = newCapacity_;
+}
+
+unsigned SyErrorLoggingSystem::GetLogDirectoryCapacity()
+{
+	return logDirCapacity;
+}
 
 SyResult SyErrorLoggingSystem::Init()
 {
@@ -8,27 +21,42 @@ SyResult SyErrorLoggingSystem::Init()
 		std::time_t tt;
 		auto now = system_clock::now();
 		tt = system_clock::to_time_t(now);
-		tm timeinfo;
-		localtime_s(&timeinfo, &tt);
-		logPath = xstring(	"logs\\%d-%d-%d-%d.txt",
-							timeinfo.tm_hour,
-							timeinfo.tm_min,
-							timeinfo.tm_sec,
+		tm timeInfo;
+		localtime_s(&timeInfo, &tt);
+		logPath = xstring(	"%s\\%s%d-%s%d-%s%d_%s%d-%s%d-%s%d-%s%d.txt",
+							logDir.c_str(),
+							GetZeros(3, timeInfo.tm_year - 100).c_str(),
+							timeInfo.tm_year - 100,
+							GetZeros(2, timeInfo.tm_mon + 1).c_str(),
+							timeInfo.tm_mon + 1,
+							GetZeros(2, timeInfo.tm_mday).c_str(),
+							timeInfo.tm_mday,
+							GetZeros(2, timeInfo.tm_hour).c_str(),
+							timeInfo.tm_hour,
+							GetZeros(2, timeInfo.tm_min).c_str(),
+							timeInfo.tm_min,
+							GetZeros(2, timeInfo.tm_sec).c_str(),
+							timeInfo.tm_sec,
+							GetZeros(3, int(now.time_since_epoch().count() / 1000000 % 1000)).c_str(),
 							int(now.time_since_epoch().count() / 1000000 % 1000)).ToString();
 		fout = std::ofstream(logPath);
 	}
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Error logging system initialization successful. ");
+
+	std::filesystem::path logDirPath(logDir);
+	unsigned fileCtr = 0;
+	std::vector<std::filesystem::path> logFiles;
+	logFiles.reserve(2 * logDirCapacity);
+	for (auto& logDirEntry : std::filesystem::directory_iterator(logDirPath))
+		logFiles.push_back(logDirEntry.path());
+	for (auto i = 0; i < (int)logFiles.size() - (int)logDirCapacity; i++)
+			std::filesystem::remove(logFiles[i]);
+
 	return SyResult();
 }
 
 SyResult SyErrorLoggingSystem::Run()
 {
-	using namespace std::chrono;
-	std::time_t tt;
-	auto now = system_clock::now();
-	tt = system_clock::to_time_t(now);
-	tm timeinfo;
-	localtime_s(&timeinfo, &tt);
+	
 	for (auto& sink : SY_EL->sinks)
 		for (auto& message : SY_EL->messagePool)
 		{
@@ -44,13 +72,40 @@ SyResult SyErrorLoggingSystem::Run()
 				break;
 			}
 		}
-	SY_EL->messagePool.clear(); //all systems accessing messagepool must do it prior to SyErrorLoggingSystem::Run()!
+	SY_EL->messagePool.clear(); //all systems accessing message pool must do it prior to SyErrorLoggingSystem::Run()!
+
+	
 	return SyResult();
 }
 
 SyResult SyErrorLoggingSystem::Destroy()
 {
 	Run();
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Error logging system destruction successful. ");
 	return SyResult();
+}
+
+std::string SyErrorLoggingSystem::GetZeros(const unsigned maxZeros_, unsigned number_)
+{
+	unsigned numDigits = 1;
+	if (maxZeros_ > 3)
+		std::cout << "";
+	if (number_ >= 10)
+		numDigits++;
+	if (number_ >=100)
+		numDigits++;
+	if (number_ >= 1000)
+		std::cout << "";
+	unsigned numZeros = maxZeros_ - numDigits;
+	switch (numZeros)
+	{
+	case 0:
+		return "";
+	case 1:
+		return "0";
+	case 2:
+		return "00";
+	default:
+		std::cout << "";
+		return "";
+	}
 }
