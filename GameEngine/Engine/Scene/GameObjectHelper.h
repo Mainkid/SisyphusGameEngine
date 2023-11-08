@@ -30,6 +30,10 @@ public:
 													const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
 													const SyColliderMaterial& 			material = SyColliderMaterial(),
 													unsigned							flags = 0);
+	static SyResult AddTrimeshColliderComponent(	entt::registry*						ecs,
+													entt::entity						entity,
+													const SyColliderMaterial& 			material = SyColliderMaterial(),
+													unsigned							flags = 0);
 	
 	static entt::entity CreateLight(entt::registry* ecs, ELightType lightType, Vector3 pos = Vector3::Zero);
 

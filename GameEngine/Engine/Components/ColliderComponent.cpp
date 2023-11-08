@@ -7,6 +7,10 @@ SyPrimitiveColliderComponent::SyPrimitiveColliderComponent(SyPrimitiveColliderTy
     _radius(colliderShapeDesc.Radius),
     _halfHeight(colliderShapeDesc.HalfHeight),
     _material(material),
+    _flags(flags){ }
+
+SyTrimeshColliderComponent::SyTrimeshColliderComponent(const SyColliderMaterial& material, unsigned flags) :
+    _material(material),
     _flags(flags){ };
 
 

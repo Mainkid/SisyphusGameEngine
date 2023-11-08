@@ -63,3 +63,19 @@ private:
     
     friend class SyCollisionSystem;
 };
+
+struct SyTrimeshColliderComponent
+{
+    SyTrimeshColliderComponent(  const SyColliderMaterial& material,
+                                 unsigned flags = 0);
+    //members initialized in constructor
+    
+    SyColliderMaterial      _material;
+    unsigned                _flags;
+    
+    //members initialized in CollisionSystem::InitComponentP
+    
+    physx::PxShape*			_rbShape = nullptr;
+    
+    friend class SyCollisionSystem;
+};

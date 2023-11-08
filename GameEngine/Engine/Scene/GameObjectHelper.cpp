@@ -133,10 +133,35 @@ SyResult GameObjectHelper::AddPrimitiveColliderComponent(entt::registry* ecs, en
 	{
 		result.code = SY_RESCODE_ERROR;
 		result.message = xstring("Entity %d lacks RigidBody Component. You can't attach PrimitiveCollider Component to it.", (int)entity);
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks RigidBody Component. You can't attach PrimitiveCollider Component to it..", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks RigidBody Component. You can't attach PrimitiveCollider Component to it.", (int)entity);
 		return result;
 	}
 	ecs->emplace<SyPrimitiveColliderComponent>(entity, colliderType, colliderShapeDesc,  material, flags);
+	ecs->emplace<SyColliderCreateOnNextUpdateTag>(entity);
+	return result;
+}
+
+SyResult GameObjectHelper::AddTrimeshColliderComponent(entt::registry* ecs, entt::entity entity,
+	const SyColliderMaterial& material, unsigned flags)
+{
+	SyResult result;
+	auto* rbComponent = ecs->try_get<SyRBodyComponent>(entity);
+	if (rbComponent == nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("Entity %d lacks RigidBody Component. You can't attach PrimitiveCollider Component to it.", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks RigidBody Component. You can't attach PrimitiveCollider Component to it.", (int)entity);
+		return result;
+	}
+	auto* mComponent = ecs->try_get<MeshComponent>(entity);
+	if (rbComponent == nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("Entity %d lacks Mesh Component. You can't attach MeshCollider Component to it.", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks Mesh Component. You can't attach MeshCollider Component to it.", (int)entity);
+		return result;
+	}
+	ecs->emplace<SyPrimitiveColliderComponent>(entity, material, flags);
 	ecs->emplace<SyColliderCreateOnNextUpdateTag>(entity);
 	return result;
 }

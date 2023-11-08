@@ -111,7 +111,6 @@ SyResult SyRBodySystem::Destroy()
 {
 	PX_RELEASE(_physics);
 	PX_RELEASE(_foundation);
-	SY_LOG_PHYS(SY_LOGLEVEL_INFO, "Physics system destruction successful. ");
 	return SyResult();
 }
 
