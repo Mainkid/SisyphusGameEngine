@@ -2,6 +2,10 @@
 #define THREAD_GROUP_Y 24
 #define THREAD_GROUP_TOTAL 768
 
+#define SPHERE_SHAPE 0
+#define CONE_SHAPE 1
+#define BOX_SHAPE 2
+
 struct SharedParticleData
 {
     float4 deltaTime;
@@ -33,6 +37,7 @@ Texture2D<float4> noiseTex : register(t1);
 SamplerState textureSampler : SAMPLER : register(s0);
 
 
+
 //AppendStructuredBuffer<int> sortList : register(u3);
 
 cbuffer Params : register(b0)
@@ -59,7 +64,11 @@ float3 randVec3(float co)
     vec -= float3(0.5f, 0.5f, 0.5f);
     vec = vec * 2;
     return normalize(vec);
+}
 
+float2 randVec2(float co)
+{
+    return normalize(randVec3(co).xz);
 }
 
 void EmitParticle(int index)
@@ -70,11 +79,18 @@ void EmitParticle(int index)
     pool[index].position = particleData.startPosition;
     pool[index].size = particleData.startSize;
     
-    if (particleData.shapeRadiusAngle.x == 0) // Sphere
+    if (particleData.shapeRadiusAngle.x == SPHERE_SHAPE) // Sphere
     {
         pool[index].velocity.xyz = randVec3(index);
         pool[index].position.xyz += randVec3(sqrt(index)) * particleData.shapeRadiusAngle.y;
     }
+    else if (particleData.shapeRadiusAngle.x == CONE_SHAPE)
+    {
+        pool[index].position.xz = randVec2(index);
+        pool[index].velocity
+
+    }
+    
     
         
 }

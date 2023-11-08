@@ -45,6 +45,7 @@ SyResult ParticleRenderSystem::Run()
 
         CB_ComputeShader dataGroup;
         NullSortList(pc);
+        
         dataGroup.GroupCount = Vector4(pc.GroupSizeX, pc.GroupSizeY, 0, 1);
         dataGroup.viewProjBuff.projection = camera.projection;
         dataGroup.viewProjBuff.view = camera.view;
