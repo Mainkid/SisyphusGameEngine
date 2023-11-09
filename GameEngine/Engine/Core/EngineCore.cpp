@@ -59,6 +59,7 @@ void EngineCore::StartUp()
 	ServiceLocator::instance()->Register<ResourceService>();
 	_context = ServiceLocator::instance()->Get<EngineContext>();
 
+
 	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
 	ser.AddEcsCompMeta<GameObjectComp>();
 	ser.AddEcsCompMeta<TransformComponent>();
@@ -67,6 +68,11 @@ void EngineCore::StartUp()
 	ser.AddEcsCompMeta<EditorBillboardComponent>();
 	ser.AddEcsCompMeta<SkyboxComponent>();
 	ser.AddEcsCompMeta<ImageBasedLightingComponent>();
+	
+	ServiceLocator::instance()->Register<mono::SyMono>();
+	mono::SyMono* mono = ServiceLocator::instance()->Get<mono::SyMono>();
+	mono->Init();
+	mono->HotReload();
 
 	StartUpSystems();
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "All systems initialization complete!");
@@ -85,6 +91,10 @@ void EngineCore::StartUpSystems()
 	_systems.Add<ResourceSystem>();
 	_systems.Add<SyRBodySystem>();
 	_systems.Add<SyCollisionSystem>();
+
+	_systems.Add<MonoSyncSystem>();
+
+	
 
 	_systems.Add<TransformSystem>();
 
@@ -132,6 +142,7 @@ void EngineCore::ShutDown()
 	ServiceLocator::instance()->Unregister<EngineCore>();
 	ServiceLocator::instance()->Unregister<RenderContext>();
 	ServiceLocator::instance()->Unregister<HardwareContext>();
+	ServiceLocator::instance()->Unregister<mono::SyMono>();
 	ServiceLocator::instance()->Unregister<SyErrorLogger>();
 	ServiceLocator::instance()->Unregister<ResourceService>();
 }

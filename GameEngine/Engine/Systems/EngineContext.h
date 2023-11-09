@@ -10,6 +10,7 @@
 #include <boost/uuid/nil_generator.hpp>
 #include <set>
 
+#include "../Mono/SyMono.h"
 #include "../Serialization/Serializer.hpp"
 
 
@@ -30,7 +31,6 @@ struct HudData
 struct EngineContext : public IService
 {
 	entt::registry ecs;
-
 	ser::Serializer serializer;
 
 	entt::entity selectedEntityID=entt::null;
@@ -52,4 +52,4 @@ struct EngineContext : public IService
 	
 };
 
-//TODO: Перенести resourceLibrary в ResourceService;
+//TODO: ��������� resourceLibrary � ResourceService;

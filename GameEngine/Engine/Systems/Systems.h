@@ -34,4 +34,6 @@
 #include "Rendering/RenderPipeline/EditorGridRenderSystem.h"
 #include "Rendering/RenderPipeline/HbaoRenderSystem.h"
 
+#include "../Mono/Systems/MonoSyncSystem.h"
+
 #include "../Systems/PrepareEventsSystem.h"
