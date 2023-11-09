@@ -40,6 +40,8 @@ SyResult ShadowRenderSystem::Run()
             {
                 auto [transform, meshComp] = viewMeshes.get(ent);
 
+                if (!(meshComp.flags & EMeshComponentFlags::ERenderMesh))
+                    continue;
                 CB_ShadowBuffer dataShadow;
                 //dataShadow.baseData.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
                 dataShadow.baseData.world = transform.transformMatrix;
@@ -131,7 +133,8 @@ SyResult ShadowRenderSystem::Run()
             for (auto& ent : viewMeshes)
             {
                 auto [transform, meshComp] = viewMeshes.get(ent);
-
+                if (!(meshComp.flags & EMeshComponentFlags::ERenderMesh))
+                    continue;
                 dataShadow.world = transform.transformMatrix;
                 
                 D3D11_MAPPED_SUBRESOURCE mappedResource;
