@@ -69,6 +69,7 @@ void EngineCore::StartUp()
 	ser.AddEcsCompMeta<ImageBasedLightingComponent>();
 
 	StartUpSystems();
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "All systems initialization complete!");
 }
 
 void EngineCore::StartUpSystems()

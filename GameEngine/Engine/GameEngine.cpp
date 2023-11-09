@@ -48,16 +48,23 @@ int main()
                                                             baseColDesc,
                                                             SyColliderMaterial());
 
-    auto cube = GameObjectHelper::Create(ecs, "Cube", {0.0f, 5.0f, 8.0f});
-    auto result4 = GameObjectHelper::AddRigidBodyComponent(ecs, cube, SY_RB_TYPE_DYNAMIC, 10);
-    auto result5 = GameObjectHelper::AddCubeMeshComponent(ecs, cube);
+    
+    auto meshUuid = ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Game\\Assets\\fbx\\barrel.fbx");
+    auto staticMesh = GameObjectHelper::Create(ecs, "Static Mesh", {0.0f, -2.5f, 8.0f});
+    ecs->get<TransformComponent>(staticMesh).localScale = { 3.0f, 3.0f, 3.0f };
+    auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid);
+    auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, SY_RB_TYPE_DYNAMIC, 1, SyRBodyFlags::SY_RB_IS_KINEMATIC | SyRBodyFlags::SY_RB_USE_DENSITY);
+    auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
+
+    auto cube = GameObjectHelper::Create(ecs, "Cube", { 0.0f, 5.0f, 8.0f });
+    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube, SY_RB_TYPE_DYNAMIC);
+    auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube);
     SyPrimitiveColliderShapeDesc cubeColDesc;
-    cubeColDesc.Extent = {1.0f, 1.0f, 1.0f};
-    auto result6 = GameObjectHelper::AddPrimitiveColliderComponent( ecs, cube,
-                                                                     SY_COL_SHAPE_TYPE_BOX,
-                                                                     cubeColDesc,
-                                                                     SyColliderMaterial(),
-                                                                     SyColliderFlags::SY_COL_SET_MASS_MANUALLY);
+    cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
+    auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube,
+        SY_COL_SHAPE_TYPE_BOX,
+        cubeColDesc,
+        SyColliderMaterial());
     //---------- Serialization test ----------------
 
     // ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;

@@ -105,7 +105,7 @@ void GameObjectHelper::RemoveChild(entt::registry* ecs, entt::entity parent, ent
 	ecs->get<TransformComponent>(parent).children.erase(child);
 }
 
-SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::entity entity, const SyRBodyType& rbType, float mass)
+SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::entity entity, const SyRBodyType& rbType, float mass, unsigned flags)
 {
 	SyResult result;
 	auto* transformComponent = ecs->try_get<TransformComponent>(entity);
@@ -118,14 +118,15 @@ SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::enti
 	}
 	ecs->emplace<SyRBodyComponent>(	entity,
 									rbType,
-									mass);
+									mass,
+									flags);
 	ecs->emplace<SyRbCreateOnNextUpdateTag>(entity);
 	return result;
 }
 
 SyResult GameObjectHelper::AddPrimitiveColliderComponent(entt::registry* ecs, entt::entity entity,
 	SyPrimitiveColliderType colliderType, const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
-	const SyColliderMaterial& material, unsigned flags)
+	const SyColliderMaterial& material)
 {
 	SyResult result;
 	auto* rbComponent = ecs->try_get<SyRBodyComponent>(entity);
@@ -136,13 +137,13 @@ SyResult GameObjectHelper::AddPrimitiveColliderComponent(entt::registry* ecs, en
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks RigidBody Component. You can't attach PrimitiveCollider Component to it.", (int)entity);
 		return result;
 	}
-	ecs->emplace<SyPrimitiveColliderComponent>(entity, colliderType, colliderShapeDesc,  material, flags);
+	ecs->emplace<SyPrimitiveColliderComponent>(entity, colliderType, colliderShapeDesc,  material);
 	ecs->emplace<SyColliderCreateOnNextUpdateTag>(entity);
 	return result;
 }
 
 SyResult GameObjectHelper::AddTrimeshColliderComponent(entt::registry* ecs, entt::entity entity,
-	const SyColliderMaterial& material, unsigned flags)
+	const SyColliderMaterial& material)
 {
 	SyResult result;
 	auto* rbComponent = ecs->try_get<SyRBodyComponent>(entity);
@@ -161,7 +162,7 @@ SyResult GameObjectHelper::AddTrimeshColliderComponent(entt::registry* ecs, entt
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks Mesh Component. You can't attach MeshCollider Component to it.", (int)entity);
 		return result;
 	}
-	ecs->emplace<SyPrimitiveColliderComponent>(entity, material, flags);
+	ecs->emplace<SyTrimeshColliderComponent>(entity, material);
 	ecs->emplace<SyColliderCreateOnNextUpdateTag>(entity);
 	return result;
 }

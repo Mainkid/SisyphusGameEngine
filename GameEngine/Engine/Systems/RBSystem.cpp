@@ -97,13 +97,7 @@ SyResult SyRBodySystem::Run()
 		trComponent.localPosition = rbTrasform.p;
 		trComponent.localRotation = SyVector3::PxQuatToEuler(rbTrasform.q);
 	}
-
-	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyTestEvent);
-	for (auto& entity : eventView)
-	{
-		SyTestEvent& testEvent = eventView.get<SyTestEvent>(entity);
-		SY_LOG_EVSY(SY_LOGLEVEL_WARNING, testEvent.message.c_str());
-	}
+	
 	return SyResult();
 }
 
@@ -140,6 +134,11 @@ SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyCompone
 			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::setMassAndUpdateInertia returned false");
 			return result;
 		}
+	}
+	if (rbComponent._flags & SyRBodyFlags::SY_RB_IS_KINEMATIC)
+	{
+		PxRigidBody* rb = rbComponent._rbActor->is<PxRigidBody>();
+		rb->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 	}
 	if (_scene->addActor(*rbComponent._rbActor) == false)
 	{

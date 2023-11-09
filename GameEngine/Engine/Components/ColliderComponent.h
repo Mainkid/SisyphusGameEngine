@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "../Tools/Data/Vector.h"
-#include "../Tools/Data/FlagBitmask.h"
 
 namespace physx
 {
@@ -12,7 +11,7 @@ struct SyColliderMaterial
     float staticFriction	= 1.0f;
     float dynamicFriction	= 1.0f;
     float restitution		= 0.3f;
-    float density			= 0.001f;
+    float density			= 0.1f;
 };
 
 enum SyPrimitiveColliderType
@@ -29,12 +28,6 @@ struct SyPrimitiveColliderShapeDesc
     float       HalfHeight; //for capsule
 };
 
-enum SyColliderFlags
-{
-    SY_COL_SET_MASS_MANUALLY = 1
-};
-DEFINE_BITWISE_OPERATORS(SyColliderFlags);
-
 struct SyColliderCreateOnNextUpdateTag
 {
     
@@ -45,17 +38,15 @@ struct SyPrimitiveColliderComponent
 
     SyPrimitiveColliderComponent(   SyPrimitiveColliderType colliderType,
                                     const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
-                                    const SyColliderMaterial& material,
-                                    unsigned flags = 0);
+                                    const SyColliderMaterial& material);
 private:
     //members initialized in constructor
     
     SyPrimitiveColliderType _colliderType;
-    SyVector3               _extent;    //for box
+    SyVector3               _extent;        //for box
     float                   _radius;        //for sphere and capsule
     float                   _halfHeight;    //for capsule
     SyColliderMaterial      _material;
-    unsigned                _flags;
 
     //members initialized in CollisionSystem::InitComponentP
     
@@ -66,16 +57,13 @@ private:
 
 struct SyTrimeshColliderComponent
 {
-    SyTrimeshColliderComponent(  const SyColliderMaterial& material,
-                                 unsigned flags = 0);
+    SyTrimeshColliderComponent(  const SyColliderMaterial& material = SyColliderMaterial());
     //members initialized in constructor
     
     SyColliderMaterial      _material;
-    unsigned                _flags;
-    
     //members initialized in CollisionSystem::InitComponentP
     
-    physx::PxShape*			_rbShape = nullptr;
+    physx::PxShape* _shape;
     
     friend class SyCollisionSystem;
 };

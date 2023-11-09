@@ -23,17 +23,16 @@ public:
 	static SyResult AddRigidBodyComponent(	entt::registry*			ecs,
 											entt::entity			entity,
 											const SyRBodyType&		rbType,
-											float					mass			= 1.0);
+											float					mass			= 1.0,
+											unsigned				flags			= 0);
 	static SyResult AddPrimitiveColliderComponent(	entt::registry*						ecs,
 													entt::entity						entity,
 													SyPrimitiveColliderType				colliderType,
 													const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
-													const SyColliderMaterial& 			material = SyColliderMaterial(),
-													unsigned							flags = 0);
+													const SyColliderMaterial& 			material = SyColliderMaterial());
 	static SyResult AddTrimeshColliderComponent(	entt::registry*						ecs,
 													entt::entity						entity,
-													const SyColliderMaterial& 			material = SyColliderMaterial(),
-													unsigned							flags = 0);
+													const SyColliderMaterial& 			material = SyColliderMaterial());
 	
 	static entt::entity CreateLight(entt::registry* ecs, ELightType lightType, Vector3 pos = Vector3::Zero);
 
