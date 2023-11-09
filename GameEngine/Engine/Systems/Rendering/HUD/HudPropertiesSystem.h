@@ -9,11 +9,15 @@
 #include "../../../../vendor/entt/entt.hpp"
 #include <utility>
 
+namespace mono
+{
+	class SyMonoEditor;
+}
+
 struct EngineContext;
 struct HardwareContext;
 struct RenderContext;
 class ResourceService;
-
 
 
 class HudPropertiesSystem : public SystemBase
@@ -27,6 +31,8 @@ private:
     RenderContext* rc;
     HardwareContext* hc;
     ResourceService* rs;
+    mono::SyMonoEditor* _monoEditor;
+
     std::string windowID;
     boost::uuids::uuid prevSelectedUUID = boost::uuids::nil_uuid();
     bool isFocused;
