@@ -2,6 +2,7 @@
 #include "../../EngineContext.h"
 #include "../../HardwareContext.h"
 #include "../RenderContext.h"
+#include "../../../Components/LightComponent.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
 #include "../../Components/ParticleComponent.h"
@@ -214,7 +215,33 @@ SyResult ParticleRenderSystem::Run()
         }*/
 
 
+        auto view = _ecs->view<LightComponent,TransformComponent>();
+        int ctr = 0;
+        ID3D11ShaderResourceView* shadowSrv;
+        for (auto ent : view)
+        {
+            auto [lightComponent,transform] = view.get<LightComponent,TransformComponent>(ent);
+            if (lightComponent.LightType == ELightType::Directional)
+                shadowSrv = lightComponent.DirShadowBluredSrv.Get();
 
+            dataParticle.lightData[ctr].Pos = Vector4(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z,1);
+            dataParticle.lightData[ctr].Color = lightComponent.Color;
+            dataParticle.lightData[ctr].Dir = Vector4::Transform(Vector4::UnitX, Matrix::CreateFromYawPitchRoll(transform.localRotation));
+            dataParticle.lightData[ctr].additiveParams = lightComponent.ParamsRadiusAndAttenuation;
+            dataParticle.lightData[ctr].additiveParams.w = (float)lightComponent.LightType;
+
+            if (lightComponent.LightType == ELightType::Directional)
+            {
+                shadowSrv = lightComponent.DirShadowBluredSrv.Get();
+                for (int j = 0; j < 4; j++)
+                {
+                    dataParticle.distances[j] = lightComponent.Distances[j];
+                    dataParticle.viewProjs[j] = lightComponent.ViewMatrices[j] * lightComponent.OrthoMatrices[j];
+                }
+            }
+            ctr++;
+        }
+        dataParticle.lightCount = ctr;
 
         D3D11_MAPPED_SUBRESOURCE mappedResource2;
         res = _hc->context->Map(pc.ConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource2);
@@ -227,11 +254,11 @@ SyResult ParticleRenderSystem::Run()
 
         _hc->context->VSSetShader(_rc->SimpleParticle->vertexShader.Get(), nullptr, 0);
         _hc->context->PSSetShader(_rc->SimpleParticle->pixelShader.Get(), nullptr, 0);
-        //_hc->context->VSSetShaderResources(0, 1, &shadowResourceView);
+        _hc->context->VSSetShaderResources(0, 1, &shadowSrv);
         _hc->context->VSSetShaderResources(1, 1, pc.PoolBufferSrv.GetAddressOf());
         _hc->context->VSSetShaderResources(2, 1, pc.SortBufferSrv.GetAddressOf());
         //_hc->context->VSSetShaderResources(3, 1, pc.TextureSrv.GetAddressOf());
-        //_hc->context->PSSetShaderResources(0, 1, &shadowResourceView);
+        _hc->context->PSSetShaderResources(0, 1, &shadowSrv);
         _hc->context->PSSetShaderResources(1, 1, pc.PoolBufferSrv.GetAddressOf());
         _hc->context->PSSetShaderResources(2, 1, pc.SortBufferSrv.GetAddressOf());
         _hc->context->PSSetShaderResources(3, 1, pc.ParticleTexture->textureSRV.GetAddressOf());

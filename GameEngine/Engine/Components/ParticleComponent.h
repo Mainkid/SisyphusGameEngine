@@ -5,6 +5,7 @@
 #include "../Systems/HardwareContext.h"
 #include "../Components/Particle.h"
 #include "../Components/Texture.h"
+#include "../Core/Rendering/Lights/LightData.h"
 
 struct CB
 {
@@ -30,6 +31,7 @@ struct ParticleComponent
 	uint32_t NumParticles;
 	float TimeFromStart;
 	float ParticlesToEmit = 0.0f;
+	LightData lightObjects[10];
 
 	std::unique_ptr<Buffer> PoolBuffer;
 	std::unique_ptr<Buffer> DeadListBuffer;

@@ -62,7 +62,7 @@ public:
 	void SaveSceneToFile(std::filesystem::path file, entt::registry* ecs);
 
 private:
-	const std::string baseTexture = ".\\Engine\\Assets\\Resources\\Textures\\default_albedo.png";
+	const std::string baseTexture = ".\\Engine\\Assets\\Resources\\Textures\\spotlight_1.png";
 	const std::string baseCubemap = ".\\Engine\\Assets\\Resources\\Cubemaps\\cubemap.hdr";
 	const std::string baseMaterial = ".\\Engine\\Assets\\Resources\\Materials\\baseMaterial.mat";
 	const std::string baseModel = ".\\Engine\\Assets\\Resources\\Cube.fbx";

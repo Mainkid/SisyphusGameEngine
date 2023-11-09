@@ -2,6 +2,10 @@
 #define THREAD_GROUP_Y 24
 #define THREAD_GROUP_TOTAL 768
 
+#define AMBIENT 0
+#define DIRECTIONAL 1
+#define POINTLIGHT 2
+#define SPOTLIGHT 3
 
 
 struct Particle
@@ -96,27 +100,41 @@ struct PixelOutput
 [numthreads(THREAD_GROUP_X, THREAD_GROUP_Y, 1)]
 void DefaultCS(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
 {
- //   uint index = groupID.x * THREAD_GROUP_TOTAL + groupID.y * 37 * THREAD_GROUP_TOTAL + groupIndex;
-	
-	//[flatten]
- //   if (index >= 999)
- //       return;
 
- //   Particle particle = Particles[index];
-
- //   float3 position = particle.position;
- //   float3 velocity = particle.velocity;
-
- //       // payload
-    
-    
-
- //   particle.position.xyz = position + float3(0.0f, 0.01f, 0.0f);
- //   particle.velocity.xyz = velocity;
-
- //   Particles[index] = particle;
 }
 
+//float LinStep(float low, float high, float v)
+//{
+//    return clamp((v - low) / (high - low), 0.0f, 1.0f);
+//}
+
+//float SampleVarianceShadowMap(float3 worldPos, int layer)
+//{
+//    float4 posLight = float4(worldPos, 1);
+//    float3 projectTexCoord;
+//    float shadowSum = 0;
+//    float depthValue = 0;
+//    float bias = 0.001f;
+    
+//    posLight = mul(posLight, viewProj[layer]);
+//    projectTexCoord.x = posLight.x / posLight.w / 2.0f + 0.5f;
+//    projectTexCoord.y = -posLight.y / posLight.w / 2.0f + 0.5f;
+//    projectTexCoord.z = layer;
+    
+//    float compare = posLight.z / posLight.w - bias;
+    
+//    float2 moments = depthMapTexture.Sample(textureSampler, projectTexCoord).rg;
+//    float p = step(compare, moments.x);
+//    float variance = max(moments.y - moments.x * moments.x, 0.00002);
+    
+//    float d = compare - moments.x;
+//    float pMax = LinStep(0.4, 1.0, variance / (variance + d * d));
+   
+ 
+    
+//    return 1 - min(max(p, pMax), 1.0f);
+
+//}
 
 
 LightingO AccumulateLighting(in LightingO o, float3 lightDir, float3 lightCol, float atten,bool is_ambient)
@@ -211,61 +229,64 @@ PixelInput DefaultVS(VertexInput input)
     
     
     
+    for (int i = 0; i < lightCount; i++)
+    {
+        float3 dir;
+        float att;
+        float distance;
+        
+        //float bias = 0.001f;
+        //float3 projectTexCoord;
+        //float depthValue;
+        //float lightDepthValue;
+        //int layer = 3;
+        //float depthVal = abs(mul(float4(particle.position.xyz, 1), View).z);
+        //for (int j = 0; j < 4; j++)
+        //    if (depthVal < distances[j].x)
+        //    {
+        //        layer = j;
+        //        break;
+        //    }
     
-    //for (int i = 0; i < lightCount; i++)
-    //{
-    //    float3 dir = light[i].Dir.xyz;
-    //    float distance = -1;
-    //    float att = light[i].Color.w;
+        //float4 posLight = float4(particle.position.xyz, 1);
+        //posLight = mul(posLight, viewProj[layer]);
+    
+    
+        //projectTexCoord.x = posLight.x / posLight.w / 2.0f + 0.5f;
+        //projectTexCoord.y = -posLight.y / posLight.w / 2.0f + 0.5f;
+        //projectTexCoord.z = layer;
+        
+        //float depth = depthMapTexture.SampleLevel(textureSampler, projectTexCoord, 0);
+        //float shadow = 1.0f;
+        //if (depth > depthVal)
+        //{
+        //    shadow = 0.0f;
+        //}
+        
   
-    //    if (light[i].additiveParams.r>0)
-    //    {
-    //        dir = particle.position.xyz - light[i].Pos.xyz;
-    //        distance = length(dir);
-    //        dir = normalize(dir);
-    //        float att = 1.0f / dot(light[i].additiveParams.yzw, float3(1.0f, distance * light[i].additiveParams.r, distance * distance * light[i].additiveParams.r));
-    //    }
-    //    if (distance<light[i].additiveParams.r)
-    //        output.lightO = AccumulateLighting(output.lightO, dir, light[i].Color.xyz, att, ((light[i].Dir.xyz == float3(0, 0, 0)).x && (light[i].Pos.xyz == float3(0, 0, 0)).x).x);
-
-    //}
+            if (abs(light[i].additiveParams.w - AMBIENT) < 0.01f)
+                output.lightO = AccumulateLighting(output.lightO, dir, light[i].Color.xyz, light[i].Color.w, true);
+            else if (abs(light[i].additiveParams.w - DIRECTIONAL) < 0.01f )
+            {
+                output.lightO = AccumulateLighting(output.lightO, light[i].Dir, light[i].Color.xyz, light[i].Color.w, false);
+            }
+        else if (abs(light[i].additiveParams.w - POINTLIGHT) < 0.01f )
+            {
+                dir = particle.position.xyz - light[i].Pos.xyz;
+                distance = length(dir);
+                dir = normalize(dir);
+                att = pow((1 - distance / light[i].additiveParams.r), 2.0f);
+                if (distance < light[i].additiveParams.r)
+                    output.lightO = AccumulateLighting(output.lightO, dir, light[i].Color.xyz, att, false);
+            }
+    }
     
 
-    //float bias = 0.001f;
-    //float3 projectTexCoord;
-    //float depthValue;
-    //float lightDepthValue;
-    //int layer = 3;
-    //float depthVal = abs(mul(float4(particle.position.xyz, 1), View).z);
-    //for (i = 0; i < 4; i++)
-    //    if (depthVal < distances[i].x)
-    //    {
-    //        layer = i;
-    //        break;
-    //    }
-    
-    //float4 posLight = float4(particle.position.xyz, 1);
-    //posLight = mul(posLight, viewProj[layer]);
-    
-    
-    //projectTexCoord.x = posLight.x / posLight.w / 2.0f + 0.5f;
-    //projectTexCoord.y = -posLight.y / posLight.w / 2.0f + 0.5f;
-    //projectTexCoord.z = layer;
-    //depthValue = depthMapTexture.SampleLevel(textureSampler, projectTexCoord, 1);
-    //lightDepthValue = posLight.z / posLight.w - bias;
     
     
     
-    
-    //if (lightDepthValue > depthValue)
-    //{
-    //    output.lightO.basis_col0 = output.lightO.ambient;
-    //    output.lightO.basis_col1 = output.lightO.ambient;
-    //    output.lightO.basis_col2 = output.lightO.ambient;
-    //}
-    
-    
-    output.normal = normalize(-viewDirection);
+    output.
+        normal = normalize(-viewDirection);
     output.worldPos = particle.position.xyz;
 
    
@@ -291,8 +312,8 @@ void TriangleGS(triangle PixelInput input[3], inout TriangleStream<PixelInput> s
 PixelOutput DefaultPS(PixelInput input) : SV_Target
 {
     PixelOutput output = (PixelOutput) 0;
-    output.Color = textureDiffuse.Sample(textureSampler, input.uv.xy);
-    return output;
+    //output.Color = textureDiffuse.Sample(textureSampler, input.uv.xy);
+    //return output;
     
     
     float3 n = normalize(-input.normal);
@@ -311,9 +332,9 @@ PixelOutput DefaultPS(PixelInput input) : SV_Target
     float3 diffuse = input.lightO.basis_col0 * w.x + input.lightO.basis_col1 * w.y + input.lightO.basis_col2 * w.z + input.lightO.ambient;
     
     float4 pixelColor = textureDiffuse.Sample(textureSampler, input.uv.xy);
-    clip(pixelColor.a -1.0f);
+    //clip(pixelColor.a -1.0f);
     output.Color = float4(pixelColor.xyz*diffuse, 1);
-    
+    return output;
 }
 
 
