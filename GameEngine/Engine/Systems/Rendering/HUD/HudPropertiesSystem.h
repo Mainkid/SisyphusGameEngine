@@ -51,6 +51,10 @@ private:
     template<int steps>
     void bezier_table(ImVec2 P[4], ImVec2 results[steps + 1]) {
         static float C[(steps + 1) * 4], * K = 0;
+
+        for (int i = 0; i < 4; i++)
+            std::cout << P[i].x << " ";
+        std::cout << std::endl;
         if (!K) {
             K = C;
             for (unsigned step = 0; step <= steps; ++step) {
@@ -80,7 +84,7 @@ private:
 
     int Bezier(const char* label, float P[5]) {
         // visuals
-        enum { SMOOTHNESS = 64 }; // curve smoothness: the higher number of segments, the smoother curve
+        enum { SMOOTHNESS = 16 }; // curve smoothness: the higher number of segments, the smoother curve
         enum { CURVE_WIDTH = 4 }; // main curved line width
         enum { LINE_WIDTH = 1 }; // handlers: small lines width
         enum { GRAB_RADIUS = 8 }; // handlers: circle radius
@@ -268,7 +272,7 @@ private:
             ImVec2 p2 = ImVec2(evalx, 1 - evaly) * (bb.Max - bb.Min) + bb.Min;
             //DrawList->AddCircleFilled(p0, GRAB_RADIUS / 2, ImColor(white));
             //DrawList->AddCircleFilled(p1, GRAB_RADIUS / 2, ImColor(white));
-            //DrawList->AddCircleFilled(p2, GRAB_RADIUS / 2, ImColor(white));
+            DrawList->AddCircleFilled(p2, GRAB_RADIUS / 2, ImColor(white));
         }
 
         // draw lines and grabbers

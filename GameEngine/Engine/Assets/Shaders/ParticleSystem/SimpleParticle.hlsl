@@ -7,7 +7,7 @@
 struct Particle
 {
     float4 position;
-    float4 size;
+    float4 sizeAndRot;
     float4 velocity;
     float4 lifetime;
     float4 color;
@@ -156,7 +156,10 @@ LightingO AccumulateLighting(in LightingO o, float3 lightDir, float3 lightCol, f
     }
 
 
-
+float2 Rotate2D(float2 p, float angle)
+{
+    return float2(p.x * cos(angle) - p.y * sin(angle), p.x * sin(angle) + p.y * cos(angle));
+}
 
 //===============
 // Shader code  |
@@ -179,32 +182,33 @@ PixelInput DefaultVS(VertexInput input)
     Particle particle = Particles[index];
     
     float4 worldPosition;
-    const float size = particle.size.x;
+    const float size = particle.sizeAndRot.x;
     
     worldPosition = float4(particle.position.xyz, 1);
     worldPosition = mul(worldPosition, View);
     
     if (input.VertexID % 4 == 0)
     {
-        worldPosition.xy += float2(-1, -1) * size;
+        worldPosition.xy += Rotate2D(float2(-1, -1), radians(particle.sizeAndRot.y)) * size;
         output.uv.xy = float2(0, 0);
 
     }
     if (input.VertexID % 4 == 1)
     {
-        worldPosition.xy += float2(1, -1) * size;
+        worldPosition.xy += Rotate2D(float2(1, -1), radians(particle.sizeAndRot.y)) * size;
         output.uv.xy = float2(1, 0);
     }
     if (input.VertexID % 4 == 2)
     {
         output.uv.xy = float2(1, 1);
-        worldPosition.xy += float2(1, 1) * size;
+        worldPosition.xy += Rotate2D(float2(1, 1), radians(particle.sizeAndRot.y)) * size;
     }
     if (input.VertexID % 4 == 3)
     {
         output.uv.xy = float2(0, 1);
-        worldPosition.xy += float2(-1, 1) * size;
+        worldPosition.xy += Rotate2D(float2(-1, 1), radians(particle.sizeAndRot.y)) * size;
     }
+    
     
     
     

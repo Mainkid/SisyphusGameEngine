@@ -30,10 +30,22 @@ struct VectorPair
     SER_DATA(VectorPair, vec1, vec2);
 };
 
+struct UniformCurve
+{
+    DirectX::SimpleMath::Vector2 P0;
+    DirectX::SimpleMath::Vector2 P1;
+    DirectX::SimpleMath::Vector2 P2;
+    DirectX::SimpleMath::Vector2 P3;
+    DirectX::SimpleMath::Vector4 IsUsing;
+
+    SER_DATA(UniformCurve, P0, P1, P2, P3, IsUsing);
+};
+
 struct ParticleInputDataF
 {
     float Fvalue;                                     
-    FloatPair RandomBetweenConstsF; 
+    FloatPair RandomBetweenConstsF;
+    UniformCurve Curve;
     EInputType InputType = SimpleFloat;
 
 	SER_DATA(ParticleInputDataF, Fvalue, RandomBetweenConstsF, InputType);
@@ -51,11 +63,12 @@ struct ParticleInputDataV4
 struct ParticleBurst
 {
     float Time;                                       // Simulation time when burst will be triggered;
+    float TimeSinceLastBurst = 0.0f;                  
     ParticleInputDataF Count;                         // Particles to emmit;
-    //Interval;
+    bool IsLooping;
     float Probability;                                // Probability of the burst;
 
-    SER_DATA(ParticleBurst, Time, Count, Probability);
+    SER_DATA(ParticleBurst, Time, Count, Probability, IsLooping);
 };
 
 enum EParticleEmitShape
@@ -74,6 +87,10 @@ struct SharedParticlesData:public ResourceBase
     ParticleInputDataF StartSpeed;                    // Speed, applied to the particle when created;
     ParticleInputDataF StartSize;                     // StartSize of particle;
     ParticleInputDataV4 StartColor;                   // Start Color;
+    ParticleInputDataF StartRotation;
+    UniformCurve SizeOverLifetime;
+    UniformCurve SpeedOverLifetime;
+    ParticleInputDataF RotationOverLifetime;
     uint32_t MaxParticles;
 
     //Emission
@@ -90,7 +107,7 @@ struct SharedParticlesData:public ResourceBase
     SER_DATA(SharedParticlesData, Duration,
         IsLooping, StartDelayTime, StartLifeTime,
         StartSpeed, StartSize, StartColor, MaxParticles, RateOverTime, ParticleBursts,
-        ParticleEmitShape, Angle, Radius
+        ParticleEmitShape, Angle, Radius,RotationOverLifetime,SizeOverLifetime,SpeedOverLifetime,StartRotation
     )
 };
 

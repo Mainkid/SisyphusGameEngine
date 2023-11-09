@@ -15,6 +15,16 @@
 #define SimpleCurve 4
 
 
+struct ParticleInputDataCurve
+{
+    float2 P0;
+    float2 P1;
+    float2 P2;
+    float2 P3;
+    float4 IsUsing;
+};
+
+
 struct ParticleInputDataF
 {
     float4 Fvalue;
@@ -30,13 +40,17 @@ struct SharedParticleData
     float4 startColor;
     ParticleInputDataF startLifeTime;
     ParticleInputDataF startVelocity;
+    ParticleInputDataF startRotation;
+    ParticleInputDataCurve SizeOverLifetime;
+    ParticleInputDataCurve SpeedOverLifetime;
+    ParticleInputDataF RotationOverLifetime;
     float4 shapeRadiusAngle;
 };
 
 struct Particle
 {
     float4 position;
-    float4 size;
+    float4 sizeAndRot;
     float4 velocity;
     float4 lifetime;
     float4 color;
@@ -95,7 +109,7 @@ float ProcessFloatInput(ParticleInputDataF inputData, int seed)
     }
     else if (inputData.InputType.x == RandomBetweenFloats)
     {
-        return lerp(inputData.RandomBetweenConstsF.x, inputData.RandomBetweenConstsF.y, abs(randVec3(particleData.deltaTime.x).x));
+        return lerp(inputData.RandomBetweenConstsF.x, inputData.RandomBetweenConstsF.y, saturate(randVec3(seed).x * 0.5f + 0.5f));
     }
     return 0;
 }
@@ -106,8 +120,13 @@ void EmitParticle(int index)
     pool[index].state.x = true;
     pool[index].color = particleData.startColor;
     pool[index].position = particleData.startPosition;
-    pool[index].size.x = ProcessFloatInput(particleData.startSize,index);
+    pool[index].sizeAndRot.x = ProcessFloatInput(particleData.startSize,index);
+    pool[index].sizeAndRot.y = ProcessFloatInput(particleData.startRotation, index); //оепедекюрэ
     pool[index].velocity.w = ProcessFloatInput(particleData.startVelocity, index);
+    
+    pool[index].state.y = pool[index].sizeAndRot.x;
+    pool[index].state.w = pool[index].sizeAndRot.y;
+    pool[index].state.z = pool[index].velocity.w;
     
     if (particleData.shapeRadiusAngle.x == SPHERE_SHAPE) // Sphere
     {

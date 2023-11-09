@@ -9,6 +9,7 @@
 
 SyResult ParticleRenderSystem::Init()
 {
+    srand(static_cast <unsigned> (time(0)));
     _ec = ServiceLocator::instance()->Get<EngineContext>();
     _rc = ServiceLocator::instance()->Get<RenderContext>();
     _hc = ServiceLocator::instance()->Get<HardwareContext>();
@@ -55,18 +56,42 @@ SyResult ParticleRenderSystem::Run()
         D3D11_MAPPED_SUBRESOURCE mappedResource;
         dataGroup.SharedParticlesData.deltaTime = Vector4(_ec->deltaTime);
         dataGroup.SharedParticlesData.startColor = Vector4(pc.SharedParticlesDataResource->StartColor.V4value);
+
         dataGroup.SharedParticlesData.startLifeTime.Fvalue = Vector4(pc.SharedParticlesDataResource->StartLifeTime.Fvalue,1,1,1);
         dataGroup.SharedParticlesData.startLifeTime.RandomBetweenConstsF = Vector4(pc.SharedParticlesDataResource->StartLifeTime.RandomBetweenConstsF.f1, pc.SharedParticlesDataResource->StartLifeTime.RandomBetweenConstsF.f2, 1, 1);
         dataGroup.SharedParticlesData.startLifeTime.InputType = Vector4(pc.SharedParticlesDataResource->StartLifeTime.InputType);
     	dataGroup.SharedParticlesData.startPosition = Vector4(tc.localPosition);
+
         dataGroup.SharedParticlesData.startSize.Fvalue = Vector4(pc.SharedParticlesDataResource->StartSize.Fvalue);
         dataGroup.SharedParticlesData.startSize.RandomBetweenConstsF = Vector4(pc.SharedParticlesDataResource->StartSize.RandomBetweenConstsF.f1, pc.SharedParticlesDataResource->StartSize.RandomBetweenConstsF.f2, 1, 1);
         dataGroup.SharedParticlesData.startSize.InputType = Vector4(pc.SharedParticlesDataResource->StartSize.InputType);
+
         dataGroup.SharedParticlesData.startVelocity.Fvalue = Vector4(pc.SharedParticlesDataResource->StartSpeed.Fvalue);
         dataGroup.SharedParticlesData.startVelocity.RandomBetweenConstsF = Vector4(pc.SharedParticlesDataResource->StartSpeed.RandomBetweenConstsF.f1, pc.SharedParticlesDataResource->StartSpeed.RandomBetweenConstsF.f2,1,1);
         dataGroup.SharedParticlesData.startVelocity.InputType = Vector4(pc.SharedParticlesDataResource->StartSpeed.InputType);
+
+        dataGroup.SharedParticlesData.startRotation.Fvalue = Vector4(pc.SharedParticlesDataResource->StartRotation.Fvalue);
+        dataGroup.SharedParticlesData.startRotation.RandomBetweenConstsF = Vector4(pc.SharedParticlesDataResource->StartRotation.RandomBetweenConstsF.f1, pc.SharedParticlesDataResource->StartRotation.RandomBetweenConstsF.f2, 1, 1);
+        dataGroup.SharedParticlesData.startRotation.InputType = Vector4(pc.SharedParticlesDataResource->StartRotation.InputType);
+
         dataGroup.SharedParticlesData.shapeRadiusAndAngle = Vector4(pc.SharedParticlesDataResource->ParticleEmitShape,
             pc.SharedParticlesDataResource->Radius, pc.SharedParticlesDataResource->Angle, 1);
+
+        dataGroup.SharedParticlesData.SizeOverLifetime.P0 = Vector2(pc.SharedParticlesDataResource->SizeOverLifetime.P0);
+        dataGroup.SharedParticlesData.SizeOverLifetime.P1 = Vector2(pc.SharedParticlesDataResource->SizeOverLifetime.P1);
+        dataGroup.SharedParticlesData.SizeOverLifetime.P2 = Vector2(pc.SharedParticlesDataResource->SizeOverLifetime.P2);
+        dataGroup.SharedParticlesData.SizeOverLifetime.P3 = Vector2(pc.SharedParticlesDataResource->SizeOverLifetime.P3);
+        dataGroup.SharedParticlesData.SizeOverLifetime.IsUsing =pc.SharedParticlesDataResource->SizeOverLifetime.IsUsing;
+
+        dataGroup.SharedParticlesData.SpeedOverLifetime.P0 = Vector2(pc.SharedParticlesDataResource->SpeedOverLifetime.P0);
+        dataGroup.SharedParticlesData.SpeedOverLifetime.P1 = Vector2(pc.SharedParticlesDataResource->SpeedOverLifetime.P1);
+        dataGroup.SharedParticlesData.SpeedOverLifetime.P2 = Vector2(pc.SharedParticlesDataResource->SpeedOverLifetime.P2);
+        dataGroup.SharedParticlesData.SpeedOverLifetime.P3 = Vector2(pc.SharedParticlesDataResource->SpeedOverLifetime.P3);
+        dataGroup.SharedParticlesData.SpeedOverLifetime.IsUsing = pc.SharedParticlesDataResource->SpeedOverLifetime.IsUsing;
+
+        dataGroup.SharedParticlesData.RotationOverLifetime.Fvalue = Vector4(pc.SharedParticlesDataResource->RotationOverLifetime.Fvalue);
+        dataGroup.SharedParticlesData.RotationOverLifetime.InputType = Vector4(pc.SharedParticlesDataResource->RotationOverLifetime.InputType);
+        dataGroup.SharedParticlesData.RotationOverLifetime.RandomBetweenConstsF = Vector4(pc.SharedParticlesDataResource->RotationOverLifetime.RandomBetweenConstsF.f1, pc.SharedParticlesDataResource->RotationOverLifetime.RandomBetweenConstsF.f2, 1, 1);
 
         HRESULT res = _hc->context->Map(pc.GroupCountConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
         CopyMemory(mappedResource.pData, &dataGroup, sizeof(CB_ComputeShader));
@@ -97,6 +122,25 @@ SyResult ParticleRenderSystem::Run()
             _hc->context->Dispatch(int(pc.ParticlesToEmit), 1, 1);
             pc.ParticlesToEmit = pc.ParticlesToEmit-int(pc.ParticlesToEmit);
         }
+
+        for (auto& burst : pc.SharedParticlesDataResource->ParticleBursts)
+        {
+            
+	        if (burst.TimeSinceLastBurst>burst.Time)
+	        {
+                
+                float randomVal = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+                if (randomVal <= burst.Probability)
+                {
+                    _hc->context->Dispatch(int(burst.Count.Fvalue), 1, 1);
+                }
+                burst.TimeSinceLastBurst = 0.0f;
+	        }
+
+            burst.TimeSinceLastBurst += _ec->deltaTime;
+        }
+
         _hc->context->CSSetShaderResources(0, 2, _rc->RhData.NullSrv);
        
 

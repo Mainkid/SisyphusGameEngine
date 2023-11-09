@@ -3,16 +3,85 @@
  "Duration": 5.0,
  "IsLooping": true,
  "MaxParticles": 1000,
- "ParticleBursts": null,
+ "ParticleBursts": [
+  {
+   "Count": {
+    "Fvalue": 100.0,
+    "InputType": 0,
+    "RandomBetweenConstsF": {
+     "f1": -107374176.0,
+     "f2": -107374176.0
+    }
+   },
+   "IsLooping": true,
+   "Probability": 0.1,
+   "Time": 2.0
+  }
+ ],
  "ParticleEmitShape": 1,
  "Radius": 1.0,
- "Angle": 25,
  "RateOverTime": {
-  "Fvalue": 20.0,
+  "Fvalue": 1.0,
   "InputType": 0,
   "RandomBetweenConstsF": {
    "f1": -107374176.0,
    "f2": -107374176.0
+  }
+ },
+ "RotationOverLifetime": {
+  "Fvalue": 30.0,
+  "InputType": 0,
+  "RandomBetweenConstsF": {
+   "f1": -107374176.0,
+   "f2": -107374176.0
+  }
+ },
+ "SizeOverLifetime": {
+  "IsUsing": {
+   "w": 1.0,
+   "x": 1.0,
+   "y": 1.0,
+   "z": 1.0
+  },
+  "P0": {
+   "x": 0.0,
+   "y": 0.0
+  },
+  "P1": {
+   "x": 0.0,
+   "y": 0.0
+  },
+  "P2": {
+   "x": 1.0,
+   "y": 1.0
+  },
+  "P3": {
+   "x": 1.0,
+   "y": 1.0
+  }
+ },
+ "SpeedOverLifetime": {
+  "IsUsing": {
+   "w": 1.0,
+   "x": 1.0,
+   "y": 1.0,
+   "z": 1.0
+  },
+  "P0": {
+   "x": 0.0,
+   "y": 0.0
+  },
+  "P1": {
+   "x": 0.0,
+   "y": 1.0
+  },
+  "P2": {
+   "x": 1.0,
+   "y": 0.0
+  },
+  "P3": {
+   "x": 0.0,
+   "y": 0.0
   }
  },
  "StartColor": {
@@ -55,16 +124,24 @@
   }
  },
  "StartSize": {
-  "Fvalue": 0.1,
+  "Fvalue": 1.0,
   "InputType": 1,
   "RandomBetweenConstsF": {
    "f1": 0.10000000149011612,
-   "f2": 1.0
+   "f2": 0.2
+  }
+ },
+"StartRotation": {
+  "Fvalue": 45.0,
+  "InputType": 1,
+  "RandomBetweenConstsF": {
+   "f1": -40.0,
+   "f2": 40.0
   }
  },
  "StartSpeed": {
-  "Fvalue": 0.10000000149011612,
-  "InputType": 1,
+  "Fvalue": 2.0,
+  "InputType": 0,
   "RandomBetweenConstsF": {
    "f1": 1.0,
    "f2": 3.0

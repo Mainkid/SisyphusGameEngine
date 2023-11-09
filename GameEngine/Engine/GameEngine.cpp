@@ -97,6 +97,17 @@ int main()
     spd.ParticleEmitShape = EParticleEmitShape::Sphere;
     spd.StartSize.RandomBetweenConstsF.f1 = 0.01f;
     spd.StartSize.RandomBetweenConstsF.f1 = 0.1f;
+
+    ParticleBurst pb;
+    pb.Probability = 0.5f;
+    pb.IsLooping = true;
+    pb.Count.InputType = EInputType::SimpleFloat;
+    pb.Count.Fvalue = 10.0f;
+    pb.Time = 2.0f;
+
+    spd.ParticleBursts.push_back(pb);
+    
+
     auto json = ser.Serialize<SharedParticlesData>(spd);
 
     ////auto model = GameObjectHelper::CreateMesh(ecs, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath("./Game/Assets/fbx/artifact.fbx"));

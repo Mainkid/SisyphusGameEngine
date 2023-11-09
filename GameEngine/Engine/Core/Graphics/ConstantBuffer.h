@@ -96,6 +96,15 @@ struct CB_ParticleInputDataF
     Vector4 InputType;
 };
 
+struct CB_ParticleInputDataCurve
+{
+    Vector2 P0;
+    Vector2 P1;
+    Vector2 P2;
+    Vector2 P3;
+    Vector4 IsUsing = Vector4::Zero;
+};
+
 struct CB_SharedParticlesData
 {
     Vector4 deltaTime;
@@ -104,6 +113,10 @@ struct CB_SharedParticlesData
     Vector4 startColor;
     CB_ParticleInputDataF startLifeTime;
     CB_ParticleInputDataF startVelocity;
+    CB_ParticleInputDataF startRotation;
+    CB_ParticleInputDataCurve SizeOverLifetime;
+    CB_ParticleInputDataCurve SpeedOverLifetime;
+    CB_ParticleInputDataF RotationOverLifetime;
     Vector4 shapeRadiusAndAngle;
 };
 

@@ -11,6 +11,7 @@ namespace DirectX
 	{
 		SER_DATA_OUTER(DirectX::SimpleMath::Vector4, x, y, z, w)
 		SER_DATA_OUTER(DirectX::SimpleMath::Vector3, x, y, z)
+		SER_DATA_OUTER(DirectX::SimpleMath::Vector2, x, y)
 	}
 }
 
