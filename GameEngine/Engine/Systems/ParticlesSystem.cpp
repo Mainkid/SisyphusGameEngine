@@ -32,6 +32,7 @@ SyResult ParticlesSystem::Run()
         {
             ps.Hash = hash;
             ps.SharedParticlesDataResource = std::static_pointer_cast<SharedParticlesData>(_rs->LoadResource(ps.SharedParticlesDataUuid));
+            ps.ParticleTexture = std::static_pointer_cast<Texture>(_rs->LoadResource(ps.SharedParticlesDataResource->TextureUuid));
             InitRenderResources(ps);
         }
     }

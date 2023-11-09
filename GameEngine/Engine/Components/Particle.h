@@ -102,12 +102,12 @@ struct SharedParticlesData:public ResourceBase
     float Angle;
     float Radius;
 
-
+    boost::uuids::uuid TextureUuid;
 
     SER_DATA(SharedParticlesData, Duration,
         IsLooping, StartDelayTime, StartLifeTime,
         StartSpeed, StartSize, StartColor, MaxParticles, RateOverTime, ParticleBursts,
-        ParticleEmitShape, Angle, Radius,RotationOverLifetime,SizeOverLifetime,SpeedOverLifetime,StartRotation
+        ParticleEmitShape, Angle, Radius,RotationOverLifetime,SizeOverLifetime,SpeedOverLifetime,StartRotation,TextureUuid
     )
 };
 

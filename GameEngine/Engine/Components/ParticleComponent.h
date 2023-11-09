@@ -4,6 +4,7 @@
 #include "../Core/Graphics/Shader.h"
 #include "../Systems/HardwareContext.h"
 #include "../Components/Particle.h"
+#include "../Components/Texture.h"
 
 struct CB
 {
@@ -20,6 +21,7 @@ struct ParticleComponent
 
 	boost::uuids::uuid SharedParticlesDataUuid;					//Particles Data Resource;
 	std::shared_ptr<SharedParticlesData> SharedParticlesDataResource;
+	std::shared_ptr<Texture> ParticleTexture;
 	std::vector<Particle> ParticlesList;
 
 

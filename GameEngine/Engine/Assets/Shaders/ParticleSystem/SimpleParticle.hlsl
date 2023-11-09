@@ -291,7 +291,7 @@ void TriangleGS(triangle PixelInput input[3], inout TriangleStream<PixelInput> s
 PixelOutput DefaultPS(PixelInput input) : SV_Target
 {
     PixelOutput output = (PixelOutput) 0;
-    output.Color = float4(input.color);
+    output.Color = textureDiffuse.Sample(textureSampler, input.uv.xy);
     return output;
     
     

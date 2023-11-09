@@ -223,8 +223,10 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			nlohmann::json data;
 			file.open(filePath);
 			file >> data;
-
+		
 			ser.Deserialize(data, *spd.get());
+			if (spd->TextureUuid == boost::uuids::nil_uuid())
+				spd->TextureUuid = baseResourceDB[EAssetType::ASSET_TEXTURE].uuid;
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(spd);
 			return spd;
 

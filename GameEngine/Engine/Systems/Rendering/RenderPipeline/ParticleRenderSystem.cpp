@@ -234,7 +234,7 @@ SyResult ParticleRenderSystem::Run()
         //_hc->context->PSSetShaderResources(0, 1, &shadowResourceView);
         _hc->context->PSSetShaderResources(1, 1, pc.PoolBufferSrv.GetAddressOf());
         _hc->context->PSSetShaderResources(2, 1, pc.SortBufferSrv.GetAddressOf());
-        //_hc->context->PSSetShaderResources(3, 1, pc.TextureSrv.GetAddressOf());
+        _hc->context->PSSetShaderResources(3, 1, pc.ParticleTexture->textureSRV.GetAddressOf());
 
         _hc->context->PSSetSamplers(0, 1, _rc->SamplerState.GetAddressOf());
         _hc->context->PSSetSamplers(1, 1, _rc->SamplerState.GetAddressOf());
