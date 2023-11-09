@@ -46,11 +46,11 @@ SyResult LightRenderSystem::Run()
     {
         LightComponent& light = view.get<LightComponent>(entity);
         TransformComponent& tc = view.get<TransformComponent>(entity);
-        lightBuffer.lightData.Pos = Vector4(tc.position.x, tc.position.y, tc.position.z, 1);
+        lightBuffer.lightData.Pos = Vector4(tc._position.x, tc._position.y, tc._position.z, 1);
         lightBuffer.lightData.Color = light.Color;
         lightBuffer.lightData.Dir = Vector4::Transform(Vector4::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation));
         lightBuffer.lightData.additiveParams = light.ParamsRadiusAndAttenuation;
-        lightBuffer.eyePos = Vector4(cameraTf.position.x, cameraTf.position.y, cameraTf.position.z, 1.0f);
+        lightBuffer.eyePos = Vector4(cameraTf._position.x, cameraTf._position.y, cameraTf._position.z, 1.0f);
 
         _hc->context->ClearDepthStencilView(_hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1, 0);
 
@@ -83,7 +83,7 @@ SyResult LightRenderSystem::Run()
         else if (light.LightType == ELightType::PointLight)
         {
             using namespace DirectX::SimpleMath;
-            lightBuffer.baseData.world = Matrix::CreateScale(light.ParamsRadiusAndAttenuation.x, light.ParamsRadiusAndAttenuation.x, light.ParamsRadiusAndAttenuation.x) * Matrix::CreateTranslation(tc.position);
+            lightBuffer.baseData.world = Matrix::CreateScale(light.ParamsRadiusAndAttenuation.x, light.ParamsRadiusAndAttenuation.x, light.ParamsRadiusAndAttenuation.x) * Matrix::CreateTranslation(tc._position);
             lightBuffer.baseData.worldView = lightBuffer.baseData.world * camera.view;
             lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * camera.projection;
             lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;
@@ -107,7 +107,7 @@ SyResult LightRenderSystem::Run()
                 1.0f)) *
                 Matrix::CreateScale(radius, radius, light.ParamsRadiusAndAttenuation.x) *
                 Matrix::CreateFromAxisAngle(a, angle) *
-                Matrix::CreateTranslation(tc.position);
+                Matrix::CreateTranslation(tc._position);
             lightBuffer.baseData.worldView = lightBuffer.baseData.world * camera.view;
             lightBuffer.baseData.worldViewProj = lightBuffer.baseData.worldView * camera.projection;
             lightBuffer.baseData.worldViewInverseTranspose = DirectX::SimpleMath::Matrix::Identity;

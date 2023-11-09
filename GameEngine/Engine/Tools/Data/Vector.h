@@ -94,6 +94,13 @@ public:
 		z *= factor_;
 		return *this;
 	}
+	SyVector3& operator/= (float dividor_)
+	{
+		x /= dividor_;
+		y /= dividor_;
+		z /= dividor_;
+		return *this;
+	}
 	static SyVector3 PxQuatToEuler(const physx::PxQuat& pxQuat) //returns euler angle vector
 	{
 		DirectX::SimpleMath::Quaternion q(pxQuat.x, pxQuat.y, pxQuat.z, pxQuat.w);

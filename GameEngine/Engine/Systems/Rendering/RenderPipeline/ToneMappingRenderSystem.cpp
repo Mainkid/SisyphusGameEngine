@@ -32,6 +32,5 @@ SyResult ToneMappingRenderSystem::Run()
 
 SyResult ToneMappingRenderSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "ToneMappingSystem system destroyed successful.");
 	return SyResult();
 }

@@ -26,15 +26,7 @@ SyResult SyHudConsoleSystem::Run()
 	for (auto& message : SY_EL->messagePool)
 		messageBuffer.Push(message);
 	ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-	if (!ImGui::Begin("Console Output", NULL, ImGuiWindowFlags_NoTitleBar))
-	{
-		ImGui::End();
-		result.code = SY_RESCODE_ERROR;
-		result.message = "Failed to create console output window. ";
-		SY_LOG_HUD(SY_LOGLEVEL_ERROR, result.message.ToString());
-		return result;
-	};
-	
+	ImGui::Begin("Console Output", NULL, ImGuiWindowFlags_NoTitleBar);
 	ImGui::BeginChild("ScrollingLog", ImVec2(-ImGui::GetContentRegionAvail().x / 15, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
 	for (auto i = messageBuffer.Head(); messageBuffer.Stopped(i) != true; i = messageBuffer.Next(i))
 	{

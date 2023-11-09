@@ -44,11 +44,11 @@ void TransformHelper::UpdateTransformMatrix(TransformComponent& tc)
 	}
 	Quaternion q;
 	Vector3 scaleNew = tc.scale;
-	Vector3 positionNew = tc.position;
+	Vector3 positionNew = tc._position;
 	tc.transformMatrix.Decompose(scaleNew, q, positionNew);
-	tc.position = positionNew;
+	tc._position = positionNew;
 	tc.scale = scaleNew;
-	tc.rotation = q.ToEuler();
+	tc._rotation = q.ToEuler();
 }
 
 

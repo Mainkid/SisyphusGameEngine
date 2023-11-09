@@ -50,7 +50,6 @@
     <ClCompile Include="Engine\Systems\Rendering\RenderInitSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\PostViewportRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\HardwareInitSystem.cpp" />
-    <ClCompile Include="Engine\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="Engine\Components\RBodyComponent.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.cpp" />
@@ -95,6 +94,9 @@
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\HbaoRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\ImageBasedLightingSystem.cpp" />
     <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
+    <ClCompile Include="Engine\Components\ColliderComponent.cpp" />
+    <ClCompile Include="Engine\Systems\CollisionSystem.cpp" />
+    <ClCompile Include="Engine\Systems\RBSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -155,7 +157,6 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderHelper.h" />
     <ClInclude Include="Engine\Systems\HardwareInitSystem.h" />
     <ClInclude Include="Engine\Systems\HardwareContext.h" />
-    <ClInclude Include="Engine\Systems\PhysicsSystem.h" />
     <ClInclude Include="Engine\Components\RBodyComponent.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowMapGenerationSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\SkyboxRenderSystem.h" />
@@ -231,6 +232,10 @@
     <ClInclude Include="Engine\Core\ECS\Events\SyImageBasedLightingUpdateEvent.h" />
     <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
+    <ClInclude Include="Engine\Components\ColliderComponent.h" />
+    <ClInclude Include="Engine\Systems\CollisionSystem.h" />
+    <ClInclude Include="Engine\Tools\Data\FlagBitmask.h" />
+    <ClInclude Include="Engine\Systems\RBSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
