@@ -2,7 +2,7 @@
 using namespace physx;
 
 
-SyRBodyComponent::SyRBodyComponent( const SyRBodyType&      rbType,
+SyRBodyComponent::SyRBodyComponent( const SyERBodyType&      rbType,
                                     float                   mass,
                                     unsigned flags)
 {

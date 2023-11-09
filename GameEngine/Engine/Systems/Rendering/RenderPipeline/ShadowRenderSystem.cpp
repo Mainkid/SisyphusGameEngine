@@ -40,7 +40,7 @@ SyResult ShadowRenderSystem::Run()
             {
                 auto [transform, meshComp] = viewMeshes.get(ent);
 
-                if (!(meshComp.flags & EMeshComponentFlags::ERenderMesh))
+                if (!(meshComp.flags & SyEMeshComponentFlags::MESH_RENDER))
                     continue;
                 CB_ShadowBuffer dataShadow;
                 //dataShadow.baseData.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
@@ -133,7 +133,7 @@ SyResult ShadowRenderSystem::Run()
             for (auto& ent : viewMeshes)
             {
                 auto [transform, meshComp] = viewMeshes.get(ent);
-                if (!(meshComp.flags & EMeshComponentFlags::ERenderMesh))
+                if (!(meshComp.flags & SyEMeshComponentFlags::MESH_RENDER))
                     continue;
                 dataShadow.world = transform.transformMatrix;
                 

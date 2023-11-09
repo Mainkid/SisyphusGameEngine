@@ -4,6 +4,7 @@
 #include "../Tools/Data/Vector.h"
 #include "../../Components/LightComponent.h"
 #include "../Components/RBodyComponent.h"
+#include "../Components/MeshComponent.h"
 #include "../Components/ColliderComponent.h"
 #include "../Tools/ErrorLogger.h"
 
@@ -22,12 +23,12 @@ public:
 
 	static SyResult AddRigidBodyComponent(	entt::registry*			ecs,
 											entt::entity			entity,
-											const SyRBodyType&		rbType,
+											const SyERBodyType&		rbType,
 											float					mass			= 1.0,
 											unsigned				flags			= 0);
 	static SyResult AddPrimitiveColliderComponent(	entt::registry*						ecs,
 													entt::entity						entity,
-													SyPrimitiveColliderType				colliderType,
+													SyEPrimitiveColliderType				colliderType,
 													const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
 													const SyColliderMaterial& 			material = SyColliderMaterial());
 	static SyResult AddTrimeshColliderComponent(	entt::registry*						ecs,
@@ -37,7 +38,7 @@ public:
 	static entt::entity CreateLight(entt::registry* ecs, ELightType lightType, Vector3 pos = Vector3::Zero);
 
 	static entt::entity CreateMesh(entt::registry* ecs, boost::uuids::uuid uuid, Vector3 pos=Vector3::Zero);
-	static SyResult AddMeshComponent(entt::registry* ecs, entt::entity entity, boost::uuids::uuid uuid); 
+	static SyResult AddMeshComponent(entt::registry* ecs, entt::entity entity, boost::uuids::uuid uuid, unsigned flags = SyEMeshComponentFlags::MESH_RENDER);
 	static SyResult AddCubeMeshComponent(entt::registry* ecs, entt::entity entity);
 	static entt::entity CreateParticleSystem(entt::registry* ecs);
 

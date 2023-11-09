@@ -15,10 +15,10 @@ namespace physx
 }
 #pragma endregion
 
-enum SyRBodyType
+enum SyERBodyType
 {
-	SY_RB_TYPE_STATIC	= 0,
-	SY_RB_TYPE_DYNAMIC	= 1
+	STATIC	= 0,
+	DYNAMIC	= 1
 };
 
 struct SyRbTransform
@@ -27,16 +27,16 @@ struct SyRbTransform
 	SyVector3 Rotation				= {0.0f, 0.0f, 0.0f};
 };
 
-enum SyRBodyFlags
+enum SyERBodyFlags
 {
-	SY_RB_USE_DENSITY		 = 1,
-	SY_RB_IS_KINEMATIC		= 1 << 1
+	USE_DENSITY		 = 1,
+	KINEMATIC		= 1 << 1
 };
-DEFINE_BITWISE_OPERATORS(SyRBodyFlags);
+DEFINE_BITWISE_OPERATORS(SyERBodyFlags);
 
 struct SyRBodyComponent
 {
-	SyRBodyComponent(	const SyRBodyType&	rbType,
+	SyRBodyComponent(	const SyERBodyType&	rbType,
 						float 				mass = 1.0f,
 						unsigned			flags = 0);
 	
@@ -44,7 +44,7 @@ struct SyRBodyComponent
 private:
 	//fields initialized in constructor
 
-	SyRBodyType			_rbType;
+	SyERBodyType			_rbType;
 	float				_mass;
 	unsigned			_flags;
 	//fields initialized in SyPhysicsSystem::Init

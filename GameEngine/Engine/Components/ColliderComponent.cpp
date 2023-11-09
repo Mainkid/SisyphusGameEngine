@@ -1,6 +1,6 @@
 ﻿#include "ColliderComponent.h"
 
-SyPrimitiveColliderComponent::SyPrimitiveColliderComponent(SyPrimitiveColliderType colliderType,
+SyPrimitiveColliderComponent::SyPrimitiveColliderComponent(SyEPrimitiveColliderType colliderType,
     const SyPrimitiveColliderShapeDesc& colliderShapeDesc, const SyColliderMaterial& material) :
     _colliderType(colliderType),
     _extent(colliderShapeDesc.Extent),

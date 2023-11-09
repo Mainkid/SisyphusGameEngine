@@ -14,11 +14,11 @@ struct SyColliderMaterial
     float density			= 0.1f;
 };
 
-enum SyPrimitiveColliderType
+enum SyEPrimitiveColliderType
 {
-    SY_COL_SHAPE_TYPE_BOX = 0,
-    SY_COL_SHAPE_TYPE_SPHERE = 1,
-    SY_COL_SHAPE_TYPE_CAPSULE = 2
+    BOX = 0,
+    SPHERE = 1,
+    CAPSULE = 2
 };
 
 struct SyPrimitiveColliderShapeDesc
@@ -36,13 +36,13 @@ struct SyColliderCreateOnNextUpdateTag
 struct SyPrimitiveColliderComponent
 {
 
-    SyPrimitiveColliderComponent(   SyPrimitiveColliderType colliderType,
+    SyPrimitiveColliderComponent(   SyEPrimitiveColliderType colliderType,
                                     const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
                                     const SyColliderMaterial& material);
 private:
     //members initialized in constructor
     
-    SyPrimitiveColliderType _colliderType;
+    SyEPrimitiveColliderType _colliderType;
     SyVector3               _extent;        //for box
     float                   _radius;        //for sphere and capsule
     float                   _halfHeight;    //for capsule

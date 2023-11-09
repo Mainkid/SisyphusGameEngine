@@ -105,7 +105,7 @@ void GameObjectHelper::RemoveChild(entt::registry* ecs, entt::entity parent, ent
 	ecs->get<TransformComponent>(parent).children.erase(child);
 }
 
-SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::entity entity, const SyRBodyType& rbType, float mass, unsigned flags)
+SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::entity entity, const SyERBodyType& rbType, float mass, unsigned flags)
 {
 	SyResult result;
 	auto* transformComponent = ecs->try_get<TransformComponent>(entity);
@@ -125,7 +125,7 @@ SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::enti
 }
 
 SyResult GameObjectHelper::AddPrimitiveColliderComponent(entt::registry* ecs, entt::entity entity,
-	SyPrimitiveColliderType colliderType, const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
+	SyEPrimitiveColliderType colliderType, const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
 	const SyColliderMaterial& material)
 {
 	SyResult result;
@@ -198,10 +198,9 @@ entt::entity GameObjectHelper::CreateMesh(entt::registry* ecs, boost::uuids::uui
 	return entt::entity();
 }
 
-SyResult GameObjectHelper::AddMeshComponent(entt::registry* ecs, entt::entity entity, boost::uuids::uuid uuid)
+SyResult GameObjectHelper::AddMeshComponent(entt::registry* ecs, entt::entity entity, boost::uuids::uuid uuid, unsigned flags)
 {
-	MeshComponent& mesh = ecs->emplace<MeshComponent>(entity);
-	mesh.modelUUID = uuid;
+	MeshComponent& mesh = ecs->emplace<MeshComponent>(entity, uuid, flags);
 	return SyResult();
 }
 

@@ -68,19 +68,19 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyCo
 																	cComponent._material.restitution);
 	switch (cComponent._colliderType)
     {
-    case SY_COL_SHAPE_TYPE_BOX:
+    case BOX:
 		
     	cComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
 																		PxBoxGeometry(cComponent._extent),
 																		pxMaterial);
 		break;
-    case SY_COL_SHAPE_TYPE_SPHERE:
+    case SPHERE:
     	cComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
 																		PxSphereGeometry(cComponent._radius),
 																		pxMaterial);
 		
 		break;
-    case SY_COL_SHAPE_TYPE_CAPSULE:
+    case CAPSULE:
     	cComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
 																		PxCapsuleGeometry(cComponent._radius, cComponent._halfHeight),
 																		pxMaterial);
@@ -92,7 +92,7 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyCo
     	break;
     }
 	bool updateMassResult = true;
-	if (rbComponent._flags & SyRBodyFlags::SY_RB_USE_DENSITY && rbComponent._rbType == SY_RB_TYPE_DYNAMIC)
+	if (rbComponent._flags & SyERBodyFlags::USE_DENSITY && rbComponent._rbType == DYNAMIC)
 		updateMassResult = PxRigidBodyExt::updateMassAndInertia(	*static_cast<PxRigidBody*>(rbComponent._rbActor),
 																	cComponent._material.density);
 	if (updateMassResult == false)
@@ -107,49 +107,53 @@ SyResult SyCollisionSystem::InitComponentTm(const entt::entity& entity, SyRBodyC
                                             SyTrimeshColliderComponent& cComponent, const MeshComponent& mComponent, const TransformComponent& tComponent)
 {
 	SyResult result;
+	if (!(mComponent.flags & SyEMeshComponentFlags::MESH_COLLIDER))
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("You can't use mesh from Mesh Component (entity %d) not marked with flag MESH_COLLIDER as collider. ", (int) entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "You can't use mesh from Mesh Component (entity %d) not marked with flag MESH_COLLIDER as collider. ", (int)entity);
+		return result;
+	}
 	auto& pxMaterial = *SyRBodyComponent::_physics->createMaterial(	cComponent._material.staticFriction,
 																	cComponent._material.dynamicFriction,
 																	cComponent._material.restitution);
-	 for (const auto& meshPtr : mComponent.model->meshes)
-	 {
-	 	const unsigned NUM_VECTORS_PER_VERTEX = 5;
-	 	PxTriangleMeshDesc meshDesc;
-	 	meshDesc.points.count           = meshPtr->vertices.size() / NUM_VECTORS_PER_VERTEX;
-	 	meshDesc.points.stride          = NUM_VECTORS_PER_VERTEX * 4 * sizeof(float);
-	 	meshDesc.points.data            = (void*)(std::addressof(*meshPtr->vertices.begin()));
+	auto meshPtr = mComponent.model->meshes[0];
+	const unsigned NUM_VECTORS_PER_VERTEX = 5;
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count           = meshPtr->vertices.size() / NUM_VECTORS_PER_VERTEX;
+	meshDesc.points.stride          = NUM_VECTORS_PER_VERTEX * 4 * sizeof(float);
+	meshDesc.points.data            = (void*)(std::addressof(*meshPtr->vertices.begin()));
 	 	
-	 	meshDesc.triangles.count        = meshPtr->indices.size() / 3;
-	 	meshDesc.triangles.stride       = 3 * sizeof(int);
-	 	meshDesc.triangles.data         = (void*)(std::addressof(*meshPtr->indices.begin()));
+	meshDesc.triangles.count        = meshPtr->indices.size() / 3;
+	meshDesc.triangles.stride       = 3 * sizeof(int);
+	meshDesc.triangles.data         = (void*)(std::addressof(*meshPtr->indices.begin()));
 	
-	 	PxTolerancesScale toleranceScale;
-	 	PxCookingParams params(toleranceScale);
-	
-	 	PxDefaultMemoryOutputStream writeBuffer;
-	 	PxTriangleMeshCookingResult::Enum cookingResult;
-	 	bool cookingStatus = PxCookTriangleMesh(params, meshDesc, writeBuffer, &cookingResult);
-	 	if(!cookingStatus)
-	 	{
-	 		result.code = SY_RESCODE_ERROR;
-	 		result.message = xstring("PhysX failed to cook mesh in SyTrimeshCollider Component on entity %d", (int)entity);
-	 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PhysX failed to cook mesh in SyTrimeshCollider Component on entity %d", (int)entity);
-	 		return result;
-	 	}
-		PxMeshScale scale(tComponent.localScale, PxQuat(PxIdentity));
-	 	PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
-	 	PxTriangleMesh* trimeshPtr = rbComponent._physics->createTriangleMesh(readBuffer);
-		PxTriangleMeshGeometry trimeshGeometry = PxTriangleMeshGeometry(trimeshPtr, scale);
-	 	cComponent._shape = PxRigidActorExt::createExclusiveShape(*(rbComponent._rbActor),
-	 														trimeshGeometry,
-	 														pxMaterial);
-	 	if (cComponent._shape == nullptr)
-	 	{
-	 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidActorExt::createExclusiveShape returned nullptr in TrimeshCollider Component on entity %d.", (int)entity);
-	 		result.code = SY_RESCODE_ERROR;
-	 		result.message = xstring("PxRigidActorExt::createExclusiveShape returned nullptr in TrimeshCollider Component on entity %d.", (int)entity);
-	 		return result;
-	 	}
-	 }
+	PxTolerancesScale toleranceScale;
+ 	PxCookingParams params(toleranceScale);
 
+ 	PxDefaultMemoryOutputStream writeBuffer;
+ 	PxTriangleMeshCookingResult::Enum cookingResult;
+ 	bool cookingStatus = PxCookTriangleMesh(params, meshDesc, writeBuffer, &cookingResult);
+ 	if(!cookingStatus)
+ 	{
+ 		result.code = SY_RESCODE_ERROR;
+ 		result.message = xstring("PhysX failed to cook mesh in SyTrimeshCollider Component on entity %d", (int)entity);
+ 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PhysX failed to cook mesh in SyTrimeshCollider Component on entity %d", (int)entity);
+ 		return result;
+ 	}
+	PxMeshScale scale(tComponent.localScale, PxQuat(PxIdentity));
+ 	PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+ 	PxTriangleMesh* trimeshPtr = rbComponent._physics->createTriangleMesh(readBuffer);
+	PxTriangleMeshGeometry trimeshGeometry = PxTriangleMeshGeometry(trimeshPtr, scale);
+ 	cComponent._shape = PxRigidActorExt::createExclusiveShape(*(rbComponent._rbActor),
+ 														trimeshGeometry,
+ 														pxMaterial);
+ 	if (cComponent._shape == nullptr)
+ 	{
+ 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidActorExt::createExclusiveShape returned nullptr in TrimeshCollider Component on entity %d.", (int)entity);
+ 		result.code = SY_RESCODE_ERROR;
+ 		result.message = xstring("PxRigidActorExt::createExclusiveShape returned nullptr in TrimeshCollider Component on entity %d.", (int)entity);
+ 		return result;
+ 	}
 	return result;
 }

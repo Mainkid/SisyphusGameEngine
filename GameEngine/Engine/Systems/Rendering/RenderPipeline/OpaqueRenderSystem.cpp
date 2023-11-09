@@ -32,7 +32,7 @@ SyResult OpaqueRenderSystem::Run()
         TransformComponent& transformComp = _ecs->get<TransformComponent>(entity);
         MeshComponent& meshComp = _ecs->get<MeshComponent>(entity);
 
-        if (!(meshComp.flags & EMeshComponentFlags::ERenderMesh))
+        if (!(meshComp.flags & SyEMeshComponentFlags::MESH_RENDER))
             continue;
         
         dataOpaque.baseData.world = transformComp.transformMatrix;

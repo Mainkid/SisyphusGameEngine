@@ -81,7 +81,7 @@ SyResult SyRBodySystem::Run()
 	{
 		SyRBodyComponent& rbComponent = view.get<SyRBodyComponent>(entity);
 		TransformComponent& trComponent = view.get<TransformComponent>(entity);
-		if (rbComponent._rbType == SY_RB_TYPE_STATIC)
+		if (rbComponent._rbType == STATIC)
 			continue;
 		if (rbComponent._rbActor == nullptr)
 		{
@@ -113,10 +113,10 @@ SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyCompone
 	SyResult result;
 	switch (rbComponent._rbType)
 	{
-	case SY_RB_TYPE_STATIC: rbComponent._rbActor = _physics->createRigidStatic(PxTransform(tComponent._position, 
+	case STATIC: rbComponent._rbActor = _physics->createRigidStatic(PxTransform(tComponent._position, 
 														SyVector3::EulerToPxQuat(tComponent._rotation)));
 		break;
-	case SY_RB_TYPE_DYNAMIC: rbComponent._rbActor = _physics->createRigidDynamic(PxTransform(tComponent._position, 
+	case DYNAMIC: rbComponent._rbActor = _physics->createRigidDynamic(PxTransform(tComponent._position, 
 														SyVector3::EulerToPxQuat(tComponent._rotation)));
 		break;
 	default:
@@ -125,7 +125,7 @@ SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyCompone
 		result.message = xstring("Unknown Rigid Body type in SyRbComponent. Entity: %d.", (unsigned)entity);
 		return result;
 	};
-	if (rbComponent._rbType == SY_RB_TYPE_DYNAMIC)
+	if (rbComponent._rbType == DYNAMIC)
 	{
 		bool updateMassResult = PxRigidBodyExt::setMassAndUpdateInertia(	*static_cast<PxRigidBody*>(rbComponent._rbActor),
 																			rbComponent._mass);
@@ -135,7 +135,7 @@ SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyCompone
 			return result;
 		}
 	}
-	if (rbComponent._flags & SyRBodyFlags::SY_RB_IS_KINEMATIC)
+	if (rbComponent._flags & SyERBodyFlags::KINEMATIC)
 	{
 		PxRigidBody* rb = rbComponent._rbActor->is<PxRigidBody>();
 		rb->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);

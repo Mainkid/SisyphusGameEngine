@@ -18,5 +18,10 @@ echo PhysXFoundation_64.lib copied from %geDir%%phRelDir% to %geDir%%libRelDir%
 copy %geDir%%phRelDir%\PhysXFoundation_64.dll %geDir%
 echo PhysXFoundation_64.dll copied from %geDir%%phRelDir% to %geDir%
 
+copy %geDir%%phRelDir%\PhysXCooking_64.lib %geDir%%libRelDir%
+echo PhysXCooking_64.lib copied from %geDir%%phRelDir% to %geDir%%libRelDir%
+copy %geDir%%phRelDir%\PhysXCooking_64.dll %geDir%
+echo PhysXCooking_64.dll copied from %geDir%%phRelDir% to %geDir%
+
 copy %geDir%%phRelDir%\PhysXExtensions_static_64.lib %geDir%%libRelDir%
 echo PhysXExtensions_static_64.lib copied from %geDir%%phRelDir% to %geDir%%libRelDir%
