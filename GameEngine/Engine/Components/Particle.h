@@ -87,8 +87,8 @@ struct SharedParticlesData:public ResourceBase
     ParticleInputDataF StartSpeed;                    // Speed, applied to the particle when created;
     ParticleInputDataF StartSize;                     // StartSize of particle;
     ParticleInputDataV4 StartColor;                   // Start Color;
-    ParticleInputDataF StartRotation;
-    UniformCurve SizeOverLifetime;
+    ParticleInputDataF StartRotation;                 
+    UniformCurve SizeOverLifetime;                      
     UniformCurve SpeedOverLifetime;
     ParticleInputDataF RotationOverLifetime;
     uint32_t MaxParticles;

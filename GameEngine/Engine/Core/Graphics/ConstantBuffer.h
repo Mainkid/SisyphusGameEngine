@@ -124,6 +124,7 @@ class CB_ComputeShader
 {
 public:
     CB_viewProjBuffer viewProjBuff;
+    Matrix world;
     Vector4 GroupCount;
     Vector4 eyePos;
     CB_SharedParticlesData SharedParticlesData;

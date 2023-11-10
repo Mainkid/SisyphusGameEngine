@@ -366,6 +366,15 @@ void HudViewportSystem::DrawMainMenuBar()
 				ImGui::EndMenu();
 			
 			}
+			if (ImGui::BeginMenu("Effects"))
+			{
+				if (ImGui::MenuItem("Particle System"))
+				{
+					GameObjectHelper::CreateParticleSystem(_ecs);
+				}
+				ImGui::EndMenu();
+			}
+
 			if (ImGui::MenuItem("Open", "Ctrl+O")) {}
 
 			ImGui::EndMenu();
@@ -374,22 +383,13 @@ void HudViewportSystem::DrawMainMenuBar()
 		{
 			if (ImGui::BeginMenu("Add..."))
 			{
-				auto viewTemp = _ecs->view<ImageBasedLightingComponent>();
-				ImGui::BeginDisabled(!viewTemp.empty());
-				if (ImGui::MenuItem("Image Based Lighting"))
-				{
-					
-				}
-				ImGui::EndDisabled();
+				
 				ImGui::EndMenu();
 			}
 
 			if (ImGui::MenuItem("Bake Lighting"))
 			{
 				
-			}
-			if (ImGui::MenuItem("Update Image Based Lighting"))
-			{
 			}
 
 			ImGui::EndMenu();

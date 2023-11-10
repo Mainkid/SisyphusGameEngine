@@ -55,6 +55,7 @@ cbuffer Params : register(b0)
 {
     row_major float4x4 view;
     row_major float4x4 proj;
+    row_major float4x4 world;
     float4 groupDim;
     float4 eyePos;
     SharedParticleData particleData;

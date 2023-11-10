@@ -30,7 +30,6 @@ SyResult ParticleRenderSystem::Run()
 
     auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
 
-    static bool helper = false;
 
     for (auto& entt : view)
     {
@@ -53,6 +52,8 @@ SyResult ParticleRenderSystem::Run()
         dataGroup.viewProjBuff.view = camera.view;
         dataGroup.eyePos = Vector4(cameraTransform.localPosition.x,
             cameraTransform.localPosition.y, cameraTransform.localPosition.z, 1);
+
+        dataGroup.world = tc.transformMatrix;
 
         D3D11_MAPPED_SUBRESOURCE mappedResource;
         dataGroup.SharedParticlesData.deltaTime = Vector4(_ec->deltaTime);
@@ -105,10 +106,10 @@ SyResult ParticleRenderSystem::Run()
         const unsigned int end[1] = { pc.SharedParticlesDataResource->MaxParticles - 1 };
         const unsigned int start[1] = { 0 };
         _hc->context->CSSetUnorderedAccessViews(1, 1, pc.PoolBufferUav.GetAddressOf(), nullptr);
-        if (!helper)
+        if (!pc.IsInitialized)
         {
             _hc->context->CSSetUnorderedAccessViews(2, 1, pc.DeadListUav.GetAddressOf(), end);
-            helper = true;
+            pc.IsInitialized = true;
         }
         else
         {
@@ -197,22 +198,7 @@ SyResult ParticleRenderSystem::Run()
         Vector3 vec = Vector3(camera.forward.x,camera.forward.y,camera.forward.z);
         dataParticle.viewDirection = vec;
         dataParticle.cameraRot = camera.view.Invert();       //???
-        /*for (int i = 0; i < dataParticle.lightCount; i++)
-        {
-            dataParticle.lightData[i].Pos = _hc->lights[i]->position;
-            dataParticle.lightData[i].Color = _hc->lights[i]->color;
-            dataParticle.lightData[i].Dir = _hc->lights[i]->direction;
-            dataParticle.lightData[i].additiveParams = _hc->lights[i]->params;
 
-            if (_hc->lights[i]->lightType == LightType::Directional)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    dataParticle.distances[j] = _hc->lights[i]->distances[j];
-                    dataParticle.viewProjs[j] = _hc->lights[i]->viewMatrices[j] * _hc->lights[i]->orthoMatrices[j];
-                }
-            }
-        }*/
 
 
         auto view = _ecs->view<LightComponent,TransformComponent>();

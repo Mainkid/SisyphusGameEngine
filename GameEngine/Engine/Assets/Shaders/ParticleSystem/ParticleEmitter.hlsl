@@ -74,6 +74,7 @@ cbuffer Params : register(b0)
 {
     row_major float4x4 view;
     row_major float4x4 proj;
+    row_major float4x4 world;
     float4 groupDim;
     float4 eyePos;
     SharedParticleData particleData;
@@ -119,7 +120,7 @@ void EmitParticle(int index)
     pool[index].lifetime.xy = float2(0, ProcessFloatInput(particleData.startLifeTime, index));
     pool[index].state.x = true;
     pool[index].color = particleData.startColor;
-    pool[index].position = particleData.startPosition;
+    pool[index].position = mul(float4(0, 0, 0, 1), world);
     pool[index].sizeAndRot.x = ProcessFloatInput(particleData.startSize,index);
     pool[index].sizeAndRot.y = ProcessFloatInput(particleData.startRotation, index); //оепедекюрэ
     pool[index].velocity.w = ProcessFloatInput(particleData.startVelocity, index);
@@ -146,7 +147,7 @@ void EmitParticle(int index)
         
         float3 velocityVec = normalize(float3(targetTopOffset.x, 1.0f, targetTopOffset.y)
         - float3(offsetSpawnPosition.x, 0, offsetSpawnPosition.y));
-        pool[index].velocity.xyz = velocityVec;
+        pool[index].velocity.xyz = mul(float4(velocityVec, 0), world).xyz;
     }
     
     
