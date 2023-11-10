@@ -611,7 +611,6 @@
     </ClCompile>
     <ClCompile Include="Engine\Tools\ErrorLogger.cpp" />
     <ClCompile Include="Engine\Tools\ImageLoader.cpp" />
-    <ClCompile Include="Engine\Components\ParticleComponent.cpp" />
     <ClCompile Include="Engine\Components\Particle.cpp" />
     <ClCompile Include="Engine\Systems\TransformSystem.cpp" />
     <ClCompile Include="Engine\Systems\TransformHelper.cpp" />

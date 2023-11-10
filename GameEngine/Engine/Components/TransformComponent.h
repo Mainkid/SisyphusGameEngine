@@ -17,12 +17,17 @@ struct TransformComponent
 	~TransformComponent()
 	{
 	}
+	//----User vars----
+	SyVector3 localPosition = SyVector3(0, 0, 0);
+	SyVector3 localRotation = SyVector3(0, 0, 0);
+	SyVector3 localScale = SyVector3(1, 1, 1);
+
+	//----User read-only vars
 	SyVector3 position =		SyVector3(0, 0, 0 );
 	SyVector3 rotation =		SyVector3(0, 0, 0);
 	SyVector3 scale =			SyVector3(1, 1, 1);
-	SyVector3 localPosition =	SyVector3(0, 0, 0);
-	SyVector3 localRotation =	SyVector3(0, 0, 0);
-	SyVector3 localScale =		SyVector3(1, 1, 1);
+
+	//----Engine vars----
 	Matrix transformMatrix =	Matrix::Identity;
 	uint32_t hash =				0;
 	uint32_t parent =		entt::null;

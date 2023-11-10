@@ -31,13 +31,15 @@ struct MeshComponent
 	{
 		this->modelUUID = modelUUID;
 	};
-	//Material* material = nullptr;
-	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture = nullptr;
-	//Microsoft::WRL::ComPtr<ID3D11SamplerState> SamplerState = nullptr;
-	std::shared_ptr<Model> model = nullptr;
+
+	//----User vars----
 	std::vector<boost::uuids::uuid> materialUUIDs = {};
-	std::vector<std::shared_ptr<Material>> materials = {};
 	boost::uuids::uuid modelUUID;
+
+	//----Engine vars----
+
+	std::shared_ptr<Model> model = nullptr;
+	std::vector<std::shared_ptr<Material>> materials = {};
 	UINT strides[1] = { 80 };
 	UINT offsets[1] = { 0 };
 	uint32_t hashMaterial = 0;
