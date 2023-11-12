@@ -65,6 +65,7 @@ cbuffer Params : register(b0)
     float4 eyePos;
     row_major float4x4 viewProj[4];
     float4 distances[4];
+    float4 IsLit_Ambient_params;
 };
 
 struct VertexInput
@@ -167,7 +168,7 @@ LightingO AccumulateLighting(in LightingO o, float3 lightDir, float3 lightCol, f
         //o.basis_col1 += lightCol;
         //o.basis_col2 += lightCol;
         
-        o.ambient = lightCol;
+       
     }
     
         return o;
@@ -204,6 +205,7 @@ PixelInput DefaultVS(VertexInput input)
     
     worldPosition = float4(particle.position.xyz, 1);
     worldPosition = mul(worldPosition, View);
+    float4 startWorldPosition = worldPosition;
     
     if (input.VertexID % 4 == 0)
     {
@@ -262,15 +264,18 @@ PixelInput DefaultVS(VertexInput input)
         //{
         //    shadow = 0.0f;
         //}
+        output.lightO.ambient = IsLit_Ambient_params.y;
+        if (IsLit_Ambient_params.x)
+        {
         
   
             if (abs(light[i].additiveParams.w - AMBIENT) < 0.01f)
                 output.lightO = AccumulateLighting(output.lightO, dir, light[i].Color.xyz, light[i].Color.w, true);
-            else if (abs(light[i].additiveParams.w - DIRECTIONAL) < 0.01f )
+            else if (abs(light[i].additiveParams.w - DIRECTIONAL) < 0.01f)
             {
                 output.lightO = AccumulateLighting(output.lightO, light[i].Dir, light[i].Color.xyz, light[i].Color.w, false);
             }
-        else if (abs(light[i].additiveParams.w - POINTLIGHT) < 0.01f )
+            else if (abs(light[i].additiveParams.w - POINTLIGHT) < 0.01f)
             {
                 dir = particle.position.xyz - light[i].Pos.xyz;
                 distance = length(dir);
@@ -279,14 +284,14 @@ PixelInput DefaultVS(VertexInput input)
                 if (distance < light[i].additiveParams.r)
                     output.lightO = AccumulateLighting(output.lightO, dir, light[i].Color.xyz, att, false);
             }
+        }
     }
     
 
     
     
     
-    output.
-        normal = normalize(-viewDirection);
+    output.normal = normalize(lerp(normalize(-viewDirection), normalize(worldPosition.xyz - startWorldPosition.xyz), 0.5f));
     output.worldPos = particle.position.xyz;
 
    
@@ -333,7 +338,10 @@ PixelOutput DefaultPS(PixelInput input) : SV_Target
     
     float4 pixelColor = textureDiffuse.Sample(textureSampler, input.uv.xy);
     //clip(pixelColor.a -1.0f);
-    output.Color = float4(pixelColor.xyz*diffuse, 1);
+    if (IsLit_Ambient_params.x)
+        output.Color = float4(pixelColor.xyz * diffuse, pixelColor.r);
+    else
+        output.Color = float4(pixelColor.xyz, pixelColor.r);
     return output;
 }
 

@@ -92,6 +92,8 @@ struct SharedParticlesData:public ResourceBase
     UniformCurve SpeedOverLifetime;
     ParticleInputDataF RotationOverLifetime;
     uint32_t MaxParticles;
+    bool IsLit;
+    float AmbientAmount;
 
     //Emission
     ParticleInputDataF RateOverTime;                  // Particles emitted per second;
@@ -107,7 +109,7 @@ struct SharedParticlesData:public ResourceBase
     SER_DATA(SharedParticlesData, Duration,
         IsLooping, StartDelayTime, StartLifeTime,
         StartSpeed, StartSize, StartColor, MaxParticles, RateOverTime, ParticleBursts,
-        ParticleEmitShape, Angle, Radius,RotationOverLifetime,SizeOverLifetime,SpeedOverLifetime,StartRotation,TextureUuid
+        ParticleEmitShape, Angle, Radius,RotationOverLifetime,SizeOverLifetime,SpeedOverLifetime,StartRotation,TextureUuid, IsLit, AmbientAmount
     )
 };
 

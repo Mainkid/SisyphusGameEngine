@@ -9,7 +9,7 @@ struct ImageBasedLightingComponent
 	bool IsOn = false;
 
 	//----Engine vars----
-
+	
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> IrradianceMapSampler;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> IrradianceCubeMapTex;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> IrradianceCubeMapSrv;

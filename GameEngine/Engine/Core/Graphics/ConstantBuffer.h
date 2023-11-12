@@ -86,6 +86,7 @@ public:
     Vector4 eyePos;
     DirectX::SimpleMath::Matrix viewProjs[4];
     DirectX::SimpleMath::Vector4 distances[4];
+    DirectX::SimpleMath::Vector4 litAmbientParams;
     
 };
 

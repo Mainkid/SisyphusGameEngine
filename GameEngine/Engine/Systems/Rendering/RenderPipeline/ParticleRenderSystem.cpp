@@ -98,7 +98,7 @@ SyResult ParticleRenderSystem::Run()
         HRESULT res = _hc->context->Map(pc.GroupCountConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
         CopyMemory(mappedResource.pData, &dataGroup, sizeof(CB_ComputeShader));
         _hc->context->Unmap(pc.GroupCountConstBuffer->buffer.Get(), 0);
-        _hc->context->OMSetBlendState(_rc->LightBlendState.Get(), nullptr, 0xffffffff);
+        _hc->context->OMSetBlendState(_rc->ParticlesBlendState.Get(), nullptr, 0xffffffff);
         _hc->context->CSSetConstantBuffers(0, 1, pc.GroupCountConstBuffer->buffer.GetAddressOf());
 
 
@@ -169,7 +169,7 @@ SyResult ParticleRenderSystem::Run()
         // Sorting        //
         //=============== //
 
-        SortGpu();
+        SortGpu(pc);
         _hc->context->CSSetUnorderedAccessViews(0, 1, nullViews, 0);
         _hc->context->CSSetShader(nullptr, 0, 0);
 
@@ -198,7 +198,7 @@ SyResult ParticleRenderSystem::Run()
         Vector3 vec = Vector3(camera.forward.x,camera.forward.y,camera.forward.z);
         dataParticle.viewDirection = vec;
         dataParticle.cameraRot = camera.view.Invert();       //???
-
+        dataParticle.litAmbientParams=Vector4(pc.SharedParticlesDataResource->IsLit, pc.SharedParticlesDataResource->AmbientAmount, 0, 1);
 
 
         auto view = _ecs->view<LightComponent,TransformComponent>();
@@ -286,60 +286,70 @@ SyResult ParticleRenderSystem::Destroy()
 
 }
 
-void ParticleRenderSystem::SortGpu()
+void ParticleRenderSystem::SortGpu(ParticleComponent& pc)
 {
-    //for (UINT level = 2; level <= BITONIC_BLOCK_SIZE; level = level * 2)
-    //{
-    //    SetConstants(level, level, MATRIX_HEIGHT, MATRIX_WIDTH);
+    NUM_ELEMENTS = pow(2,floor(log2(pc.SharedParticlesDataResource->MaxParticles)));
+    auto tmp = ceil(log2(NUM_ELEMENTS / BITONIC_BLOCK_SIZE));
+    MATRIX_HEIGHT = NUM_ELEMENTS / BITONIC_BLOCK_SIZE;
+    for (UINT level = 2; level <= BITONIC_BLOCK_SIZE; level = level * 2)
+    {
+        SetConstants(pc,level, level, MATRIX_HEIGHT, MATRIX_WIDTH);
 
-    //    // Sort the row data
-    //    game->context->CSSetUnorderedAccessViews(0, 1, sortBufferUAV.GetAddressOf(), nullptr);
-    //    game->context->CSSetShader(bitonicSortShader->computeShader.Get(), nullptr, 0);
-    //    game->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
-    //    std::cout << NUM_ELEMENTS / BITONIC_BLOCK_SIZE << std::endl;
-    //}
+        // Sort the row data
+        _hc->context->CSSetUnorderedAccessViews(0, 1, pc.SortBufferUav.GetAddressOf(), nullptr);
+        _hc->context->CSSetShader(_rc->BitonicSort->computeShader.Get(), nullptr, 0);
+        _hc->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
+    }
 
-    //// Then sort the rows and columns for the levels > than the block size
-    //// Transpose. Sort the Columns. Transpose. Sort the Rows.
-    //for (UINT level = (BITONIC_BLOCK_SIZE * 2); level <= NUM_ELEMENTS; level = level * 2)
-    //{
-    //    SetConstants((level / BITONIC_BLOCK_SIZE), (level & ~NUM_ELEMENTS) / BITONIC_BLOCK_SIZE, MATRIX_WIDTH, MATRIX_HEIGHT);
+    // Then sort the rows and columns for the levels > than the block size
+    // Transpose. Sort the Columns. Transpose. Sort the Rows.
+    for (UINT level = (BITONIC_BLOCK_SIZE * 2); level <= NUM_ELEMENTS; level = level * 2)
+    {
+        SetConstants(pc,(level / BITONIC_BLOCK_SIZE), (level & ~NUM_ELEMENTS) / BITONIC_BLOCK_SIZE, MATRIX_WIDTH, MATRIX_HEIGHT);
 
-    //    // Transpose the data from buffer 1 into buffer 2
-    //    ID3D11ShaderResourceView* pViewnullptr = nullptr;
-    //    game->context->CSSetShaderResources(0, 1, &pViewnullptr);
-    //    game->context->CSSetUnorderedAccessViews(0, 1, tmpGPUBufferUAV.GetAddressOf(), nullptr);
-    //    game->context->CSSetShaderResources(0, 1, sortBufferSRV.GetAddressOf());
-    //    game->context->CSSetShader(matrixTransposeShader->computeShader.Get(), nullptr, 0);
-    //    game->context->Dispatch(MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE, MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE, 1);
+        // Transpose the data from buffer 1 into buffer 2
+        ID3D11ShaderResourceView* pViewnullptr = nullptr;
+        _hc->context->CSSetShaderResources(0, 1, &pViewnullptr);
+        _hc->context->CSSetUnorderedAccessViews(0, 1, pc.TmpGpuBufferUav.GetAddressOf(), nullptr);
+        _hc->context->CSSetShaderResources(0, 1, pc.SortBufferSrv.GetAddressOf());
+        _hc->context->CSSetShader(_rc->MatrixTranspose->computeShader.Get(), nullptr, 0);
+        _hc->context->Dispatch(MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE, MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE, 1);
 
-    //    std::cout << MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE << " " << MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE << std::endl;
-    //    // Sort the transposed column data
-    //    game->context->CSSetShader(bitonicSortShader->computeShader.Get(), nullptr, 0);
-    //    game->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
+        std::cout << MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE << " " << MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE << std::endl;
+        // Sort the transposed column data
+        _hc->context->CSSetShader(_rc->BitonicSort->computeShader.Get(), nullptr, 0);
+        _hc->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
 
-    //    //std::cout << NUM_ELEMENTS / BITONIC_BLOCK_SIZE << std::endl;
+        //std::cout << NUM_ELEMENTS / BITONIC_BLOCK_SIZE << std::endl;
 
-    //    SetConstants(BITONIC_BLOCK_SIZE, level, MATRIX_HEIGHT, MATRIX_WIDTH);
+        SetConstants(pc,BITONIC_BLOCK_SIZE, level, MATRIX_HEIGHT,MATRIX_WIDTH);
 
-    //    // Transpose the data from buffer 2 back into buffer 1
-    //    game->context->CSSetShaderResources(0, 1, &pViewnullptr);
-    //    game->context->CSSetUnorderedAccessViews(0, 1, sortBufferUAV.GetAddressOf(), nullptr);
-    //    game->context->CSSetShaderResources(0, 1, tmpGPUBufferSRV.GetAddressOf());
-    //    game->context->CSSetShader(matrixTransposeShader->computeShader.Get(), nullptr, 0);
-    //    game->context->Dispatch(MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE, MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE, 1);
-    //    //std::cout << MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE<<" "<< MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE << std::endl;
+        // Transpose the data from buffer 2 back into buffer 1
+        _hc->context->CSSetShaderResources(0, 1, &pViewnullptr);
+        _hc->context->CSSetUnorderedAccessViews(0, 1, pc.SortBufferUav.GetAddressOf(), nullptr);
+        _hc->context->CSSetShaderResources(0, 1, pc.TmpGpuBufferSrv.GetAddressOf());
+        _hc->context->CSSetShader(_rc->MatrixTranspose->computeShader.Get(), nullptr, 0);
+        _hc->context->Dispatch(MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE, MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE, 1);
+        //std::cout << MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE<<" "<< MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE << std::endl;
 
-    //    // Sort the row data
-    //    game->context->CSSetShader(bitonicSortShader->computeShader.Get(), nullptr, 0);
-    //    game->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
+        // Sort the row data
+        _hc->context->CSSetShader(_rc->BitonicSort->computeShader.Get(), nullptr, 0);
+        _hc->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
 
-    //    //std::cout << NUM_ELEMENTS / BITONIC_BLOCK_SIZE << std::endl;
-    //}
+        //std::cout << NUM_ELEMENTS / BITONIC_BLOCK_SIZE << std::endl;
+    }
 }
 
 void ParticleRenderSystem::NullSortList(ParticleComponent& pc)
 {
     std::generate(pc.data.begin(), pc.data.end(), [&] { return SortListParticle(0, 0); });
    _hc->context->UpdateSubresource(pc.SortListBuffer->buffer.Get(), 0, nullptr, &pc.data[0], 0, 0);
+}
+
+void ParticleRenderSystem::SetConstants(ParticleComponent& pc,UINT iLevel, UINT iLevelMask, UINT iWidth, UINT iHeight)
+{
+
+    CB cb = { iLevel, iLevelMask, iWidth, iHeight };
+    _hc->context->UpdateSubresource(pc.SortGpuConstBuffer->buffer.Get(), 0, nullptr, &cb, 0, 0);
+    _hc->context->CSSetConstantBuffers(0, 1, pc.SortGpuConstBuffer->buffer.GetAddressOf());
 }
