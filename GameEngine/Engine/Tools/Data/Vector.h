@@ -113,4 +113,9 @@ public:
 		physx::PxQuat qq = { q.x, q.y, q.z, q.w };
 		return qq;
 	}
+	friend bool operator==(const SyVector3& left, const SyVector3& right);
 };
+inline bool operator==(const SyVector3& left, const SyVector3& right)
+{
+	return (left.x == right.x) && (left.y == right.y) && (left.z == right.z);
+}
