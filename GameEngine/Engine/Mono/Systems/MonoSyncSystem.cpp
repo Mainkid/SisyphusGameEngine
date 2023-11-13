@@ -42,8 +42,9 @@ SyResult MonoSyncSystem::Run()
 		auto& tf = viewTf.get<TransformComponent>(ent);
 
 		mono::ProxyTransformComp proxy;
-		proxy.Position = tf.position;
-		proxy.Rotation = tf.rotation;
+
+		proxy.Position = tf._position;
+		proxy.Rotation = tf._rotation;
 		proxy.Scale = tf.scale;
 		proxy.LocalPosition = tf.localPosition;
 		proxy.LocalRotation = tf.localRotation;

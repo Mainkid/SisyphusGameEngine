@@ -75,6 +75,7 @@ void EngineCore::StartUp()
 	mono->HotReload();
 
 	StartUpSystems();
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "All systems initialization complete!");
 }
 
 void EngineCore::StartUpSystems()
@@ -88,11 +89,12 @@ void EngineCore::StartUpSystems()
 	
 	_systems.Add<InputSystem>();
 	_systems.Add<ResourceSystem>();
+	_systems.Add<SyRBodySystem>();
+	_systems.Add<SyCollisionSystem>();
 
 	_systems.Add<MonoSyncSystem>();
 
-	//Add Resource System here
-	_systems.Add<SyPhysicsSystem>();
+	
 
 	_systems.Add<TransformSystem>();
 

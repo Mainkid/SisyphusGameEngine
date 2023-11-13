@@ -31,6 +31,9 @@ SyResult OpaqueRenderSystem::Run()
         CB_BaseEditorBuffer dataOpaque;
         TransformComponent& transformComp = _ecs->get<TransformComponent>(entity);
         MeshComponent& meshComp = _ecs->get<MeshComponent>(entity);
+
+        if (!(meshComp.flags & SyEMeshComponentFlags::MESH_RENDER))
+            continue;
         
         dataOpaque.baseData.world = transformComp.transformMatrix;
 
