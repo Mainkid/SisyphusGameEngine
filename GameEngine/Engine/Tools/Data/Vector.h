@@ -114,6 +114,9 @@ public:
 		return qq;
 	}
 	friend bool operator==(const SyVector3& left, const SyVector3& right);
+
+	static const SyVector3 ZERO;
+	static const SyVector3 ONE;
 };
 inline bool operator==(const SyVector3& left, const SyVector3& right)
 {

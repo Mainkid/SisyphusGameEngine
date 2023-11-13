@@ -41,10 +41,8 @@ SyResult SyRBodySystem::Init()
 SyResult SyRBodySystem::Run()
 {
 	SyResult result;
-	static bool wasPreviousFrameInPause = false;
 	if(ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
 	{
-		wasPreviousFrameInPause = true;
 		return SyResult();
 	}
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
@@ -67,31 +65,37 @@ SyResult SyRBodySystem::Run()
 		_ecs->remove<SyRbCreateOnNextUpdateTag>(entity);
 	}
 	auto view = _ecs->view<SyRBodyComponent, TransformComponent>();
-	if (wasPreviousFrameInPause == true)
+	for (auto& entity : view)
 	{
-		for (auto& entity : view)
+		SyRBodyComponent& rbComponent = view.get<SyRBodyComponent>(entity);
+		TransformComponent& trComponent = view.get<TransformComponent>(entity);
+		if (rbComponent._rbType == STATIC)
+			continue;
+		if (rbComponent._rbActor == nullptr)
 		{
-			SyRBodyComponent& rbComponent = view.get<SyRBodyComponent>(entity);
-			TransformComponent& trComponent = view.get<TransformComponent>(entity);
-			if (rbComponent._rbType == STATIC)
-				continue;
-			if (rbComponent._rbActor == nullptr)
-			{
-				result.code = SY_RESCODE_ERROR;
-				result.message = "rbComponent.rbActor is nullptr.";
-				_ecs->remove<SyRBodyComponent>(entity);
-				SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
-				continue;
-			}
-			PxRigidDynamic* rb = rbComponent._rbActor->is<PxRigidDynamic>();
-			PxTransform rbTrasform = rb->getGlobalPose();
-			if (SyVector3(rbTrasform.p) != trComponent.localPosition || SyVector3::PxQuatToEuler(rbTrasform.q) != trComponent.localRotation)
-			{
-				rb->setGlobalPose(PxTransform(trComponent._position,
-					SyVector3::EulerToPxQuat(trComponent._rotation)));
-			}
+			result.code = SY_RESCODE_ERROR;
+			result.message = "rbComponent.rbActor is nullptr.";
+			_ecs->remove<SyRBodyComponent>(entity);
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
+			continue;
 		}
-		wasPreviousFrameInPause = false;
+		PxRigidDynamic* rb = rbComponent._rbActor->is<PxRigidDynamic>();
+		PxTransform rbTransform = rb->getGlobalPose();
+		if (SyVector3(rbTransform.p) != trComponent.localPosition || SyVector3::PxQuatToEuler(rbTransform.q) != trComponent.localRotation)
+		{
+			rb->setGlobalPose(PxTransform(trComponent._position,
+				SyVector3::EulerToPxQuat(trComponent._rotation)));
+		}
+		SyVector3 pxLinearVelocity = rb->getLinearVelocity();
+		if (rbComponent._linearVelocity != pxLinearVelocity)
+		{
+			rb->setLinearVelocity(rbComponent._linearVelocity);
+		}
+		SyVector3 pxAngularVelocity = rb->getAngularVelocity();
+		if (rbComponent._angularVelocity != pxAngularVelocity)
+		{
+			rb->setLinearVelocity(rbComponent._linearVelocity);
+		}
 	}
 	if (!_scene->simulate(deltaTime))
 	{
@@ -126,6 +130,9 @@ SyResult SyRBodySystem::Run()
 		PxTransform rbTrasform = rb->getGlobalPose();
 		trComponent.localPosition = rbTrasform.p;
 		trComponent.localRotation = SyVector3::PxQuatToEuler(rbTrasform.q);
+
+		rbComponent._linearVelocity = rb->getLinearVelocity();
+		rbComponent._angularVelocity = rb->getAngularVelocity();
 	}
 	
 	return SyResult();

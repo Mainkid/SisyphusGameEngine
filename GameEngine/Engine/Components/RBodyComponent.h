@@ -42,15 +42,20 @@ struct SyRBodyComponent
 	
 	~SyRBodyComponent();
 private:
-	//fields initialized in constructor
+	//public fields initialized in constructor
 
-	SyERBodyType			_rbType;
+	SyERBodyType		_rbType;
 	float				_mass;
 	unsigned			_flags;
+	
+	//public fields
+	
+	SyVector3			_linearVelocity = SyVector3::ZERO;
+	SyVector3			_angularVelocity = SyVector3::ZERO;
+	
 	//fields initialized in SyPhysicsSystem::Init
 	
 	physx::PxRigidActor*	_rbActor = nullptr;
-	std::size_t hash;
 
 	static physx::PxPhysics*	_physics;
 	static physx::PxScene*		_scene;

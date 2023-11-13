@@ -65,6 +65,7 @@ int main()
         BOX,
         cubeColDesc,
         SyColliderMaterial());
+  
     //---------- Serialization test ----------------
 
     // ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
