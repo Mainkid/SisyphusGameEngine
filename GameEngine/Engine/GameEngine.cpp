@@ -65,7 +65,9 @@ int main()
         BOX,
         cubeColDesc,
         SyColliderMaterial());
-  
+
+    ecs->get<SyRBodyComponent>(cube).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
+    ecs->get<SyRBodyComponent>(cube).Flags |= SyERBodyFlags::DISABLE_GRAVITY;
     //---------- Serialization test ----------------
 
     // ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;

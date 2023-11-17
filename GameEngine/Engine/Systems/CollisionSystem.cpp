@@ -92,7 +92,7 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyCo
     	break;
     }
 	bool updateMassResult = true;
-	if (rbComponent._flags & SyERBodyFlags::USE_DENSITY && rbComponent._rbType == DYNAMIC)
+	if (rbComponent.Flags & SyERBodyFlags::USE_DENSITY && rbComponent._rbType == DYNAMIC)
 		updateMassResult = PxRigidBodyExt::updateMassAndInertia(	*static_cast<PxRigidBody*>(rbComponent._rbActor),
 																	cComponent._material.density);
 	if (updateMassResult == false)

@@ -29,8 +29,9 @@ struct SyRbTransform
 
 enum SyERBodyFlags
 {
-	USE_DENSITY		 = 1,
-	KINEMATIC		= 1 << 1
+	USE_DENSITY		= 1,
+	KINEMATIC		= 1 << 1,
+	DISABLE_GRAVITY	= 1 << 2
 };
 DEFINE_BITWISE_OPERATORS(SyERBodyFlags);
 
@@ -41,19 +42,23 @@ struct SyRBodyComponent
 						unsigned			flags = 0);
 	
 	~SyRBodyComponent();
-private:
-	//public fields initialized in constructor
 
+	//public fields initialized in constructor and can be modified during runtime
+	
+	float				Mass;
+	unsigned			Flags;
+	
+	//public fields, that can be modified during runtime
+	
+	SyVector3			LinearVelocity = SyVector3::ZERO;
+	SyVector3			AngularVelocity = SyVector3::ZERO;
+
+private:
+	//private fields initialized in constructor
+	
 	SyERBodyType		_rbType;
-	float				_mass;
-	unsigned			_flags;
 	
-	//public fields
-	
-	SyVector3			_linearVelocity = SyVector3::ZERO;
-	SyVector3			_angularVelocity = SyVector3::ZERO;
-	
-	//fields initialized in SyPhysicsSystem::Init
+	//private fields initialized in SyPhysicsSystem::Init
 	
 	physx::PxRigidActor*	_rbActor = nullptr;
 
