@@ -63,6 +63,17 @@ struct RenderContext : public IService
 	std::unique_ptr<Shader> EnvironmentPrefilter;
 	std::unique_ptr<Shader> IblLookUpGenerator;
 
+	/*
+	 * Particle System Shader;
+	 */
+
+	std::unique_ptr<Shader> SimpleParticle;
+	std::unique_ptr<Shader> ParticleUpdate;
+	std::unique_ptr<Shader> ParticleEmitter;
+	std::unique_ptr<Shader> BitonicSort;
+	std::unique_ptr<Shader> MatrixTranspose;
+	std::unique_ptr<Shader> MultiplyBy6Shader;
+
 
 	std::shared_ptr<Mesh> CubeMesh;
 

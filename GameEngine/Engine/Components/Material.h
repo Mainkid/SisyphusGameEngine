@@ -22,6 +22,7 @@ struct Material : public ResourceBase
 	{
 	}
 
+	//----User vars----
 	boost::uuids::uuid albedoTextureUUID = boost::uuids::nil_uuid();
 	boost::uuids::uuid specularTextureUUID = boost::uuids::nil_uuid();
 	boost::uuids::uuid roughnessTextureUUID = boost::uuids::nil_uuid();
@@ -30,6 +31,17 @@ struct Material : public ResourceBase
 	boost::uuids::uuid normalmapTextureUUID = boost::uuids::nil_uuid();
 	boost::uuids::uuid opacityTextureUUID = boost::uuids::nil_uuid();
 
+
+	DirectX::SimpleMath::Vector4 albedoValue = DirectX::SimpleMath::Vector4(0, 0, 0, -1);
+	DirectX::SimpleMath::Vector4 specularValue = DirectX::SimpleMath::Vector4(0, 0, 0, -1);
+	DirectX::SimpleMath::Vector4 roughnessValue = DirectX::SimpleMath::Vector4(0, 0, 0, -1);
+	DirectX::SimpleMath::Vector4 metallicValue = DirectX::SimpleMath::Vector4(0, 0, 0, -1);
+	DirectX::SimpleMath::Vector4 emissiveValue = DirectX::SimpleMath::Vector4(0, 0, 0, -1);;
+
+
+	EMaterialBlendMode blendMode = EMaterialBlendMode::Opaque;
+
+	//----Engine vars----
 	std::shared_ptr<Texture> albedoSRV;
 	std::shared_ptr<Texture> specularSRV;
 	std::shared_ptr<Texture> roughnessSRV;
@@ -38,14 +50,6 @@ struct Material : public ResourceBase
 	std::shared_ptr<Texture> normalmapSRV;
 	std::shared_ptr<Texture> opacitySRV;
 
-	DirectX::SimpleMath::Vector4 albedoValue = DirectX::SimpleMath::Vector4(0,0,0,-1);
-	DirectX::SimpleMath::Vector4 specularValue  = DirectX::SimpleMath::Vector4(0, 0, 0, -1);
-	DirectX::SimpleMath::Vector4 roughnessValue = DirectX::SimpleMath::Vector4(0, 0, 0, -1);
-	DirectX::SimpleMath::Vector4 metallicValue = DirectX::SimpleMath::Vector4(0, 0, 0, -1);
-	DirectX::SimpleMath::Vector4 emissiveValue = DirectX::SimpleMath::Vector4(0, 0, 0, -1);;
-
-
-	EMaterialBlendMode blendMode = EMaterialBlendMode::Opaque;
 	
 	ID3D11ShaderResourceView* resources[7];
 	uint32_t hash = 0;

@@ -15,10 +15,13 @@
 
 struct SkyboxComponent
 {
+	//----User vars----
+	boost::uuids::uuid uuid;
+
+	//----Engine vars----
 	std::unique_ptr<Buffer> VertexBuffer;
 	std::unique_ptr<Buffer> IndexBuffer;
 	std::shared_ptr<SkyboxResource> SkyboxRes;
-	boost::uuids::uuid uuid;
 	size_t Hash;
 	SER_COMP(SkyboxComponent,
 		uuid)

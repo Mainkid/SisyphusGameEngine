@@ -68,6 +68,10 @@ void EngineCore::StartUp()
 	ser.AddEcsCompMeta<EditorBillboardComponent>();
 	ser.AddEcsCompMeta<SkyboxComponent>();
 	ser.AddEcsCompMeta<ImageBasedLightingComponent>();
+	ser.AddEcsCompMeta<ParticleComponent>();
+	//ser.AddEcsCompMeta<SharedParticlesData>();
+
+
 	
 	ServiceLocator::instance()->Register<mono::SyMono>();
 	mono::SyMono* mono = ServiceLocator::instance()->Get<mono::SyMono>();
@@ -106,7 +110,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<MeshSystem>();
 	_systems.Add<SkyboxSystem>();
 	_systems.Add<LightSystem>();
-
+	_systems.Add<ParticlesSystem>();
 	_systems.Add<EditorBillboardSystem>();
 
 	_systems.Add<PreRenderSystem>();
@@ -117,6 +121,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<HbaoRenderSystem>();
 	_systems.Add<ShadowMapGenerationSystem>();
 	_systems.Add<LightRenderSystem>();
+	_systems.Add<ParticleRenderSystem>();
 	_systems.Add<EditorBillboardRenderSystem>();
 	_systems.Add<ToneMappingRenderSystem>();
 	_systems.Add<EditorGridRenderSystem>();

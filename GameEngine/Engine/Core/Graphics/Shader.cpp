@@ -80,6 +80,20 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
     D3D11_INPUT_ELEMENT_DESC inputElements [5];
     int ctr = 0;
 
+    if ((uniform_flags & USE_VERTEXID) == USE_VERTEXID)
+    {
+        inputElements[ctr] =
+            D3D11_INPUT_ELEMENT_DESC{
+            "SV_VertexID",
+            0,
+            DXGI_FORMAT_R32_UINT,
+            0,
+            0,
+            D3D11_INPUT_PER_VERTEX_DATA,
+            0 };
+        ctr++;
+    }
+
     if ((uniform_flags & USE_POSITION) == USE_POSITION)
     {
         inputElements[ctr]=D3D11_INPUT_ELEMENT_DESC{

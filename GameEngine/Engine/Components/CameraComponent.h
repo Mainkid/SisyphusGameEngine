@@ -4,13 +4,16 @@
 using namespace DirectX::SimpleMath;
 struct CameraComponent
 {
-	Matrix view = Matrix::Identity;
-	Matrix projection = Matrix::Identity;
+	//----User vars----
 	float nearPlane = 0.01f;
 	float farPlane = 100.0f;
 	float fovDegrees = 60.0f;
-	float aspectRatio = 1280.0f/720.0f;
 	float cameraSpeed = 2.0f;
+
+	//----Engine vars----
+	Matrix view = Matrix::Identity;
+	Matrix projection = Matrix::Identity;
+	float aspectRatio = 1280.0f / 720.0f;
 	uint32_t hash = 0;
 	uint32_t transformHash = 0;
 

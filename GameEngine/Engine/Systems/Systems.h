@@ -13,6 +13,7 @@
 #include "ResourceSystem.h"
 #include "ErrorLoggingSystem.h"
 #include "SkyboxSystem.h"
+#include "ParticlesSystem.h"
 #include "Rendering/HUD/HudPropertiesSystem.h"
 #include "Rendering/HUD/HudContentBrowserSystem.h"
 #include "Rendering/HUD/HudHierarchySystem.h"
@@ -33,6 +34,7 @@
 #include "Rendering/PostViewportRenderSystem.h"
 #include "Rendering/RenderPipeline/EditorGridRenderSystem.h"
 #include "Rendering/RenderPipeline/HbaoRenderSystem.h"
+#include "Rendering/RenderPipeline/ParticleRenderSystem.h"
 
 #include "../Mono/Systems/MonoSyncSystem.h"
 

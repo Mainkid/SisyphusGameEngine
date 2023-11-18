@@ -619,7 +619,6 @@
     </ClCompile>
     <ClCompile Include="Engine\Tools\ErrorLogger.cpp" />
     <ClCompile Include="Engine\Tools\ImageLoader.cpp" />
-    <ClCompile Include="Engine\Components\ParticleComponent.cpp" />
     <ClCompile Include="Engine\Components\Particle.cpp" />
     <ClCompile Include="Engine\Systems\TransformSystem.cpp" />
     <ClCompile Include="Engine\Systems\TransformHelper.cpp" />
@@ -652,6 +651,8 @@
     <ClCompile Include="Engine\Mono\Objects\SyMonoEditor.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\ImageBasedLightingSystem.cpp" />
     <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
+    <ClCompile Include="Engine\Systems\ParticlesSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -779,7 +780,9 @@
     <ClInclude Include="Engine\Mono\Objects\SyMonoEcs.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoGameConfig.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoEditor.h" />
+    <ClInclude Include="Engine\Systems\ParticlesSystem.h" />
     <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
@@ -788,7 +791,9 @@
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="vendor\ImGuizmo\ImSequencer.h" />
     <ClInclude Include="vendor\ImGuizmo\ImZoomSlider.h" />
+    <ClInclude Include="vendor\ImGui\curve_v122.hpp" />
     <ClInclude Include="vendor\ImGui\imconfig.h" />
+    <ClInclude Include="vendor\ImGui\ImCurve.h" />
     <ClInclude Include="vendor\ImGui\imgui.h" />
     <ClInclude Include="vendor\ImGui\imgui_impl_dx11.h" />
     <ClInclude Include="vendor\ImGui\imgui_impl_win32.h" />

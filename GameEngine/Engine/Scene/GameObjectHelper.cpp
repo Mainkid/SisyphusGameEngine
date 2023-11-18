@@ -211,8 +211,10 @@ SyResult GameObjectHelper::AddCubeMeshComponent(entt::registry* ecs, entt::entit
 
 entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 {
-	auto ent = Create(ecs, "ParticleObject");
-	ecs->emplace<ParticleComponent>(ent);
+	//TODO: Translate to resource service!
+	auto ent = Create(ecs, "ParticleSystem");
+	ParticleComponent& pc = ecs->emplace<ParticleComponent>(ent);
+	pc.SharedParticlesDataUuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_PARTICLESYS].uuid;
 	return ent;
 }
 

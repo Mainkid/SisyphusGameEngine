@@ -1,4 +1,7 @@
 ﻿#include "HudPropertiesSystem.h"
+
+#include <corecrt_math_defines.h>
+
 #include "../../EngineContext.h"
 #include "../RenderContext.h"
 #include "ResourceHelper.h"
@@ -7,9 +10,15 @@
 #include "../../TransformHelper.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../../Components/LightComponent.h"
+#include "../../../../vendor/ImGui/curve_v122.hpp"
+
+
 #include "json.hpp"
 
 #include <fstream>
+
+
+
 
 SyResult HudPropertiesSystem::Init()
 {
@@ -23,12 +32,17 @@ SyResult HudPropertiesSystem::Init()
     return SyResult();
 }
 
+
 SyResult HudPropertiesSystem::Run()
 {
     ImGui::Begin(windowID.c_str());
     //Widget::Render();
 
+    //ImCurve::ShowBezierDemo();
+
     ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    //ImGui::ShowBezierDemo();
 
     if (ec->hudData.selectedEntityIDs.size() != 0)
     {
