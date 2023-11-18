@@ -34,7 +34,7 @@ SyResult HudPropertiesSystem::Run()
     ImGui::Begin(windowID.c_str());
     //Widget::Render();
 
-    ImCurve::ShowBezierDemo();
+    //ImCurve::ShowBezierDemo();
 
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 

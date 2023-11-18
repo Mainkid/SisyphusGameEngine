@@ -315,7 +315,7 @@ void ParticleRenderSystem::SortGpu(ParticleComponent& pc)
         _hc->context->CSSetShader(_rc->MatrixTranspose->computeShader.Get(), nullptr, 0);
         _hc->context->Dispatch(MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE, MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE, 1);
 
-        std::cout << MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE << " " << MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE << std::endl;
+        //std::cout << MATRIX_WIDTH / TRANSPOSE_BLOCK_SIZE << " " << MATRIX_HEIGHT / TRANSPOSE_BLOCK_SIZE << std::endl;
         // Sort the transposed column data
         _hc->context->CSSetShader(_rc->BitonicSort->computeShader.Get(), nullptr, 0);
         _hc->context->Dispatch(NUM_ELEMENTS / BITONIC_BLOCK_SIZE, 1, 1);
