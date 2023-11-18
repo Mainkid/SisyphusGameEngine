@@ -14,7 +14,6 @@ SyResult EditorBillboardRenderSystem::Init()
     _hc = ServiceLocator::instance()->Get<HardwareContext>();
     _rc = ServiceLocator::instance()->Get<RenderContext>();
     _ec = ServiceLocator::instance()->Get<EngineContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboardRender system initialization successful.");
     return SyResult();
 
 }
@@ -48,7 +47,7 @@ SyResult EditorBillboardRenderSystem::Run()
 
         Vector3 tmp = Vector3(camera.forward.x, camera.forward.y, camera.forward.z);
 
-        auto billboardMat = Matrix::CreateConstrainedBillboard(transformComp.position, cameraTf.position,
+        auto billboardMat = Matrix::CreateConstrainedBillboard(transformComp._position, cameraTf._position,
             Vector3(camera.up), &tmp);
         billboardMat = Matrix::CreateScale(0.25f) * billboardMat;
 
@@ -86,7 +85,5 @@ SyResult EditorBillboardRenderSystem::Run()
 
 SyResult EditorBillboardRenderSystem::Destroy()
 {
-
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboardRender system destruction successful.");
     return SyResult();
 }

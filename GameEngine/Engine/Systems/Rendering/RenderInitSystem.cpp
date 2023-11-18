@@ -78,9 +78,6 @@ SyResult RenderInitSystem::Init()
 	CreateHbao();
 
 	
-
-
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "RenderInit system initialization successful. ");
 	return SyResult();
 }
 
@@ -91,7 +88,6 @@ SyResult RenderInitSystem::Run()
 
 SyResult RenderInitSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "RenderInit system destruction successful. ");
 	return SyResult();
 }
 

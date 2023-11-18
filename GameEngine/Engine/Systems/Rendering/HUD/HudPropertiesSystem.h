@@ -16,6 +16,11 @@
 #include "imgui_internal.h"
 #include "ImCurve.h"
 
+namespace mono
+{
+	class SyMonoEditor;
+}
+
 struct EngineContext;
 struct HardwareContext;
 struct RenderContext;
@@ -28,7 +33,6 @@ class ResourceService;
 //    float CurveValueSmooth(float p, int maxpoints, const ImVec2* points);
 //};
 
-
 class HudPropertiesSystem : public SystemBase
 {
 public:
@@ -40,6 +44,8 @@ private:
     RenderContext* rc;
     HardwareContext* hc;
     ResourceService* rs;
+    mono::SyMonoEditor* _monoEditor;
+
     std::string windowID;
     boost::uuids::uuid prevSelectedUUID = boost::uuids::nil_uuid();
     bool isFocused;

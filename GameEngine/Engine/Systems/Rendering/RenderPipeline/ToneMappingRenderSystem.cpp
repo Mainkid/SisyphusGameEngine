@@ -9,7 +9,6 @@ SyResult ToneMappingRenderSystem::Init()
 	_rc = ServiceLocator::instance()->Get<RenderContext>();
 	_hc = ServiceLocator::instance()->Get<HardwareContext>();
 
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "ToneMappingSystem system initialization successful.");
 	return SyResult();
 }
 
@@ -33,6 +32,5 @@ SyResult ToneMappingRenderSystem::Run()
 
 SyResult ToneMappingRenderSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "ToneMappingSystem system destroyed successful.");
 	return SyResult();
 }

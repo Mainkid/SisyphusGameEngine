@@ -8,35 +8,30 @@ using namespace DirectX::SimpleMath;
 struct TransformComponent
 {
 	TransformComponent() = default;
-	TransformComponent(Vector3 _pos, Vector3 _rot = Vector3::Zero, Vector3 _scale=  Vector3(1,1,1))
+	TransformComponent(Vector3 _pos, Vector3 _rot = Vector3::Zero, Vector3 _scale = Vector3(1, 1, 1))
 	{
-		this->position = _pos;
-		this->rotation = _rot;
+		this->_position = _pos;
+		this->_rotation = _rot;
 		this->scale = _scale;
 	}
 	~TransformComponent()
 	{
 	}
-	//----User vars----
+	SyVector3 _position = SyVector3(0, 0, 0);
+	SyVector3 _rotation = SyVector3(0, 0, 0);
+	SyVector3 scale = SyVector3(1, 1, 1);
 	SyVector3 localPosition = SyVector3(0, 0, 0);
 	SyVector3 localRotation = SyVector3(0, 0, 0);
 	SyVector3 localScale = SyVector3(1, 1, 1);
-
-	//----User read-only vars
-	SyVector3 position =		SyVector3(0, 0, 0 );
-	SyVector3 rotation =		SyVector3(0, 0, 0);
-	SyVector3 scale =			SyVector3(1, 1, 1);
-
-	//----Engine vars----
-	Matrix transformMatrix =	Matrix::Identity;
-	uint32_t hash =				0;
-	uint32_t parent =		entt::null;
+	Matrix transformMatrix = Matrix::Identity;
+	uint32_t hash = 0;
+	uint32_t parent = entt::null;
 	std::set<entt::entity> children = {};
 
 
-	SER_COMP(TransformComponent, 
-		position, 
-		rotation, 
+	SER_COMP(TransformComponent,
+		_position,
+		_rotation,
 		scale,
 		localPosition,
 		localRotation,
@@ -86,9 +81,9 @@ namespace std
 		using result_type = std::size_t;
 		result_type operator()(argument_type const& a) const
 		{
-			result_type const h1(std::hash<SyVector3>()(a.position));
+			result_type const h1(std::hash<SyVector3>()(a._position));
 			result_type const h2(std::hash<SyVector3>()(a.scale));
-			result_type const h3(std::hash<SyVector3>()(a.rotation));
+			result_type const h3(std::hash<SyVector3>()(a._rotation));
 			result_type const h4(std::hash<uint32_t>()(a.parent));
 			result_type const h5(std::hash<SyVector3>()(a.localPosition));
 			result_type const h6(std::hash<SyVector3>()(a.localRotation));

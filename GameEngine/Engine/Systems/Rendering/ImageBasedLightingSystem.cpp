@@ -18,7 +18,6 @@ SyResult ImageBasedLightingSystem::Init()
 	_rc = ServiceLocator::instance()->Get<RenderContext>();
 	_rs = ServiceLocator::instance()->Get<ResourceService>();
 
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "ImageBasedLighting system initialization successful.");
 	return SyResult();
 }
 
@@ -127,7 +126,6 @@ SyResult ImageBasedLightingSystem::Run()
 
 SyResult ImageBasedLightingSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "ImageBasedLighting system destruction successful.");
 	return SyResult();
 }
 

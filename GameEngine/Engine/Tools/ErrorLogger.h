@@ -2,7 +2,6 @@
 #include <string>
 #include "ComplexString.h"
 #include "../Core/IService.h"
-#include <map>
 #include <vector>
 #include "../Core/ServiceLocator.h"
 #include <iostream>
@@ -25,10 +24,20 @@ else																					\
 #define SY_LOG_CORE(logLevel, ...)	SY_LOG("CORE",	logLevel, __VA_ARGS__)
 #define SY_LOG_REND(logLevel, ...)	SY_LOG("REND",	logLevel, __VA_ARGS__)
 #define SY_LOG_HUD(logLevel, ...)	SY_LOG("HUD ",	logLevel, __VA_ARGS__)
+#define SY_LOG_MONO(logLevel, ...)  SY_LOG("MONO",  logLevel, __VA_ARGS__)
+#define SY_LOG_GAME(logLevel, ...)	SY_LOG("GAME",	logLevel, __VA_ARGS__)
 
 #define SY_RESCODE_OK 0
 #define SY_RESCODE_UNEXPECTED 1
 #define SY_RESCODE_ERROR 2
+
+#define SY_RESULT_CHECK(result) if ((result).code != SY_RESCODE_OK) return result
+#define SY_RESULT_CHECK_EXT(result, prefix)												\
+	if ((result).code != SY_RESCODE_OK)													\
+		return SyResult{																\
+			(result).code,																\
+			SyComplexString(SyComplexString(prefix).ToString() + std::string("; %s"),	\
+											(result).message.ToString().c_str())}
 
 //basic structure used for return values
 struct SyResult
@@ -66,7 +75,9 @@ struct SyErrorLogger : IService
 							{"REND", 0}, 
 							{"PHYS", 0}, 
 							{"HUD ", 0}, 
-							{"ERLG", 0}};
+							{"ERLG", 0},
+							{"MONO", 0},
+							{"GAME", 0}};
 		sinks = { /*SY_SINK_CONSOLE,*/ SY_SINK_TXT };
 	};
 

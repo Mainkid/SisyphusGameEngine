@@ -18,22 +18,9 @@
 
 int main()
 {
-    //std::unique_ptr<Material> material = std::make_unique<Material>();
-    //material->albedoTexturePath = "./Engine/Assets/PBR_test/sspere_diff.png";
-    //material->metallicTexturePath = "./Engine/Assets/PBR_test/SS_LP_metallic.png";
-    //material->normalmapTexturePath = "./Engine/Assets/PBR_test/SS_LP_normal.png";
-    ////material->emissiveTexturePath = "./Engine/Assets/PBR_test/Crystal_stone_emissive.jpg";
-    //material->roughnessTexturePath = "./Engine/Assets/PBR_test/SS_LP_roughness.png";
-    //material->roughnessValue = (1, 0, 0, 0);
-
     EngineCore::instance()->StartUp();
-
     
-
     entt::registry* ecs = &ServiceLocator::instance()->Get<EngineContext>()->ecs;
-    
-    //EngineCore* engine = new EngineCore();
-    
     EngineContext* ec = EngineCore::instance()->ec;
   /*  auto box1 = _ec->scene->AddStaticBox({ -5.0f, -5.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 3.0f, 1.0f, 3.0f });
     auto box2 = _ec->scene->AddDynamicBox({ -5.0f, 10.0f, 0.0f }, { SY_PI2 / 2, 0.0f, SY_PI2 / 2 });*/
@@ -66,65 +53,45 @@ int main()
     auto lightPoint = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
     ecs->get<LightComponent>(lightPoint).ParamsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
     ecs->get<LightComponent>(lightPoint).Color = Vector4(1, 1, 0.0f, 3.0f);
-    ecs->get<TransformComponent>(lightPoint).position = Vector3(3, 0, 0);
+    ecs->get<TransformComponent>(lightPoint)._position = Vector3(3, 0, 0);
 
     auto lightPoint2 = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
 
     ecs->get<LightComponent>(lightPoint2).ParamsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
     ecs->get<LightComponent>(lightPoint2).Color = Vector4(1, 0, 0.0f, 3.0f);
-    ecs->get<TransformComponent>(lightPoint2).position = Vector3(3, 0, 0);
+    ecs->get<TransformComponent>(lightPoint2)._position = Vector3(3, 0, 0);
     ecs->get<LightComponent>(lightPoint2).LightBehavior = LightBehavior::Movable;
 
-    GameObjectHelper::CreateParticleSystem(ecs);
+    auto base = GameObjectHelper::Create(ecs, "Base", { 0.0f, -5.0f, 13.0f });
+    ecs->get<TransformComponent>(base).localScale = {10.0f, 1.0f, 10.0f};
+    auto result1 = GameObjectHelper::AddRigidBodyComponent(ecs, base, STATIC);
+    auto result2 = GameObjectHelper::AddCubeMeshComponent(ecs, base);
+    SyPrimitiveColliderShapeDesc baseColDesc;
+    baseColDesc.Extent = { 10.0f, 1.0f, 10.0f };
+    auto result3 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, base,
+                                                            BOX,
+                                                            baseColDesc,
+                                                            SyColliderMaterial());
 
-
-
-    ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
-
-    SharedParticlesData spd;
-    spd.MaxParticles = 1000;
-    spd.RateOverTime.Fvalue = 1;
-    spd.StartColor.V4value = Vector4(1, 1, 1,1);
-    spd.StartSize.Fvalue = 1;
     
-    spd.StartSize.InputType = RandomBetweenFloats;
-    spd.StartSpeed.Fvalue = 0.1f;
-    spd.Duration = 5;
-    spd.IsLooping = true;
-    spd.StartLifeTime.Fvalue = 5.0f;
-    spd.Angle = 30;
-    spd.Radius = 1;
-    spd.ParticleEmitShape = EParticleEmitShape::Sphere;
-    spd.StartSize.RandomBetweenConstsF.f1 = 0.01f;
-    spd.StartSize.RandomBetweenConstsF.f1 = 0.1f;
+    auto meshUuid = ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Game\\Assets\\fbx\\barrel.fbx");
+    auto staticMesh = GameObjectHelper::Create(ecs, "Static Mesh", {0.0f, -2.5f, 8.0f});
+    ecs->get<TransformComponent>(staticMesh).localScale = { 3.0f, 3.0f, 3.0f };
+    auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid, SyEMeshComponentFlags::MESH_COLLIDER | SyEMeshComponentFlags::MESH_RENDER);
+    auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
+    auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
 
-    ParticleBurst pb;
-    pb.Probability = 0.5f;
-    pb.IsLooping = true;
-    pb.Count.InputType = EInputType::SimpleFloat;
-    pb.Count.Fvalue = 10.0f;
-    pb.Time = 2.0f;
-
-    spd.ParticleBursts.push_back(pb);
-    
-
-    auto json = ser.Serialize<SharedParticlesData>(spd);
-
-    ////auto model = GameObjectHelper::CreateMesh(ecs, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath("./Game/Assets/fbx/artifact.fbx"));
-    ////ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
-    ////ser.AddEcsCompMeta<GameObjectComp>();
-    ////ser.AddEcsCompMeta<TransformComponent>();
-    ////ser.AddEcsCompMeta<MeshComponent>();
-    ////ser.AddEcsCompMeta<LightComponent>();
-    ////ser.AddEcsCompMeta<EditorBillboardComponent>();
-
-    ////auto json = ser.Serialize<GameObjectComp>(*ecs);
-    std::ofstream file;
-    file.open("baseParticles.ps", std::ios::trunc);
-    file << std::setw(1) << json;
-    file.close();
-
+    auto cube = GameObjectHelper::Create(ecs, "Cube", { 0.0f, 5.0f, 8.0f });
+    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube, DYNAMIC);
+    auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube);
+    SyPrimitiveColliderShapeDesc cubeColDesc;
+    cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
+    auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube,
+        BOX,
+        cubeColDesc,
+        SyColliderMaterial());
     //---------- Serialization test ----------------
+
     // ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
     // ser.AddEcsCompMeta<GameObjectComp>();
     // ser.AddEcsCompMeta<TransformComponent>();

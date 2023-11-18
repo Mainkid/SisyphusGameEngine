@@ -16,7 +16,6 @@ SyResult ShadowRenderSystem::Init()
     _rc = ServiceLocator::instance()->Get<RenderContext>();
     _hc = ServiceLocator::instance()->Get<HardwareContext>();
    
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowRender system initialization successful. ");
     return SyResult();
 }
 
@@ -41,6 +40,8 @@ SyResult ShadowRenderSystem::Run()
             {
                 auto [transform, meshComp] = viewMeshes.get(ent);
 
+                if (!(meshComp.flags & SyEMeshComponentFlags::MESH_RENDER))
+                    continue;
                 CB_ShadowBuffer dataShadow;
                 //dataShadow.baseData.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
                 dataShadow.baseData.world = transform.transformMatrix;
@@ -109,20 +110,20 @@ SyResult ShadowRenderSystem::Run()
 
             CB_PointlightShadowBuffer dataShadow;
             dataShadow.world =Matrix::CreateScale(light.ParamsRadiusAndAttenuation.x, light.ParamsRadiusAndAttenuation.x,
-                light.ParamsRadiusAndAttenuation.x)*Matrix::CreateTranslation(lightTf.position);
+                light.ParamsRadiusAndAttenuation.x)*Matrix::CreateTranslation(lightTf._position);
             
             //dataShadow.baseData.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
-            dataShadow.view[0] = DirectX::XMMatrixLookAtLH( Vector3(lightTf.position), lightTf.position + Vector3(1, 0, 0),
+            dataShadow.view[0] = DirectX::XMMatrixLookAtLH( Vector3(lightTf._position), lightTf._position + Vector3(1, 0, 0),
                 Vector3(0, 1, 0));
-            dataShadow.view[1] = DirectX::XMMatrixLookAtLH(Vector3(lightTf.position), lightTf.position + Vector3(-1, 0, 0),
+            dataShadow.view[1] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(-1, 0, 0),
                 Vector3(0, 1, 0));
-            dataShadow.view[2] = DirectX::XMMatrixLookAtLH(Vector3(lightTf.position), lightTf.position + Vector3(0, 1, 0),
+            dataShadow.view[2] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(0, 1, 0),
                 Vector3(0, 0, -1));
-            dataShadow.view[3] = DirectX::XMMatrixLookAtLH(Vector3(lightTf.position), lightTf.position + Vector3(0, -1, 0),
+            dataShadow.view[3] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(0, -1, 0),
                 Vector3(0, 0, 1));
-            dataShadow.view[4] = DirectX::XMMatrixLookAtLH(Vector3(lightTf.position), lightTf.position + Vector3(0, 0, 1),
+            dataShadow.view[4] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(0, 0, 1),
                 Vector3(0, 1, 0));
-            dataShadow.view[5] = DirectX::XMMatrixLookAtLH(Vector3(lightTf.position), lightTf.position + Vector3(0, 0, -1),
+            dataShadow.view[5] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(0, 0, -1),
                 Vector3(0, 1, 0));
 
 
@@ -132,7 +133,8 @@ SyResult ShadowRenderSystem::Run()
             for (auto& ent : viewMeshes)
             {
                 auto [transform, meshComp] = viewMeshes.get(ent);
-
+                if (!(meshComp.flags & SyEMeshComponentFlags::MESH_RENDER))
+                    continue;
                 dataShadow.world = transform.transformMatrix;
                 
                 D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -194,7 +196,6 @@ SyResult ShadowRenderSystem::Run()
 
 SyResult ShadowRenderSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowRender system destruction successful. ");
     return SyResult();
 }
 

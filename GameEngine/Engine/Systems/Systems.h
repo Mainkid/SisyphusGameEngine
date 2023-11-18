@@ -6,7 +6,8 @@
 #include "TransformSystem.h"
 #include "MeshSystem.h"
 #include "LightSystem.h"
-#include "PhysicsSystem.h"
+#include "RBSystem.h"
+#include "CollisionSystem.h"
 #include "HardwareInitSystem.h"
 #include "MaterialUpdateSystem.h"
 #include "ResourceSystem.h"
@@ -34,5 +35,7 @@
 #include "Rendering/RenderPipeline/EditorGridRenderSystem.h"
 #include "Rendering/RenderPipeline/HbaoRenderSystem.h"
 #include "Rendering/RenderPipeline/ParticleRenderSystem.h"
+
+#include "../Mono/Systems/MonoSyncSystem.h"
 
 #include "../Systems/PrepareEventsSystem.h"

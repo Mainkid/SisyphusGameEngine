@@ -12,7 +12,6 @@ SyResult HardwareInitSystem::Init()
 	InitializeDirectX();
 	hc->renderTarget = std::make_unique<RenderTarget>();
 	hc->renderTarget->Initialize();
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "HardwareInit system initialization successful. ");
 	return SyResult();
 }
 
@@ -23,7 +22,6 @@ SyResult HardwareInitSystem::Run()
 
 SyResult HardwareInitSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "HardwareInit system destruction successful. ");
 	return SyResult();
 }
 

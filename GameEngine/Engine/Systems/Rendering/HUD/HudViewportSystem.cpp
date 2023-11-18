@@ -24,7 +24,6 @@ SyResult HudViewportSystem::Init()
 	rs = ServiceLocator::instance()->Get<ResourceService>();
 	windowID = "Viewport";
 	InitSRV();
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudViewport system initialization successful.");
 	return SyResult();
 	
 }
@@ -182,7 +181,6 @@ SyResult HudViewportSystem::Run()
 
 SyResult HudViewportSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, " HudViewport system destruction successful.");
 	return SyResult();
 }
 
@@ -321,7 +319,7 @@ void HudViewportSystem::DrawMainMenuBar()
 			auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
 
 
-			Vector3 pos = Vector3(cameraTransform.position.x, cameraTransform.position.y, cameraTransform.position.z) +
+			Vector3 pos = Vector3(cameraTransform._position.x, cameraTransform._position.y, cameraTransform._position.z) +
 				Vector3(camera.forward.x, camera.forward.y, camera.forward.z) * 3;
 
 			if (ImGui::BeginMenu("3D object"))

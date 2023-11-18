@@ -9,7 +9,6 @@ SyResult PreRenderSystem::Init()
     rc = ServiceLocator::instance()->Get<RenderContext>();
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "PreRender system initialization successful.");
     return SyResult();
 }
 
@@ -34,6 +33,5 @@ SyResult PreRenderSystem::Run()
 
 SyResult PreRenderSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "PreRender system destruction successful.");
     return SyResult();
 }

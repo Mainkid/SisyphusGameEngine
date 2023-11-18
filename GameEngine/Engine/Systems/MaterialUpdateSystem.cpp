@@ -12,7 +12,6 @@ SyResult MaterialUpdateSystem::Init()
 	rc = ServiceLocator::instance()->Get<RenderContext>();
 	hc = ServiceLocator::instance()->Get<HardwareContext>();
 
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "MaterialUpdateSystem system initialization successful.");
 	return SyResult();
 }
 
@@ -24,6 +23,5 @@ SyResult MaterialUpdateSystem::Run()
 
 SyResult MaterialUpdateSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "MaterialUpdateSystem system destruction successful.");
 	return SyResult();
 }
