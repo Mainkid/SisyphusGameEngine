@@ -6,10 +6,10 @@ using SyEngine.Logger;
 
 namespace TestGame
 {
-struct ParentTag : SyEcs.IComp { }
-struct ChildTag : SyEcs.IComp { }
+struct ParentTag : SyEcs.IGameComp { }
+struct ChildTag : SyEcs.IGameComp { }
 
-struct TestEditorComp : SyEcs.IComp
+struct TestEditorComp : SyEcs.IGameComp
 {
 	public int   TestIntVal;
 	public bool  TestBoolVal;
@@ -43,6 +43,10 @@ public class TestSystem : SyEcsSystemBase
 		childTf.ParentEnt     = parentEnt;
 		Ecs.AddMeshComp(childEnt);
 		Ecs.AddComp<ChildTag>(childEnt);
+
+		int lightEnt = Ecs.CreateEntity();
+		Ecs.AddTransformComp(lightEnt).LocalPosition = new SyVector3(-10, 10, 10);
+		Ecs.AddLightComp(lightEnt);
 	}
 
 	public override void Run()

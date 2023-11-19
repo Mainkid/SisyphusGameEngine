@@ -19,6 +19,16 @@ struct SyMathHelper
         return y_;
     }
 
+    template <typename T>
+    static const T& Clamp(const T& val, const T& min, const T& max)
+    {
+        if (val < min)
+            return min;
+        if (val > max)
+            return max;
+        return val;
+    }
+
     static float CalculateSphereVolume(float radius)
     {
         return 4.0f * PI * radius * radius * radius / 3;

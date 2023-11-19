@@ -36,6 +36,7 @@
 #include "Rendering/RenderPipeline/HbaoRenderSystem.h"
 #include "Rendering/RenderPipeline/ParticleRenderSystem.h"
 
-#include "../Mono/Systems/MonoSyncSystem.h"
+#include "../Mono/Systems/MonoSyncGeSystem.h"
+#include "../Mono/Systems/MonoSyncEgSystem.h"
 
 #include "../Systems/PrepareEventsSystem.h"

@@ -10,7 +10,6 @@
 #include <boost/uuid/nil_generator.hpp>
 #include <set>
 
-#include "../Mono/SyMono.h"
 #include "../Serialization/Serializer.hpp"
 
 

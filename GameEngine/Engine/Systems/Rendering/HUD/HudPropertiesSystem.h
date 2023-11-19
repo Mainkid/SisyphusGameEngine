@@ -44,7 +44,8 @@ private:
     RenderContext* rc;
     HardwareContext* hc;
     ResourceService* rs;
-    mono::SyMonoEditor* _monoEditor;
+
+    mono::SyMonoEditor* _monoEditor = nullptr;
 
     std::string windowID;
     boost::uuids::uuid prevSelectedUUID = boost::uuids::nil_uuid();

@@ -2,7 +2,7 @@
 
 namespace SyEngine.Core.Comps
 {
-public struct TransformComp
+public struct TransformComp : SyEcs.IComp
 {
     public SyVector3 Position { get; internal set; }
     public SyVector3 Rotation { get; internal set; }

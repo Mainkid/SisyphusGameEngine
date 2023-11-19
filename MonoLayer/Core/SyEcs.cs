@@ -10,11 +10,11 @@ namespace SyEngine.Core
 public class SyEcs
 {
     internal readonly EcsWorld World;
-    
+
     private readonly Dictionary<int, uint> _gameEntToEngineEnt        = new Dictionary<int, uint>();
     private readonly Dictionary<uint, int> _engineEntToGameEnt        = new Dictionary<uint, int>();
     private readonly Dictionary<int, int>  _gameEntToEngineCompsCount = new Dictionary<int, int>();
-    
+
     internal SyEcs()
     {
         World = new EcsWorld();
@@ -26,10 +26,10 @@ public class SyEcs
     //-----------------------------------------------------------
     //-----------------------------------------------------------
     private List<SyEcsSystemBase> _systems = new List<SyEcsSystemBase>();
-    
+
     private int _singletonEntity;
-    
-    
+
+
     internal void SetSystems(List<SyEcsSystemBase> systems)
     {
         foreach (var system in systems)
@@ -62,7 +62,7 @@ public class SyEcs
     {
         return World.NewEntity();
     }
-    
+
     public void DestroyEntity(int ent)
     {
         World.DelEntity(ent);
@@ -81,35 +81,35 @@ public class SyEcs
         _engineEntToGameEnt.Remove(engineEnt);
         _gameEntToEngineCompsCount.Remove(gameEnt);
     }
-    
 
-    public ref T AddComp<T>(int ent) where T : struct, IComp
+
+    public ref T AddComp<T>(int ent) where T : struct, IGameComp
     {
         return ref World.GetPool<T>().Add(ent);
     }
 
-    public void RemoveComp<T>(int ent) where T : struct, IComp
+    public void RemoveComp<T>(int ent) where T : struct, IGameComp
     {
         World.GetPool<T>().Del(ent);
     }
-    
-    
-    public ref T GetComp<T>(int ent) where T : struct
+
+
+    public ref T GetComp<T>(int ent) where T : struct, IComp
     {
         return ref World.GetPool<T>().Get(ent);
     }
-    
+
 
     public ref TransformComp AddTransformComp(int ent)
     {
         SyLog.Debug(ELogTag.Ecs, $"add transform comp to g{ent}");
-        
+
         TryCreateEngineEntity(ent);
-        
+
         ref var comp = ref World.GetPool<TransformComp>().Add(ent);
         comp.LocalScale = SyVector3.One;
-        
-        SyProxyEcs.GeAddTransformComp(_gameEntToEngineEnt[ent]);
+
+        SyProxyEcs.GeAddEngineComp(_gameEntToEngineEnt[ent], SyProxyEcs.EEngineCompId.Transform);
         IncreaseEngineCompsCount(ent);
 
         return ref comp;
@@ -120,19 +120,19 @@ public class SyEcs
         SyLog.Debug(ELogTag.Ecs, $"remove transform comp from g{ent}");
 
         World.GetPool<TransformComp>().Del(ent);
-        SyProxyEcs.GeRemoveTransformComp(_gameEntToEngineEnt[ent]);
+        SyProxyEcs.GeRemoveEngineComp(_gameEntToEngineEnt[ent], SyProxyEcs.EEngineCompId.Transform);
         DecreaseEngineCompsCountAndTryDestroy(ent);
     }
 
     public ref MeshComp AddMeshComp(int ent)
     {
         SyLog.Debug(ELogTag.Ecs, $"add mesh comp to g{ent}");
-        
+
         TryCreateEngineEntity(ent);
-        
+
         ref var comp = ref World.GetPool<MeshComp>().Add(ent);
-        
-        SyProxyEcs.GeAddMeshComp(_gameEntToEngineEnt[ent]);
+
+        SyProxyEcs.GeAddEngineComp(_gameEntToEngineEnt[ent], SyProxyEcs.EEngineCompId.Mesh);
         IncreaseEngineCompsCount(ent);
 
         return ref comp;
@@ -142,8 +142,59 @@ public class SyEcs
     {
         SyLog.Debug(ELogTag.Ecs, $"remove mesh comp from g{ent}");
 
-        World.GetPool<MeshComp>().Add(ent);
-        SyProxyEcs.GeRemoveMeshComp(_gameEntToEngineEnt[ent]);
+        World.GetPool<MeshComp>().Del(ent);
+        SyProxyEcs.GeRemoveEngineComp(_gameEntToEngineEnt[ent], SyProxyEcs.EEngineCompId.Mesh);
+        DecreaseEngineCompsCountAndTryDestroy(ent);
+    }
+
+    public ref LightComp AddLightComp(int ent)
+    {
+        SyLog.Debug(ELogTag.Ecs, $"add light comp to g{ent}");
+
+        TryCreateEngineEntity(ent);
+
+        ref var comp = ref World.GetPool<LightComp>().Add(ent);
+        comp.Type                       = LightComp.EType.Ambient;
+        comp.Behaviour                  = LightComp.EBehaviour.Movable;
+        comp.Color                      = SyColor.White;
+        comp.ShouldCastShadows          = false;
+        comp.ParamsRadiusAndAttenuation = new SyVector4(0, 1, 1, 1);
+
+        SyProxyEcs.GeAddEngineComp(_gameEntToEngineEnt[ent], SyProxyEcs.EEngineCompId.Light);
+        IncreaseEngineCompsCount(ent);
+
+        return ref comp;
+    }
+
+    public void RemoveLightComp(int ent)
+    {
+        SyLog.Debug(ELogTag.Ecs, $"remove light comp from g{ent}");
+
+        World.GetPool<LightComp>().Del(ent);
+        SyProxyEcs.GeRemoveEngineComp(_gameEntToEngineEnt[ent], SyProxyEcs.EEngineCompId.Light);
+        DecreaseEngineCompsCountAndTryDestroy(ent);
+    }
+
+    public ref RigidComp AddRigidComp(int ent)
+    {
+        SyLog.Debug(ELogTag.Ecs, $"add rigid comp to g{ent}");
+
+        TryCreateEngineEntity(ent);
+
+        ref var comp = ref World.GetPool<RigidComp>().Add(ent);
+
+        SyProxyEcs.GeAddEngineComp(_gameEntToEngineEnt[ent], SyProxyEcs.EEngineCompId.Rigid);
+        IncreaseEngineCompsCount(ent);
+
+        return ref comp;
+    }
+
+    public void RemoveRigidComp(int ent)
+    {
+        SyLog.Debug(ELogTag.Ecs, $"remove rigid comp from g{ent}");
+
+        World.GetPool<RigidComp>().Del(ent);
+        SyProxyEcs.GeRemoveEngineComp(_gameEntToEngineEnt[ent], SyProxyEcs.EEngineCompId.Rigid);
         DecreaseEngineCompsCountAndTryDestroy(ent);
     }
 
@@ -151,14 +202,16 @@ public class SyEcs
     //-----------------------------------------------------------
     internal uint ToEngineEnt(int gameEnt)
         => _gameEntToEngineEnt[gameEnt];
+
     internal bool ToEngineEnt(int gameEnt, out uint engineEnt)
         => _gameEntToEngineEnt.TryGetValue(gameEnt, out engineEnt);
 
     internal int ToGameEnt(uint engineEnt)
         => _engineEntToGameEnt[engineEnt];
+
     internal bool ToGameEnt(uint engineEnt, out int gameEnt)
         => _engineEntToGameEnt.TryGetValue(engineEnt, out gameEnt);
-    
+
     //-----------------------------------------------------------
     //-----------------------------------------------------------
     public EcsWorld.Mask BuildFilter<T>() where T : struct
@@ -166,21 +219,21 @@ public class SyEcs
         return World.Filter<T>();
     }
 
-    public ref T AddSingleton<T>() where T : struct, IComp => ref AddSingletonRaw<T>();
+    public ref T AddSingleton<T>() where T : struct, IGameComp => ref AddSingletonRaw<T>();
 
     public ref T GetSingleton<T>() where T : struct
     {
         return ref World.GetPool<T>().Get(_singletonEntity);
     }
-    
-    public void RemoveSingleton<T>() where T: struct, IComp => RemoveSingletonRaw<T>();
 
-    internal ref T AddSingletonRaw<T>() where T: struct
+    public void RemoveSingleton<T>() where T : struct, IGameComp => RemoveSingletonRaw<T>();
+
+    internal ref T AddSingletonRaw<T>() where T : struct, IComp
     {
         return ref World.GetPool<T>().Add(_singletonEntity);
     }
 
-    internal void RemoveSingletonRaw<T>() where T : struct
+    internal void RemoveSingletonRaw<T>() where T : struct, IComp
     {
         World.GetPool<T>().Del(_singletonEntity);
     }
@@ -230,5 +283,6 @@ public class SyEcs
     //-----------------------------------------------------------
     //-----------------------------------------------------------
     public interface IComp { }
+    public interface IGameComp : IComp { }
 }
 }

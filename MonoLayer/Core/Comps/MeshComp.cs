@@ -1,6 +1,6 @@
 ﻿namespace SyEngine.Core.Comps
 {
-public struct MeshComp
+public struct MeshComp : SyEcs.IComp
 {
 	public string TexturePath;
 	public string ModelPath;

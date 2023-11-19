@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../Core/ECS/SystemBase.h"
-#include "../ISyMonoGameCallbackReceiver.h"
+#include "../Objects/ISyMonoEcsCallbacks.h"
 
 struct EngineContext;
 
@@ -11,7 +11,7 @@ namespace mono
 	class SyMonoGame;
 }
 
-class MonoSyncSystem : public SystemBase, mono::ISyMonoEcsCallbackReceiver
+class MonoSyncGeSystem : public SystemBase, mono::ISyMonoEcsCallbacks
 {
 public:
 	SyResult Init() override;
@@ -28,15 +28,14 @@ private:
 	float _testTotalTime = 0;
 
 
-	uint32_t OnCreateEngineEntity() override;
-	void OnDestroyEngineEntity(uint32_t rawEnt) override;
+	uint32_t OnCreateEntity() override;
+	void OnDestroyEntity(uint32_t rawEnt) override;
 	void OnDestroyEngineEntityImpl(entt::entity ent, bool isRecursionStep);
 
-	void OnAddTransformComp(uint32_t rawEnt) override;
-	void OnRemoveTransformComp(uint32_t rawEnt) override;
-	void OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyTransformComp& proxy) override;
+	void OnAddComp(uint32_t rawEnt, mono::ProxyCompId id) override;
+	void OnRemoveComp(uint32_t rawEnt, mono::ProxyCompId id) override;
 
-	void OnAddMeshComp(uint32_t rawEnt) override;
-	void OnRemoveMeshComp(uint32_t rawEnt) override;
+	void OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyTransformComp& proxy) override;
 	void OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshComp& proxy) override;
+	void OnUpdateLightComp(uint32_t rawEnt, const mono::ProxyLightComp& proxy) override;
 };

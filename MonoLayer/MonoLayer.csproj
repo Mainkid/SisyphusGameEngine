@@ -39,17 +39,33 @@
         <Reference Include="System.Xml"/>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Core\Comps\LightComp.cs" />
         <Compile Include="Core\Comps\MeshComp.cs" />
+        <Compile Include="Core\Comps\RigidComp.cs" />
         <Compile Include="Core\Comps\SingletonsTag.cs" />
         <Compile Include="Core\Comps\TimeData.cs" />
         <Compile Include="Core\Comps\TransformComp.cs" />
+        <Compile Include="Core\Datas\SyColor.cs" />
         <Compile Include="Core\Datas\SyVector3.cs" />
+        <Compile Include="Core\Datas\SyVector4.cs" />
         <Compile Include="Core\Helpers\HashHelper.cs" />
+        <Compile Include="Core\Helpers\MathExt.cs" />
         <Compile Include="Core\ProxyComps\ProxyTransformComp.cs" />
         <Compile Include="Core\SyEcs.cs" />
         <Compile Include="Core\SyEcsSync.cs" />
         <Compile Include="Core\SyEcsSystemBase.cs" />
         <Compile Include="Core\SyProxyEcs.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerBase.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerBool.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerColor.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerComp.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerCompLight.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerReflect.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerEnumBase.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerFloat.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerInt.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerCompTransform.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerVector3.cs" />
         <Compile Include="Editor\SyProxyEditor.cs" />
         <Compile Include="Game\SyGameConfigBase.cs" />
         <Compile Include="Game\SyProxyGame.cs" />

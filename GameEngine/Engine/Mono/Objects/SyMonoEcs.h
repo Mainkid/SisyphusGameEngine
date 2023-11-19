@@ -1,10 +1,11 @@
 #pragma once
 #include "../SyMonoObj.h"
 #include "../SyMonoMethod.h"
+#include "../SyMonoProxyDatas.h"
 
 namespace mono
 {
-	class ISyMonoEcsCallbackReceiver;
+	class ISyMonoEcsCallbacks;
 	struct ProxyTransformComp;
 	struct ProxyMeshComp;
 
@@ -16,39 +17,36 @@ namespace mono
 		inline static const std::string GE_CREATE_ENTITY = "GeCreateEngineEntity";
 		inline static const std::string GE_DESTROY_ENTITY = "GeDestroyEngineEntity";
 
-		inline static const std::string GE_ADD_TRANSFORM_COMP = "GeAddTransformComp";
-		inline static const std::string GE_UPDATE_TRANSFORM_COMP = "GeUpdateTransformComp";
-		inline static const std::string GE_REMOVE_TRANSFORM_COMP = "GeRemoveTransformComp";
+		inline static const std::string GE_ADD_COMP = "GeAddEngineComp";
+		inline static const std::string GE_REMOVE_COMP = "GeRemoveEngineComp";
 
-		inline static const std::string GE_ADD_MESH_COMP = "GeAddMeshComp";
+		inline static const std::string GE_UPDATE_TRANSFORM_COMP = "GeUpdateTransformComp";
 		inline static const std::string GE_UPDATE_MESH_COMP = "GeUpdateMeshComp";
-		inline static const std::string GE_REMOVE_MESH_COMP = "GeRemoveMeshComp";
+		inline static const std::string GE_UPDATE_LIGHT_COMP = "GeUpdateMeshComp";
 
 	private:
 		inline static SyMonoEcs* _instance = nullptr;
 
-		static void GeCreateEngineEntity();
-		static void GeDestroyEngineEntity(uint32_t rawEnt);
+		static void GeCreateEntity();
+		static void GeDestroyEntity(uint32_t rawEnt);
 
-		static void GeAddTransformComp(uint32_t rawEnt);
+		static void GeAddComp(uint32_t rawEnt, ProxyCompId id);
+		static void GeRemoveComp(uint32_t rawEnt, ProxyCompId id);
+
 		static void GeUpdateTransformComp(uint32_t rawEnt, ProxyTransformComp proxy);
-		static void GeRemoveTransformComp(uint32_t rawEnt);
-
-		static void GeAddMeshComp(uint32_t rawEnt);
 		static void GeUpdateMeshComp(uint32_t rawEnt, ProxyMeshComp proxy);
-		static void GeRemoveMeshComp(uint32_t rawEnt);
+		static void GeUpdateLightComp(uint32_t rawEnt, ProxyLightComp proxy);
 
 	public:
 		SyMonoMethod<uint32_t> EgContinueEntityDestroyCascade { "EgContinueEntityDestroyCascade" };
 
 		SyMonoMethod<uint32_t, ProxyTransformComp> EgUpdateTransformComp{ "EgUpdateTransformComp" };
-		SyMonoMethod<uint32_t, ProxyTransformComp> EgUpdateMeshComp{ "EgUpdateMeshComp" };
+		SyMonoMethod<uint32_t, ProxyMeshComp> EgUpdateMeshComp{ "EgUpdateMeshComp" };
+		SyMonoMethod<uint32_t, ProxyLightComp> EgUpdateLightComp{ "EgUpdateLightComp" };
 
-		void SetCallbackReceiver(ISyMonoEcsCallbackReceiver* receiver);
+		void SetCallbackReceiver(ISyMonoEcsCallbacks* receiver);
 	private:
-
-
-		ISyMonoEcsCallbackReceiver* _cbReceiver = nullptr;
+		ISyMonoEcsCallbacks* _cbReceiver = nullptr;
 
 		SyResult OnAfterCreate() override;
 		SyResult OnBeforeDestroy() override;
