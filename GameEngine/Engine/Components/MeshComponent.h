@@ -41,13 +41,15 @@ struct MeshComponent
 		this->modelUUID = modelUUID;
 		this->flags = flags;
 	};
-	//Material* material = nullptr;
-	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture = nullptr;
-	//Microsoft::WRL::ComPtr<ID3D11SamplerState> SamplerState = nullptr;
-	std::shared_ptr<Model> model = nullptr;
+
+	//----User vars----
 	std::vector<boost::uuids::uuid> materialUUIDs = {};
-	std::vector<std::shared_ptr<Material>> materials = {};
 	boost::uuids::uuid modelUUID;
+
+	//----Engine vars----
+
+	std::shared_ptr<Model> model = nullptr;
+	std::vector<std::shared_ptr<Material>> materials = {};
 	uint32_t flags = SyEMeshComponentFlags::MESH_RENDER;
 	UINT strides[1] = { 80 };
 	UINT offsets[1] = { 0 };

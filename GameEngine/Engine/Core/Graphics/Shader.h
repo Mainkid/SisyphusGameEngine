@@ -20,6 +20,7 @@
 #define USE_COLOR 4
 #define USE_NORMAL 8
 #define USE_TANGENT_BITANGENT 16
+#define USE_VERTEXID 32
 
 struct HardwareContext;
 

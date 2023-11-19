@@ -5,6 +5,7 @@
 
 struct GameObjectComp
 {
+	//----User vars----
 	std::string Name = "GameObject";
 	std::string Tag = "None";
 

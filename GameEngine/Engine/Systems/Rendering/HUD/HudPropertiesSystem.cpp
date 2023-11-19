@@ -1,4 +1,7 @@
 ﻿#include "HudPropertiesSystem.h"
+
+#include <corecrt_math_defines.h>
+
 #include "../../EngineContext.h"
 #include "../RenderContext.h"
 #include "ResourceHelper.h"
@@ -7,9 +10,15 @@
 #include "../../TransformHelper.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../../Components/LightComponent.h"
+#include "../../../../vendor/ImGui/curve_v122.hpp"
+
+
 #include "json.hpp"
 
 #include <fstream>
+
+
+
 
 SyResult HudPropertiesSystem::Init()
 {
@@ -17,16 +26,23 @@ SyResult HudPropertiesSystem::Init()
     this->ec = ServiceLocator::instance()->Get<EngineContext>();
     this->rs = ServiceLocator::instance()->Get<ResourceService>();
     rs->updateContentBrowser.AddRaw(this, &HudPropertiesSystem::UpdateHudProperties);
+
+    _monoEditor = ServiceLocator::instance()->Get<mono::SyMono>()->GetEditor();
+
     return SyResult();
-    
 }
+
 
 SyResult HudPropertiesSystem::Run()
 {
     ImGui::Begin(windowID.c_str());
     //Widget::Render();
 
+    //ImCurve::ShowBezierDemo();
+
     ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    //ImGui::ShowBezierDemo();
 
     if (ec->hudData.selectedEntityIDs.size() != 0)
     {
@@ -35,12 +51,12 @@ SyResult HudPropertiesSystem::Run()
 
         if (tc)
         {
-        auto degToRadians = [](float angle) {return angle * M_PI / 180.0f; };
-        ImGui::Text("Transform");
-        Vector3 vec3Dx = tc->localPosition;
-        float vec3[3]{ vec3Dx.x, vec3Dx.y, vec3Dx.z };
-        ImGui::DragFloat3("Translation", vec3,0.1f);
-        tc->localPosition=(Vector3(vec3[0], vec3[1], vec3[2]));
+            auto degToRadians = [](float angle) {return angle * M_PI / 180.0f; };
+            ImGui::Text("Transform");
+            Vector3 vec3Dx = tc->localPosition;
+            float vec3[3]{ vec3Dx.x, vec3Dx.y, vec3Dx.z };
+            ImGui::DragFloat3("Translation", vec3, 0.1f);
+            tc->localPosition = (Vector3(vec3[0], vec3[1], vec3[2]));
 
             vec3Dx = TransformHelper::GetRotationDegrees(*tc);
             vec3[0] = vec3Dx.x;
@@ -72,10 +88,10 @@ SyResult HudPropertiesSystem::Run()
 
             switch (lc->LightType)
             {
-            
-                case ELightType::PointLight:
-                    ImGui::DragFloat("Light Radius",&lc->ParamsRadiusAndAttenuation.x);
-                    ImGui::Checkbox("Bake Shadows", &lc->CastShadows);
+
+            case ELightType::PointLight:
+                ImGui::DragFloat("Light Radius", &lc->ParamsRadiusAndAttenuation.x);
+                ImGui::Checkbox("Bake Shadows", &lc->CastShadows);
                 break;
             }
             ImGui::PopItemWidth();
@@ -83,6 +99,10 @@ SyResult HudPropertiesSystem::Run()
             lc->Color.y = col3[1];
             lc->Color.z = col3[2];
         }
+
+        auto rawEnt = static_cast<uint32_t>(*ec->hudData.selectedEntityIDs.begin());
+        if (_monoEditor->IsValid())
+            _monoEditor->EgDrawEntityCustomComps.Invoke(rawEnt);
     }
     else if (ec->hudData.selectedContent.uuid!=boost::uuids::nil_uuid())
     {

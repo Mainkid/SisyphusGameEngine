@@ -9,7 +9,7 @@
 
 #define BITONIC_BLOCK_SIZE 512
 
-#define TRANSPOSE_BLOCK_SIZE 16
+#define TRANSPOSE_BLOCK_SIZE 1
 
 
 struct ParticleListItem

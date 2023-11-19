@@ -3,6 +3,7 @@
 #include "ServiceLocator.h"
 #include "../../vendor/Delegates.h"
 
+
 static bool isInitialized = false;
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lparam);

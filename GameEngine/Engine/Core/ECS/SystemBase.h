@@ -33,7 +33,7 @@ public:
 	}
 
 protected:
-	entt::registry* _ecs;
+	entt::registry* _ecs = nullptr;
 };
 
 
