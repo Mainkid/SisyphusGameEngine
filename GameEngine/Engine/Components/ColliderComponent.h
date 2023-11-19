@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "../../vendor/entt/entt.hpp"
 #include "../Tools/Data/Vector.h"
 
 namespace physx
@@ -23,14 +24,20 @@ enum SyEPrimitiveColliderType
 
 struct SyPrimitiveColliderShapeDesc
 {
-    SyVector3   Extent; //for box
-    float       Radius; //for sphere and capsule
+    SyVector3   Extent;     //for box
+    float       Radius;     //for sphere and capsule
     float       HalfHeight; //for capsule
 };
 
-struct SyColliderCreateOnNextUpdateTag
+struct SyEventOnCreateCollider
 {
-    
+    SyEventOnCreateCollider(entt::entity entity) : Entity(entity) {};
+    entt::entity Entity; //entity that collider is attached to
+};
+
+struct SyTagColliderVisualizationEnabled
+{
+    int PlaceHolder = 0; //needed for try_get working correctly
 };
 
 struct SyPrimitiveColliderComponent
@@ -47,11 +54,12 @@ private:
     float                   _radius;        //for sphere and capsule
     float                   _halfHeight;    //for capsule
     SyColliderMaterial      _material;
-
+    
     //members initialized in CollisionSystem::InitComponentP
-    
-    physx::PxShape*			_rbShape = nullptr;
-    
+private:
+    physx::PxShape*			_shape = nullptr;
+
+    friend class SyCollisionPreSystem;
     friend class SyCollisionSystem;
 };
 
@@ -61,7 +69,7 @@ struct SyTrimeshColliderComponent
     //members initialized in constructor
     
     SyColliderMaterial      _material;
-    //members initialized in CollisionSystem::InitComponentP
+    //members initialized in CollisionSystem::InitComponentTm
     
     physx::PxShape* _shape;
     

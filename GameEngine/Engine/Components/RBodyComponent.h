@@ -4,6 +4,7 @@
 #include "../Tools/Data/Vector.h"
 #include "../Tools/ErrorLogger.h"
 #include "../Tools/Data/FlagBitmask.h"
+#include "../../vendor/entt/entt.hpp"
 #pragma region forward declaration
 namespace physx
 {
@@ -66,6 +67,7 @@ private:
 	static physx::PxScene*		_scene;
 	
 	friend class SyCollisionSystem;
+	friend class SyCollisionPreSystem;
 	friend class SyRBodySystem;
 };
 
@@ -74,3 +76,7 @@ struct SyRbCreateOnNextUpdateTag
 	
 };
 
+struct SyEventOnCreateRBody
+{
+	entt::entity Entity; //entity to which RigidBody Component is attached to
+};

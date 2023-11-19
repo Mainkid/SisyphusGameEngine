@@ -21,7 +21,7 @@ public:
 	virtual SyResult Destroy() = 0;
 
 
-	
+	//Calls the event to be listened to NEXT FRAME. Events are only to be listened to in Runtime (it is possible to listen to events in Init(), but it relies on order of systems update). Use the macros from SystemBase.h to listen to event!
 	template <typename T_Event, typename ... Args>
 	SyResult CallEvent(const std::string& name, Args... eventArgs_)
 	{

@@ -30,10 +30,12 @@ SyResult SyRBodySystem::Init()
 		exit(-1);
 	}
 	PxSceneDesc sceneDesc(_physics->getTolerancesScale());
-	sceneDesc.gravity = _gravity;
+	sceneDesc.gravity = GRAVITY;
 	sceneDesc.cpuDispatcher = PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 	_scene = _physics->createScene(sceneDesc);
+	_scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
+	_scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
 	SyRBodyComponent::_scene = _scene;
 	return SyResult();
 }
@@ -41,10 +43,6 @@ SyResult SyRBodySystem::Init()
 SyResult SyRBodySystem::Run()
 {
 	SyResult result;
-	if(ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
-	{
-		return result;
-	}
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
 	if (deltaTime == 0)
 	{
@@ -53,17 +51,29 @@ SyResult SyRBodySystem::Run()
 		return result;
 	}
 	//initialize components that were created at this frame
-	auto toInitView = _ecs->view<SyRBodyComponent, TransformComponent, SyRbCreateOnNextUpdateTag>();
-	for (auto& entity : toInitView)
+	//auto toInitView = _ecs->view<SyRBodyComponent, TransformComponent, SyRbCreateOnNextUpdateTag>();
+	auto eventView = _ecs->view<SyEventOnCreateRBody>();
+	for (auto& eventEntity : eventView)
 	{
-		auto& rbComponent = _ecs->get<SyRBodyComponent>(entity);
-		auto& tComponent = _ecs->get<TransformComponent>(entity);
-		if (InitComponent(entity, rbComponent, tComponent).code != SY_RESCODE_OK)
+		auto entity = _ecs->get<SyEventOnCreateRBody>(eventEntity).Entity;
+		auto* rbComponent = _ecs->try_get<SyRBodyComponent>(entity);
+		if (rbComponent == nullptr)
 		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to initialize RigidBody Component on entity %d", (int)entity);
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "RigidBody Component has not been attached to entity (%d). Something went wrong", (int)entity);
+			continue;
+		}
+		auto* tComponent = _ecs->try_get<TransformComponent>(entity);
+		if (tComponent == nullptr)
+		{
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity (%d) is missing the Transform Component. Hence, you can't attach RigidBody Component to it. The RigidBody Component has been removed.", (int)entity);
+			_ecs->remove<SyRBodyComponent>(entity);
+			continue;
+		}
+		if (InitComponent(entity, *rbComponent, *tComponent).code != SY_RESCODE_OK)
+		{
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to initialize RigidBody Component on entity (%d). The RigidBody Component has been removed.", (int)entity);
 			_ecs->remove<SyRBodyComponent>(entity);
 		}
-		_ecs->remove<SyRbCreateOnNextUpdateTag>(entity);
 	}
 	//update PhysX according to changes in components member values
 	auto view = _ecs->view<SyRBodyComponent, TransformComponent>();
@@ -100,6 +110,9 @@ SyResult SyRBodySystem::Run()
 		if (rbComponent.Flags & SyERBodyFlags::DISABLE_GRAVITY)
 			rbComponent._rbActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);	
 	}
+	//do not simulate if in pause mode
+	if(ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
+		return result;
 	//advance simulation for 1 frame
 	if (!_scene->simulate(deltaTime))
 	{
