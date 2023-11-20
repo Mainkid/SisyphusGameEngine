@@ -96,9 +96,6 @@ void EngineCore::StartUpSystems()
 	_systems.Add<SyRBodySystem>();
 	_systems.Add<SyCollisionSystem>();
 
-	_systems.Add<MonoSyncSystem>();
-
-	
 
 	_systems.Add<TransformSystem>();
 
@@ -112,6 +109,8 @@ void EngineCore::StartUpSystems()
 	_systems.Add<LightSystem>();
 	_systems.Add<ParticlesSystem>();
 	_systems.Add<EditorBillboardSystem>();
+
+	_systems.Add<MonoSyncEgSystem>();
 
 	_systems.Add<PreRenderSystem>();
 	_systems.Add<ShadowRenderSystem>();
@@ -136,6 +135,8 @@ void EngineCore::StartUpSystems()
 	_systems.Add<SyErrorLoggingSystem>();
 	_systems.Add<HudPostRenderSystem>();
 	_systems.Add<SyPrepareEventsSystem>();
+
+	_systems.Add<MonoSyncGeSystem>();
 	
 	_systems.Init();
 }

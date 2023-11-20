@@ -14,8 +14,10 @@
 #include "../Tools/ErrorLogger.h"
 #include "ECS/SystemsGroup.h"
 
-
 #include "../Systems/ResourceService.h"
+
+#include "../Mono/SyMono.h"
+
 
 
 #pragma comment(lib, "d3d11.lib")

@@ -41,12 +41,13 @@ internal class SyProxyEcs
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	public static extern uint GeAddTransformComp(uint engineEnt);
+	public static extern void GeAddEngineComp(uint engineEnt, EEngineCompId id);
 
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	public static extern uint GeRemoveTransformComp(uint engineEnt);
+	public static extern void GeRemoveEngineComp(uint engineEnt, EEngineCompId id);
 
-
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	public static extern void GeUpdateTransformComp(uint engineEnt, ProxyTransformComp proxy);
 
@@ -65,12 +66,6 @@ internal class SyProxyEcs
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	public static extern void GeAddMeshComp(uint engineEnt);
-
-	[MethodImpl(MethodImplOptions.InternalCall)]
-	public static extern void GeRemoveMeshComp(uint engineEnt);
-
-	[MethodImpl(MethodImplOptions.InternalCall)]
 	public static extern void GeUpdateMeshComp(uint engineEnt, MeshComp comp);
 
 	public void EgUpdateMeshComp(uint engineEnt, MeshComp comp)
@@ -83,6 +78,49 @@ internal class SyProxyEcs
 		{
 			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
 		}
+	}
+
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	public static extern void GeUpdateLightComp(uint engineEnt, LightComp comp);
+
+	public void EgUpdateLightComp(uint engineEnt, LightComp comp)
+	{
+		try
+		{
+			//_ecsSync.ReceiveMeshFromEngine(engineEnt, comp);
+		}
+		catch (Exception e)
+		{
+			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
+		}
+	}
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	public static extern void GeUpdateRigidComp(uint engineEnt, RigidComp comp);
+
+	public void EgUpdateRigidComp(uint engineEnt, RigidComp comp)
+	{
+		try
+		{
+			//_ecsSync.ReceiveMeshFromEngine(engineEnt, comp);
+		}
+		catch (Exception e)
+		{
+			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
+		}
+	}
+	
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
+	public enum EEngineCompId
+	{
+		Transform,
+		Mesh,
+		Light,
+		Rigid
 	}
 }
 }

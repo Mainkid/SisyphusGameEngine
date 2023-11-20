@@ -1,15 +1,16 @@
-#include "MonoSyncSystem.h"
+#include "MonoSyncGeSystem.h"
 
+#include "../SyMono.h"
+#include "../Components/MonoSyncComp.h"
 #include "../../Components/MeshComponent.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../Systems/EngineContext.h"
 #include "../../Systems/ResourceService.h"
-#include "../Components/MonoSyncComp.h"
 #include "../../Core/ResourcePath.h"
 #include "../../Scene/GameObjectHelper.h"
 
-SyResult MonoSyncSystem::Init()
+SyResult MonoSyncGeSystem::Init()
 {
 	auto mono = ServiceLocator::instance()->Get<mono::SyMono>();
 	_monoEcs = mono->GetEcs();
@@ -25,7 +26,7 @@ SyResult MonoSyncSystem::Init()
 	return {};
 }
 
-SyResult MonoSyncSystem::Run()
+SyResult MonoSyncGeSystem::Run()
 {
 	if (!_monoEcs->IsValid() || !_monoGame->IsValid())
 		return {};
@@ -34,24 +35,6 @@ SyResult MonoSyncSystem::Run()
 	{
 		_monoGame->EgLoopInit.Invoke();
 		_isGameInited = true;
-	}
-
-	auto viewTf = _ecs->view<MonoSyncComp, TransformComponent>();
-	for (auto ent : viewTf)
-	{
-		auto& tf = viewTf.get<TransformComponent>(ent);
-
-		mono::ProxyTransformComp proxy;
-
-		proxy.Position = tf._position;
-		proxy.Rotation = tf._rotation;
-		proxy.Scale = tf.scale;
-		proxy.LocalPosition = tf.localPosition;
-		proxy.LocalRotation = tf.localRotation;
-		proxy.LocalScale = tf.localScale;
-		proxy.HasParent = tf.parent != entt::null;
-		proxy.ParentEngineEnt = tf.parent;
-		_monoEcs->EgUpdateTransformComp.Invoke(static_cast<uint32_t>(ent), proxy);
 	}
 
 	//TODO: rewrite when engine-context-time will be fixed.
@@ -69,7 +52,7 @@ SyResult MonoSyncSystem::Run()
 	return {};
 }
 
-SyResult MonoSyncSystem::Destroy()
+SyResult MonoSyncGeSystem::Destroy()
 {
 	if (_monoGame->IsValid())
 		_monoGame->EgLoopDestroy.Invoke();
@@ -78,7 +61,7 @@ SyResult MonoSyncSystem::Destroy()
 }
 
 
-uint32_t MonoSyncSystem::OnCreateEngineEntity()
+uint32_t MonoSyncGeSystem::OnCreateEntity()
 {
 	auto ent = _ecs->create();
 	_ecs->emplace<GameObjectComp>(ent).Name = "FromC#";
@@ -89,14 +72,14 @@ uint32_t MonoSyncSystem::OnCreateEngineEntity()
 	return static_cast<uint32_t>(ent);
 }
 
-void MonoSyncSystem::OnDestroyEngineEntity(uint32_t rawEnt)
+void MonoSyncGeSystem::OnDestroyEntity(uint32_t rawEnt)
 {
 	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "engine entity e%d destroy", static_cast<int>(rawEnt));
 
 	OnDestroyEngineEntityImpl(static_cast<entt::entity>(rawEnt), false);
 }
 
-void MonoSyncSystem::OnDestroyEngineEntityImpl(entt::entity ent, bool isRecursionStep)
+void MonoSyncGeSystem::OnDestroyEngineEntityImpl(entt::entity ent, bool isRecursionStep)
 {
 	auto tf = _ecs->try_get<TransformComponent>(ent);
 	if (tf != nullptr)
@@ -116,24 +99,73 @@ void MonoSyncSystem::OnDestroyEngineEntityImpl(entt::entity ent, bool isRecursio
 	_ecs->destroy(ent);
 }
 
-
-void MonoSyncSystem::OnAddTransformComp(uint32_t rawEnt)
+void MonoSyncGeSystem::OnAddComp(uint32_t rawEnt, mono::EProxyCompId id)
 {
-	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "add transform comp to e%d", static_cast<int>(rawEnt));
-
-	_ecs->emplace<TransformComponent>(static_cast<entt::entity>(rawEnt));
-}
-
-void MonoSyncSystem::OnRemoveTransformComp(uint32_t rawEnt)
-{
-	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "remove transform comp from e%d", static_cast<int>(rawEnt));
+	SY_LOG_MONO(
+		SY_LOGLEVEL_DEBUG, 
+		"add %s to e%d", 
+		mono::ProxyCompIdExt::ToStr(id).c_str(),
+		static_cast<int>(rawEnt)
+	);
 
 	auto ent = static_cast<entt::entity>(rawEnt);
-	GameObjectHelper::SetParent(_ecs, ent, entt::null);
-	_ecs->remove<TransformComponent>(ent);
+	if (id == mono::EProxyCompId::Transform)
+	{
+		_ecs->emplace<TransformComponent>(ent);
+	}
+	else if (id == mono::EProxyCompId::Mesh)
+	{
+		auto resourceService = ServiceLocator::instance()->Get<ResourceService>();
+		auto uuid = resourceService->GetUUIDFromPath(cubeMeshPath);
+		_ecs->emplace<MeshComponent>(ent).modelUUID = uuid;
+	}
+	else if (id == mono::EProxyCompId::Light)
+	{
+		_ecs->emplace<LightComponent>(ent);
+	}
+	else if (id == mono::EProxyCompId::Rigid)
+	{
+		
+	}
+	else
+	{
+		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "not implemented");
+	}
 }
 
-void MonoSyncSystem::OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyTransformComp& proxy)
+void MonoSyncGeSystem::OnRemoveComp(uint32_t rawEnt, mono::EProxyCompId id)
+{
+	SY_LOG_MONO(
+		SY_LOGLEVEL_DEBUG, 
+		"remove %s from e%d",
+		mono::ProxyCompIdExt::ToStr(id).c_str(),
+		static_cast<int>(rawEnt)
+	);
+
+	auto ent = static_cast<entt::entity>(rawEnt);
+	if (id == mono::EProxyCompId::Transform)
+	{
+		GameObjectHelper::SetParent(_ecs, ent, entt::null);
+		_ecs->remove<TransformComponent>(ent);
+	}
+	else if (id == mono::EProxyCompId::Mesh)
+	{
+		_ecs->remove<MeshComponent>(ent);
+	}
+	else if (id == mono::EProxyCompId::Light)
+	{
+		_ecs->emplace<LightComponent>(ent);
+	}
+	else if (id == mono::EProxyCompId::Rigid)
+	{
+	}
+	else
+	{
+		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "not implemented");
+	}
+}
+
+void MonoSyncGeSystem::OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyTransformComp& proxy)
 {
 	auto ent = static_cast<entt::entity>(rawEnt);
 
@@ -154,28 +186,11 @@ void MonoSyncSystem::OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyTra
 	}
 }
 
-
-void MonoSyncSystem::OnAddMeshComp(uint32_t rawEnt)
-{
-	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "add mesh comp to e%d", static_cast<int>(rawEnt));
-
-	auto resourceService = ServiceLocator::instance()->Get<ResourceService>();
-	auto uuid = resourceService->GetUUIDFromPath(cubeMeshPath);
-
-	_ecs->emplace<MeshComponent>(static_cast<entt::entity>(rawEnt))
-		.modelUUID = uuid;
-}
-
-void MonoSyncSystem::OnRemoveMeshComp(uint32_t rawEnt)
-{
-	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "remove mesh comp from e%d", static_cast<int>(rawEnt));
-
-	_ecs->remove<MeshComponent>(static_cast<entt::entity>(rawEnt));
-}
-
-void MonoSyncSystem::OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshComp& proxy)
+void MonoSyncGeSystem::OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshComp& proxy)
 {
 	auto& mesh = _ecs->get<MeshComponent>(static_cast<entt::entity>(rawEnt));
 	//mesh.texturePath = proxy.TexturePath;
 	//mesh.modelPath = proxy.ModelPath;
 }
+
+void MonoSyncGeSystem::OnUpdateLightComp(uint32_t rawEnt, const mono::ProxyLightComp& proxy) {}

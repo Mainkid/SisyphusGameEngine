@@ -1,43 +1,36 @@
 #include "SyMonoEcs.h"
-#include "../ISyMonoGameCallbackReceiver.h"
+#include "ISyMonoEcsCallbacks.h"
 
 using namespace mono;
 
-void SyMonoEcs::GeCreateEngineEntity()
+void SyMonoEcs::GeCreateEntity()
 {
 	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnCreateEngineEntity();
+		_instance->_cbReceiver->OnCreateEntity();
 }
 
-void SyMonoEcs::GeDestroyEngineEntity(uint32_t rawEnt)
+void SyMonoEcs::GeDestroyEntity(uint32_t rawEnt)
 {
 	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnDestroyEngineEntity(rawEnt);
+		_instance->_cbReceiver->OnDestroyEntity(rawEnt);
 }
 
-void SyMonoEcs::GeAddTransformComp(uint32_t rawEnt)
+void SyMonoEcs::GeAddComp(uint32_t rawEnt, EProxyCompId id)
 {
 	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnAddTransformComp(rawEnt);
+		_instance->_cbReceiver->OnAddComp(rawEnt, id);
 }
+void SyMonoEcs::GeRemoveComp(uint32_t rawEnt, EProxyCompId id)
+{
+	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
+		_instance->_cbReceiver->OnRemoveComp(rawEnt, id);
+}
+
 
 void SyMonoEcs::GeUpdateTransformComp(uint32_t rawEnt, ProxyTransformComp proxy)
 {
 	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
 		_instance->_cbReceiver->OnUpdateTransformComp(rawEnt, proxy);
-}
-
-void SyMonoEcs::GeRemoveTransformComp(uint32_t rawEnt)
-{
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnRemoveTransformComp(rawEnt);
-}
-
-
-void SyMonoEcs::GeAddMeshComp(uint32_t rawEnt)
-{
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnAddMeshComp(rawEnt);
 }
 
 void SyMonoEcs::GeUpdateMeshComp(uint32_t rawEnt, ProxyMeshComp proxy)
@@ -46,15 +39,13 @@ void SyMonoEcs::GeUpdateMeshComp(uint32_t rawEnt, ProxyMeshComp proxy)
 		_instance->_cbReceiver->OnUpdateMeshComp(rawEnt, proxy);
 }
 
-void SyMonoEcs::GeRemoveMeshComp(uint32_t rawEnt)
+void SyMonoEcs::GeUpdateLightComp(uint32_t rawEnt, ProxyLightComp proxy)
 {
 	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnRemoveMeshComp(rawEnt);
+		_instance->_cbReceiver->OnUpdateLightComp(rawEnt, proxy);
 }
 
-
-
-void SyMonoEcs::SetCallbackReceiver(ISyMonoEcsCallbackReceiver* receiver)
+void SyMonoEcs::SetCallbackReceiver(ISyMonoEcsCallbacks* receiver)
 {
 	_cbReceiver = receiver;
 }
@@ -67,20 +58,19 @@ SyResult SyMonoEcs::OnAfterCreate()
 
 	_instance = this;
 
-	SY_RESULT_CHECK(EgContinueEntityDestroyCascade.Bind(_instance));
-	SY_RESULT_CHECK(EgUpdateTransformComp.Bind(_instance));
-	SY_RESULT_CHECK(EgUpdateMeshComp.Bind(_instance));
+	SY_RESULT_CHECK(EgContinueEntityDestroyCascade.Bind(this));
+	SY_RESULT_CHECK(EgUpdateTransformComp.Bind(this));
+	SY_RESULT_CHECK(EgUpdateMeshComp.Bind(this));
+	SY_RESULT_CHECK(EgUpdateLightComp.Bind(this));
 
-	BindCallback(GE_CREATE_ENTITY, &GeCreateEngineEntity);
-	BindCallback(GE_DESTROY_ENTITY, &GeDestroyEngineEntity);
+	BindCallback(GE_CREATE_ENTITY, &GeCreateEntity);
+	BindCallback(GE_DESTROY_ENTITY, &GeDestroyEntity);
 
-	BindCallback(GE_ADD_TRANSFORM_COMP, &GeAddTransformComp);
+	BindCallback(GE_ADD_COMP, &GeAddComp);
+	BindCallback(GE_REMOVE_COMP, &GeRemoveComp);
+
 	BindCallback(GE_UPDATE_TRANSFORM_COMP, &GeUpdateTransformComp);
-	BindCallback(GE_REMOVE_TRANSFORM_COMP, &GeRemoveTransformComp);
-
-	BindCallback(GE_ADD_MESH_COMP, &GeAddMeshComp);
 	BindCallback(GE_UPDATE_MESH_COMP, &GeUpdateMeshComp);
-	BindCallback(GE_REMOVE_MESH_COMP, &GeRemoveMeshComp);
 
 	return {};
 }
@@ -92,6 +82,7 @@ SyResult SyMonoEcs::OnBeforeDestroy()
 	EgContinueEntityDestroyCascade.UnBind();
 	EgUpdateTransformComp.UnBind();
 	EgUpdateMeshComp.UnBind();
+	EgUpdateLightComp.UnBind();
 
 	return {};
 }

@@ -11,13 +11,13 @@
 #include "../../Core/ServiceLocator.h"
 #include "../../../Components/LightComponent.h"
 #include "../../../../vendor/ImGui/curve_v122.hpp"
+#include "../../../Mono/SyMono.h"
+#include "../../../Mono/Objects/SyMonoEditor.h"
 
 
 #include "json.hpp"
 
 #include <fstream>
-
-
 
 
 SyResult HudPropertiesSystem::Init()
@@ -46,6 +46,13 @@ SyResult HudPropertiesSystem::Run()
 
     if (ec->hudData.selectedEntityIDs.size() != 0)
     {
+        if (_monoEditor->IsValid())
+        {
+            auto rawEnt = static_cast<uint32_t>(*ec->hudData.selectedEntityIDs.begin());
+            _monoEditor->EgDrawEntityComps.Invoke(rawEnt);
+        }
+
+        /*
         TransformComponent* tc = _ecs->try_get<TransformComponent>(*ec->hudData.selectedEntityIDs.begin());
         LightComponent* lc = _ecs->try_get<LightComponent>(*ec->hudData.selectedEntityIDs.begin());
 
@@ -98,11 +105,7 @@ SyResult HudPropertiesSystem::Run()
             lc->Color.x = col3[0];
             lc->Color.y = col3[1];
             lc->Color.z = col3[2];
-        }
-
-        auto rawEnt = static_cast<uint32_t>(*ec->hudData.selectedEntityIDs.begin());
-        if (_monoEditor->IsValid())
-            _monoEditor->EgDrawEntityCustomComps.Invoke(rawEnt);
+        }*/
     }
     else if (ec->hudData.selectedContent.uuid!=boost::uuids::nil_uuid())
     {

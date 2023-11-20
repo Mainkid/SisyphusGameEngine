@@ -84,7 +84,7 @@
     <ClCompile Include="Engine\Mono\SyMonoObj.cpp" />
     <ClCompile Include="Engine\Mono\SyMonoRuntime.cpp" />
     <ClCompile Include="Engine\Mono\SyMonoProxyDatas.h" />
-    <ClCompile Include="Engine\Mono\Systems\MonoSyncSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Systems\MonoSyncGeSystem.cpp" />
     <ClCompile Include="Engine\Mono\Components\MonoSyncComp.h" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoLogger.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoEcs.cpp" />
@@ -98,6 +98,7 @@
     <ClCompile Include="Engine\Systems\RBSystem.cpp" />
     <ClCompile Include="Engine\Systems\ParticlesSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Systems\MonoSyncEgSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -209,12 +210,12 @@
     <ClInclude Include="Engine\Systems\PrepareEventsSystem.h" />
     <ClInclude Include="Engine\Tools\MathHelper.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SySceneLoadEvent.h" />
-    <ClInclude Include="Engine\Mono\ISyMonoGameCallbackReceiver.h" />
+    <ClInclude Include="Engine\Mono\Objects\ISyMonoEcsCallbacks.h" />
     <ClInclude Include="Engine\Mono\SyMono.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoGame.h" />
     <ClInclude Include="Engine\Mono\SyMonoObj.h" />
     <ClInclude Include="Engine\Mono\SyMonoRuntime.h" />
-    <ClInclude Include="Engine\Mono\Systems\MonoSyncSystem.h" />
+    <ClInclude Include="Engine\Mono\Systems\MonoSyncGeSystem.h" />
     <ClInclude Include="Engine\Mono\SyMonoMethod.h" />
     <ClInclude Include="Engine\Core\ECS\Event.h" />
     <ClInclude Include="Engine\Systems\PrepareEventsSystem.h" />
@@ -241,6 +242,8 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.h" />
     <ClInclude Include="vendor\ImGui\curve_v122.hpp" />
     <ClInclude Include="vendor\ImGui\ImCurve.h" />
+    <ClInclude Include="Engine\Mono\Systems\MonoSyncEgSystem.h" />
+    <ClInclude Include="Engine\Mono\Objects\ISyMonoEditorCallbacks.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
