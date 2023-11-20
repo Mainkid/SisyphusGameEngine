@@ -28,6 +28,36 @@ SyResult HardwareInitSystem::Destroy()
 
 void HardwareInitSystem::CreateDeviceAndSwapChain()
 {
+	Microsoft::WRL::ComPtr<IDXGIFactory> pFactory;
+	HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(pFactory.GetAddressOf()));
+	std::vector<IDXGIAdapter*> adapters;
+
+	IDXGIAdapter* pAdapter;
+	IDXGIAdapter* chosenAdapter;
+	unsigned index = 0;
+	while(pFactory->EnumAdapters(index,&pAdapter)==0)
+	{
+		adapters.push_back(pAdapter);
+		index++;
+	}
+
+	chosenAdapter = adapters[0];
+	
+	for (auto adapter : adapters)
+	{
+		DXGI_ADAPTER_DESC descI;
+		memset(&descI, 0, sizeof(DXGI_ADAPTER_DESC));
+		adapter->GetDesc(&descI);
+
+		DXGI_ADAPTER_DESC descChosen;
+		memset(&descChosen, 0, sizeof(DXGI_ADAPTER_DESC));
+		chosenAdapter->GetDesc(&descChosen);
+
+
+		if (descI.DedicatedVideoMemory > descChosen.DedicatedVideoMemory)
+			chosenAdapter = adapter;
+	}
+
 	ID3D11Texture2D* backTex;
 
 	DXGI_SWAP_CHAIN_DESC swapDesc;
@@ -56,8 +86,8 @@ void HardwareInitSystem::CreateDeviceAndSwapChain()
 	D3D_FEATURE_LEVEL featureLevel[] = { D3D_FEATURE_LEVEL_11_1 };
 
 	HRESULT res = D3D11CreateDeviceAndSwapChain(
-		nullptr,
-		D3D_DRIVER_TYPE_HARDWARE,
+		chosenAdapter,
+		D3D_DRIVER_TYPE_UNKNOWN,
 		nullptr,
 		D3D11_CREATE_DEVICE_DEBUG,
 		featureLevel,
@@ -89,7 +119,7 @@ void HardwareInitSystem::CreateDeviceAndSwapChain()
 	depthStencilDesc.MiscFlags = 0;
 	
 
-	HRESULT hr = hc->device->CreateTexture2D(&depthStencilDesc, NULL, hc->depthStencilBuffer.GetAddressOf());
+	hr = hc->device->CreateTexture2D(&depthStencilDesc, NULL, hc->depthStencilBuffer.GetAddressOf());
 
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthSRVDesc = {};
