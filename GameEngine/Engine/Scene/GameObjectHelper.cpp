@@ -13,6 +13,8 @@
 #include "../Components/ImageBasedLightingComponent.h"
 #include "../Components/SkyboxComponent.h"
 #include "../Systems/ResourceService.h"
+//#include "../Components/FAudioEngine.h"
+#include "../../Components/FSoundComponent.h"
 
 
 entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, Vector3 pos)
@@ -199,5 +201,13 @@ entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs, boost::uuids::u
 		uuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_CUBEMAP].uuid;
 	ecs->get<SkyboxComponent>(ent).uuid = uuid;
 
+	return ent;
+}
+
+entt::entity GameObjectHelper::CreateSoundBox(entt::registry* ecs, Vector3 pos)
+{
+	auto ent = Create(ecs, "SoundObject", pos);
+	ecs->emplace<EditorBillboardComponent>(ent, "Engine/Assets/Sprites/Sound.png");
+	ecs->emplace<FSoundComponent>(ent);
 	return ent;
 }

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  IgnorableNamespaces="uap mp">
+  <Identity Name="fmod.example" Publisher="CN=Firelight Technologies" Version="1.0.0.0" />
+  <Properties>
+    <DisplayName>FMOD Example</DisplayName>
+    <PublisherDisplayName>Firelight Technologies</PublisherDisplayName>
+    <Logo>logo_store.png</Logo>
+    <Description>FMOD Example</Description>
+  </Properties>
+  <mp:PhoneIdentity PhoneProductId="49B0E83F-0C87-4285-9484-8487EBD13FF3" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+  </Dependencies>
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+  <Applications>
+    <Application Id="fmod.example.app"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="fmod.example.app">
+      <uap:VisualElements
+        DisplayName="FMOD Example"
+        Square150x150Logo="logo.png"
+        Square44x44Logo="logo_small.png"
+        Description="FMOD Example"
+        BackgroundColor="#464646">
+        <uap:SplashScreen Image="splash.png" />
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="portrait" />
+        </uap:InitialRotationPreference>
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="privateNetworkClientServer" />
+    <Capability Name="internetClientServer" />
+    <Capability Name="internetClient" />
+    <uap:Capability Name="removableStorage" />
+    <uap:Capability Name="musicLibrary" />
+    <DeviceCapability Name="microphone" />
+  </Capabilities>
+</Package>

@@ -14,7 +14,6 @@
 #include "../Tools/ErrorLogger.h"
 #include "ECS/SystemsGroup.h"
 
-
 #include "../Systems/ResourceService.h"
 
 

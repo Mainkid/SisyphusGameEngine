@@ -3,7 +3,11 @@
 #include "../../../vendor/entt/entt.hpp"
 #include "../Tools/Data/Vector.h"
 #include "../../Components/LightComponent.h"
+
 #include "../Tools/ErrorLogger.h"
+
+
+
 
 class GameObjectHelper
 {
@@ -39,5 +43,5 @@ public:
 
 	static entt::entity CreateSkybox(entt::registry* ecs,boost::uuids::uuid uuid = boost::uuids::nil_uuid());
 
-	
+	static entt::entity CreateSoundBox(entt::registry* ecs, Vector3 pos = Vector3::Zero);	
 };

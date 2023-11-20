@@ -13,6 +13,7 @@
 #define SY_PI 3.14f
 #define SY_PI2 SY_PI / 2
 
+#include "Components/FAudioEngine.h"
 
 int main()
 {
@@ -67,12 +68,16 @@ int main()
     ecs->get<LightComponent>(lightPoint).Color = Vector4(1, 1, 0.0f, 3.0f);
     ecs->get<TransformComponent>(lightPoint).position = Vector3(3, 0, 0);
 
-    auto lightPoint2 = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
+    
+    auto TestSound = GameObjectHelper::CreateSoundBox(ecs);
+    //FAudioEngine& TestSound = FAudioEngine::Init();
+    // вернуть потом
+   /* auto lightPoint2 = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
 
     ecs->get<LightComponent>(lightPoint2).ParamsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
     ecs->get<LightComponent>(lightPoint2).Color = Vector4(1, 0, 0.0f, 3.0f);
     ecs->get<TransformComponent>(lightPoint2).position = Vector3(3, 0, 0);
-    ecs->get<LightComponent>(lightPoint2).LightBehavior = LightBehavior::Movable;
+    ecs->get<LightComponent>(lightPoint2).LightBehavior = LightBehavior::Movable;*/
 
 
     //auto model = GameObjectHelper::CreateMesh(ecs, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath("./Game/Assets/fbx/artifact.fbx"));
@@ -110,6 +115,8 @@ int main()
     // ser.Deserialize(json, *ecs);
     //---------------------------------------------
 
+    FAudioEngine TESTAE;
+    TESTAE.Init();
 
     EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();

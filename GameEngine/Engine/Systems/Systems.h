@@ -6,6 +6,7 @@
 #include "TransformSystem.h"
 #include "MeshSystem.h"
 #include "LightSystem.h"
+#include "SoundSystem.h"
 #include "PhysicsSystem.h"
 #include "HardwareInitSystem.h"
 #include "MaterialUpdateSystem.h"
@@ -32,5 +33,6 @@
 #include "Rendering/PostViewportRenderSystem.h"
 #include "Rendering/RenderPipeline/EditorGridRenderSystem.h"
 #include "Rendering/RenderPipeline/HbaoRenderSystem.h"
+
 
 #include "../Systems/PrepareEventsSystem.h"

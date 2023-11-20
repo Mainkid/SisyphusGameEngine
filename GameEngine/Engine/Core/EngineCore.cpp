@@ -89,11 +89,9 @@ void EngineCore::StartUpSystems()
 	_systems.Add<EditorCameraSystem>();
 
 	_systems.Add<MeshSystem>();
-
 	_systems.Add<LightSystem>();
-	_systems.Add<MeshSystem>();
 	_systems.Add<SkyboxSystem>();
-	_systems.Add<LightSystem>();
+	_systems.Add<SoundSystem>();
 
 	_systems.Add<EditorBillboardSystem>();
 
@@ -120,6 +118,8 @@ void EngineCore::StartUpSystems()
 	_systems.Add<HudPostRenderSystem>();
 	_systems.Add<SyPrepareEventsSystem>();
 	
+
+
 	_systems.Init();
 }
 

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Framework">
+      <UniqueIdentifier>e8994867-ef3b-4bdd-b9f9-2ed44d3367d1</UniqueIdentifier>
+      <Extensions>h;appxmanifest</Extensions>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>b75ad469-f69a-44f2-b46e-4b1ffac1289a</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Images">
+      <UniqueIdentifier>{77209c67-3247-42e4-9fbe-f69e16f76a2c}</UniqueIdentifier>
+      <Extensions>png</Extensions>
+    </Filter>
+    <Filter Include="Assets\Audio">
+      <UniqueIdentifier>{a6cff799-013b-4122-8f28-31950e6f8ace}</UniqueIdentifier>
+      <Extensions>wav;fsb;mp3;ogg;flac;wma;bank;strings</Extensions>
+    </Filter>
+    <Filter Include="Libs">
+      <UniqueIdentifier>{caf1270f-e00c-4503-ac23-fde6ab3b64fb}</UniqueIdentifier>
+      <Extensions>dll</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common_platform.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
