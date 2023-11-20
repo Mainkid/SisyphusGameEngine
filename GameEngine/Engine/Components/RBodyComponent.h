@@ -5,6 +5,7 @@
 #include "../Tools/ErrorLogger.h"
 #include "../Tools/Data/FlagBitmask.h"
 #include "../../vendor/entt/entt.hpp"
+#include "../Serialization/Serializable.h"
 #pragma region forward declaration
 namespace physx
 {
@@ -38,14 +39,14 @@ DEFINE_BITWISE_OPERATORS(SyERBodyFlags);
 
 struct SyRBodyComponent
 {
-	SyRBodyComponent(	const SyERBodyType&	rbType,
+	SyRBodyComponent(	const SyERBodyType&	rbType = SyERBodyType::STATIC,
 						float 				mass = 1.0f,
 						unsigned			flags = 0);
 	
 	~SyRBodyComponent();
 
 	//public fields initialized in constructor and can be modified during runtime
-	
+	SyERBodyType		RbType; //runtime modification is not supported, but will be added in future. The member has to be added to properties
 	float				Mass;
 	unsigned			Flags;
 	
@@ -54,11 +55,7 @@ struct SyRBodyComponent
 	SyVector3			LinearVelocity = SyVector3::ZERO;
 	SyVector3			AngularVelocity = SyVector3::ZERO;
 
-private:
-	//private fields initialized in constructor
-	
-	SyERBodyType		_rbType;
-	
+private:	
 	//private fields initialized in SyPhysicsSystem::Init
 	
 	physx::PxRigidActor*	_rbActor = nullptr;
@@ -68,15 +65,12 @@ private:
 	
 	friend class SyCollisionSystem;
 	friend class SyCollisionPreSystem;
-	friend class SyRBodySystem;
+	friend class SyRBodySystem;	
 };
 
-struct SyRbCreateOnNextUpdateTag
-{
-	
-};
 
 struct SyEventOnCreateRBody
 {
+	SyEventOnCreateRBody(entt::entity& entity) : Entity(entity) {};
 	entt::entity Entity; //entity to which RigidBody Component is attached to
 };

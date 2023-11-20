@@ -81,7 +81,7 @@ SyResult SyRBodySystem::Run()
 	{
 		SyRBodyComponent& rbComponent = view.get<SyRBodyComponent>(entity);
 		TransformComponent& trComponent = view.get<TransformComponent>(entity);
-		if (rbComponent._rbType == STATIC)
+		if (rbComponent.RbType == STATIC)
 			continue;
 		if (rbComponent._rbActor == nullptr)
 		{
@@ -133,7 +133,7 @@ SyResult SyRBodySystem::Run()
 	{
 		SyRBodyComponent& rbComponent = view.get<SyRBodyComponent>(entity);
 		TransformComponent& trComponent = view.get<TransformComponent>(entity);
-		if (rbComponent._rbType == STATIC)
+		if (rbComponent.RbType == STATIC)
 			continue;
 		if (rbComponent._rbActor == nullptr)
 		{
@@ -166,7 +166,7 @@ SyResult SyRBodySystem::Destroy()
 SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyComponent& rbComponent, TransformComponent& tComponent)
 {
 	SyResult result;
-	switch (rbComponent._rbType)
+	switch (rbComponent.RbType)
 	{
 	case STATIC: rbComponent._rbActor = _physics->createRigidStatic(PxTransform(tComponent._position, 
 														SyVector3::EulerToPxQuat(tComponent._rotation)));

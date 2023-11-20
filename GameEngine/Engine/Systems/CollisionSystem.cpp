@@ -89,26 +89,26 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyCo
                                            SyPrimitiveColliderComponent& cComponent)
 {
 	SyResult result;
-	auto& pxMaterial = *SyRBodyComponent::_physics->createMaterial(	cComponent._material.staticFriction,
-																	cComponent._material.dynamicFriction,
-																	cComponent._material.restitution);
-	switch (cComponent._colliderType)
+	auto& pxMaterial = *SyRBodyComponent::_physics->createMaterial(	cComponent.Material.staticFriction,
+																	cComponent.Material.dynamicFriction,
+																	cComponent.Material.restitution);
+	switch (cComponent.ColliderType)
     {
     case BOX:
 		
     	cComponent._shape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
-																		PxBoxGeometry(cComponent._extent),
+																		PxBoxGeometry(cComponent.Extent),
 																		pxMaterial);
 		break;
     case SPHERE:
     	cComponent._shape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
-																		PxSphereGeometry(cComponent._radius),
+																		PxSphereGeometry(cComponent.Radius),
 																		pxMaterial);
 		
 		break;
     case CAPSULE:
     	cComponent._shape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
-																		PxCapsuleGeometry(cComponent._radius, cComponent._halfHeight),
+																		PxCapsuleGeometry(cComponent.Radius, cComponent.HalfHeight),
 																		pxMaterial);
 		break;
     default:
@@ -118,9 +118,9 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyCo
     	break;
     }
 	bool updateMassResult = true;
-	if (rbComponent.Flags & SyERBodyFlags::USE_DENSITY && rbComponent._rbType == DYNAMIC)
+	if (rbComponent.Flags & SyERBodyFlags::USE_DENSITY && rbComponent.RbType == DYNAMIC)
 		updateMassResult = PxRigidBodyExt::updateMassAndInertia(	*static_cast<PxRigidBody*>(rbComponent._rbActor),
-																	cComponent._material.density);
+																	cComponent.Material.density);
 	if (updateMassResult == false)
 	{
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::updateMassAndInertia returned false");
@@ -147,9 +147,9 @@ SyResult SyCollisionSystem::InitComponentTm(const entt::entity& entity, SyRBodyC
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "You can't create TrimeshCollider Component on entity (%d) unless it's marked with flag KINEMATIC. ", (int)entity);
 		return result;
 	}
-	auto& pxMaterial = *SyRBodyComponent::_physics->createMaterial(	cComponent._material.staticFriction,
-																	cComponent._material.dynamicFriction,
-																	cComponent._material.restitution);
+	auto& pxMaterial = *SyRBodyComponent::_physics->createMaterial(	cComponent.Material.staticFriction,
+																	cComponent.Material.dynamicFriction,
+																	cComponent.Material.restitution);
 	auto meshPtr = mComponent.model->meshes[0];
 	const unsigned NUM_VECTORS_PER_VERTEX = 5;
 	PxTriangleMeshDesc meshDesc;
