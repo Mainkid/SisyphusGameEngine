@@ -30,8 +30,8 @@ namespace mono
 		static void GeCreateEntity();
 		static void GeDestroyEntity(uint32_t rawEnt);
 
-		static void GeAddComp(uint32_t rawEnt, ProxyCompId id);
-		static void GeRemoveComp(uint32_t rawEnt, ProxyCompId id);
+		static void GeAddComp(uint32_t rawEnt, EProxyCompId id);
+		static void GeRemoveComp(uint32_t rawEnt, EProxyCompId id);
 
 		static void GeUpdateTransformComp(uint32_t rawEnt, ProxyTransformComp proxy);
 		static void GeUpdateMeshComp(uint32_t rawEnt, ProxyMeshComp proxy);

@@ -21,16 +21,16 @@ public class EditorDrawerReflect<T> : EditorDrawerBase<T>
 		return isChanged;
 	}
 	
-	public override bool DrawRaw(string name, ref object val)
+	public override bool DrawRaw(string name, ref object rawVal)
 	{
 		var isObjChanged = false;
 		foreach (var field in _fields)
 		{
-			object fieldVal       = field.GetValue(val);
+			object fieldVal       = field.GetValue(rawVal);
 			bool   isFieldChanged = _editor.DrawField(field.Name, field.FieldType, ref fieldVal);
 			if (isFieldChanged)
 			{
-				field.SetValue(val, fieldVal);
+				field.SetValue(rawVal, fieldVal);
 				isObjChanged = true;
 			}
 		}

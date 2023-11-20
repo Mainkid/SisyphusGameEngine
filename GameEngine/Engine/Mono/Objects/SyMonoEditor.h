@@ -3,6 +3,8 @@
 #include "../SyMonoObj.h"
 #include "../SyMonoProxyDatas.h"
 
+class ResourceService;
+
 namespace mono
 {
 	class ISyMonoEditorCallbacks;
@@ -19,6 +21,7 @@ namespace mono
 		inline static const std::string GE_DRAW_VECTOR3_FIELD = "GeDrawVector3Field";
 		inline static const std::string GE_DRAW_COLOR_FIELD = "GeDrawColorField";
 		inline static const std::string GE_DRAW_ENUM_FIELD = "GeDrawEnumField";
+		inline static const std::string GE_DRAW_RES_FIELD = "GeDrawResField";
 
 	private:
 		static void GeDrawCompHeader(MonoString* rawName);
@@ -28,12 +31,16 @@ namespace mono
 		static ProxyVector3 GeDrawVector3Field(MonoString* rawName, ProxyVector3 val);
 		static ProxyVector4 GeDrawColorField(MonoString* rawName, ProxyVector4 val);
 		static int GeDrawEnumField(MonoString* rawName, MonoArray* rawItems, int selected);
+		static MonoString* GeDrawResField(MonoString* rawName, EProxyResourceType rawResType, MonoString* rawSelectedUuid);
 
 	public:
 		SyMonoMethod<MonoObject*> EgInit{ "EgInit" };
 		SyMonoMethod<uint32_t> EgDrawEntityComps {"EgDrawEntityComps"};
 
 	private:
+		inline static SyMonoEditor* _instance = nullptr;
+		ResourceService* _resService = nullptr;
+
 		SyResult OnAfterCreate() override;
 		SyResult OnBeforeDestroy() override;
 		const std::string& GetMonoClassName() override;

@@ -5,12 +5,12 @@ namespace SyEngine.Editor.Drawers
 {
 public interface IEditorDrawer
 {
-	bool DrawRaw(string name, ref object val);
+	bool DrawRaw(string name, ref object rawVal);
 }
 
 public abstract class EditorDrawerBase<T> : IEditorDrawer
 {
-	protected SyProxyEditor Editor;
+	protected readonly SyProxyEditor Editor;
 	
 	public EditorDrawerBase(SyProxyEditor editor)
 	{
@@ -27,13 +27,13 @@ public abstract class EditorDrawerBase<T> : IEditorDrawer
 		return true;
 	}
 
-	public virtual bool DrawRaw(string name, ref object val)
+	public virtual bool DrawRaw(string name, ref object rawVal)
 	{
-		var prevVal = (T)val;
+		var prevVal = (T)rawVal;
 		var newVal  = DrawImpl(name, prevVal);
 		if (EqualityComparer<T>.Default.Equals(prevVal, newVal))
 			return false;
-		val = newVal;
+		rawVal = newVal;
 		return true;
 	}
 

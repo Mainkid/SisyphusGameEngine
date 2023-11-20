@@ -99,7 +99,7 @@ void MonoSyncGeSystem::OnDestroyEngineEntityImpl(entt::entity ent, bool isRecurs
 	_ecs->destroy(ent);
 }
 
-void MonoSyncGeSystem::OnAddComp(uint32_t rawEnt, mono::ProxyCompId id)
+void MonoSyncGeSystem::OnAddComp(uint32_t rawEnt, mono::EProxyCompId id)
 {
 	SY_LOG_MONO(
 		SY_LOGLEVEL_DEBUG, 
@@ -109,21 +109,21 @@ void MonoSyncGeSystem::OnAddComp(uint32_t rawEnt, mono::ProxyCompId id)
 	);
 
 	auto ent = static_cast<entt::entity>(rawEnt);
-	if (id == mono::ProxyCompId::Transform)
+	if (id == mono::EProxyCompId::Transform)
 	{
 		_ecs->emplace<TransformComponent>(ent);
 	}
-	else if (id == mono::ProxyCompId::Mesh)
+	else if (id == mono::EProxyCompId::Mesh)
 	{
 		auto resourceService = ServiceLocator::instance()->Get<ResourceService>();
 		auto uuid = resourceService->GetUUIDFromPath(cubeMeshPath);
 		_ecs->emplace<MeshComponent>(ent).modelUUID = uuid;
 	}
-	else if (id == mono::ProxyCompId::Light)
+	else if (id == mono::EProxyCompId::Light)
 	{
 		_ecs->emplace<LightComponent>(ent);
 	}
-	else if (id == mono::ProxyCompId::Rigid)
+	else if (id == mono::EProxyCompId::Rigid)
 	{
 		
 	}
@@ -133,7 +133,7 @@ void MonoSyncGeSystem::OnAddComp(uint32_t rawEnt, mono::ProxyCompId id)
 	}
 }
 
-void MonoSyncGeSystem::OnRemoveComp(uint32_t rawEnt, mono::ProxyCompId id)
+void MonoSyncGeSystem::OnRemoveComp(uint32_t rawEnt, mono::EProxyCompId id)
 {
 	SY_LOG_MONO(
 		SY_LOGLEVEL_DEBUG, 
@@ -143,20 +143,20 @@ void MonoSyncGeSystem::OnRemoveComp(uint32_t rawEnt, mono::ProxyCompId id)
 	);
 
 	auto ent = static_cast<entt::entity>(rawEnt);
-	if (id == mono::ProxyCompId::Transform)
+	if (id == mono::EProxyCompId::Transform)
 	{
 		GameObjectHelper::SetParent(_ecs, ent, entt::null);
 		_ecs->remove<TransformComponent>(ent);
 	}
-	else if (id == mono::ProxyCompId::Mesh)
+	else if (id == mono::EProxyCompId::Mesh)
 	{
 		_ecs->remove<MeshComponent>(ent);
 	}
-	else if (id == mono::ProxyCompId::Light)
+	else if (id == mono::EProxyCompId::Light)
 	{
 		_ecs->emplace<LightComponent>(ent);
 	}
-	else if (id == mono::ProxyCompId::Rigid)
+	else if (id == mono::EProxyCompId::Rigid)
 	{
 	}
 	else

@@ -15,12 +15,12 @@ void SyMonoEcs::GeDestroyEntity(uint32_t rawEnt)
 		_instance->_cbReceiver->OnDestroyEntity(rawEnt);
 }
 
-void SyMonoEcs::GeAddComp(uint32_t rawEnt, ProxyCompId id)
+void SyMonoEcs::GeAddComp(uint32_t rawEnt, EProxyCompId id)
 {
 	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
 		_instance->_cbReceiver->OnAddComp(rawEnt, id);
 }
-void SyMonoEcs::GeRemoveComp(uint32_t rawEnt, ProxyCompId id)
+void SyMonoEcs::GeRemoveComp(uint32_t rawEnt, EProxyCompId id)
 {
 	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
 		_instance->_cbReceiver->OnRemoveComp(rawEnt, id);

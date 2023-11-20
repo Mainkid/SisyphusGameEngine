@@ -7,7 +7,7 @@
 
 namespace mono
 {
-	enum class ProxyCompId
+	enum class EProxyCompId
 	{
 		Transform,
 		Mesh,
@@ -18,18 +18,26 @@ namespace mono
 	class ProxyCompIdExt
 	{
 	public:
-		static constexpr std::string ToStr(ProxyCompId id)
+		static constexpr std::string ToStr(EProxyCompId id)
 		{
 			switch(id)
 			{
-			case ProxyCompId::Transform: return "Transform";
-			case ProxyCompId::Mesh: return "Mesh";
-			case ProxyCompId::Light: return "Light";
-			case ProxyCompId::Rigid: return "Rigid";
+			case EProxyCompId::Transform: return "Transform";
+			case EProxyCompId::Mesh: return "Mesh";
+			case EProxyCompId::Light: return "Light";
+			case EProxyCompId::Rigid: return "Rigid";
 			default: return "Missing";
 			}
 		}
 	};
+
+
+	enum class EProxyResourceType
+	{
+		Texture,
+		Material
+	};
+
 
 	struct ProxyVector3
 	{
@@ -90,4 +98,6 @@ namespace mono
 		ProxyVector4 Color;
 		ProxyVector4 ParamsRadiusAndAttenuation;
 	};
+
+
 }

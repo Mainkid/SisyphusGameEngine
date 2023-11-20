@@ -4,6 +4,8 @@ using System.Runtime.CompilerServices;
 using SyEngine.Core;
 using SyEngine.Core.Comps;
 using SyEngine.Core.Datas;
+using SyEngine.Core.Helpers;
+using SyEngine.Core.Resources;
 using SyEngine.Editor.Drawers;
 using SyEngine.Logger;
 
@@ -11,7 +13,8 @@ namespace SyEngine.Editor
 {
 public class SyProxyEditor
 {
-	private SyEcs  _ecs;
+	private SyEcs _ecs;
+		
 	private Type[] _compsTypesBuffer = new Type[10];
 
 	private Dictionary<Type, IEditorDrawer> _drawers;
@@ -37,7 +40,7 @@ public class SyProxyEditor
 			}
 		}
 	}
-	
+
 	internal bool DrawField(string name, Type type, ref object val)
 	{
 		if (!TryGetDrawer(type, out var drawer))
@@ -76,6 +79,14 @@ public class SyProxyEditor
 			_drawers.Add(type, drawer);
 			return true;
 		}
+		if (type.TryExtractGeneric(out var defType, out var genType) &&
+		    defType == typeof(ResRef<>))
+		{
+			var drawerType = typeof(EditorDrawerResRef<,>).MakeGenericType(type, genType);
+			drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this);
+			_drawers.Add(type, drawer);
+			return true;
+		}
 		if (type.IsClass || type.IsValueType && !type.IsPrimitive)
 		{
 			var drawerType = typeof(EditorDrawerReflect<>).MakeGenericType(type);
@@ -88,9 +99,9 @@ public class SyProxyEditor
 
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
-	internal void EgInit(SyProxyEcs proxy)
+	internal void EgInit(SyProxyEcs proxyEcs)
 	{
-		_ecs = proxy.Ecs;
+		_ecs = proxyEcs.Ecs;
 
 		_drawers = new Dictionary<Type, IEditorDrawer>
 		{
@@ -137,5 +148,8 @@ public class SyProxyEditor
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern int GeDrawEnumField(string name, string[] items, int selected);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern string GeDrawResField(string name, EResourceType resType, string uuid);
 }
 }

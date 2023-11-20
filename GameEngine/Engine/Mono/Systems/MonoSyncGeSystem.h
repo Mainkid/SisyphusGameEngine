@@ -32,8 +32,8 @@ private:
 	void OnDestroyEntity(uint32_t rawEnt) override;
 	void OnDestroyEngineEntityImpl(entt::entity ent, bool isRecursionStep);
 
-	void OnAddComp(uint32_t rawEnt, mono::ProxyCompId id) override;
-	void OnRemoveComp(uint32_t rawEnt, mono::ProxyCompId id) override;
+	void OnAddComp(uint32_t rawEnt, mono::EProxyCompId id) override;
+	void OnRemoveComp(uint32_t rawEnt, mono::EProxyCompId id) override;
 
 	void OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyTransformComp& proxy) override;
 	void OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshComp& proxy) override;

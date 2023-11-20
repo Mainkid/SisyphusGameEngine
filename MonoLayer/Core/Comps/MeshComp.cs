@@ -1,8 +1,10 @@
-﻿namespace SyEngine.Core.Comps
+﻿using SyEngine.Core.Resources;
+
+namespace SyEngine.Core.Comps
 {
 public struct MeshComp : SyEcs.IComp
 {
-	public string TexturePath;
-	public string ModelPath;
+	public ResRef<ResTexture>  Texture;
+	public ResRef<ResMaterial> Material;
 }
 }
