@@ -1,11 +1,13 @@
 #include "FAudioEngine.h"
 
 
-Implementation::Implementation() {
+Implementation::Implementation()
+{
+    mnNextChannelId = 0;
     mpStudioSystem = NULL;
     FAudioEngine::ErrorCheck(FMOD::Studio::System::create(&mpStudioSystem));
     FAudioEngine::ErrorCheck(mpStudioSystem->initialize(32, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_PROFILE_ENABLE, NULL));
-
+    
     mpSystem = NULL;
     FAudioEngine::ErrorCheck(mpStudioSystem->getCoreSystem(&mpSystem));
 }
@@ -42,7 +44,7 @@ void FAudioEngine::Init()
 
 void FAudioEngine::Update() 
 {
-    //sgpImplementation->Update();
+    sgpImplementation->Update();
 }
 
 int FAudioEngine::ErrorCheck(FMOD_RESULT result) 

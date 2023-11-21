@@ -3,8 +3,8 @@
 #include "SimpleMath.h"
 
 
-//#ifndef FAUDIOENGINE
-//#define FAUDIOENGINE
+#ifndef FAUDIOENGINE
+#define FAUDIOENGINE
 
 
 #include "fmod_studio.hpp"
@@ -16,7 +16,7 @@
 #include <iostream>
 //#include "FAudioImp.h"
 
-//#endif
+#endif
 
 struct MVector3 
 {
@@ -26,6 +26,7 @@ struct MVector3
 };
 
 struct Implementation {
+
     Implementation();
     ~Implementation();
 
@@ -52,10 +53,10 @@ class FAudioEngine
 {
 private:
    
-
-
-public:
     
+public:
+
+    //static Implementation* sgpImplementation;
     // that's how it works
     //void Init() {  };
     // but only if it is empty
