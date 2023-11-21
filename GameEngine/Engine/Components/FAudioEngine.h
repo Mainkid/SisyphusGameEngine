@@ -51,8 +51,9 @@ struct Implementation {
 class FAudioEngine
 {
 private:
-    Implementation* sgpImplementation = new Implementation;;
- 
+   
+
+
 public:
     
     // that's how it works

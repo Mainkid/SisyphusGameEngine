@@ -33,7 +33,7 @@ void Implementation::Update() {
     FAudioEngine::ErrorCheck(mpStudioSystem->update());
 }
 
-
+Implementation* sgpImplementation = nullptr;
 
 void FAudioEngine::Init()
 {
