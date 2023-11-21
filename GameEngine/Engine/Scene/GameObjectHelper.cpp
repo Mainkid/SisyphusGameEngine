@@ -20,7 +20,7 @@ entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& na
 	auto ent = ecs->create();
 	ecs->emplace<GameObjectComp>(ent, name);
 	TransformComponent& tc=ecs->emplace<TransformComponent>(ent);
-	tc.localPosition = pos;
+	tc._position = pos;
 	return ent;
 }
 

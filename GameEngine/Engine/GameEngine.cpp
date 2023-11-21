@@ -63,7 +63,7 @@ int main()
     ecs->get<LightComponent>(lightPoint2).LightBehavior = LightBehavior::Movable;
 
     auto base = GameObjectHelper::Create(ecs, "Base", { 0.0f, -5.0f, 13.0f });
-    ecs->get<TransformComponent>(base).localScale = {10.0f, 1.0f, 10.0f};
+    ecs->get<TransformComponent>(base).scale = {10.0f, 1.0f, 10.0f};
     auto result1 = GameObjectHelper::AddRigidBodyComponent(ecs, base, STATIC);
     auto result2 = GameObjectHelper::AddCubeMeshComponent(ecs, base);
     SyPrimitiveColliderShapeDesc baseColDesc;
@@ -76,12 +76,13 @@ int main()
     
     auto meshUuid = ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Game\\Assets\\fbx\\barrel.fbx");
     auto staticMesh = GameObjectHelper::Create(ecs, "Static Mesh", {0.0f, -2.5f, 8.0f});
-    ecs->get<TransformComponent>(staticMesh).localScale = { 3.0f, 3.0f, 3.0f };
+    ecs->get<TransformComponent>(staticMesh).scale = { 3.0f, 3.0f, 3.0f };
     auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid, SyEMeshComponentFlags::MESH_COLLIDER | SyEMeshComponentFlags::MESH_RENDER);
     auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
     auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
 
     auto cube = GameObjectHelper::Create(ecs, "Cube", { 0.0f, 5.0f, 8.0f });
+    //ecs->get<TransformComponent>(cube)._position = Vector3(1, 0, 0);
     auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube, DYNAMIC);
     auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube);
     SyPrimitiveColliderShapeDesc cubeColDesc;

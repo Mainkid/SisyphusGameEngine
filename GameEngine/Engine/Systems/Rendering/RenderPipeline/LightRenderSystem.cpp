@@ -48,7 +48,7 @@ SyResult LightRenderSystem::Run()
         TransformComponent& tc = view.get<TransformComponent>(entity);
         lightBuffer.lightData.Pos = Vector4(tc._position.x, tc._position.y, tc._position.z, 1);
         lightBuffer.lightData.Color = light.Color;
-        lightBuffer.lightData.Dir = Vector4::Transform(Vector4::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation));
+        lightBuffer.lightData.Dir = Vector4::Transform(Vector4::UnitX, Matrix::CreateFromYawPitchRoll(tc._rotation));
         lightBuffer.lightData.additiveParams = light.ParamsRadiusAndAttenuation;
         lightBuffer.eyePos = Vector4(cameraTf._position.x, cameraTf._position.y, cameraTf._position.z, 1.0f);
 
@@ -95,7 +95,7 @@ SyResult LightRenderSystem::Run()
             using namespace DirectX::SimpleMath;
             Vector3 a;
             Vector3 forward = Vector3(0, 0, 1);
-            Vector3 dir = Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation));
+            Vector3 dir = Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc._rotation));
             dir.Normalize();
             forward.Cross(dir, a);
             a.Normalize();

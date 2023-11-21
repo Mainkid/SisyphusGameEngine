@@ -1,5 +1,7 @@
 #pragma once
 
+#include <boost/container_hash/hash.hpp>
+
 #include "SimpleMath.h"
 #include "foundation/PxVec3.h"
 #include "foundation/PxQuat.h"
@@ -113,4 +115,15 @@ public:
 		physx::PxQuat qq = { q.x, q.y, q.z, q.w };
 		return qq;
 	}
+
+	
 };
+
+inline std::size_t hash_value(SyVector3 const& vec)
+{
+	size_t seed = 0;
+	boost::hash_combine(seed, vec.x);
+	boost::hash_combine(seed, vec.y);
+	boost::hash_combine(seed, vec.z);
+	return seed;
+}
