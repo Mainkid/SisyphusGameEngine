@@ -7,6 +7,7 @@
 #include "MeshSystem.h"
 #include "LightSystem.h"
 #include "RBSystem.h"
+#include "CollisionPreSystem.h"
 #include "CollisionSystem.h"
 #include "HardwareInitSystem.h"
 #include "MaterialUpdateSystem.h"

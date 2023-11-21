@@ -9,11 +9,8 @@ SyResult SyPrepareEventsSystem::Init()
 SyResult SyPrepareEventsSystem::Run()
 {
     auto thisFrameView = _ecs->view<SyEventTag, SyThisFrameEventTag>();
-    auto i = thisFrameView.size_hint();
     _ecs->destroy(thisFrameView.begin(), thisFrameView.end());
-    i = thisFrameView.size_hint();
     auto nextFrameView = _ecs->view<SyEventTag>();
-    auto ii = nextFrameView.size();
     for (auto& entity : nextFrameView)
         _ecs->emplace<SyThisFrameEventTag>(entity);
     return SyResult();

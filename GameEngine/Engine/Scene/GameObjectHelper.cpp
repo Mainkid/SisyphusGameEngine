@@ -1,7 +1,7 @@
 ﻿#include "GameObjectHelper.h"
 
 #include "../../../vendor/entt/entt.hpp"
-#include "../../Components/GameObjectComp.h"
+
 #include "../../Components/MeshComponent.h"
 #include "../../Components/LightComponent.h"
 #include "../../Components/TransformComponent.h"
@@ -120,7 +120,8 @@ SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::enti
 									rbType,
 									mass,
 									flags);
-	ecs->emplace<SyRbCreateOnNextUpdateTag>(entity);
+	CallEvent<SyEventOnCreateRBody>(ecs, "OnCreateRBody", entity);
+	//ecs->emplace<SyRbCreateOnNextUpdateTag>(entity);
 	return result;
 }
 
@@ -133,12 +134,21 @@ SyResult GameObjectHelper::AddPrimitiveColliderComponent(entt::registry* ecs, en
 	if (rbComponent == nullptr)
 	{
 		result.code = SY_RESCODE_ERROR;
-		result.message = xstring("Entity %d lacks RigidBody Component. You can't attach PrimitiveCollider Component to it.", (int)entity);
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks RigidBody Component. You can't attach PrimitiveCollider Component to it.", (int)entity);
+		result.message = xstring("Could not find RigidBody Component on entity (%d). Hence, you can't attach a collider component to it. ", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Could not find RigidBody Component on entity (%d). Hence, you can't attach a collider component to it. ", (int)entity);
+		return result;
+	}
+	auto* pComponent = ecs->try_get<SyPrimitiveColliderComponent>(entity);
+	auto* tmComponent = ecs->try_get<SyTrimeshColliderComponent>(entity);
+	if (pComponent != nullptr || tmComponent != nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("Could not find RigidBody Component on entity (%d). Hence, you can't attach a collider component to it. ", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Could not find RigidBody Component on entity (%d). Hence, you can't attach a collider component to it. ", (int)entity);
 		return result;
 	}
 	ecs->emplace<SyPrimitiveColliderComponent>(entity, colliderType, colliderShapeDesc,  material);
-	ecs->emplace<SyColliderCreateOnNextUpdateTag>(entity);
+	CallEvent<SyEventOnCreateCollider>(ecs, "OnCreateCollider", entity);
 	return result;
 }
 
@@ -150,20 +160,29 @@ SyResult GameObjectHelper::AddTrimeshColliderComponent(entt::registry* ecs, entt
 	if (rbComponent == nullptr)
 	{
 		result.code = SY_RESCODE_ERROR;
-		result.message = xstring("Entity %d lacks RigidBody Component. You can't attach PrimitiveCollider Component to it.", (int)entity);
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks RigidBody Component. You can't attach PrimitiveCollider Component to it.", (int)entity);
+		result.message = xstring("Could not find RigidBody Component on entity (%d). Hence, you can't attach a collider component to it. ", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Could not find RigidBody Component on entity (%d). Hence, you can't attach a collider component to it. ", (int)entity);
+		return result;
+	}
+	auto* pComponent = ecs->try_get<SyPrimitiveColliderComponent>(entity);
+	auto* tmComponent = ecs->try_get<SyTrimeshColliderComponent>(entity);
+	if (pComponent != nullptr || tmComponent != nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("A collider component is already attached to the entity (%d). You can't attach more than one collider to an entity. ", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "A collider component is already attached to the entity (%d). You can't attach more than one collider to an entity. ", (int)entity);
 		return result;
 	}
 	auto* mComponent = ecs->try_get<MeshComponent>(entity);
-	if (rbComponent == nullptr)
+	if (mComponent == nullptr)
 	{
 		result.code = SY_RESCODE_ERROR;
-		result.message = xstring("Entity %d lacks Mesh Component. You can't attach MeshCollider Component to it.", (int)entity);
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks Mesh Component. You can't attach MeshCollider Component to it.", (int)entity);
+		result.message = xstring("Could not find Mesh Component on entity (%d). Hence, you can't attach TrimeshCollider Component to it. ", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Could not find Mesh Component on entity (%d). Hence, you can't attach TrimeshCollider Component to it. ", (int)entity);
 		return result;
 	}
 	ecs->emplace<SyTrimeshColliderComponent>(entity, material);
-	ecs->emplace<SyColliderCreateOnNextUpdateTag>(entity);
+	CallEvent<SyEventOnCreateCollider>(ecs, "OnCreateCollider", entity);
 	return result;
 }
 

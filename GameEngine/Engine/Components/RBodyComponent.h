@@ -4,6 +4,7 @@
 #include "../Tools/Data/Vector.h"
 #include "../Tools/ErrorLogger.h"
 #include "../Tools/Data/FlagBitmask.h"
+#include "../../vendor/entt/entt.hpp"
 #pragma region forward declaration
 namespace physx
 {
@@ -29,8 +30,9 @@ struct SyRbTransform
 
 enum SyERBodyFlags
 {
-	USE_DENSITY		 = 1,
-	KINEMATIC		= 1 << 1
+	USE_DENSITY		= 1,
+	KINEMATIC		= 1 << 1,
+	DISABLE_GRAVITY	= 1 << 2
 };
 DEFINE_BITWISE_OPERATORS(SyERBodyFlags);
 
@@ -41,21 +43,31 @@ struct SyRBodyComponent
 						unsigned			flags = 0);
 	
 	~SyRBodyComponent();
-private:
-	//fields initialized in constructor
 
-	SyERBodyType			_rbType;
-	float				_mass;
-	unsigned			_flags;
-	//fields initialized in SyPhysicsSystem::Init
+	//public fields initialized in constructor and can be modified during runtime
+	
+	float				Mass;
+	unsigned			Flags;
+	
+	//public fields, that can be modified during runtime
+	
+	SyVector3			LinearVelocity = SyVector3::ZERO;
+	SyVector3			AngularVelocity = SyVector3::ZERO;
+
+private:
+	//private fields initialized in constructor
+	
+	SyERBodyType		_rbType;
+	
+	//private fields initialized in SyPhysicsSystem::Init
 	
 	physx::PxRigidActor*	_rbActor = nullptr;
-	std::size_t hash;
 
 	static physx::PxPhysics*	_physics;
 	static physx::PxScene*		_scene;
 	
 	friend class SyCollisionSystem;
+	friend class SyCollisionPreSystem;
 	friend class SyRBodySystem;
 };
 
@@ -64,3 +76,7 @@ struct SyRbCreateOnNextUpdateTag
 	
 };
 
+struct SyEventOnCreateRBody
+{
+	entt::entity Entity; //entity to which RigidBody Component is attached to
+};
