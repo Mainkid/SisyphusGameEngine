@@ -255,6 +255,11 @@ void HudContentBrowserSystem::InitImagesSRV()
 
 void HudContentBrowserSystem::ProcessPopUp()
 {
+    if (ImGui::IsKeyDown(ImGuiKey_F2))
+    {
+        if (selectedFiles.size()>0)
+			renamingFileName = *selectedFiles.begin();
+    }
 
 
     int selected_Popup = -1;
@@ -263,7 +268,6 @@ void HudContentBrowserSystem::ProcessPopUp()
         None,
         MainPopup,
         CreatePopup
-
     };
     ESelectedCategory selectedCategory = None;
     const char* mainPopupsNames[] = { "Delete","Rename","Show in explorer"};

@@ -420,11 +420,29 @@ void HudViewportSystem::ProcessInput()
 
 	if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_V))
 	{
-		/*for (auto id : ec->hudData.copyBufferEntityIDs)
-		{
-			ec->scene->registry.get(id);
-		}*/
+		for (auto ent:ec->hudData.selectedEntityIDs)
+		for (auto [id, storage] : _ecs->storage()) {
+			auto ptr = storage.find(ent);
+			if (ptr == storage.end())
+				continue;
+			else
+			{
+				std::cout << "YO";
+			}
+
+			/*auto ptrMeta = _compTypeToMeta.find(storage.type().index());
+			if (ptrMeta == _compTypeToMeta.end())
+				continue;
+
+			CompMeta& meta = ptrMeta->second;
+
+			void* val = storage.value(ent1);
+			meta.FuncSerialize(this, val, outJson[meta.Name]);*/
+			}
+		
+		
 	}
+	
 
 }
 
