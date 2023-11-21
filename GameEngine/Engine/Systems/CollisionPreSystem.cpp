@@ -1,7 +1,10 @@
 ﻿#include "CollisionPreSystem.h"
+
+#include "EngineContext.h"
 #include "../Components/ColliderComponent.h"
 #include "PxPhysicsAPI.h"
 #include "../Components/RBodyComponent.h"
+#include "../Core/ECS/Event.h"
 
 SyResult SyCollisionPreSystem::Init()
 {
@@ -10,24 +13,13 @@ SyResult SyCollisionPreSystem::Init()
 
 SyResult SyCollisionPreSystem::Run()
 {
-    // auto pView = _ecs->view<SyPrimitiveColliderComponent, SyRBodyComponent>();
-    // for (auto& entity : pView)
+
+    // for (const auto& entity : ServiceLocator::instance()->Get<EngineContext>()->hudData.selectedEntityIDs)
     // {
-    //     if (_ecs->try_get<SyEventOnCreateCollider>(entity) != nullptr)
-    //         continue; //skip uninitialized components
-    //     bool isVisualizationEnabled = true/*(_ecs->try_get<SyTagColliderVisualizationEnabled>(entity) != nullptr)*/;
-    //     _ecs->get<SyRBodyComponent>(entity)._rbActor->setActorFlag(physx::PxActorFlag::eVISUALIZATION, isVisualizationEnabled);
-    //     _ecs->get<SyPrimitiveColliderComponent>(entity)._shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, isVisualizationEnabled);
+    //     auto* rbComponent = _ecs->try_get<SyRBodyComponent>(entity);
+    //     if (rbComponent != nullptr
     // }
-    // auto tMView = _ecs->view<SyTrimeshColliderComponent, SyRBodyComponent>();
-    // for (auto& entity : tMView)
-    // {
-    //     if (_ecs->try_get<SyEventOnCreateCollider>(entity) != nullptr)
-    //         continue; //skip uninitialized components
-    //     bool isVisualizationEnabled = true/*(_ecs->try_get<SyTagColliderVisualizationEnabled>(entity) != nullptr)*/;
-    //     _ecs->get<SyRBodyComponent>(entity)._rbActor->setActorFlag(physx::PxActorFlag::eVISUALIZATION, isVisualizationEnabled);
-    //     _ecs->get<SyPrimitiveColliderComponent>(entity)._shape->setFlag(physx::PxShapeFlag::eVISUALIZATION, isVisualizationEnabled);
-    // }
+    //
     return SyResult();
 }
 

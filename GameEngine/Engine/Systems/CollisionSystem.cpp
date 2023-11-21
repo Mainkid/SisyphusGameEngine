@@ -16,8 +16,6 @@ SyResult SyCollisionSystem::Init()
 SyResult SyCollisionSystem::Run()
 {
 	SyResult result;
-	// if(ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
-	// 	return SyResult();
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
 	if (deltaTime == 0)
 	{
@@ -25,7 +23,6 @@ SyResult SyCollisionSystem::Run()
 		result.message = "EngineContext.deltaTime == 0";
 		return result;
 	}
-	//auto toInitPView = _ecs->view<SyRBodyComponent, SyPrimitiveColliderComponent, SyTagColliderCreateOnNextUpdate>();
 	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyEventOnCreateCollider);
 	for (auto& eventEntity : eventView)
 	{

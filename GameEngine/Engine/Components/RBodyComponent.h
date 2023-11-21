@@ -55,7 +55,10 @@ struct SyRBodyComponent
 	SyVector3			LinearVelocity = SyVector3::ZERO;
 	SyVector3			AngularVelocity = SyVector3::ZERO;
 
-private:	
+private:
+	//members that are used by developers only
+	static std::vector<SyVector3> _debugLineSegments; //even element - start of a segment, odd - its end
+	
 	//private fields initialized in SyPhysicsSystem::Init
 	
 	physx::PxRigidActor*	_rbActor = nullptr;
@@ -68,9 +71,3 @@ private:
 	friend class SyRBodySystem;	
 };
 
-
-struct SyEventOnCreateRBody
-{
-	SyEventOnCreateRBody(entt::entity& entity) : Entity(entity) {};
-	entt::entity Entity; //entity to which RigidBody Component is attached to
-};

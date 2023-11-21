@@ -51,7 +51,6 @@ SyResult SyRBodySystem::Run()
 		return result;
 	}
 	//initialize components that were created at this frame
-	//auto toInitView = _ecs->view<SyRBodyComponent, TransformComponent, SyRbCreateOnNextUpdateTag>();
 	auto eventView = _ecs->view<SyEventOnCreateRBody>();
 	for (auto& eventEntity : eventView)
 	{
@@ -108,7 +107,16 @@ SyResult SyRBodySystem::Run()
 		if (rbComponent.Flags & SyERBodyFlags::KINEMATIC)
 			rb->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 		if (rbComponent.Flags & SyERBodyFlags::DISABLE_GRAVITY)
-			rbComponent._rbActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);	
+			rbComponent._rbActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+		rbComponent._rbActor->setActorFlag(PxActorFlag::eVISUALIZATION, false);
+	}
+	//enable visualization for selected entities only
+	for (const auto& entity : ServiceLocator::instance()->Get<EngineContext>()->hudData.selectedEntityIDs)
+	{
+	    auto* rbComponent = _ecs->try_get<SyRBodyComponent>(entity);
+		auto pComponent = _ecs->try_get<SyPrimitiveColliderComponent>(entity);
+	    if (rbComponent != nullptr && pComponent != nullptr)
+	    	rbComponent->_rbActor->setActorFlag(PxActorFlag::eVISUALIZATION, true);
 	}
 	//do not simulate if in pause mode
 	if(ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
@@ -152,7 +160,13 @@ SyResult SyRBodySystem::Run()
 		rbComponent.LinearVelocity = rb->getLinearVelocity();
 		rbComponent.AngularVelocity = rb->getAngularVelocity();
 	}
-	
+	const PxRenderBuffer& rb = _scene->getRenderBuffer();
+	SyRBodyComponent::_debugLineSegments.clear();
+	for(PxU32 i = 0; i < rb.getNbLines(); i++)
+	{
+		SyRBodyComponent::_debugLineSegments.push_back(rb.getLines()[i].pos0);
+		SyRBodyComponent::_debugLineSegments.push_back(rb.getLines()[i].pos1);
+	}
 	return SyResult();
 }
 

@@ -40,16 +40,8 @@ struct SyPrimitiveColliderShapeDesc
                 HalfHeight)
 };
 
-struct SyEventOnCreateCollider
-{
-    SyEventOnCreateCollider(entt::entity entity) : Entity(entity) {};
-    entt::entity Entity; //entity that collider is attached to
-};
 
-struct SyTagColliderVisualizationEnabled
-{
-    int PlaceHolder = 0; //needed for try_get working correctly
-};
+
 
 struct SyPrimitiveColliderComponent
 {
@@ -69,7 +61,7 @@ struct SyPrimitiveColliderComponent
     //members initialized in CollisionSystem::InitComponentP
 private:
     physx::PxShape*			_shape = nullptr;
-
+    
     friend class SyCollisionPreSystem;
     friend class SyCollisionSystem;
 };

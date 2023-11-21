@@ -26,3 +26,9 @@ private:
                              const MeshComponent& mComponent,
                              const TransformComponent& tComponent);
 };
+
+struct SyEventOnCreateCollider
+{
+    SyEventOnCreateCollider(entt::entity entity) : Entity(entity) {};
+    entt::entity Entity; //entity that collider is attached to
+};
