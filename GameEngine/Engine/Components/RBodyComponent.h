@@ -57,7 +57,7 @@ struct SyRBodyComponent
 
 private:
 	//members that are used by developers only
-	static std::vector<SyVector3> _debugLineSegments; //even element - start of a segment, odd - its end
+	
 	
 	//private fields initialized in SyPhysicsSystem::Init
 	

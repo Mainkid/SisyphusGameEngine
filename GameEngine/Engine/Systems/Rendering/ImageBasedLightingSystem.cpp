@@ -6,8 +6,8 @@
 #include "RenderContext.h"
 #include "../../Components/ImageBasedLightingComponent.h"
 #include "../../Components/SkyboxComponent.h"
-#include "../../Core/ECS/Events/SyImageBasedLightingUpdateEvent.h"
-#include "../../Core/ECS/Events/SySceneLoadEvent.h"
+#include "../../Events/SyImageBasedLightingUpdateEvent.h"
+#include "../../Events/SySceneLoadEvent.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
 #include "../../Scene/CameraHelper.h"
 

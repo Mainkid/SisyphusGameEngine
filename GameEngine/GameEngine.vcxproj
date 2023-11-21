@@ -675,12 +675,14 @@
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
     <ClInclude Include="Engine\Components\ColliderComponent.h" />
     <ClInclude Include="Engine\Core\ECS\Event.h" />
-    <ClInclude Include="Engine\Core\ECS\Events\SyHotReloadEvent.h" />
-    <ClInclude Include="Engine\Core\ECS\Events\SyImageBasedLightingUpdateEvent.h" />
-    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeStartedEvent.h" />
-    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeEndedEvent.h" />
-    <ClInclude Include="Engine\Core\ECS\Events\SySceneLoadEvent.h" />
     <ClInclude Include="Engine\Core\ResourcePath.h" />
+    <ClInclude Include="Engine\Events\SyHotReloadEvent.h" />
+    <ClInclude Include="Engine\Events\SyImageBasedLightingUpdateEvent.h" />
+    <ClInclude Include="Engine\Events\SyOnCreateColliderEvent.h" />
+    <ClInclude Include="Engine\Events\SyOnCreateRBodyEvent.h" />
+    <ClInclude Include="Engine\Events\SyPlayModeEndedEvent.h" />
+    <ClInclude Include="Engine\Events\SyPlayModeStartedEvent.h" />
+    <ClInclude Include="Engine\Events\SySceneLoadEvent.h" />
     <ClInclude Include="Engine\Systems\CollisionPreSystem.h" />
     <ClInclude Include="Engine\Systems\CollisionSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.h" />
@@ -739,6 +741,7 @@
     <ClInclude Include="Engine\Components\LightComponent.h" />
     <ClInclude Include="Engine\Core\Rendering\RenderTarget.h" />
     <ClInclude Include="Engine\Tools\ComplexString.h" />
+    <ClInclude Include="Engine\Tools\Data\ColliderGeometry.h" />
     <ClInclude Include="Engine\Tools\Data\FlagBitmask.h" />
     <ClInclude Include="Engine\Tools\Data\RingBuffer.h" />
     <ClInclude Include="Engine\Tools\ErrorLogger.h" />

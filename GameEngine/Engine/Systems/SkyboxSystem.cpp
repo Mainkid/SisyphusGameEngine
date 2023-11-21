@@ -6,7 +6,7 @@
 #include "../Systems/EngineContext.h"
 #include "../Systems/ResourceService.h"
 #include "../Scene/GameObjectHelper.h"
-#include "../Core/ECS/Events/SyImageBasedLightingUpdateEvent.h"
+#include "../Events/SyImageBasedLightingUpdateEvent.h"
 
 SyResult SkyboxSystem::Init()
 {

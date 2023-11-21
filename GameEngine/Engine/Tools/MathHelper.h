@@ -1,5 +1,4 @@
 ﻿#pragma once
-
 struct SyMathHelper
 {
     inline static constexpr float PI = 3.141592f;
@@ -31,4 +30,6 @@ struct SyMathHelper
     {
         return CalculateSphereVolume(radius) + PI * radius * radius * 2 * halfHeight;
     }
+    
+
 };

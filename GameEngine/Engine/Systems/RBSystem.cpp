@@ -4,7 +4,7 @@
 #include "../Components/RBodyComponent.h"
 #include "../Tools/ErrorLogger.h"
 #include "../Components/TransformComponent.h"
-#include "../Tools/MathHelper.h"
+#include "../Events/SyOnCreateRBodyEvent.h"
 
 
 using namespace physx;
@@ -51,10 +51,10 @@ SyResult SyRBodySystem::Run()
 		return result;
 	}
 	//initialize components that were created at this frame
-	auto eventView = _ecs->view<SyEventOnCreateRBody>();
+	auto eventView = _ecs->view<SyOnCreateRBodyEvent>();
 	for (auto& eventEntity : eventView)
 	{
-		auto entity = _ecs->get<SyEventOnCreateRBody>(eventEntity).Entity;
+		auto entity = _ecs->get<SyOnCreateRBodyEvent>(eventEntity).Entity;
 		auto* rbComponent = _ecs->try_get<SyRBodyComponent>(entity);
 		if (rbComponent == nullptr)
 		{
@@ -110,14 +110,6 @@ SyResult SyRBodySystem::Run()
 			rbComponent._rbActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
 		rbComponent._rbActor->setActorFlag(PxActorFlag::eVISUALIZATION, false);
 	}
-	//enable visualization for selected entities only
-	for (const auto& entity : ServiceLocator::instance()->Get<EngineContext>()->hudData.selectedEntityIDs)
-	{
-	    auto* rbComponent = _ecs->try_get<SyRBodyComponent>(entity);
-		auto pComponent = _ecs->try_get<SyPrimitiveColliderComponent>(entity);
-	    if (rbComponent != nullptr && pComponent != nullptr)
-	    	rbComponent->_rbActor->setActorFlag(PxActorFlag::eVISUALIZATION, true);
-	}
 	//do not simulate if in pause mode
 	if(ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
 		return result;
@@ -159,13 +151,6 @@ SyResult SyRBodySystem::Run()
 
 		rbComponent.LinearVelocity = rb->getLinearVelocity();
 		rbComponent.AngularVelocity = rb->getAngularVelocity();
-	}
-	const PxRenderBuffer& rb = _scene->getRenderBuffer();
-	SyRBodyComponent::_debugLineSegments.clear();
-	for(PxU32 i = 0; i < rb.getNbLines(); i++)
-	{
-		SyRBodyComponent::_debugLineSegments.push_back(rb.getLines()[i].pos0);
-		SyRBodyComponent::_debugLineSegments.push_back(rb.getLines()[i].pos1);
 	}
 	return SyResult();
 }

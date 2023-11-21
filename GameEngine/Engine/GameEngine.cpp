@@ -9,8 +9,7 @@
 
 #include "Scene/GameObjectHelper.h"
 
-#include "SimpleMath.h"
-#include "Serialization/Serializable.h"
+#include "Tools/Data/ColliderGeometry.h"
 
 #define SY_PI 3.14f
 #define SY_PI2 SY_PI / 2
@@ -92,6 +91,7 @@ int main()
 
     ecs->get<SyRBodyComponent>(cube).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
     ecs->get<SyRBodyComponent>(cube).Flags |= SyERBodyFlags::DISABLE_GRAVITY;
+    
     //---------- Serialization test ----------------
 
     // ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
@@ -114,7 +114,7 @@ int main()
     // ser.Deserialize(json, *ecs);
     //---------------------------------------------
 
-
+    
     EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();
     

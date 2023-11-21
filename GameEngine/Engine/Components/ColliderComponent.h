@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "../../vendor/entt/entt.hpp"
 #include "../Tools/Data/Vector.h"
+#include "../Tools/Data/ColliderGeometry.h"
 #include "../Serialization/Serializable.h"
 namespace physx
 {
@@ -61,6 +62,7 @@ struct SyPrimitiveColliderComponent
     //members initialized in CollisionSystem::InitComponentP
 private:
     physx::PxShape*			_shape = nullptr;
+    SyColliderGeometry      _colliderGeometry;
     
     friend class SyCollisionPreSystem;
     friend class SyCollisionSystem;

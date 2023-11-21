@@ -39,8 +39,3 @@ private:
     friend class SyCollisionSystem;
 };
 
-struct SyEventOnCreateRBody
-{
-    SyEventOnCreateRBody(entt::entity& entity) : Entity(entity) {};
-    entt::entity Entity; //entity to which RigidBody Component is attached to
-};

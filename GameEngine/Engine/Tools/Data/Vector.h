@@ -101,6 +101,24 @@ public:
 		z /= dividor_;
 		return *this;
 	}
+	SyVector3 ReflectX()
+	{
+		SyVector3 newVector = *this;
+		newVector.x *= -1;
+		return newVector;
+	}
+	SyVector3 ReflectY()
+	{
+		SyVector3 newVector = *this;
+		newVector.y *= -1;
+		return newVector;
+	}
+	SyVector3 ReflectZ()
+	{
+		SyVector3 newVector = *this;
+		newVector.z *= -1;
+		return newVector;
+	}
 	static SyVector3 PxQuatToEuler(const physx::PxQuat& pxQuat) //returns euler angle vector
 	{
 		DirectX::SimpleMath::Quaternion q(pxQuat.x, pxQuat.y, pxQuat.z, pxQuat.w);

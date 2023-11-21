@@ -1,7 +1,8 @@
 ﻿#include "GameObjectHelper.h"
 
 #include "../../../vendor/entt/entt.hpp"
-
+#include "../Events/SyOnCreateRBodyEvent.h"
+#include "../Events/SyOnCreateColliderEvent.h"
 #include "../../Components/MeshComponent.h"
 #include "../../Components/LightComponent.h"
 #include "../../Components/TransformComponent.h"
@@ -120,7 +121,7 @@ SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::enti
 									rbType,
 									mass,
 									flags);
-	CallEvent<SyEventOnCreateRBody>(ecs, "OnCreateRBody", entity);
+	CallEvent<SyOnCreateRBodyEvent>(ecs, "OnCreateRBody", entity);
 	//ecs->emplace<SyRbCreateOnNextUpdateTag>(entity);
 	return result;
 }
@@ -148,7 +149,7 @@ SyResult GameObjectHelper::AddPrimitiveColliderComponent(entt::registry* ecs, en
 		return result;
 	}
 	ecs->emplace<SyPrimitiveColliderComponent>(entity, colliderType, colliderShapeDesc,  material);
-	CallEvent<SyEventOnCreateCollider>(ecs, "OnCreateCollider", entity);
+	CallEvent<SyOnCreateColliderEvent>(ecs, "OnCreateCollider", entity);
 	return result;
 }
 
@@ -182,7 +183,7 @@ SyResult GameObjectHelper::AddTrimeshColliderComponent(entt::registry* ecs, entt
 		return result;
 	}
 	ecs->emplace<SyTrimeshColliderComponent>(entity, material);
-	CallEvent<SyEventOnCreateCollider>(ecs, "OnCreateCollider", entity);
+	CallEvent<SyOnCreateColliderEvent>(ecs, "OnCreateCollider", entity);
 	return result;
 }
 

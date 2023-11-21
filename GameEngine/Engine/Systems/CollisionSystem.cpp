@@ -3,6 +3,7 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/RBodyComponent.h"
 #include "../Components/MeshComponent.h"
+#include "../Events/SyOnCreateColliderEvent.h"
 #include "PxPhysicsAPI.h"
 #include "RBSystem.h"
 
@@ -23,10 +24,10 @@ SyResult SyCollisionSystem::Run()
 		result.message = "EngineContext.deltaTime == 0";
 		return result;
 	}
-	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyEventOnCreateCollider);
+	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyOnCreateColliderEvent);
 	for (auto& eventEntity : eventView)
 	{
-		auto& entity = _ecs->get<SyEventOnCreateCollider>(eventEntity).Entity;
+		auto& entity = _ecs->get<SyOnCreateColliderEvent>(eventEntity).Entity;
 		auto* rbComponent = _ecs->try_get<SyRBodyComponent>(entity);
 		if (rbComponent == nullptr)
 		{
@@ -96,6 +97,7 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyCo
     	cComponent._shape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
 																		PxBoxGeometry(cComponent.Extent),
 																		pxMaterial);
+		cComponent._colliderGeometry.MakeBox(cComponent.Extent);
 		break;
     case SPHERE:
     	cComponent._shape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),

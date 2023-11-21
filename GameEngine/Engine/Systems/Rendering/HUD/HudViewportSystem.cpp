@@ -9,10 +9,10 @@
 #include "../../../Scene/GameObjectHelper.h"
 #include "../../../Components/MeshComponent.h"
 #include "../../ResourceService.h"
-#include "../../../Core/ECS/Events/SyHotReloadEvent.h"
-#include "../../../Core/ECS/Events/SyPlayModeEndedEvent.h"
-#include "../../../Core/ECS/Events/SyPlayModeStartedEvent.h"
-#include "../../../Core/ECS/Events/SySceneLoadEvent.h"
+#include "../../Events/SyHotReloadEvent.h"
+#include "../../Events/SyPlayModeEndedEvent.h"
+#include "../../Events/SyPlayModeStartedEvent.h"
+#include "../../Events/SySceneLoadEvent.h"
 #include "../../../Components/ImageBasedLightingComponent.h"
 
 
