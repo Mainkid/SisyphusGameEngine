@@ -16,7 +16,7 @@ Implementation::~Implementation() {
 }
 
 void Implementation::Update() {
-    vector<ChannelMap::iterator> pStoppedChannels;
+    std::vector<ChannelMap::iterator> pStoppedChannels;
     for (auto it = mChannels.begin(), itEnd = mChannels.end(); it != itEnd; ++it)
     {
         bool bIsPlaying = false;
@@ -35,20 +35,20 @@ void Implementation::Update() {
 
 
 
-//void FAudioEngine::Init()
-//{
-//  // sgpImplementation = new Implementation;
-//    return 1;
-//}
+void FAudioEngine::Init()
+{
+  sgpImplementation = new Implementation;
+}
 
-void FAudioEngine::Update() {
-    sgpImplementation->Update();
+void FAudioEngine::Update() 
+{
+    //sgpImplementation->Update();
 }
 
 int FAudioEngine::ErrorCheck(FMOD_RESULT result) 
 {
     if (result != FMOD_OK) {
-        cout << "FMOD ERROR " << result << endl;
+        std::cout << "FMOD ERROR " << result << std::endl;
         return 1;
     }
     // cout << "FMOD all good" << endl;
@@ -57,7 +57,7 @@ int FAudioEngine::ErrorCheck(FMOD_RESULT result)
 
 void FAudioEngine::Shutdown()
 {
-    delete sgpImplementation;
+    //delete sgpImplementation;
 }
 
 void FAudioEngine::LoadSound(const std::string& strSoundName, bool b3d, bool bLooping, bool bStream)
@@ -87,36 +87,6 @@ void FAudioEngine::UnLoadSound(const std::string& strSoundName)
 
     FAudioEngine::ErrorCheck(tFoundIt->second->release());
     sgpImplementation->mSounds.erase(tFoundIt);
-}
-
-int FAudioEngine::PlaySound(const std::string& strSoundName, const MVector3& vPosition, float fVolumedB)
-{
-    int nChannelId = sgpImplementation->mnNextChannelId++;
-    auto tFoundIt = sgpImplementation->mSounds.find(strSoundName);
-    if (tFoundIt == sgpImplementation->mSounds.end())
-    {
-        LoadSound(strSoundName);
-        tFoundIt = sgpImplementation->mSounds.find(strSoundName);
-        if (tFoundIt == sgpImplementation->mSounds.end())
-        {
-            return nChannelId;
-        }
-    }
-    FMOD::Channel* pChannel = nullptr;
-    FAudioEngine::ErrorCheck(sgpImplementation->mpSystem->playSound(tFoundIt->second, nullptr, true, &pChannel));
-    if (pChannel)
-    {
-        FMOD_MODE currMode;
-        tFoundIt->second->getMode(&currMode);
-        if (currMode & FMOD_3D) {
-            FMOD_VECTOR position = VectorToFmod(vPosition);
-            FAudioEngine::ErrorCheck(pChannel->set3DAttributes(&position, nullptr));
-        }
-        FAudioEngine::ErrorCheck(pChannel->setVolume(dbToVolume(fVolumedB)));
-        FAudioEngine::ErrorCheck(pChannel->setPaused(false));
-        sgpImplementation->mChannels[nChannelId] = pChannel;
-    }
-    return nChannelId;
 }
 
 void FAudioEngine::SetChannel3dPosition(int nChannelId, const MVector3& vPosition)
@@ -164,6 +134,36 @@ void FAudioEngine::LoadEvent(const std::string& strEventName) {
     }
 }
 
+int FAudioEngine::PlayMSound(const std::string& strSoundName, const MVector3& vPosition, float fVolumedB)
+{
+    int nChannelId = sgpImplementation->mnNextChannelId++;
+    auto tFoundIt = sgpImplementation->mSounds.find(strSoundName);
+    if (tFoundIt == sgpImplementation->mSounds.end())
+    {
+        LoadSound(strSoundName);
+        tFoundIt = sgpImplementation->mSounds.find(strSoundName);
+        if (tFoundIt == sgpImplementation->mSounds.end())
+        {
+            return nChannelId;
+        }
+    }
+    FMOD::Channel* pChannel = nullptr;
+    FAudioEngine::ErrorCheck(sgpImplementation->mpSystem->playSound(tFoundIt->second, nullptr, true, &pChannel));
+    if (pChannel)
+    {
+        FMOD_MODE currMode;
+        tFoundIt->second->getMode(&currMode);
+        if (currMode & FMOD_3D) {
+            FMOD_VECTOR position = VectorToFmod(vPosition);
+            FAudioEngine::ErrorCheck(pChannel->set3DAttributes(&position, nullptr));
+        }
+        FAudioEngine::ErrorCheck(pChannel->setVolume(dbToVolume(fVolumedB)));
+        FAudioEngine::ErrorCheck(pChannel->setPaused(false));
+        sgpImplementation->mChannels[nChannelId] = pChannel;
+    }
+    return nChannelId;
+}
+
 void FAudioEngine::PlayEvent(const  std::string& strEventName) {
     auto tFoundit = sgpImplementation->mEvents.find(strEventName);
     if (tFoundit == sgpImplementation->mEvents.end()) {
@@ -197,25 +197,25 @@ bool FAudioEngine::IsEventPlaying(const  std::string& strEventName) const {
     return false;
 }
 
-void FAudioEngine::GetEventParameter(const  std::string& strEventName, const  std::string& strEventParameter, float* parameter) {
-    auto tFoundIt = sgpImplementation->mEvents.find(strEventName);
-    if (tFoundIt == sgpImplementation->mEvents.end())
-        return;
-
-    FMOD::Studio::ParameterInstance* pParameter = NULL;
-    FAudioEngine::ErrorCheck(tFoundIt->second->getParameter(strEventParameter.c_str(), &pParameter));
-    FAudioEngine::ErrorCheck(pParameter->getValue(parameter));
-}
-
-void FAudioEngine::SetEventParameter(const  std::string& strEventName, const  std::string& strParameterName, float fValue) {
-    auto tFoundIt = sgpImplementation->mEvents.find(strEventName);
-    if (tFoundIt == sgpImplementation->mEvents.end())
-        return;
-
-    FMOD::Studio::ParameterInstance* pParameter = NULL;
-    FAudioEngine::ErrorCheck(tFoundIt->second->getParameter(strParameterName.c_str(), &pParameter));
-    FAudioEngine::ErrorCheck(pParameter->setValue(fValue));
-}
+//void FAudioEngine::GetEventParameter(const  std::string& strEventName, const  std::string& strEventParameter, float* parameter) {
+//    auto tFoundIt = sgpImplementation->mEvents.find(strEventName);
+//    if (tFoundIt == sgpImplementation->mEvents.end())
+//        return;
+//
+//    FMOD::Studio::getCoreSystem* pParameter = NULL;
+//    FAudioEngine::ErrorCheck(tFoundIt->second->getParameter(strEventParameter.c_str(), &pParameter));
+//    FAudioEngine::ErrorCheck(pParameter->getValue(parameter));
+//}
+//
+//void FAudioEngine::SetEventParameter(const  std::string& strEventName, const  std::string& strParameterName, float fValue) {
+//    auto tFoundIt = sgpImplementation->mEvents.find(strEventName);
+//    if (tFoundIt == sgpImplementation->mEvents.end())
+//        return;
+//
+//    FMOD::Studio::ParameterInstance* pParameter = NULL;
+//    FAudioEngine::ErrorCheck(tFoundIt->second->getParameter(strParameterName.c_str(), &pParameter));
+//    FAudioEngine::ErrorCheck(pParameter->setValue(fValue));
+//}
 
 float  FAudioEngine::dbToVolume(float dB)
 {

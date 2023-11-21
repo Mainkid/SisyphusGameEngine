@@ -86,6 +86,8 @@
     <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
     <ClCompile Include="Engine\Systems\SoundSystem.cpp" />
     <ClCompile Include="Engine\Components\FAudioImp.cpp" />
+    <ClCompile Include="Engine\Components\FAudioEngine.cpp" />
+    <ClCompile Include="Engine\Components\FSoundComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -209,6 +211,8 @@
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
     <ClInclude Include="Engine\Systems\SoundSystem.h" />
     <ClInclude Include="Engine\Components\FAudioImp.h" />
+    <ClInclude Include="Engine\Components\FAudioEngine.h" />
+    <ClInclude Include="Engine\Components\FSoundComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

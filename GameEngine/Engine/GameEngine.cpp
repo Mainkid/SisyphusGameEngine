@@ -115,12 +115,14 @@ int main()
     // ser.Deserialize(json, *ecs);
     //---------------------------------------------
 
+
+
     FAudioEngine TESTAE;
-    TESTAE.Init();
+    //TESTAE.Init();
+    //TESTAE.LoadSound("Engine/Assets/Audio/LookinAtIt.ogg");
+    //TESTAE.PlaySound("Engine/Assets/Audio/LookinAtIt.ogg");
+
 
     EngineCore::instance()->Update();
-    EngineCore::instance()->ShutDown();
-    
-
-    
+    EngineCore::instance()->ShutDown(); 
 }

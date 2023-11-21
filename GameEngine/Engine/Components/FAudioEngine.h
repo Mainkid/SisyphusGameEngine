@@ -51,29 +51,25 @@ struct Implementation {
 class FAudioEngine
 {
 private:
-
-   Implementation* sgpImplementation = nullptr;
-  
-
-   
+    Implementation* sgpImplementation = new Implementation;;
+ 
 public:
     
     // that's how it works
     //void Init() {  };
     // but only if it is empty
-    void Init() { Implementation* sgpImplementation = new Implementation; };
+    void Init();
     
     static void Update();
     static void Shutdown();
-    //static
-        int ErrorCheck(FMOD_RESULT result);
+    static int ErrorCheck(FMOD_RESULT result);
 
     void LoadBank(const std::string& strBankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags);
     void LoadEvent(const std::string& strEventName);
     void LoadSound(const std::string& strSoundName, bool b3d = true, bool bLooping = false, bool bStream = false);
     void UnLoadSound(const std::string& strSoundName);
     //void Set3dListenerAndOrientation(const MVector3& vPos = MVector3{ 0, 0, 0 }, float fVolumedB = 0.0f);
-    void PlaySound(const std::string& strSoundName, const MVector3& vPosition = MVector3{ 0, 0, 0 }, float fVolumedB = 1.0f);
+    int PlayMSound(const std::string& strSoundName, const MVector3& vPosition = MVector3{ 0, 0, 0 }, float fVolumedB = 0.0f);
     void PlayEvent(const std::string& strEventName);
     //void StopChannel(int nChannelId);
     void StopEvent(const std::string& strEventName, bool bImmediate = false);
@@ -87,16 +83,5 @@ public:
     float dbToVolume(float db);
     float VolumeTodb(float volume);
     FMOD_VECTOR VectorToFmod(const MVector3& vPosition);
-
-    //FAudioEngine() 
-    //{
-    //    //Init();
-
-    //        //TESTAE.LoadSound("Engine/Assets/Audio/LookinAtIt.ogg");
-    //         //TESTAE.PlaySound("Engine/Assets/Audio/LookinAtIt.ogg");};
-    //};
-
-
-    //~FAudioEngine() {};
 };
 
