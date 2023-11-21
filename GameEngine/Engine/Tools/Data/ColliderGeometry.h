@@ -30,6 +30,10 @@ struct SyColliderGeometry
         for (unsigned i = 0; i < 4; i++)
             AddSegment(i, i + 4);
     }
+    void MakeHalfRing(const SyVector3& origin, const SyVector3& radiusVector, float densityFactor)
+    {
+        
+    }
 private:
     void AddSegment(unsigned startI, unsigned endI)
     {
