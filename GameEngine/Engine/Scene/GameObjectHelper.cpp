@@ -32,7 +32,8 @@ void GameObjectHelper::Destroy(entt::registry* ecs, entt::entity ent)
 	{
 		if (tf->children.size() > 0)
 		{
-			for (auto childEnt : tf->children)
+			std::set<entt::entity> tmpSet = tf->children;
+			for (auto childEnt : tmpSet)
 				Destroy(ecs, childEnt);
 		}
 		SetParent(ecs, ent, entt::null);
