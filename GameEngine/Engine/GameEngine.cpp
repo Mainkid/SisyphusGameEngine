@@ -114,10 +114,7 @@ int main()
     // ser.Deserialize(json, *ecs);
     //---------------------------------------------
     SyGeometry halfring;
-    halfring.MakeSector(1, 3.0f, 0.0f, SyMathHelper::PI);
-    halfring.Rotate(SyVector3(0.0f, 1.0f, 0.0f));
-    SyGeometry box;
-    box.MakeBox(SyVector3(1.0f, 2.0f, 3.0f));
+    halfring.MakeSphere(5.0f, 3);
     EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();
     

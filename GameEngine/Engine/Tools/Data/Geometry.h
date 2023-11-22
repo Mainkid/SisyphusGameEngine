@@ -37,7 +37,7 @@ struct SyGeometry
         for (unsigned i = 0; i < _vertices.size(); i++)
             _vertices[i].Rotate(eulerRotation);
     }
-    //Construct 0-origin axis-aligned rectangle. Extent.z is ignored
+    //Construct 0-origin axis-aligned rectangle in xy-plane. Extent.z is ignored
     SyResult MakeRectangle(const SyVector3& extent)
     {
         _vertices.resize(4);
@@ -67,7 +67,7 @@ struct SyGeometry
        return SyResult();
     };
     //Construct a 0-origin round sector in xy-plane
-    SyResult MakeSector(float radius, unsigned densityFactor = 1.0f, float startAngle  = 0.0f, float endAngle = 2.0f * SyMathHelper::PI)
+    SyResult MakeRingSector(float radius, unsigned densityFactor = 1.0f, float startAngle  = 0.0f, float endAngle = 2.0f * SyMathHelper::PI)
     {
         SyResult result;
         if (densityFactor < 1)
@@ -91,6 +91,28 @@ struct SyGeometry
             AddSegment(i, i + 1);
         AddSegment(numVertices - 1, 0);
         return SyResult();
+    }
+    //Consturct a 0-origin sphere wireframe
+    SyResult MakeSphere(float radius, unsigned densityFactor = 1.0f)
+    {
+        SyResult result;
+        if (densityFactor < 1)
+        {
+            result.code = SY_RESCODE_ERROR;
+            result.message = xstring("Density factor for a half ring can't be less than 1.");
+            SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Density factor for a half ring can't be less than 1.");
+            return result;
+        }
+        MakeRingSector(radius, densityFactor); //xy ring
+        SyGeometry xzRing;
+        xzRing.MakeRingSector(radius, densityFactor);
+        xzRing.Rotate(SyVector3(1.0f, 0.0f, 0.0f));
+        Merge(xzRing);
+        SyGeometry yzRing;
+        yzRing.MakeRingSector(radius, densityFactor);
+        yzRing.Rotate(SyVector3(0.0f, 1.0f, 0.0f));
+        Merge(yzRing);
+        return result;
     }
 private:
     void AddSegment(unsigned startI, unsigned endI)
