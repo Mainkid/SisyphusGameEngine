@@ -36,7 +36,7 @@ struct SyGeometry
             AddSegment(i, i + 4);
         return SyResult();
     };
-    SyResult MakeHalfRing(const SyVector3& radiusVector, unsigned densityFactor)
+    SyResult MakeSector(float radius, unsigned densityFactor = 1.0f, float startAngle  = 0.0f, float endAngle = 2.0f * SyMathHelper::PI)
     {
         SyResult result;
         if (densityFactor < 1)
@@ -46,18 +46,14 @@ struct SyGeometry
             SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Density factor for a half ring can't be less than 1.");
             return result;
         }
-        unsigned numVertices = 3 + 2 * (densityFactor - 1);
-        float angleStep = SyMathHelper::PI / (numVertices - 1);
+        unsigned numVertices = 4 * densityFactor; // densityFactor == 1 corresponds to square
+        float angleStep = (endAngle - startAngle) / numVertices;
         _vertices.resize(numVertices);
-        _vertices[numVertices / 2] = radiusVector;
-        for (unsigned i = 1; i < numVertices / 2 + 1; i++)
+        unsigned i = 0;
+        for (float angle = startAngle; angle < endAngle; angle += angleStep)
         {
-            float x1 = radiusVector.x - sin(i * angleStep);
-            float x2 = radiusVector.x + sin(i * angleStep);
-            float y = radiusVector.y  - cos(i * angleStep) * SyMathHelper::Sign(radiusVector.y);
-            float z = radiusVector.z;
-            _vertices[numVertices / 2 + i] = SyVector3(x1, y, z);
-            _vertices[numVertices / 2 - i] = SyVector3(x2, y, z);
+            _vertices[i] = SyVector3(radius * cosf(angle), radius * sinf(angle), 0.0f);
+            i++;
         }
         _indices.reserve(2 * numVertices);
         for (unsigned i = 0; i < numVertices - 1; i++)

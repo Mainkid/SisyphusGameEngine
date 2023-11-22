@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "../../vendor/entt/entt.hpp"
 #include "../Tools/Data/Vector.h"
-#include "../Tools/Data/ColliderGeometry.h"
+#include "..\Tools\Data\Geometry.h"
 #include "../Serialization/Serializable.h"
 namespace physx
 {

@@ -9,7 +9,7 @@
 
 #include "Scene/GameObjectHelper.h"
 
-#include "Tools/Data/ColliderGeometry.h"
+#include "Tools\Data\Geometry.h"
 
 #define SY_PI 3.14f
 #define SY_PI2 SY_PI / 2
@@ -114,7 +114,7 @@ int main()
     // ser.Deserialize(json, *ecs);
     //---------------------------------------------
     SyGeometry halfring;
-    halfring.MakeHalfRing(SyVector3(0.0f, 1.0f, 0.0f), 1.0f);
+    halfring.MakeSector(1, 3.0f, 0.0f, SyMathHelper::PI);
     
     EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();

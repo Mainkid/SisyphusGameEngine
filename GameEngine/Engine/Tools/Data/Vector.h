@@ -119,6 +119,10 @@ public:
 		newVector.z *= -1;
 		return newVector;
 	}
+	float Length() const
+	{
+		return x * x + y * y + z * z;
+	}
 	static SyVector3 PxQuatToEuler(const physx::PxQuat& pxQuat) //returns euler angle vector
 	{
 		DirectX::SimpleMath::Quaternion q(pxQuat.x, pxQuat.y, pxQuat.z, pxQuat.w);
@@ -131,6 +135,7 @@ public:
 		physx::PxQuat qq = { q.x, q.y, q.z, q.w };
 		return qq;
 	}
+
 	friend bool operator==(const SyVector3& left, const SyVector3& right);
 
 	static const SyVector3 ZERO;
