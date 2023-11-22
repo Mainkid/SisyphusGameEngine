@@ -88,9 +88,29 @@ int main()
         BOX,
         cubeColDesc,
         SyColliderMaterial());
-
     ecs->get<SyRBodyComponent>(cube).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
-    ecs->get<SyRBodyComponent>(cube).Flags |= SyERBodyFlags::DISABLE_GRAVITY;
+    
+    auto sphere = GameObjectHelper::Create(ecs, "Sphere", { 0.0f, 5.0f, 10.0f });
+    auto result10 = GameObjectHelper::AddRigidBodyComponent(ecs, sphere, DYNAMIC);
+    auto result11 = GameObjectHelper::AddSphereMeshComponent(ecs, sphere);
+    SyPrimitiveColliderShapeDesc sphereColDesc;
+    sphereColDesc.Radius = 1.5f;
+    auto result12 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, sphere,
+        SPHERE,
+        sphereColDesc,
+        SyColliderMaterial());
+
+    ecs->get<SyRBodyComponent>(sphere).LinearVelocity = SyVector3(-5.0f, 0.0f, 0.0f);
+
+    //auto capsule = GameObjectHelper::Create(ecs, "Capsule", { 0.0f, 5.0f, 6.0f });
+    //auto result13 = GameObjectHelper::AddRigidBodyComponent(ecs, capsule, DYNAMIC);
+    //auto result14 = GameObjectHelper::AddCubeMeshComponent(ecs, capsule);
+    //SyPrimitiveColliderShapeDesc capsuleColDesc;
+    //capsuleColDesc.Radius = 1.5f;
+    //auto result15 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, capsule,
+    //    CAPSULE,
+    //    capsuleColDesc,
+    //    SyColliderMaterial());
     
     //---------- Serialization test ----------------
 
@@ -113,8 +133,7 @@ int main()
     //
     // ser.Deserialize(json, *ecs);
     //---------------------------------------------
-    SyGeometry capsule;
-    capsule.MakeCapsule(5, 10, 20);
+
     EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();
     

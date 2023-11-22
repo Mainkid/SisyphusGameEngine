@@ -4,9 +4,10 @@
 #include "../MathHelper.h"
 #include <vector>
 
+
 struct SyGeometry
 {
-    const std::vector<SyVector3>& GetVertices() const
+    const std::vector<DirectX::SimpleMath::Vector4>& GetVertices() const
     {
         return _vertices;
     };
@@ -30,21 +31,25 @@ struct SyGeometry
     void Translate(const SyVector3& translation)
     {
         for (unsigned i = 0; i < _vertices.size(); i++)
-            _vertices[i].Translate(translation);
+        {
+            _vertices[i].x += translation.x;
+            _vertices[i].y += translation.y;
+            _vertices[i].z += translation.z;
+        };
     }
     void Rotate(const SyVector3& eulerRotation)
     {
         for (unsigned i = 0; i < _vertices.size(); i++)
-            _vertices[i].Rotate(eulerRotation);
+            DirectX::SimpleMath::Vector4::Transform(_vertices[i], DirectX::SimpleMath::Matrix::CreateFromYawPitchRoll(eulerRotation));
     }
     //Construct 0-origin axis-aligned rectangle in xy-plane. Extent.z is ignored
     void MakeRectangle(const SyVector3& extent)
     {
         _vertices.resize(4);
-        _vertices[0] = SyVector3(extent.x, extent.y, 0.0f);
-        _vertices[1] = _vertices[0].ReflectX();
-        _vertices[2] = _vertices[0].ReflectY();
-        _vertices[3] = _vertices[0].ReflectX().ReflectY();
+        _vertices[0] = DirectX::SimpleMath::Vector4(extent.x, extent.y, 0.0f, 1.0f);
+        _vertices[1] = DirectX::SimpleMath::Vector4(-extent.x, extent.y, 0.0f, 1.0f);
+        _vertices[2] = DirectX::SimpleMath::Vector4(extent.x, -extent.y, 0.0f, 1.0f);
+        _vertices[3] = DirectX::SimpleMath::Vector4(-extent.x, -extent.y, 0.0f, 1.0f);
         _indices.reserve(8);
         for (unsigned i = 0; i < 3; i++)
             AddSegment(i, i + 1);
@@ -75,11 +80,10 @@ struct SyGeometry
         unsigned numVertices = 4 * densityFactor; // densityFactor == 1 corresponds to square
         float angleStep = (endAngle - startAngle) / numVertices;
         _vertices.resize(numVertices);
-        unsigned i = 0;
-        for (float angle = startAngle; angle < endAngle; angle += angleStep)
+        
+        for (unsigned i = 0; i < numVertices; i++)
         {
-            _vertices[i] = SyVector3(radius * cosf(angle), radius * sinf(angle), 0.0f);
-            i++;
+            _vertices[i] = DirectX::SimpleMath::Vector4(radius * cosf(angleStep * i), radius * sinf(angleStep * i), 0.0f, 1.0f);
         }
         _indices.reserve(2 * numVertices);
         for (unsigned i = 0; i < numVertices - 1; i++)
@@ -142,7 +146,7 @@ private:
         _indices.push_back(endI);
     }
     
-    std::vector<SyVector3> _vertices;
+    std::vector<DirectX::SimpleMath::Vector4> _vertices;
     std::vector<unsigned> _indices;
 };
 

@@ -229,6 +229,11 @@ SyResult GameObjectHelper::AddCubeMeshComponent(entt::registry* ecs, entt::entit
 	return AddMeshComponent(ecs, entity, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Cube.fbx"));
 }
 
+SyResult GameObjectHelper::AddSphereMeshComponent(entt::registry* ecs, entt::entity entity)
+{
+	return AddMeshComponent(ecs, entity, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\sphere.fbx"));
+}
+
 entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 {
 	//TODO: Translate to resource service!

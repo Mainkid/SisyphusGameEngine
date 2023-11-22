@@ -103,12 +103,13 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyCo
     	cComponent._shape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
 																		PxSphereGeometry(cComponent.Radius),
 																		pxMaterial);
-		
+		cComponent._colliderGeometry.MakeSphere(cComponent.Radius, 16 * SyMathHelper::Max(1.0f, cComponent.Radius));
 		break;
     case CAPSULE:
     	cComponent._shape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
 																		PxCapsuleGeometry(cComponent.Radius, cComponent.HalfHeight),
 																		pxMaterial);
+		//cComponent._colliderGeometry.MakeCapsule(cComponent.Radius, cComponent.HalfHeight, 16 * SyMathHelper::Max(1.0f, cComponent.Radius));
 		break;
     default:
     		result.code = SY_RESCODE_ERROR;
