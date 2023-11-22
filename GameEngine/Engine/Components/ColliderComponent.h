@@ -62,7 +62,7 @@ struct SyPrimitiveColliderComponent
     //members initialized in CollisionSystem::InitComponentP
 private:
     physx::PxShape*			_shape = nullptr;
-    SyColliderGeometry      _colliderGeometry;
+    SyGeometry      _colliderGeometry;
     
     friend class SyCollisionPreSystem;
     friend class SyCollisionSystem;

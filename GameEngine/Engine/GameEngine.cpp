@@ -113,7 +113,8 @@ int main()
     //
     // ser.Deserialize(json, *ecs);
     //---------------------------------------------
-
+    SyGeometry halfring;
+    halfring.MakeHalfRing(SyVector3(0.0f, 1.0f, 0.0f), 1.0f);
     
     EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();
