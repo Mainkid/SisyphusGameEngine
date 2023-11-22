@@ -66,6 +66,7 @@ private:
     
     friend class SyCollisionPreSystem;
     friend class SyCollisionSystem;
+    friend class EditorColliderRenderSystem;
 };
 
 struct SyTrimeshColliderComponent

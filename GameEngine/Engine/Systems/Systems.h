@@ -36,6 +36,7 @@
 #include "Rendering/RenderPipeline/EditorGridRenderSystem.h"
 #include "Rendering/RenderPipeline/HbaoRenderSystem.h"
 #include "Rendering/RenderPipeline/ParticleRenderSystem.h"
+#include "Rendering/RenderPipeline/EditorColliderRenderSystem.h"
 
 #include "../Mono/Systems/MonoSyncSystem.h"
 

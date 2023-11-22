@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
     <ClCompile Include="Engine\Components\ColliderComponent.cpp" />
     <ClCompile Include="Engine\Systems\CollisionPreSystem.cpp" />
     <ClCompile Include="Engine\Systems\CollisionSystem.cpp" />
@@ -671,6 +672,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorColliderRenderSystem.h" />
     <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
     <ClInclude Include="Engine\Components\ColliderComponent.h" />
@@ -827,6 +829,9 @@
     <None Include="Engine\Assets\Shaders\EditorGridShader.hlsl">
       <FileType>Document</FileType>
     </None>
+    <FxCompile Include="Engine\Assets\Shaders\EditorColliderShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Engine\Assets\Shaders\EnvironmentPrefilter.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>

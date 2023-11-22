@@ -11,6 +11,7 @@
     <FxCompile Include="Engine\Assets\Shaders\IrradianceMapGenerator.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\EnvironmentPrefilter.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\IblLookUpTexture.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\EditorColliderShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp" />
@@ -36,7 +37,6 @@
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowRenderSystem.cpp" />
     <ClCompile Include="Engine\Tools\ErrorLogger.cpp" />
     <ClCompile Include="Engine\Tools\ImageLoader.cpp" />
-    <ClCompile Include="Engine\Components\ParticleComponent.cpp" />
     <ClCompile Include="Engine\Components\Particle.cpp" />
     <ClCompile Include="Engine\Systems\TransformSystem.cpp" />
     <ClCompile Include="Engine\Systems\TransformHelper.cpp" />
@@ -100,6 +100,8 @@
     <ClCompile Include="Engine\Tools\Data\Vector.cpp" />
     <ClCompile Include="Engine\Systems\ParticlesSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\CollisionPreSystem.cpp" />
+    <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -210,7 +212,6 @@
     <ClInclude Include="Engine\Core\ECS\Event.h" />
     <ClInclude Include="Engine\Systems\PrepareEventsSystem.h" />
     <ClInclude Include="Engine\Tools\MathHelper.h" />
-    <ClInclude Include="Engine\Core\ECS\Events\SySceneLoadEvent.h" />
     <ClInclude Include="Engine\Mono\ISyMonoGameCallbackReceiver.h" />
     <ClInclude Include="Engine\Mono\SyMono.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoGame.h" />
@@ -228,12 +229,8 @@
     <ClInclude Include="Engine\Mono\Objects\SyMonoEditor.h" />
     <ClInclude Include="Engine\Systems\ParticlesSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\HbaoRenderSystem.h" />
-    <ClInclude Include="Engine\Core\ECS\Events\SyHotReloadEvent.h" />
-    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeStartedEvent.h" />
-    <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeEndedEvent.h" />
     <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
     <ClInclude Include="Engine\Systems\Rendering\ImageBasedLightingSystem.h" />
-    <ClInclude Include="Engine\Core\ECS\Events\SyImageBasedLightingUpdateEvent.h" />
     <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
     <ClInclude Include="Engine\Components\ColliderComponent.h" />
@@ -243,6 +240,16 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.h" />
     <ClInclude Include="vendor\ImGui\curve_v122.hpp" />
     <ClInclude Include="vendor\ImGui\ImCurve.h" />
+    <ClInclude Include="Engine\Events\SyHotReloadEvent.h" />
+    <ClInclude Include="Engine\Events\SyImageBasedLightingUpdateEvent.h" />
+    <ClInclude Include="Engine\Events\SyOnCreateColliderEvent.h" />
+    <ClInclude Include="Engine\Events\SyOnCreateRBodyEvent.h" />
+    <ClInclude Include="Engine\Events\SyPlayModeEndedEvent.h" />
+    <ClInclude Include="Engine\Events\SyPlayModeStartedEvent.h" />
+    <ClInclude Include="Engine\Events\SySceneLoadEvent.h" />
+    <ClInclude Include="Engine\Systems\CollisionPreSystem.h" />
+    <ClInclude Include="Engine\Tools\Data\Geometry.h" />
+    <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorColliderRenderSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

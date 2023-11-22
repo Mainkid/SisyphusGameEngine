@@ -23,6 +23,7 @@ struct RenderHelperData
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 	};
 
+	UINT strides12[1] = { 12 };
 	UINT strides16[1] = { 16 };
 	UINT strides32[1] = { 32 };
 	UINT strides48[1] = { 48 };
@@ -57,6 +58,7 @@ struct RenderContext : public IService
 	std::unique_ptr<Shader> SkyBoxShader;
 	std::unique_ptr<Shader> ToneMapper;
 	std::unique_ptr<Shader> EditorGridRenderer;
+	std::unique_ptr<Shader> EditorColliderRenderer;
 	std::unique_ptr<Shader> GaussianBlurX;
 	std::unique_ptr<Shader> GaussianBlurY;
 	std::unique_ptr<Shader> IrradianceMapGenerator;

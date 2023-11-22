@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "SimpleMath.h"
+#include "../../Tools/Data/Vector.h"
 //#include "ParticleSystem/Particle.h"
 
 struct HardwareContext;
@@ -24,10 +25,18 @@ public:
     UINT bindFlags=D3D11_BIND_INDEX_BUFFER,UINT cpuAccess=0,
     UINT miscFlags=0,UINT stride=0,UINT memPitch=0, UINT memSlicePitch=0);
 
+    void Initialize(std::vector<unsigned> points, D3D11_USAGE usage = D3D11_USAGE_DEFAULT,
+        UINT bindFlags = D3D11_BIND_INDEX_BUFFER, UINT cpuAccess = 0,
+        UINT miscFlags = 0, UINT stride = 0, UINT memPitch = 0, UINT memSlicePitch = 0);
+
     
     void Initialize(std::vector<DirectX::SimpleMath::Vector4> points,D3D11_USAGE usage=D3D11_USAGE_DEFAULT,
   UINT bindFlags=D3D11_BIND_VERTEX_BUFFER,UINT cpuAccess=0,
   UINT miscFlags=0,UINT stride=0,UINT memPitch=0, UINT memSlicePitch=0);
+
+    void Initialize(std::vector<SyVector3> points, D3D11_USAGE usage = D3D11_USAGE_DEFAULT,
+        UINT bindFlags = D3D11_BIND_VERTEX_BUFFER, UINT cpuAccess = 0,
+        UINT miscFlags = 0, UINT stride = 0, UINT memPitch = 0, UINT memSlicePitch = 0);
    
 
     
