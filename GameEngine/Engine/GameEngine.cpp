@@ -113,8 +113,8 @@ int main()
     //
     // ser.Deserialize(json, *ecs);
     //---------------------------------------------
-    SyGeometry halfring;
-    halfring.MakeSphere(5.0f, 3);
+    SyGeometry capsule;
+    capsule.MakeCapsule(5, 10, 20);
     EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();
     
