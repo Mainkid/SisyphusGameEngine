@@ -429,7 +429,8 @@ void HudViewportSystem::ProcessInput()
 			{
 				std::cout << "YO";
 			}
-
+			type_info& ti_s = id;
+			//_ecs->emplace<Type(id)>(entt::entity(1));
 			/*auto ptrMeta = _compTypeToMeta.find(storage.type().index());
 			if (ptrMeta == _compTypeToMeta.end())
 				continue;

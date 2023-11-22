@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "../../../vendor/entt/entt.hpp"
 #include "../Tools/Data/Vector.h"
 #include "../../Components/LightComponent.h"
@@ -48,6 +49,8 @@ public:
 
 	template <typename T_Event, typename ... Args>
 	static SyResult CallEvent(entt::registry* ecs, const std::string& name, Args... eventArgs);
+
+	
 };
 
 //Calls the event to be listened to NEXT FRAME. Events are only to be listened to in Runtime (it is possible to listen to events in Init(), but it relies on order of systems update). Use the macros from SystemBase.h to listen to event!
@@ -60,3 +63,5 @@ SyResult GameObjectHelper::CallEvent(entt::registry* ecs, const std::string& nam
 	ecs->emplace<SyEventTag>(ent);
 	return SyResult();
 }
+
+
