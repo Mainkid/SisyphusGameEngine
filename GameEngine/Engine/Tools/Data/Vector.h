@@ -94,11 +94,11 @@ public:
 		z *= factor_;
 		return *this;
 	}
-	SyVector3& operator/= (float dividor_)
+	SyVector3& operator/= (float divisor_)
 	{
-		x /= dividor_;
-		y /= dividor_;
-		z /= dividor_;
+		x /= divisor_;
+		y /= divisor_;
+		z /= divisor_;
 		return *this;
 	}
 	SyVector3 ReflectX()
@@ -122,6 +122,17 @@ public:
 	float Length() const
 	{
 		return x * x + y * y + z * z;
+	}
+	void Translate(const SyVector3& translation)
+	{
+		x += translation.x;
+		y += translation.y;
+		z += translation.z;
+	}
+	//rotate vector by yaw, pitch, roll angles	
+	void Rotate(const SyVector3& eulerRotation)
+	{
+		DirectX::SimpleMath::Vector3::Transform(*this, DirectX::SimpleMath::Matrix::CreateFromYawPitchRoll(eulerRotation));
 	}
 	static SyVector3 PxQuatToEuler(const physx::PxQuat& pxQuat) //returns euler angle vector
 	{
