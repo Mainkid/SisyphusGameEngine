@@ -97,7 +97,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<SyRBodySystem>();
 	_systems.Add<SyCollisionPreSystem>();
 	_systems.Add<SyCollisionSystem>();
-
+	_systems.Add<SoundSystem>();
 	_systems.Add<MonoSyncSystem>();
 
 	

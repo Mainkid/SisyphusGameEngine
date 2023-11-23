@@ -4,6 +4,7 @@
 
 #include "../../Components/MeshComponent.h"
 #include "../../Components/LightComponent.h"
+#include "../../Components/FSoundComponent.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Components/ParticleComponent.h"
 #include "../../Components/EditorBillboardComponent.h"

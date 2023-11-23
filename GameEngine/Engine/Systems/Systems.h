@@ -6,6 +6,7 @@
 #include "TransformSystem.h"
 #include "MeshSystem.h"
 #include "LightSystem.h"
+#include "SoundSystem.h"
 #include "RBSystem.h"
 #include "CollisionPreSystem.h"
 #include "CollisionSystem.h"

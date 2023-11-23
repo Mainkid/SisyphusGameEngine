@@ -57,9 +57,6 @@ private:
 public:
 
     //static Implementation* sgpImplementation;
-    // that's how it works
-    //void Init() {  };
-    // but only if it is empty
     void Init();
     
     static void Update();
