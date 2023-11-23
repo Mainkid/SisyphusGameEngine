@@ -121,8 +121,8 @@ int main()
 // test
     FAudioEngine TESTAE;
     TESTAE.Init();
-    //TESTAE.LoadSound("Engine/Assets/Audio/LookinAtIt.ogg");
-    //TESTAE.PlayMSound("Engine/Assets/Audio/LookinAtIt.ogg");
+    TESTAE.LoadSound("Engine/Assets/Audio/LookinAtIt.ogg");
+    TESTAE.PlayMSound("Engine/Assets/Audio/LookinAtIt.ogg");
 
     EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();

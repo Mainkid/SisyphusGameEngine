@@ -101,6 +101,8 @@
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\CollisionPreSystem.cpp" />
     <ClCompile Include="Engine\Systems\SoundSystem.cpp" />
+    <ClCompile Include="Engine\Components\FAudioEngine.cpp" />
+    <ClCompile Include="Engine\Components\FSoundComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -254,6 +256,8 @@
     <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp_effects.h" />
     <ClInclude Include="vendor\FMod\api\core\inc\fmod_errors.h" />
     <ClInclude Include="vendor\FMod\api\core\inc\fmod_output.h" />
+    <ClInclude Include="Engine\Components\FAudioEngine.h" />
+    <ClInclude Include="Engine\Components\FSoundComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
