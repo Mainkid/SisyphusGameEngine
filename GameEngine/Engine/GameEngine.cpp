@@ -79,38 +79,40 @@ int main()
     auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid, SyEMeshComponentFlags::MESH_COLLIDER | SyEMeshComponentFlags::MESH_RENDER);
     auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
     auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
-    auto cube = GameObjectHelper::Create(ecs, "Cube", { 0.0f, 5.0f, 8.0f });
-    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube, DYNAMIC);
-    auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube);
-    SyPrimitiveColliderShapeDesc cubeColDesc;
-    cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
-    auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube,
-        BOX,
-        cubeColDesc,
-        SyColliderMaterial());
-    ecs->get<SyRBodyComponent>(cube).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
-    
-    auto sphere = GameObjectHelper::Create(ecs, "Sphere", { 0.0f, 5.0f, 10.0f });
-    auto result10 = GameObjectHelper::AddRigidBodyComponent(ecs, sphere, DYNAMIC);
-    auto result11 = GameObjectHelper::AddSphereMeshComponent(ecs, sphere);
-    SyPrimitiveColliderShapeDesc sphereColDesc;
-    sphereColDesc.Radius = 1.5f;
-    auto result12 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, sphere,
-        SPHERE,
-        sphereColDesc,
-        SyColliderMaterial());
 
-    ecs->get<SyRBodyComponent>(sphere).LinearVelocity = SyVector3(-5.0f, 0.0f, 0.0f);
-
-    //auto capsule = GameObjectHelper::Create(ecs, "Capsule", { 0.0f, 5.0f, 6.0f });
-    //auto result13 = GameObjectHelper::AddRigidBodyComponent(ecs, capsule, DYNAMIC);
-    //auto result14 = GameObjectHelper::AddCubeMeshComponent(ecs, capsule);
-    //SyPrimitiveColliderShapeDesc capsuleColDesc;
-    //capsuleColDesc.Radius = 1.5f;
-    //auto result15 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, capsule,
-    //    CAPSULE,
-    //    capsuleColDesc,
+    //auto cube = GameObjectHelper::Create(ecs, "Cube", { 0.0f, 5.0f, 8.0f });
+    //auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube, DYNAMIC);
+    //auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube);
+    //SyPrimitiveColliderShapeDesc cubeColDesc;
+    //cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
+    //auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube,
+    //    BOX,
+    //    cubeColDesc,
     //    SyColliderMaterial());
+    //ecs->get<SyRBodyComponent>(cube).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
+    
+     //auto sphere = GameObjectHelper::Create(ecs, "Sphere", { 0.0f, 5.0f, 10.0f });
+     //auto result10 = GameObjectHelper::AddRigidBodyComponent(ecs, sphere, DYNAMIC);
+     //auto result11 = GameObjectHelper::AddSphereMeshComponent(ecs, sphere);
+     //SyPrimitiveColliderShapeDesc sphereColDesc;
+     //sphereColDesc.Radius = 1.5f;
+     //auto result12 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, sphere,
+     //    SPHERE,
+     //    sphereColDesc,
+     //    SyColliderMaterial());
+    
+     //ecs->get<SyRBodyComponent>(sphere).LinearVelocity = SyVector3(-5.0f, 0.0f, 0.0f);
+
+    auto capsule = GameObjectHelper::Create(ecs, "Capsule", { 0.0f, 5.0f, 6.0f });
+    auto result13 = GameObjectHelper::AddRigidBodyComponent(ecs, capsule, DYNAMIC);
+    //auto result14 = GameObjectHelper::AddCubeMeshComponent(ecs, capsule);
+    SyPrimitiveColliderShapeDesc capsuleColDesc;
+    capsuleColDesc.Radius = 1.0f;
+    capsuleColDesc.HalfHeight = 1.0f;
+    auto result15 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, capsule,
+        CAPSULE,
+        capsuleColDesc,
+        SyColliderMaterial());
     
     //---------- Serialization test ----------------
 
