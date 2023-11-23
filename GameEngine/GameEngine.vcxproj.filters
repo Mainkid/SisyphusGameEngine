@@ -36,6 +36,7 @@
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ShadowRenderSystem.cpp" />
     <ClCompile Include="Engine\Tools\ErrorLogger.cpp" />
     <ClCompile Include="Engine\Tools\ImageLoader.cpp" />
+    <ClCompile Include="Engine\Components\ParticleComponent.cpp" />
     <ClCompile Include="Engine\Components\Particle.cpp" />
     <ClCompile Include="Engine\Systems\TransformSystem.cpp" />
     <ClCompile Include="Engine\Systems\TransformHelper.cpp" />
@@ -96,6 +97,7 @@
     <ClCompile Include="Engine\Components\ColliderComponent.cpp" />
     <ClCompile Include="Engine\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Engine\Systems\RBSystem.cpp" />
+    <ClCompile Include="Engine\Tools\Data\Vector.cpp" />
     <ClCompile Include="Engine\Systems\ParticlesSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
   </ItemGroup>

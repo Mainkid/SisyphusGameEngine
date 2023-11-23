@@ -150,6 +150,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Components\ColliderComponent.cpp" />
+    <ClCompile Include="Engine\Systems\CollisionPreSystem.cpp" />
     <ClCompile Include="Engine\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.cpp" />
     <ClCompile Include="Engine\Mono\Components\MonoSyncComp.h" />
@@ -617,6 +618,7 @@
       <SDLCheck>true</SDLCheck>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="Engine\Tools\Data\Vector.cpp" />
     <ClCompile Include="Engine\Tools\ErrorLogger.cpp" />
     <ClCompile Include="Engine\Tools\ImageLoader.cpp" />
     <ClCompile Include="Engine\Components\Particle.cpp" />
@@ -679,6 +681,7 @@
     <ClInclude Include="Engine\Core\ECS\Events\SyPlayModeEndedEvent.h" />
     <ClInclude Include="Engine\Core\ECS\Events\SySceneLoadEvent.h" />
     <ClInclude Include="Engine\Core\ResourcePath.h" />
+    <ClInclude Include="Engine\Systems\CollisionPreSystem.h" />
     <ClInclude Include="Engine\Systems\CollisionSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.h" />
     <ClInclude Include="Engine\Components\Material.h" />

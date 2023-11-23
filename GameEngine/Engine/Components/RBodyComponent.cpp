@@ -7,8 +7,8 @@ SyRBodyComponent::SyRBodyComponent( const SyERBodyType&      rbType,
                                     unsigned flags)
 {
     _rbType = rbType;
-    _mass   = mass;
-    _flags  = flags;
+    Mass   = mass;
+    Flags  = flags;
 }
 
 SyRBodyComponent::~SyRBodyComponent()

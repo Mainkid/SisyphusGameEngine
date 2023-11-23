@@ -30,10 +30,12 @@ SyResult SyRBodySystem::Init()
 		exit(-1);
 	}
 	PxSceneDesc sceneDesc(_physics->getTolerancesScale());
-	sceneDesc.gravity = _gravity;
+	sceneDesc.gravity = GRAVITY;
 	sceneDesc.cpuDispatcher = PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 	_scene = _physics->createScene(sceneDesc);
+	_scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
+	_scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
 	SyRBodyComponent::_scene = _scene;
 	return SyResult();
 }
@@ -41,8 +43,6 @@ SyResult SyRBodySystem::Init()
 SyResult SyRBodySystem::Run()
 {
 	SyResult result;
-	if(ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
-		return SyResult();
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
 	if (deltaTime == 0)
 	{
@@ -50,18 +50,70 @@ SyResult SyRBodySystem::Run()
 		result.message = "EngineContext.deltaTime == 0";
 		return result;
 	}
-	auto toInitView = _ecs->view<SyRBodyComponent, TransformComponent, SyRbCreateOnNextUpdateTag>();
-	for (auto& entity : toInitView)
+	//initialize components that were created at this frame
+	//auto toInitView = _ecs->view<SyRBodyComponent, TransformComponent, SyRbCreateOnNextUpdateTag>();
+	auto eventView = _ecs->view<SyEventOnCreateRBody>();
+	for (auto& eventEntity : eventView)
 	{
-		auto& rbComponent = _ecs->get<SyRBodyComponent>(entity);
-		auto& tComponent = _ecs->get<TransformComponent>(entity);
-		if (InitComponent(entity, rbComponent, tComponent).code != SY_RESCODE_OK)
+		auto entity = _ecs->get<SyEventOnCreateRBody>(eventEntity).Entity;
+		auto* rbComponent = _ecs->try_get<SyRBodyComponent>(entity);
+		if (rbComponent == nullptr)
 		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to initialize RigidBody Component on entity %d", (int)entity);
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "RigidBody Component has not been attached to entity (%d). Something went wrong", (int)entity);
+			continue;
+		}
+		auto* tComponent = _ecs->try_get<TransformComponent>(entity);
+		if (tComponent == nullptr)
+		{
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity (%d) is missing the Transform Component. Hence, you can't attach RigidBody Component to it. The RigidBody Component has been removed.", (int)entity);
+			_ecs->remove<SyRBodyComponent>(entity);
+			continue;
+		}
+		if (InitComponent(entity, *rbComponent, *tComponent).code != SY_RESCODE_OK)
+		{
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to initialize RigidBody Component on entity (%d). The RigidBody Component has been removed.", (int)entity);
 			_ecs->remove<SyRBodyComponent>(entity);
 		}
-		_ecs->remove<SyRbCreateOnNextUpdateTag>(entity);
 	}
+	//update PhysX according to changes in components member values
+	auto view = _ecs->view<SyRBodyComponent, TransformComponent>();
+	for (auto& entity : view)
+	{
+		SyRBodyComponent& rbComponent = view.get<SyRBodyComponent>(entity);
+		TransformComponent& trComponent = view.get<TransformComponent>(entity);
+		if (rbComponent._rbType == STATIC)
+			continue;
+		if (rbComponent._rbActor == nullptr)
+		{
+			result.code = SY_RESCODE_ERROR;
+			result.message = "rbComponent.rbActor is nullptr.";
+			_ecs->remove<SyRBodyComponent>(entity);
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
+			continue;
+		}
+		PxRigidDynamic* rb = rbComponent._rbActor->is<PxRigidDynamic>();
+		PxTransform rbTransform = rb->getGlobalPose();
+		if (SyVector3(rbTransform.p) != trComponent.localPosition || SyVector3::PxQuatToEuler(rbTransform.q) != trComponent.localRotation)
+			rb->setGlobalPose(PxTransform(trComponent._position,
+				SyVector3::EulerToPxQuat(trComponent._rotation)));
+		SyVector3 pxLinearVelocity = rb->getLinearVelocity();
+		if (rbComponent.LinearVelocity != pxLinearVelocity)
+			rb->setLinearVelocity(rbComponent.LinearVelocity);
+		SyVector3 pxAngularVelocity = rb->getAngularVelocity();
+		if (rbComponent.AngularVelocity != pxAngularVelocity)
+			rb->setAngularVelocity(rbComponent.AngularVelocity);
+		float pxMass = rb->getMass();
+		if (rbComponent.Mass != pxMass)
+			rb->setMass(rbComponent.Mass);
+		if (rbComponent.Flags & SyERBodyFlags::KINEMATIC)
+			rb->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+		if (rbComponent.Flags & SyERBodyFlags::DISABLE_GRAVITY)
+			rbComponent._rbActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);	
+	}
+	//do not simulate if in pause mode
+	if(ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
+		return result;
+	//advance simulation for 1 frame
 	if (!_scene->simulate(deltaTime))
 	{
 		result.code = SY_RESCODE_ERROR;
@@ -76,7 +128,7 @@ SyResult SyRBodySystem::Run()
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
 		return result;
 	}
-	auto view = _ecs->view<SyRBodyComponent, TransformComponent>();
+	//update components member values according to simulation results  
 	for (auto& entity : view)
 	{
 		SyRBodyComponent& rbComponent = view.get<SyRBodyComponent>(entity);
@@ -96,6 +148,8 @@ SyResult SyRBodySystem::Run()
 		PxTransform rbTrasform = rb->getGlobalPose();
 		trComponent._position = rbTrasform.p;
 		trComponent._rotation = SyVector3::PxQuatToEuler(rbTrasform.q);
+		rbComponent.LinearVelocity = rb->getLinearVelocity();
+		rbComponent.AngularVelocity = rb->getAngularVelocity();
 	}
 	
 	return SyResult();
@@ -118,6 +172,11 @@ SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyCompone
 		break;
 	case DYNAMIC: rbComponent._rbActor = _physics->createRigidDynamic(PxTransform(tComponent._position, 
 														SyVector3::EulerToPxQuat(tComponent._rotation)));
+		if (PxRigidBodyExt::setMassAndUpdateInertia(*static_cast<PxRigidBody*>(rbComponent._rbActor), rbComponent.Mass)  == false)
+		{
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::setMassAndUpdateInertia returned false");
+			return result;
+		}
 		break;
 	default:
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Unknown Rigid Body type in SyRbComponent. Entity: %d.", (unsigned)entity);
@@ -125,21 +184,6 @@ SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyCompone
 		result.message = xstring("Unknown Rigid Body type in SyRbComponent. Entity: %d.", (unsigned)entity);
 		return result;
 	};
-	if (rbComponent._rbType == DYNAMIC)
-	{
-		bool updateMassResult = PxRigidBodyExt::setMassAndUpdateInertia(	*static_cast<PxRigidBody*>(rbComponent._rbActor),
-																			rbComponent._mass);
-		if (updateMassResult == false)
-		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::setMassAndUpdateInertia returned false");
-			return result;
-		}
-	}
-	if (rbComponent._flags & SyERBodyFlags::KINEMATIC)
-	{
-		PxRigidBody* rb = rbComponent._rbActor->is<PxRigidBody>();
-		rb->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
-	}
 	if (_scene->addActor(*rbComponent._rbActor) == false)
 	{
 		result.code = SY_RESCODE_ERROR;
