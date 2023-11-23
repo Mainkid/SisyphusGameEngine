@@ -51,7 +51,7 @@ SyResult SyRBodySystem::Run()
 		return result;
 	}
 	//initialize components that were created at this frame
-	auto eventView = _ecs->view<SyOnCreateRBodyEvent>();
+	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyOnCreateRBodyEvent);
 	for (auto& eventEntity : eventView)
 	{
 		auto entity = _ecs->get<SyOnCreateRBodyEvent>(eventEntity).Entity;
