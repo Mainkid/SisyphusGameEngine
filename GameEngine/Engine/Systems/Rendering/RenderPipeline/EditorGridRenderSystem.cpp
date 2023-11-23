@@ -15,7 +15,6 @@ SyResult EditorGridRenderSystem::Init()
 	_hc = ServiceLocator::instance()->Get<HardwareContext>();
 	_grid1M = CreateGrid(1, _minGridSize);
 	_grid10M = CreateGrid(10, _maxGridSize);
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorGridRender system initialization successful.");
 	return SyResult();
 }
 
@@ -31,7 +30,7 @@ SyResult EditorGridRenderSystem::Run()
 	_hc->context->OMSetDepthStencilState(_rc->OffStencilState.Get(), 0);
 
 
-	dataOpaque.eyePos = Vector4(cameraTransform.position.x, cameraTransform.position.y, cameraTransform.position.z, 10);
+	dataOpaque.eyePos = Vector4(cameraTransform._position.x, cameraTransform._position.y, cameraTransform._position.z, 10);
 	auto vec3 = Vector3((int)dataOpaque.eyePos.x - _minGridSize / 2, 0, (int)dataOpaque.eyePos.z - _minGridSize / 2);
 	dataOpaque.baseData.worldView = Matrix::CreateTranslation(vec3);
 	dataOpaque.baseData.worldViewProj = Matrix::CreateTranslation(vec3) *
@@ -82,7 +81,6 @@ SyResult EditorGridRenderSystem::Run()
 
 SyResult EditorGridRenderSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorGridRender system destruction successful.");
 	return SyResult();
 }
 

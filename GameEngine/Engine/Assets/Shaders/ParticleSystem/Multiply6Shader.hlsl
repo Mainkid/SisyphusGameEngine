@@ -16,10 +16,6 @@ struct Particle
 
 
 RWBuffer<uint> counter : register(u1);
-//ConsumeStructuredBuffer<int> deadList : register(u2);
-//AppendStructuredBuffer<int> sortList : register(u3);
-
-
 
 //===============
 // Compute Shader code  |
@@ -27,7 +23,7 @@ RWBuffer<uint> counter : register(u1);
 
 
 [numthreads(1, 1, 1)]
-void DefaultCS(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
+void CSMain(uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
 {
     uint amount = counter[0];
     amount = amount * 6;

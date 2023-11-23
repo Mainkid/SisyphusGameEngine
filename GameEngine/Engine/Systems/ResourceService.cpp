@@ -1,6 +1,7 @@
 #include "ResourceService.h"
 
 #include "HardwareContext.h"
+#include "../Components/Particle.h"
 #include "../Components/SkyboxResource.h"
 #include "../Core/ECS/Events/SySceneLoadEvent.h"
 #include "../Tools/ImageLoader.h"
@@ -32,6 +33,10 @@ void ResourceService::LoadBaseAssets()
 	baseResourceDB[EAssetType::ASSET_CUBEMAP].uuid = GetUUIDFromPath(baseCubemap);
 	baseResourceDB[EAssetType::ASSET_CUBEMAP].resource = LoadResource(GetUUIDFromPath(baseCubemap));
 	resourceLibrary[GetUUIDFromPath(baseCubemap)].resource = baseResourceDB[EAssetType::ASSET_CUBEMAP].resource;
+
+	baseResourceDB[EAssetType::ASSET_PARTICLESYS].uuid = GetUUIDFromPath(baseParticle);
+	baseResourceDB[EAssetType::ASSET_PARTICLESYS].resource = LoadResource(GetUUIDFromPath(baseParticle));
+	resourceLibrary[GetUUIDFromPath(baseParticle)].resource = baseResourceDB[EAssetType::ASSET_PARTICLESYS].resource;
 
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Base assets loaded successfuly!");
 }
@@ -200,6 +205,30 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			result = _hc->device->CreateShaderResourceView(skyboxResource->cubemapTexture.Get(), &srvDesc, skyboxResource->textureSRV.GetAddressOf());
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(skyboxResource);
 			return skyboxResource;
+
+		}
+		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_PARTICLESYS)
+		{
+			std::shared_ptr<SharedParticlesData> spd = std::make_shared<SharedParticlesData>();
+			ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+			std::string filePath = FindFilePathByUUID(uuid);
+			if (filePath == "")
+			{
+				SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with %s uuid! Loading base asset...",
+					boost::lexical_cast<std::string>(uuid).c_str());
+				filePath = FindFilePathByUUID(baseResourceDB[EAssetType::ASSET_PARTICLESYS].uuid);
+			}
+
+			std::ifstream file;
+			nlohmann::json data;
+			file.open(filePath);
+			file >> data;
+		
+			ser.Deserialize(data, *spd.get());
+			if (spd->TextureUuid == boost::uuids::nil_uuid())
+				spd->TextureUuid = baseResourceDB[EAssetType::ASSET_TEXTURE].uuid;
+			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(spd);
+			return spd;
 
 		}
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_NONE)

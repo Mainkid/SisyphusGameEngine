@@ -16,10 +16,19 @@
 #include <string>
 #include <wtypes.h>
 #include "../Serialization/Serializable.h"
+#include "../Tools/Data/FlagBitmask.h"
 
 using namespace DirectX::SimpleMath;
 
 class EngineCore;
+
+enum SyEMeshComponentFlags
+{
+	MESH_RENDER		= 1,		//check if you want this mesh to be rendered
+	MESH_COLLIDER	= 1 << 1	//check if you want this mesh to be used in the TrimeshColliderComponent
+};
+
+DEFINE_BITWISE_OPERATORS(SyEMeshComponentFlags);
 
 struct MeshComponent
 {
@@ -27,23 +36,28 @@ struct MeshComponent
 	{
 		
 	};
-	MeshComponent(boost::uuids::uuid modelUUID)
+	MeshComponent(boost::uuids::uuid modelUUID, unsigned flags = SyEMeshComponentFlags::MESH_RENDER)
 	{
 		this->modelUUID = modelUUID;
+		this->flags = flags;
 	};
-	//Material* material = nullptr;
-	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture = nullptr;
-	//Microsoft::WRL::ComPtr<ID3D11SamplerState> SamplerState = nullptr;
-	std::shared_ptr<Model> model = nullptr;
+
+	//----User vars----
 	std::vector<boost::uuids::uuid> materialUUIDs = {};
-	std::vector<std::shared_ptr<Material>> materials = {};
 	boost::uuids::uuid modelUUID;
+
+	//----Engine vars----
+
+	std::shared_ptr<Model> model = nullptr;
+	std::vector<std::shared_ptr<Material>> materials = {};
+	uint32_t flags = SyEMeshComponentFlags::MESH_RENDER;
 	UINT strides[1] = { 80 };
 	UINT offsets[1] = { 0 };
 	uint32_t hashMaterial = 0;
 	uint32_t hashModel = 0;
 	SER_COMP(MeshComponent,
 		modelUUID,
-		materialUUIDs)
+		materialUUIDs,
+		flags);
 };
 

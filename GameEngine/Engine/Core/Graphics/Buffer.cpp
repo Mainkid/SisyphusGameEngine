@@ -152,7 +152,7 @@ void Buffer::InitializeCounterBuffer()
     structuredBufDesc.Usage = D3D11_USAGE_DEFAULT;
     structuredBufDesc.ByteWidth = 4;
     structuredBufDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS|D3D11_BIND_SHADER_RESOURCE;
-    structuredBufDesc.CPUAccessFlags = 0;
+    structuredBufDesc.CPUAccessFlags =0;
     structuredBufDesc.StructureByteStride = 4; 
     structuredBufDesc.MiscFlags = 0;
     

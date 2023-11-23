@@ -1,7 +1,7 @@
 ﻿#include "GameObjectHelper.h"
 
 #include "../../../vendor/entt/entt.hpp"
-#include "../../Components/GameObjectComp.h"
+
 #include "../../Components/MeshComponent.h"
 #include "../../Components/LightComponent.h"
 #include "../../Components/TransformComponent.h"
@@ -16,7 +16,7 @@
 #include "../../Components/FSoundComponent.h"
 
 
-entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, Vector3 pos)
+entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, SyVector3 pos = Vector3::Zero)
 {
 	auto ent = ecs->create();
 	ecs->emplace<GameObjectComp>(ent, name);
@@ -106,51 +106,87 @@ void GameObjectHelper::RemoveChild(entt::registry* ecs, entt::entity parent, ent
 	ecs->get<TransformComponent>(parent).children.erase(child);
 }
 
-
-entt::entity GameObjectHelper::CreateStaticBox(entt::registry* ecs, 
-                                               const SyVector3& position, 
-                                               const SyVector3& rotation, 
-                                               const SyVector3& scale)
+SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::entity entity, const SyERBodyType& rbType, float mass, unsigned flags)
 {
-	auto ent = Create(ecs, "StaticBox");
-
-	ecs->emplace<MeshComponent>(ent);
-
-	auto& tf = ecs->get<TransformComponent>(ent);
-	tf.localPosition = position;
-	tf.localRotation = rotation;
-	tf.localScale = scale;
-
-	SyRBodyBoxShapeDesc boxDesc;
-	boxDesc.origin = position;
-	boxDesc.rotation = rotation;
-	boxDesc.halfExt = scale;
-	ecs->emplace<SyRBodyComponent>(ent, RB_TYPE_STATIC, RB_SHAPE_TYPE_BOX, boxDesc);
-
-	return ent;
+	SyResult result;
+	auto* transformComponent = ecs->try_get<TransformComponent>(entity);
+	if (transformComponent == nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("Entity %d lacks Transform Component. You can't attach RigidBody Component to it.", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks Transform Component. You can't attach RigidBody Component to it.", (int)entity);
+		return result;
+	}
+	ecs->emplace<SyRBodyComponent>(	entity,
+									rbType,
+									mass,
+									flags);
+	CallEvent<SyEventOnCreateRBody>(ecs, "OnCreateRBody", entity);
+	//ecs->emplace<SyRbCreateOnNextUpdateTag>(entity);
+	return result;
 }
 
-entt::entity GameObjectHelper::CreateDynamicBox(entt::registry* ecs, 
-	const SyVector3& position, 
-	const SyVector3& rotation, 
-	const SyVector3& scale)
+SyResult GameObjectHelper::AddPrimitiveColliderComponent(entt::registry* ecs, entt::entity entity,
+	SyEPrimitiveColliderType colliderType, const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
+	const SyColliderMaterial& material)
 {
-	auto ent = Create(ecs, "DynamicBox");
-
-	ecs->emplace<MeshComponent>(ent);
-
-	auto& tc = ecs->get<TransformComponent>(ent);
-	tc.localPosition = position;
-	tc.localRotation = rotation;
-	tc.localScale = scale;
-
-	SyRBodyBoxShapeDesc boxDesc;
-	boxDesc.origin = position;
-	boxDesc.rotation = rotation;
-	boxDesc.halfExt = scale;
-	ecs->emplace<SyRBodyComponent>(ent, RB_TYPE_DYNAMIC, RB_SHAPE_TYPE_BOX, boxDesc);
-	return ent;
+	SyResult result;
+	auto* rbComponent = ecs->try_get<SyRBodyComponent>(entity);
+	if (rbComponent == nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("Could not find RigidBody Component on entity (%d). Hence, you can't attach a collider component to it. ", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Could not find RigidBody Component on entity (%d). Hence, you can't attach a collider component to it. ", (int)entity);
+		return result;
+	}
+	auto* pComponent = ecs->try_get<SyPrimitiveColliderComponent>(entity);
+	auto* tmComponent = ecs->try_get<SyTrimeshColliderComponent>(entity);
+	if (pComponent != nullptr || tmComponent != nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("Could not find RigidBody Component on entity (%d). Hence, you can't attach a collider component to it. ", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Could not find RigidBody Component on entity (%d). Hence, you can't attach a collider component to it. ", (int)entity);
+		return result;
+	}
+	ecs->emplace<SyPrimitiveColliderComponent>(entity, colliderType, colliderShapeDesc,  material);
+	CallEvent<SyEventOnCreateCollider>(ecs, "OnCreateCollider", entity);
+	return result;
 }
+
+SyResult GameObjectHelper::AddTrimeshColliderComponent(entt::registry* ecs, entt::entity entity,
+	const SyColliderMaterial& material)
+{
+	SyResult result;
+	auto* rbComponent = ecs->try_get<SyRBodyComponent>(entity);
+	if (rbComponent == nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("Could not find RigidBody Component on entity (%d). Hence, you can't attach a collider component to it. ", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Could not find RigidBody Component on entity (%d). Hence, you can't attach a collider component to it. ", (int)entity);
+		return result;
+	}
+	auto* pComponent = ecs->try_get<SyPrimitiveColliderComponent>(entity);
+	auto* tmComponent = ecs->try_get<SyTrimeshColliderComponent>(entity);
+	if (pComponent != nullptr || tmComponent != nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("A collider component is already attached to the entity (%d). You can't attach more than one collider to an entity. ", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "A collider component is already attached to the entity (%d). You can't attach more than one collider to an entity. ", (int)entity);
+		return result;
+	}
+	auto* mComponent = ecs->try_get<MeshComponent>(entity);
+	if (mComponent == nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("Could not find Mesh Component on entity (%d). Hence, you can't attach TrimeshCollider Component to it. ", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Could not find Mesh Component on entity (%d). Hence, you can't attach TrimeshCollider Component to it. ", (int)entity);
+		return result;
+	}
+	ecs->emplace<SyTrimeshColliderComponent>(entity, material);
+	CallEvent<SyEventOnCreateCollider>(ecs, "OnCreateCollider", entity);
+	return result;
+}
+
 
 entt::entity GameObjectHelper::CreateLight(entt::registry* ecs, ELightType lightType,Vector3 pos)
 {
@@ -182,10 +218,23 @@ entt::entity GameObjectHelper::CreateMesh(entt::registry* ecs, boost::uuids::uui
 	return entt::entity();
 }
 
+SyResult GameObjectHelper::AddMeshComponent(entt::registry* ecs, entt::entity entity, boost::uuids::uuid uuid, unsigned flags)
+{
+	MeshComponent& mesh = ecs->emplace<MeshComponent>(entity, uuid, flags);
+	return SyResult();
+}
+
+SyResult GameObjectHelper::AddCubeMeshComponent(entt::registry* ecs, entt::entity entity)
+{
+	return AddMeshComponent(ecs, entity, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Cube.fbx"));
+}
+
 entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 {
-	auto ent = Create(ecs, "ParticleObject");
-	ecs->emplace<ParticleComponent>(ent);
+	//TODO: Translate to resource service!
+	auto ent = Create(ecs, "ParticleSystem");
+	ParticleComponent& pc = ecs->emplace<ParticleComponent>(ent);
+	pc.SharedParticlesDataUuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_PARTICLESYS].uuid;
 	return ent;
 }
 

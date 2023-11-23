@@ -1,16 +1,15 @@
 ﻿#include "HudPostRenderSystem.h"
 #include "../../../Core/ServiceLocator.h"
-#include "imgui_impl_dx11.h"
 #include "../../../vendor/ImGui/imgui.h"
+#include "imgui_impl_dx11.h"
+
 #include "../../HardwareContext.h"
 #include "../../EngineContext.h"
-#include "../../vendor/ImGui/imgui.h"
 
 SyResult HudPostRenderSystem::Init()
 {
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudPostRender system initialization successful.");
     return SyResult();
 }
 
@@ -38,8 +37,6 @@ SyResult HudPostRenderSystem::Run()
 
 SyResult HudPostRenderSystem::Destroy()
 {
-
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "HudPostRender system destruction successful.");
     return SyResult();
 }
 

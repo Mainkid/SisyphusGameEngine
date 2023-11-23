@@ -5,6 +5,11 @@
 
 struct ImageBasedLightingComponent
 {
+	//----User vars----
+	bool IsOn = false;
+
+	//----Engine vars----
+	
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> IrradianceMapSampler;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> IrradianceCubeMapTex;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> IrradianceCubeMapSrv;
@@ -19,6 +24,6 @@ struct ImageBasedLightingComponent
 
 	std::vector<Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView>> FilteredEnvironmentCubeMapUavs;
 	bool IsInitialized = false;
-	bool IsOn = false;
+	
 	SER_COMP(ImageBasedLightingComponent, IsOn);
 };

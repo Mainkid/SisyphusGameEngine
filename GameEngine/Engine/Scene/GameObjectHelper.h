@@ -3,16 +3,17 @@
 #include "../../../vendor/entt/entt.hpp"
 #include "../Tools/Data/Vector.h"
 #include "../../Components/LightComponent.h"
-
+#include "../../Components/GameObjectComp.h"
+#include "../Components/RBodyComponent.h"
+#include "../Components/MeshComponent.h"
+#include "../Components/ColliderComponent.h"
 #include "../Tools/ErrorLogger.h"
-
-
-
+#include "../Core/ECS/Event.h"
 
 class GameObjectHelper
 {
 public:
-	static entt::entity Create(entt::registry* ecs, const std::string& name, Vector3 pos=Vector3::Zero);
+	static entt::entity Create(entt::registry* ecs, const std::string& name, SyVector3 pos);
 
 	static void Destroy(entt::registry* ecs, entt::entity ent);
 
@@ -20,28 +21,42 @@ public:
 
 	static void AddChild(entt::registry* ecs, entt::entity child, entt::entity parent);
 
-	static void RemoveChild(entt::registry* rcs, entt::entity child, entt::entity parent);
+	static void RemoveChild(entt::registry* ecs, entt::entity child, entt::entity parent);
 
-
-	static entt::entity CreateStaticBox(entt::registry* ecs,
-		const SyVector3& position,
-		const SyVector3& rotation = SyVector3(), 
-		const SyVector3& scale = { 1.0f, 1.0f, 1.0f }
-	);
-
-	static entt::entity CreateDynamicBox(entt::registry* ecs, 
-		const SyVector3& position, 
-		const SyVector3& rotation = SyVector3(), 
-		const SyVector3& scale = { 1.0f, 1.0f, 1.0f }
-	);
-
+	static SyResult AddRigidBodyComponent(	entt::registry*			ecs,
+											entt::entity			entity,
+											const SyERBodyType&		rbType,
+											float					mass			= 1.0,
+											unsigned				flags			= 0);
+	static SyResult AddPrimitiveColliderComponent(	entt::registry*						ecs,
+													entt::entity						entity,
+													SyEPrimitiveColliderType				colliderType,
+													const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
+													const SyColliderMaterial& 			material = SyColliderMaterial());
+	static SyResult AddTrimeshColliderComponent(	entt::registry*						ecs,
+													entt::entity						entity,
+													const SyColliderMaterial& 			material = SyColliderMaterial());
+	
 	static entt::entity CreateLight(entt::registry* ecs, ELightType lightType, Vector3 pos = Vector3::Zero);
 
 	static entt::entity CreateMesh(entt::registry* ecs, boost::uuids::uuid uuid, Vector3 pos=Vector3::Zero);
-
+	static SyResult AddMeshComponent(entt::registry* ecs, entt::entity entity, boost::uuids::uuid uuid, unsigned flags = SyEMeshComponentFlags::MESH_RENDER);
+	static SyResult AddCubeMeshComponent(entt::registry* ecs, entt::entity entity);
 	static entt::entity CreateParticleSystem(entt::registry* ecs);
 
 	static entt::entity CreateSkybox(entt::registry* ecs,boost::uuids::uuid uuid = boost::uuids::nil_uuid());
 
-	static entt::entity CreateSoundBox(entt::registry* ecs, Vector3 pos = Vector3::Zero);	
+	template <typename T_Event, typename ... Args>
+	static SyResult CallEvent(entt::registry* ecs, const std::string& name, Args... eventArgs);
 };
+
+//Calls the event to be listened to NEXT FRAME. Events are only to be listened to in Runtime (it is possible to listen to events in Init(), but it relies on order of systems update). Use the macros from SystemBase.h to listen to event!
+template <typename T_Event, typename ... Args>
+SyResult GameObjectHelper::CallEvent(entt::registry* ecs, const std::string& name, Args... eventArgs)
+{
+	entt::entity ent = ecs->create();
+	ecs->emplace<GameObjectComp>(ent, name);
+	auto c = ecs->emplace<T_Event>(ent, eventArgs...);
+	ecs->emplace<SyEventTag>(ent);
+	return SyResult();
+}

@@ -5,7 +5,6 @@
 #include "../RenderContext.h"
 #include "../../../Scene/CameraHelper.h"
 #include "../../Core/Graphics/ConstantBuffer.h"
-#include "../../../../vendor/ImGuizmo/ImGuizmo.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Components/MeshComponent.h"
 
@@ -15,7 +14,7 @@ SyResult OpaqueRenderSystem::Init()
 	_ec = ServiceLocator::instance()->Get<EngineContext>();
 	_rc = ServiceLocator::instance()->Get<RenderContext>();
     _hc = ServiceLocator::instance()->Get<HardwareContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "OpaqueRender system initialization successful.");
+
     return SyResult();
 }
 
@@ -31,6 +30,9 @@ SyResult OpaqueRenderSystem::Run()
         CB_BaseEditorBuffer dataOpaque;
         TransformComponent& transformComp = _ecs->get<TransformComponent>(entity);
         MeshComponent& meshComp = _ecs->get<MeshComponent>(entity);
+
+        if (!(meshComp.flags & SyEMeshComponentFlags::MESH_RENDER))
+            continue;
         
         dataOpaque.baseData.world = transformComp.transformMatrix;
 
@@ -86,6 +88,5 @@ SyResult OpaqueRenderSystem::Run()
 
 SyResult OpaqueRenderSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "OpaqueRender system destruction successful.");
     return SyResult();
 }

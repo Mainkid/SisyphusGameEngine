@@ -94,6 +94,13 @@ public:
 		z *= factor_;
 		return *this;
 	}
+	SyVector3& operator/= (float dividor_)
+	{
+		x /= dividor_;
+		y /= dividor_;
+		z /= dividor_;
+		return *this;
+	}
 	static SyVector3 PxQuatToEuler(const physx::PxQuat& pxQuat) //returns euler angle vector
 	{
 		DirectX::SimpleMath::Quaternion q(pxQuat.x, pxQuat.y, pxQuat.z, pxQuat.w);
@@ -106,4 +113,12 @@ public:
 		physx::PxQuat qq = { q.x, q.y, q.z, q.w };
 		return qq;
 	}
+	friend bool operator==(const SyVector3& left, const SyVector3& right);
+
+	static const SyVector3 ZERO;
+	static const SyVector3 ONE;
 };
+inline bool operator==(const SyVector3& left, const SyVector3& right)
+{
+	return (left.x == right.x) && (left.y == right.y) && (left.z == right.z);
+}

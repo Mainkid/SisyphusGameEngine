@@ -19,19 +19,26 @@ struct LightComponent
     {
         LightType = _type;
     };
-    std::vector<Matrix> ViewMatrices;
-    std::vector<Matrix> OrthoMatrices;
-    std::vector<Vector4> Distances;
-    std::shared_ptr<Mesh> Aabb = nullptr;
+
+    //----User vars----
     ELightType LightType = ELightType::Ambient;
     LightBehavior LightBehavior = LightBehavior::Movable;
     Vector4 Color = { 1,1,1,1 };
     Vector4 ParamsRadiusAndAttenuation = { 0,1,1,1 };
+    bool CastShadows = false;
+
+    //----Engine vars----
+
+    std::vector<Matrix> ViewMatrices;
+    std::vector<Matrix> OrthoMatrices;
+    std::vector<Vector4> Distances;
+    std::shared_ptr<Mesh> Aabb = nullptr;
+   
     uint32_t Hash = 0;
     Matrix ViewMatrix;
     Matrix OrthoMatrix;
     bool ShouldBakeShadows = true;
-    bool CastShadows = false;
+    
 
     int ShadowMapSize = 1024;
 

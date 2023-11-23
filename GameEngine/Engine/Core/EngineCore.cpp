@@ -59,6 +59,7 @@ void EngineCore::StartUp()
 	ServiceLocator::instance()->Register<ResourceService>();
 	_context = ServiceLocator::instance()->Get<EngineContext>();
 
+
 	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
 	ser.AddEcsCompMeta<GameObjectComp>();
 	ser.AddEcsCompMeta<TransformComponent>();
@@ -67,8 +68,18 @@ void EngineCore::StartUp()
 	ser.AddEcsCompMeta<EditorBillboardComponent>();
 	ser.AddEcsCompMeta<SkyboxComponent>();
 	ser.AddEcsCompMeta<ImageBasedLightingComponent>();
+	ser.AddEcsCompMeta<ParticleComponent>();
+	//ser.AddEcsCompMeta<SharedParticlesData>();
+
+
+	
+	ServiceLocator::instance()->Register<mono::SyMono>();
+	mono::SyMono* mono = ServiceLocator::instance()->Get<mono::SyMono>();
+	mono->Init();
+	mono->HotReload();
 
 	StartUpSystems();
+	SY_LOG_CORE(SY_LOGLEVEL_INFO, "All systems initialization complete!");
 }
 
 void EngineCore::StartUpSystems()
@@ -82,17 +93,24 @@ void EngineCore::StartUpSystems()
 	
 	_systems.Add<InputSystem>();
 	_systems.Add<ResourceSystem>();
-	_systems.Add<SyPhysicsSystem>();
+	_systems.Add<MeshSystem>();
+	_systems.Add<SyRBodySystem>();
+	_systems.Add<SyCollisionPreSystem>();
+	_systems.Add<SyCollisionSystem>();
+
+	_systems.Add<MonoSyncSystem>();
+
+	
 
 	_systems.Add<TransformSystem>();
 
 	_systems.Add<EditorCameraSystem>();
 
-	_systems.Add<MeshSystem>();
 	_systems.Add<LightSystem>();
+	_systems.Add<MeshSystem>();
 	_systems.Add<SkyboxSystem>();
-	_systems.Add<SoundSystem>();
-
+	_systems.Add<LightSystem>();
+	_systems.Add<ParticlesSystem>();
 	_systems.Add<EditorBillboardSystem>();
 
 	_systems.Add<PreRenderSystem>();
@@ -103,6 +121,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<HbaoRenderSystem>();
 	_systems.Add<ShadowMapGenerationSystem>();
 	_systems.Add<LightRenderSystem>();
+	_systems.Add<ParticleRenderSystem>();
 	_systems.Add<EditorBillboardRenderSystem>();
 	_systems.Add<ToneMappingRenderSystem>();
 	_systems.Add<EditorGridRenderSystem>();
@@ -118,8 +137,6 @@ void EngineCore::StartUpSystems()
 	_systems.Add<HudPostRenderSystem>();
 	_systems.Add<SyPrepareEventsSystem>();
 	
-
-
 	_systems.Init();
 }
 
@@ -130,6 +147,7 @@ void EngineCore::ShutDown()
 	ServiceLocator::instance()->Unregister<EngineCore>();
 	ServiceLocator::instance()->Unregister<RenderContext>();
 	ServiceLocator::instance()->Unregister<HardwareContext>();
+	ServiceLocator::instance()->Unregister<mono::SyMono>();
 	ServiceLocator::instance()->Unregister<SyErrorLogger>();
 	ServiceLocator::instance()->Unregister<ResourceService>();
 }

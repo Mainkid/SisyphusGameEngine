@@ -14,10 +14,11 @@ SyResult EditorCameraSystem::Init()
 	_ec = ServiceLocator::instance()->Get<EngineContext>();
 	_hc = ServiceLocator::instance()->Get<HardwareContext>();
 	auto id = _ecs->create();
-	auto tc = _ecs->emplace<TransformComponent>(id);
+	auto& tc = _ecs->emplace<TransformComponent>(id);
+	tc.localPosition = Vector3(-3, 3, -3);
+	tc._position = Vector3(-3, 3, -3);
 	CameraComponent& cc = _ecs->emplace<CameraComponent>(id);
-	SetLookAtPos(Vector3(-1, 0, 0), tc);
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorBillboard system initialization successful. ");
+	SetLookAtPos(Vector3(0,0,0), tc);
 	return SyResult();
 }
 
@@ -47,7 +48,6 @@ SyResult EditorCameraSystem::Run()
 
 SyResult EditorCameraSystem::Destroy()
 {
-	SY_LOG_CORE(SY_LOGLEVEL_INFO, "EditorCamera system destruction successful. ");
 	return SyResult();
 }
 
@@ -81,9 +81,9 @@ void EditorCameraSystem::SetLookAtPos(Vector3 lookAtPos, TransformComponent& tc)
 	if (lookAtPos.x == tc.localPosition.x && lookAtPos.y == tc.localPosition.y && lookAtPos.z == tc.localPosition.z)
 		return;
 
-	lookAtPos.x = lookAtPos.x - tc.localPosition.x;
-	lookAtPos.y = lookAtPos.y - tc.localPosition.y;
-	lookAtPos.z = lookAtPos.z - tc.localPosition.z;
+	lookAtPos.x = -lookAtPos.x + tc.localPosition.x;
+	lookAtPos.y = -lookAtPos.y + tc.localPosition.y;
+	lookAtPos.z = -lookAtPos.z + tc.localPosition.z;
 
 	float pitch = 0.0f;
 	if (lookAtPos.y != 0.0f)

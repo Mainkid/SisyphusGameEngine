@@ -14,7 +14,7 @@ SyResult ShadowMapGenerationSystem::Init()
     _ec = ServiceLocator::instance()->Get<EngineContext>();
     _hc = ServiceLocator::instance()->Get<HardwareContext>();
     _rc = ServiceLocator::instance()->Get<RenderContext>();
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowMapGeneration system initialization successful. ");
+ 
     return SyResult();
 }
 
@@ -42,14 +42,14 @@ SyResult ShadowMapGenerationSystem::Run()
         TransformComponent& tc = view.get<TransformComponent>(entity);
         if (light.LightType == ELightType::Directional)
         {
-            lightBuffer.lightData.Pos = Vector4(tc.position.x, tc.position.y, tc.position.z, 1);
+            lightBuffer.lightData.Pos = Vector4(tc._position.x, tc._position.y, tc._position.z, 1);
             lightBuffer.lightData.Color = light.Color;
             lightBuffer.lightData.Dir = Vector4::Transform(Vector4::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation));
             lightBuffer.lightData.additiveParams = light.ParamsRadiusAndAttenuation;
             lightBuffer.eyePos = Vector4(
-                cameraTf.position.x,
-                cameraTf.position.y,
-                cameraTf.position.z,
+                cameraTf._position.x,
+                cameraTf._position.y,
+                cameraTf._position.z,
                 1.0f);
 
             _hc->context->ClearDepthStencilView(_hc->depthStencilView.Get(), D3D11_CLEAR_STENCIL, 1, 0);
@@ -70,7 +70,7 @@ SyResult ShadowMapGenerationSystem::Run()
             }
             else if (light.LightType == ELightType::PointLight)
             {
-                lightBuffer.lightData.Pos = Vector4(tc.position.x, tc.position.y, tc.position.z, 1);
+                lightBuffer.lightData.Pos = Vector4(tc._position.x, tc._position.y, tc._position.z, 1);
                 lightBuffer.lightData.additiveParams = light.ParamsRadiusAndAttenuation;
                 lightBuffer.baseData.world = Matrix::CreateScale(light.ParamsRadiusAndAttenuation.x,
                     light.ParamsRadiusAndAttenuation.x,light.ParamsRadiusAndAttenuation.x)*tc.transformMatrix;
@@ -133,6 +133,5 @@ SyResult ShadowMapGenerationSystem::Run()
 
 SyResult ShadowMapGenerationSystem::Destroy()
 {
-    SY_LOG_CORE(SY_LOGLEVEL_INFO, "ShadowMapGeneration system destruction successful. ");
     return SyResult();
 }

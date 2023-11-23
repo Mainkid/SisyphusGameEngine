@@ -26,6 +26,8 @@
 
 //struct SyErrorLogger : public IService;
 
+
+
 class EngineCore
 {
 public:
