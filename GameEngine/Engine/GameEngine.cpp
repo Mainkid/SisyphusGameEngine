@@ -80,18 +80,32 @@ int main()
     auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid, SyEMeshComponentFlags::MESH_COLLIDER | SyEMeshComponentFlags::MESH_RENDER);
     auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
     auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
-    auto cube = GameObjectHelper::Create(ecs, "Cube", { 0.0f, 5.0f, 8.0f });
+
+    auto cube1 = GameObjectHelper::Create(ecs, "Cube1", { 0.0f, 5.0f, 8.0f });
     //ecs->get<TransformComponent>(cube)._position = Vector3(1, 0, 0);
-    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube, DYNAMIC);
-    auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube);
+    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC);
+    auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube1);
     SyPrimitiveColliderShapeDesc cubeColDesc;
     cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
-    auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube,
+    auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube1,
         BOX,
         cubeColDesc,
         SyColliderMaterial());
 
-    // ecs->get<SyRBodyComponent>(cube).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
+    ecs->get<SyRBodyComponent>(cube1).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
+    ecs->get<SyRBodyComponent>(cube1).Flags |= SyERBodyFlags::DISABLE_GRAVITY;
+
+    auto cube2 = GameObjectHelper::Create(ecs, "Cube2", { -2.0f, 5.0f, 8.0f });
+    ecs->get<TransformComponent>(cube2).scale = { 2.0f, 2.0f, 2.0f };
+    auto result10 = GameObjectHelper::AddRigidBodyComponent(ecs, cube2, DYNAMIC);
+    auto result11 = GameObjectHelper::AddCubeMeshComponent(ecs, cube2);
+    cubeColDesc.Extent = { 2.0f, 2.0f, 2.0f };
+    auto result12 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube2,
+        BOX,
+        cubeColDesc,
+        SyColliderMaterial());
+
+    ecs->get<SyRBodyComponent>(cube2).Flags |= SyERBodyFlags::DISABLE_GRAVITY;
     // ecs->get<SyRBodyComponent>(cube).Flags |= SyERBodyFlags::DISABLE_GRAVITY;
     //---------- Serialization test ----------------
 
