@@ -118,11 +118,10 @@ int main()
 
 
 // test
-    FAudioEngine TESTAE;
-    TESTAE.Init();
-    TESTAE.LoadSound("Engine/Assets/Audio/LookinAtIt.ogg");
-    //TESTAE.LoadSound("GameEngine/Engine/Assets/Audio/LookinAtIt.ogg");
-    TESTAE.PlayMSound("Engine/Assets/Audio/LookinAtIt.ogg");
+    //FAudioEngine TESTAE;
+    //TESTAE.Init();
+    //TESTAE.LoadSound("Engine/Assets/Audio/LookinAtIt.ogg");
+    //TESTAE.PlayMSound("Engine/Assets/Audio/LookinAtIt.ogg");
 
     EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();

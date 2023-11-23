@@ -618,6 +618,7 @@
       <SDLCheck>true</SDLCheck>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="Engine\Systems\SoundSystem.cpp" />
     <ClCompile Include="Engine\Tools\Data\Vector.cpp" />
     <ClCompile Include="Engine\Tools\ErrorLogger.cpp" />
     <ClCompile Include="Engine\Tools\ImageLoader.cpp" />
@@ -734,6 +735,7 @@
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\OpaqueRenderSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ShadowRenderSystem.h" />
     <ClInclude Include="Engine\Systems\ResourceInfo.h" />
+    <ClInclude Include="Engine\Systems\SoundSystem.h" />
     <ClInclude Include="Engine\Systems\Systems.h" />
     <ClInclude Include="Engine\Systems\SystemsEnum.h" />
     <ClInclude Include="Engine\Components\LightComponent.h" />

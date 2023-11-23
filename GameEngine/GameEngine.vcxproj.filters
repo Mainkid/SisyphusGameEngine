@@ -100,6 +100,7 @@
     <ClCompile Include="Engine\Systems\ParticlesSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\CollisionPreSystem.cpp" />
+    <ClCompile Include="Engine\Systems\SoundSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -244,6 +245,7 @@
     <ClInclude Include="vendor\ImGui\curve_v122.hpp" />
     <ClInclude Include="vendor\ImGui\ImCurve.h" />
     <ClInclude Include="Engine\Systems\CollisionPreSystem.h" />
+    <ClInclude Include="Engine\Systems\SoundSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

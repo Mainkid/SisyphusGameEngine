@@ -4,11 +4,6 @@
 #include "MeshLoader.h"  //
 
 
-//#ifndef FAUDIOENGINE
-//#define FAUDIOENGINE
-
-//..\..\vendor\FMod\api\studio\inc\
-
 #include "fmod_studio.hpp"
 #include "fmod.hpp"
 #include <string>
@@ -17,7 +12,6 @@
 #include <math.h>
 #include <iostream>
 
-//#endif
 
 struct HardwareContext;
 struct EngineContext;
@@ -29,9 +23,6 @@ private:
 	
 
 public:
-
-	//FAudioImp* sgpImplementation = nullptr;
-
 
 	SyResult Init() override;
 	SyResult Run() override;
