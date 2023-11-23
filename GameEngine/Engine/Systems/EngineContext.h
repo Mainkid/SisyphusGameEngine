@@ -28,6 +28,12 @@ struct HudData
 	SelectedContent selectedContent = { boost::uuids::nil_uuid(),EAssetType::ASSET_NONE };
 };
 
+struct EngineProperties
+{
+	bool DrawOnlySelected = false;
+	bool DrawInPlayMode = false;
+};
+
 struct EngineContext : public IService
 {
 	entt::registry ecs;
@@ -35,6 +41,7 @@ struct EngineContext : public IService
 
 	entt::entity selectedEntityID=entt::null;
 	HudData hudData;
+	EngineProperties Properties;
 	float totalTime = 0;
 	unsigned int frameCount = 0;
 	float deltaTime = 0;
