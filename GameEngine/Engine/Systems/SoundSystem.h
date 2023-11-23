@@ -17,8 +17,6 @@
 #include <math.h>
 #include <iostream>
 
-#include "..\Components\FAudioImp.h"
-
 //#endif
 
 struct HardwareContext;

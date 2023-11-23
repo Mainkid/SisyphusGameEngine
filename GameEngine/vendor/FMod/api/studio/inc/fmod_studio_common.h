@@ -12,6 +12,7 @@
 #define FMOD_STUDIO_COMMON_H
 
 #include "fmod.h"
+
 /*
     FMOD Studio types.
 */

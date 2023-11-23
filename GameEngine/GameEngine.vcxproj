@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\vendor\FMod\api\studio\inc;$(SolutionDir)GameEngine\vendor\FMod\api\core\inc;$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\FMod\api\core\lib\x64;$(SolutionDir)GameEngine\vendor\FMod\api\studio\lib\x64;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\vendor\FMod\api\studio\inc;$(SolutionDir)GameEngine\vendor\FMod\api\core\inc;$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\FMod\api\core\lib\x64;$(SolutionDir)GameEngine\vendor\FMod\api\studio\lib\x64;$(SolutionDir)GameEngine\vendor\FMod\api\fsbank\lib\x64;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
   </PropertyGroup>
@@ -117,12 +117,12 @@
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)GameEngine\vendor\FMod\api\studio\lib;$(SolutionDir)GameEngine\vendor\FMod\api\core\lib\x64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GameEngine\vendor\FMod\api\studio\lib\x64;$(SolutionDir)GameEngine\vendor\FMod\api\core\lib\x64;$(SolutionDir)GameEngine\vendor\FMod\api\fsbank\lib\x64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;GFSDK_SSAO_D3D11.win64.lib;fmodL.lib;fmodstudioL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;GFSDK_SSAO_D3D11.win64.lib;fmod_vc.lib;fmodL_vc.lib;fmodstudio_vc.lib;fmodstudioL_vc.lib;fsbank_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>
@@ -643,7 +643,6 @@
     <ClCompile Include="Engine\Systems\Rendering\ImageBasedLightingSystem.cpp" />
     <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
     <ClCompile Include="Engine\Systems\SoundSystem.cpp" />
-    <ClCompile Include="Engine\Components\FAudioImp.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -750,7 +749,6 @@
     <ClInclude Include="Engine\Tools\MathHelper.h" />
     <ClInclude Include="Engine\Systems\MaterialUpdateSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\ImageBasedLightingSystem.h" />
-    <ClInclude Include="Engine\Components\FAudioImp.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ToneMappingRenderSystem.h" />
     <ClInclude Include="Engine\Systems\ResourceSystem.h" />
@@ -877,6 +875,13 @@
     <Image Include="Engine\Assets\SkyBox\skybox_4.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_5.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="vendor\FMod\api\core\lib\x64\fmodL_vc.lib" />
+    <Library Include="vendor\FMod\api\core\lib\x64\fmod_vc.lib" />
+    <Library Include="vendor\FMod\api\fsbank\lib\x64\fsbank_vc.lib" />
+    <Library Include="vendor\FMod\api\studio\lib\x64\fmodstudioL_vc.lib" />
+    <Library Include="vendor\FMod\api\studio\lib\x64\fmodstudio_vc.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|ARM">
-      <Configuration>Debug</Configuration>
-      <Platform>ARM</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -12,10 +8,6 @@
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|ARM">
-      <Configuration>Release</Configuration>
-      <Platform>ARM</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
@@ -27,21 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup>
-    <Suffix Condition="'$(Configuration)'=='Debug'">L</Suffix>
-    <Arch Condition="'$(Platform)'=='ARM'">arm</Arch>
+    <Arch>x86</Arch>
     <Arch Condition="'$(Platform)'=='x64'">x64</Arch>
-    <Arch Condition="'$(Platform)'=='Win32'">x86</Arch>
+    <Suffix Condition="'$(Configuration)'=='Debug'">L</Suffix>
   </PropertyGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CC562F42-6E78-485F-B63C-8D9C0A5108F1}</ProjectGuid>
-    <RootNamespace>example</RootNamespace>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-    <AppContainerApplication>true</AppContainerApplication>
-    <ApplicationType>Windows Store</ApplicationType>
-    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
-    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
+    <ProjectGuid>{4C6F6A8B-9788-409A-973A-A10C3CFF1DEE}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
@@ -54,52 +37,35 @@
   <PropertyGroup>
     <OutDir>$(SolutionDir)_builds\$(ProjectName)\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>$(SolutionDir)_builds\$(ProjectName)\$(Configuration)\$(Platform)\Intermediate\</IntDir>
-    <PackageCertificateKeyFile>temporary_key.pfx</PackageCertificateKeyFile>
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>$(ProjectName)$(Suffix)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\..\core\inc;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>..\..\inc</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x601;WINVER=0x601;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>..\..\..\core\lib\$(Arch)\fmod$(SUFFIX).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\..\lib\$(Arch)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmod$(Suffix)_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>if not exist ..\bin mkdir ..\bin
+copy /Y "$(TargetPath)" ..\bin
+copy /Y "..\..\lib\$(Arch)\fmod$(Suffix).dll" ..\bin
+copy /Y "..\..\lib\$(Arch)\fmod$(Suffix).dll" "$(OutDir)"
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\common.h" />
     <ClCompile Include="..\common.cpp" />
     <ClInclude Include="..\common_platform.h" />
     <ClCompile Include="..\common_platform.cpp" />
-    <AppxManifest Include="package.appxmanifest" />
-    <Image Include="*.png" />
-    <Media Include="..\media\**">
-      <Link>media\%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </Media>
-    <None Include="..\..\..\core\lib\x64\fmod.dll">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'!='Release|x64'">true</ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\core\lib\x64\fmodL.dll">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'!='Debug|x64'">true</ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\core\lib\x86\fmod.dll">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'!='Release|Win32'">true</ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\core\lib\x86\fmodL.dll">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'!='Debug|Win32'">true</ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\core\lib\arm\fmod.dll">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'!='Release|ARM'">true</ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\core\lib\arm\fmodL.dll">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'!='Debug|ARM'">true</ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\dsp_effect_per_speaker.cpp" />

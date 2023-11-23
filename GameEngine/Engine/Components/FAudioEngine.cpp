@@ -6,9 +6,12 @@ Implementation::Implementation()
     mnNextChannelId = 0;
     mpStudioSystem = NULL;
     FAudioEngine::ErrorCheck(FMOD::Studio::System::create(&mpStudioSystem));
+    // 30
     FAudioEngine::ErrorCheck(mpStudioSystem->initialize(32, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_PROFILE_ENABLE, NULL));
+   // FAudioEngine::ErrorCheck(mpStudioSystem->initialize(44100, 32, 0, NULL));
     
     mpSystem = NULL;
+    // 30
     FAudioEngine::ErrorCheck(mpStudioSystem->getCoreSystem(&mpSystem));
 }
 
@@ -53,13 +56,13 @@ int FAudioEngine::ErrorCheck(FMOD_RESULT result)
         std::cout << "FMOD ERROR " << result << std::endl;
         return 1;
     }
-    // cout << "FMOD all good" << endl;
+    std::cout << "FMOD all good" << std::endl;
     return 0;
 }
 
 void FAudioEngine::Shutdown()
 {
-    //delete sgpImplementation;
+    delete sgpImplementation;
 }
 
 void FAudioEngine::LoadSound(const std::string& strSoundName, bool b3d, bool bLooping, bool bStream)

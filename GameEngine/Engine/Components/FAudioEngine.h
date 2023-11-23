@@ -71,7 +71,7 @@ public:
     void LoadSound(const std::string& strSoundName, bool b3d = true, bool bLooping = false, bool bStream = false);
     void UnLoadSound(const std::string& strSoundName);
     //void Set3dListenerAndOrientation(const MVector3& vPos = MVector3{ 0, 0, 0 }, float fVolumedB = 0.0f);
-    int PlayMSound(const std::string& strSoundName, const MVector3& vPosition = MVector3{ 0, 0, 0 }, float fVolumedB = 0.0f);
+    int PlayMSound(const std::string& strSoundName, const MVector3& vPosition = MVector3{ 0, 0, 10 }, float fVolumedB = 1.0f);
     void PlayEvent(const std::string& strEventName);
     //void StopChannel(int nChannelId);
     void StopEvent(const std::string& strEventName, bool bImmediate = false);
