@@ -1,14 +1,14 @@
 #pragma once
 
 #include "../../../vendor/entt/entt.hpp"
-#include "../Tools/Data/Vector.h"
-#include "../../Components/LightComponent.h"
+#include "../Core/Tools/Structures/Vector.h"
+#include "../Features/Lighting/Components/LightComponent.h"
 #include "../../Components/GameObjectComp.h"
-#include "../Components/RBodyComponent.h"
-#include "../Components/MeshComponent.h"
-#include "../Components/ColliderComponent.h"
-#include "../Tools/ErrorLogger.h"
-#include "../Core/ECS/Event.h"
+#include "../Features/Physics/Components/RBodyComponent.h"
+#include "../Features/Physics/Components/ColliderComponent.h"
+#include "../Features/Mesh/Components/MeshComponent.h"
+#include "../Core/Tools/ErrorLogger.h"
+#include "../Features/Events/Tags/SyEventTag.h"
 
 class GameObjectHelper
 {

@@ -4,7 +4,7 @@
 #include "Core/EngineCore.h"
 #include "Components/EditorBillboardComponent.h"
 #include "Components/GameObjectComp.h"
-#include "Components/MeshComponent.h"
+#include "Features/Mesh/Components/MeshComponent.h"
 #include "Components/TransformComponent.h"
 
 #include "Scene/GameObjectHelper.h"
@@ -63,7 +63,7 @@ int main()
     ecs->get<LightComponent>(lightPoint2).LightBehavior = LightBehavior::Movable;
 
     auto base = GameObjectHelper::Create(ecs, "Base", { 0.0f, -5.0f, 13.0f });
-    ecs->get<TransformComponent>(base).localScale = {10.0f, 1.0f, 10.0f};
+    ecs->get<TransformComponent>(base).scale = {10.0f, 1.0f, 10.0f};
     auto result1 = GameObjectHelper::AddRigidBodyComponent(ecs, base, STATIC);
     auto result2 = GameObjectHelper::AddCubeMeshComponent(ecs, base);
     SyPrimitiveColliderShapeDesc baseColDesc;
@@ -76,7 +76,7 @@ int main()
     
     auto meshUuid = ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Game\\Assets\\fbx\\barrel.fbx");
     auto staticMesh = GameObjectHelper::Create(ecs, "Static Mesh", {0.0f, -2.5f, 8.0f});
-    ecs->get<TransformComponent>(staticMesh).localScale = { 3.0f, 3.0f, 3.0f };
+    ecs->get<TransformComponent>(staticMesh).scale = { 3.0f, 3.0f, 3.0f };
     auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid, SyEMeshComponentFlags::MESH_COLLIDER | SyEMeshComponentFlags::MESH_RENDER);
     auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
     auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());

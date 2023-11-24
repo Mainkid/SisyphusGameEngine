@@ -1,7 +1,7 @@
 ﻿#include "Buffer.h"
 
 #include "../ServiceLocator.h"
-#include "../../Systems/HardwareContext.h"
+#include "../../Contexts/HardwareContext.h"
 
 Buffer::Buffer()
 {

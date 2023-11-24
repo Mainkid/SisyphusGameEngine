@@ -3,8 +3,7 @@
 #include <string>
 #include <mono/jit/jit.h>
 
-#include "../Tools/Data/Vector.h"
-#include "../Core/Rendering/Lights/ELightType.h"
+#include "../Core/Tools/Structures/Vector.h"
 
 namespace mono
 {

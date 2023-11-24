@@ -5,7 +5,7 @@
 #include <iostream>
 #include <Windows.h>
 
-#include "../Tools/ErrorLogger.h"
+#include "../Core/Tools/ErrorLogger.h"
 
 using namespace mono;
 
