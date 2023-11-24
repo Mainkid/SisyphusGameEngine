@@ -18,7 +18,8 @@ SyResult EditorColliderRenderSystem::Init()
 
 SyResult EditorColliderRenderSystem::Run()
 {
-	if (_ec->playModeState == EngineContext::EPlayModeState::PlayMode && !_ec->Properties.DrawInPlayMode)
+	if (_ec->playModeState == EngineContext::EPlayModeState::PlayMode &&
+		_ec->propertyFlags & SyEEnginePropertiesFlags::SHOW_COLLIDERS_IN_PLAYMODE == 0)
 		return SyResult();
 
 	CB_GridEditorBuffer dataOpaque;
@@ -36,7 +37,8 @@ SyResult EditorColliderRenderSystem::Run()
 	auto view = _ecs->view<SyPrimitiveColliderComponent>();
 	for (auto& ent:view)
 	{
-		if (_ec->Properties.DrawOnlySelected && !_ec->hudData.selectedEntityIDs.contains(ent))
+		if ((_ec->propertyFlags & SyEEnginePropertiesFlags::SHOW_ALL_COLLIDERS) == 0
+			&& !_ec->hudData.selectedEntityIDs.contains(ent))
 			continue;
 
 		auto& transform = _ecs->get<TransformComponent>(ent);
