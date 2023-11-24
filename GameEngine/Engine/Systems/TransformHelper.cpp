@@ -1,8 +1,8 @@
 #include "TransformHelper.h"
 #include "../Core/EngineCore.h"
 #include "../Core/ServiceLocator.h"
-#include "../Systems/EngineContext.h"
-#include "../Tools/Data/Vector.h"
+#include "../Contexts/EngineContext.h"
+#include "../Core/Tools/Structures/Vector.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 

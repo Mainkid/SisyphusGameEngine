@@ -1,8 +1,8 @@
 #include "EditorBillboardSystem.h"
 #include "../Core/ServiceLocator.h"
 #include "../Components/EditorBillboardComponent.h"
-#include "MeshLoader.h"
-#include "EngineContext.h"
+#include "../Features/Mesh/MeshLoader.h"
+#include "../Contexts/EngineContext.h"
 
 SyResult EditorBillboardSystem::Init()
 {

@@ -1,9 +1,9 @@
 #include "MaterialUpdateSystem.h"
-#include "EngineContext.h"
-#include "HardwareContext.h"
-#include "Rendering/RenderContext.h"
+#include "../Contexts/EngineContext.h"
+#include "../Contexts/HardwareContext.h"
+#include "../Contexts/RenderContext.h"
 #include "../Core/ServiceLocator.h"
-#include "MeshLoader.h"
+#include "../Features/Mesh/MeshLoader.h"
 
 
 SyResult MaterialUpdateSystem::Init()

@@ -2,9 +2,9 @@
 
 #include "../Components/SkyboxComponent.h"
 #include "../Core/ServiceLocator.h"
-#include "../Systems/HardwareContext.h"
-#include "../Systems/EngineContext.h"
-#include "../Systems/ResourceService.h"
+#include "../Contexts/HardwareContext.h"
+#include "../Contexts/EngineContext.h"
+#include "../Features/Resources/ResourceService.h"
 #include "../Scene/GameObjectHelper.h"
 #include "../Events/SyImageBasedLightingUpdateEvent.h"
 

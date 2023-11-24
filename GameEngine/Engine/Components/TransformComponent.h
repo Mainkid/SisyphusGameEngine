@@ -1,7 +1,7 @@
 #pragma once
 #include "SimpleMath.h"
 #include "../../vendor/entt/entt.hpp"
-#include "../Tools/Data/Vector.h"
+#include "../Core/Tools/Structures/Vector.h"
 #include "../Serialization/Serializable.h"
 
 using namespace DirectX::SimpleMath;
