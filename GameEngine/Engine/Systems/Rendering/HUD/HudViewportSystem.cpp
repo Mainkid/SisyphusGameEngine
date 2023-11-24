@@ -57,7 +57,7 @@ SyResult HudViewportSystem::Run()
 	x = std::clamp((int)(pos.x * textureSize.x / imgSize.x), 0, (int)textureSize.x - 1);
 	y = std::clamp((int)(pos.y * textureSize.y / imgSize.y), 0, (int)textureSize.y - 1);
 	
-	std::cout << (int)hoverState << std::endl;
+	//std::cout << (int)hoverState << std::endl;
 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)&& !ImGuizmo::IsOver()&& hoverState==EHoveringState::Viewport)
 	{

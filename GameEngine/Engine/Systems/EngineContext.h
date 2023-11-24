@@ -28,11 +28,6 @@ struct HudData
 	SelectedContent selectedContent = { boost::uuids::nil_uuid(),EAssetType::ASSET_NONE };
 };
 
-struct EngineProperties
-{
-	bool DrawOnlySelected = false;
-	bool DrawInPlayMode = false;
-};
 
 enum SyEEnginePropertiesFlags
 {

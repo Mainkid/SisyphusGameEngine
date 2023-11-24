@@ -63,7 +63,7 @@ SyResult SyErrorLoggingSystem::Run()
 			switch (sink)
 			{
 			case SY_SINK_CONSOLE:
-				std::cout << message.ToString();
+				//std::cout << message.ToString();
 				break;
 			case SY_SINK_TXT:
 				fout << message.ToString();
@@ -87,14 +87,10 @@ SyResult SyErrorLoggingSystem::Destroy()
 std::string SyErrorLoggingSystem::GetZeros(const unsigned maxZeros_, unsigned number_)
 {
 	unsigned numDigits = 1;
-	if (maxZeros_ > 3)
-		std::cout << "";
 	if (number_ >= 10)
 		numDigits++;
 	if (number_ >=100)
 		numDigits++;
-	if (number_ >= 1000)
-		std::cout << "";
 	unsigned numZeros = maxZeros_ - numDigits;
 	switch (numZeros)
 	{
@@ -105,7 +101,6 @@ std::string SyErrorLoggingSystem::GetZeros(const unsigned maxZeros_, unsigned nu
 	case 2:
 		return "00";
 	default:
-		std::cout << "";
 		return "";
 	}
 }
