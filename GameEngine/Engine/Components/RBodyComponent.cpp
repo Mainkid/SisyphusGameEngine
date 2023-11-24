@@ -6,7 +6,7 @@ SyRBodyComponent::SyRBodyComponent( const SyERBodyType&      rbType,
                                     float                   mass,
                                     unsigned flags)
 {
-    _rbType = rbType;
+    RbType = rbType;
     Mass   = mass;
     Flags  = flags;
 }

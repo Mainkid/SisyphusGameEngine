@@ -96,8 +96,8 @@ struct SyErrorLogger : IService
 			tt = system_clock::to_time_t(now);
 			tm timeinfo;
 			localtime_s(&timeinfo, &tt);
-			if (logLevel_ != SY_LOGLEVEL_INFO)
-				std::cout << "";
+			//if (logLevel_ != SY_LOGLEVEL_INFO)
+			//	std::cout << "";
 			xstring newMessage(	"#%d\t%s\t[%s]\t|%d : %d : %d : %d|\t{%s, %s, %d} : %s\n",
 								counter,
 								logLevelMap.at(logLevel_).c_str(),

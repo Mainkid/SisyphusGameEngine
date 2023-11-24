@@ -9,10 +9,10 @@
 #include "../../../Scene/GameObjectHelper.h"
 #include "../../../Components/MeshComponent.h"
 #include "../../ResourceService.h"
-#include "../../../Core/ECS/Events/SyHotReloadEvent.h"
-#include "../../../Core/ECS/Events/SyPlayModeEndedEvent.h"
-#include "../../../Core/ECS/Events/SyPlayModeStartedEvent.h"
-#include "../../../Core/ECS/Events/SySceneLoadEvent.h"
+#include "../../Events/SyHotReloadEvent.h"
+#include "../../Events/SyPlayModeEndedEvent.h"
+#include "../../Events/SyPlayModeStartedEvent.h"
+#include "../../Events/SySceneLoadEvent.h"
 #include "../../../Components/ImageBasedLightingComponent.h"
 
 
@@ -57,7 +57,7 @@ SyResult HudViewportSystem::Run()
 	x = std::clamp((int)(pos.x * textureSize.x / imgSize.x), 0, (int)textureSize.x - 1);
 	y = std::clamp((int)(pos.y * textureSize.y / imgSize.y), 0, (int)textureSize.y - 1);
 	
-	std::cout << (int)hoverState << std::endl;
+	//std::cout << (int)hoverState << std::endl;
 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)&& !ImGuizmo::IsOver()&& hoverState==EHoveringState::Viewport)
 	{

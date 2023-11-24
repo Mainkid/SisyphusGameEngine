@@ -4,7 +4,7 @@
 #include "../Components/RBodyComponent.h"
 #include "../Tools/ErrorLogger.h"
 #include "../Components/TransformComponent.h"
-#include "../Tools/MathHelper.h"
+#include "../Events/SyOnCreateRBodyEvent.h"
 
 
 using namespace physx;
@@ -51,11 +51,10 @@ SyResult SyRBodySystem::Run()
 		return result;
 	}
 	//initialize components that were created at this frame
-	//auto toInitView = _ecs->view<SyRBodyComponent, TransformComponent, SyRbCreateOnNextUpdateTag>();
-	auto eventView = _ecs->view<SyEventOnCreateRBody>();
+	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyOnCreateRBodyEvent);
 	for (auto& eventEntity : eventView)
 	{
-		auto entity = _ecs->get<SyEventOnCreateRBody>(eventEntity).Entity;
+		auto entity = _ecs->get<SyOnCreateRBodyEvent>(eventEntity).Entity;
 		auto* rbComponent = _ecs->try_get<SyRBodyComponent>(entity);
 		if (rbComponent == nullptr)
 		{
@@ -81,7 +80,7 @@ SyResult SyRBodySystem::Run()
 	{
 		SyRBodyComponent& rbComponent = view.get<SyRBodyComponent>(entity);
 		TransformComponent& trComponent = view.get<TransformComponent>(entity);
-		if (rbComponent._rbType == STATIC)
+		if (rbComponent.RbType == STATIC)
 			continue;
 		if (rbComponent._rbActor == nullptr)
 		{
@@ -108,7 +107,8 @@ SyResult SyRBodySystem::Run()
 		if (rbComponent.Flags & SyERBodyFlags::KINEMATIC)
 			rb->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 		if (rbComponent.Flags & SyERBodyFlags::DISABLE_GRAVITY)
-			rbComponent._rbActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);	
+			rbComponent._rbActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+		rbComponent._rbActor->setActorFlag(PxActorFlag::eVISUALIZATION, false);
 	}
 	//do not simulate if in pause mode
 	if(ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
@@ -133,7 +133,7 @@ SyResult SyRBodySystem::Run()
 	{
 		SyRBodyComponent& rbComponent = view.get<SyRBodyComponent>(entity);
 		TransformComponent& trComponent = view.get<TransformComponent>(entity);
-		if (rbComponent._rbType == STATIC)
+		if (rbComponent.RbType == STATIC)
 			continue;
 		if (rbComponent._rbActor == nullptr)
 		{
@@ -152,7 +152,6 @@ SyResult SyRBodySystem::Run()
 		rbComponent.LinearVelocity = rb->getLinearVelocity();
 		rbComponent.AngularVelocity = rb->getAngularVelocity();
 	}
-	
 	return SyResult();
 }
 
@@ -166,7 +165,7 @@ SyResult SyRBodySystem::Destroy()
 SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyComponent& rbComponent, TransformComponent& tComponent)
 {
 	SyResult result;
-	switch (rbComponent._rbType)
+	switch (rbComponent.RbType)
 	{
 	case STATIC: rbComponent._rbActor = _physics->createRigidStatic(PxTransform(tComponent._position, 
 														SyVector3::EulerToPxQuat(tComponent._rotation)));

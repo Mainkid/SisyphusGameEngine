@@ -124,6 +124,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<ParticleRenderSystem>();
 	_systems.Add<EditorBillboardRenderSystem>();
 	_systems.Add<ToneMappingRenderSystem>();
+	_systems.Add<EditorColliderRenderSystem>();
 	_systems.Add<EditorGridRenderSystem>();
 	_systems.Add<PostViewportRenderSystem>();
 

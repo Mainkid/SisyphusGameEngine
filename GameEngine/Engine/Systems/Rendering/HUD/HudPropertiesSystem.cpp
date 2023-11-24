@@ -357,7 +357,7 @@ void HudPropertiesSystem::DrawMaterialProperties()
 void HudPropertiesSystem::UpdateHudProperties(bool)
 {
     prevSelectedUUID = boost::uuids::nil_uuid();
-    std::cout << "OK";
+    //std::cout << "OK";
 }
 
 //TODO: Нужно избежать открытия файлов каждый фрейм

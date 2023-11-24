@@ -3,7 +3,7 @@
 #include "HardwareContext.h"
 #include "../Components/Particle.h"
 #include "../Components/SkyboxResource.h"
-#include "../Core/ECS/Events/SySceneLoadEvent.h"
+#include "../Events/SySceneLoadEvent.h"
 #include "../Tools/ImageLoader.h"
 
 ResourceService::ResourceService()
@@ -133,7 +133,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 		}
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_TEXTURE)
 		{
-			//TODO: Поддержка sRGB;
+			//TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ sRGB;
 			auto texture = std::make_shared<Texture>();
 			std::string filePath = FindFilePathByUUID(uuid);
 			if (filePath == "")
@@ -257,7 +257,7 @@ std::string ResourceService::FindFilePathByUUID(const boost::uuids::uuid& uuid, 
 	{
 		SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't find file path with current UUID. Returning NONE");
 		return "";
-		//TODO: Добавить вывод ошибки, если файл отсутствует с ID
+		//TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ ID
 	}
 }
 
