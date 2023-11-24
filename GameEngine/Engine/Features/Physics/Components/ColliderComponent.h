@@ -1,8 +1,7 @@
 ﻿#pragma once
 #include "../../vendor/entt/entt.hpp"
-#include "../Tools/Data/Vector.h"
-#include "..\Tools\Data\Geometry.h"
-#include "../Serialization/Serializable.h"
+#include "../../../Core/Tools/Structures/Vector.h"
+#include "../../../Core/Tools/Structures/Geometry.h"
 namespace physx
 {
     class PxShape;
@@ -15,11 +14,6 @@ struct SyColliderMaterial
     float restitution		= 0.3f;
     float density			= 0.1f;
 
-    SER_DATA(   SyColliderMaterial,
-                staticFriction,
-                dynamicFriction,
-                restitution,
-                density)
 };
 
 enum SyEPrimitiveColliderType
@@ -35,10 +29,6 @@ struct SyPrimitiveColliderShapeDesc
     float       Radius      = 1.0f;             //for sphere and capsule
     float       HalfHeight  = 1.0f;             //for capsule
 
-    SER_DATA(   SyPrimitiveColliderShapeDesc,
-                Extent,
-                Radius,
-                HalfHeight)
 };
 
 

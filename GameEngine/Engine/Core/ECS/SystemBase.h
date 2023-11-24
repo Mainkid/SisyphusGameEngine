@@ -1,9 +1,8 @@
 #pragma once
 #include "../../vendor/entt/entt.hpp"
-#include "../../Tools/ErrorLogger.h"
+#include "../Tools/ErrorLogger.h"
 #include "../../Components/GameObjectComp.h"
-#include "Event.h"
-
+#include "../../Features/Events/Tags/SyEventTag.h"
 #define SY_GET_THIS_FRAME_EVENT_VIEW(eventType_) _ecs->view<eventType_, SyThisFrameEventTag>()
 
 class SystemBase

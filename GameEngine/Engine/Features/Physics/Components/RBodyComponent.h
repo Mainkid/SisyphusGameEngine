@@ -1,11 +1,10 @@
 #pragma once
 #include <PxMaterial.h>
 
-#include "../Tools/Data/Vector.h"
-#include "../Tools/ErrorLogger.h"
-#include "../Tools/Data/FlagBitmask.h"
+#include "../../../Core/Tools/Structures/Vector.h"
+#include "../../../Core/Tools/ErrorLogger.h"
+#include "../../../Core/Tools/FlagBitmask.h"
 #include "../../vendor/entt/entt.hpp"
-#include "../Serialization/Serializable.h"
 #pragma region forward declaration
 namespace physx
 {

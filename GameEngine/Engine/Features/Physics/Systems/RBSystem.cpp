@@ -1,9 +1,9 @@
 #include "PxPhysicsAPI.h"
 #include "RBSystem.h"
-#include "EngineContext.h"
+#include "../../../Contexts/EngineContext.h"
 #include "../Components/RBodyComponent.h"
-#include "../Tools/ErrorLogger.h"
-#include "../Components/TransformComponent.h"
+#include "../../../Core/Tools/ErrorLogger.h"
+#include "../../../Components/TransformComponent.h"
 #include "../Events/SyOnCreateRBodyEvent.h"
 
 
@@ -146,9 +146,8 @@ SyResult SyRBodySystem::Run()
 		PxRigidDynamic* rb = rbComponent._rbActor->is<PxRigidDynamic>();
 		
 		PxTransform rbTrasform = rb->getGlobalPose();
-		trComponent.localPosition = rbTrasform.p;
-		trComponent.localRotation = SyVector3::PxQuatToEuler(rbTrasform.q);
-
+		trComponent._position = rbTrasform.p;
+		trComponent._rotation = SyVector3::PxQuatToEuler(rbTrasform.q);
 		rbComponent.LinearVelocity = rb->getLinearVelocity();
 		rbComponent.AngularVelocity = rb->getAngularVelocity();
 	}

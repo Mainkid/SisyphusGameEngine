@@ -1,8 +1,8 @@
 #pragma once
-#include "ResourceBase.h"
+#include "../Features/Resources/ResourceBase.h"
 #include <vector>
 #include <memory>
-#include "Mesh.h"
+#include "../Features/Mesh/Mesh.h"
 
 struct Model : public ResourceBase
 {

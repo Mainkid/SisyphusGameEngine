@@ -1,19 +1,19 @@
 ﻿#include "GameObjectHelper.h"
 
 #include "../../../vendor/entt/entt.hpp"
-#include "../Events/SyOnCreateRBodyEvent.h"
-#include "../Events/SyOnCreateColliderEvent.h"
-#include "../../Components/MeshComponent.h"
-#include "../../Components/LightComponent.h"
+#include "../Features/Physics/Components/RBodyComponent.h"
+#include "../Features/Physics/Events/SyOnCreateRBodyEvent.h"
+#include "../Features/Physics/Events/SyOnCreateColliderEvent.h"
+#include "../Features/Mesh/Components/MeshComponent.h"
+#include "../Features/Lighting/Components/LightComponent.h"
 #include "../../Components/TransformComponent.h"
-#include "../../Components/ParticleComponent.h"
+#include "../Features/Particles/Components/ParticleComponent.h"
 #include "../../Components/EditorBillboardComponent.h"
-#include "../../Components/RBodyComponent.h"
 #include "../Systems/TransformHelper.h"
-#include "../../Tools/Data/Vector.h"
+#include "../Core/Tools/Structures/Vector.h"
 #include "../Components/ImageBasedLightingComponent.h"
 #include "../Components/SkyboxComponent.h"
-#include "../Systems/ResourceService.h"
+#include "../Features/Resources/ResourceService.h"
 
 
 entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, SyVector3 pos = Vector3::Zero)
@@ -21,7 +21,7 @@ entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& na
 	auto ent = ecs->create();
 	ecs->emplace<GameObjectComp>(ent, name);
 	TransformComponent& tc=ecs->emplace<TransformComponent>(ent);
-	tc.localPosition = pos;
+	tc._position = pos;
 	return ent;
 }
 

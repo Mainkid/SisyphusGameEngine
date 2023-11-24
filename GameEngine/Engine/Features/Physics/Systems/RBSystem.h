@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
 
-#include "../Core/EngineCore.h"
-#include "../Core/ECS/SystemBase.h"
+#include "../../../Core/EngineCore.h"
+#include "../../../Core/ECS/SystemBase.h"
 
 
 #pragma region forward declaration

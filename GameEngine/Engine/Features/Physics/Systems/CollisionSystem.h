@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Core/ECS/SystemBase.h"
+#include "../../../Core/ECS/SystemBase.h"
 
 struct TransformComponent;
 struct SyPrimitiveColliderComponent;
