@@ -53,11 +53,28 @@ struct MeshComponent
 	uint32_t flags = SyEMeshComponentFlags::MESH_RENDER;
 	UINT strides[1] = { 80 };
 	UINT offsets[1] = { 0 };
-	uint32_t hashMaterial = 0;
-	uint32_t hashModel = 0;
+	uint32_t hashMaterialUuid = 0;
+	uint32_t hashModelUuid = 0;
+
+	size_t MonoHash = 0; // read/write only by mono sync system
+
 	SER_COMP(MeshComponent,
 		modelUUID,
 		materialUUIDs,
 		flags);
 };
 
+
+namespace std
+{
+	template<> struct hash<MeshComponent>
+	{
+		size_t operator()(const MeshComponent& a) const noexcept
+		{
+			return HashCombine(
+				a.modelUUID,
+				a.materialUUIDs
+			);
+		}
+	};
+}

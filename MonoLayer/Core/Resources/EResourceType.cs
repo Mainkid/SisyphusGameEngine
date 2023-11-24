@@ -2,7 +2,7 @@
 {
 public enum EResourceType
 {
-	Texture,
+	Model,
 	Material
 }
 }

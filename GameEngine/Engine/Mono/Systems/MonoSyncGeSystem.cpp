@@ -115,8 +115,8 @@ void MonoSyncGeSystem::OnAddComp(uint32_t rawEnt, mono::EProxyCompId id)
 	}
 	else if (id == mono::EProxyCompId::Mesh)
 	{
-		auto resourceService = ServiceLocator::instance()->Get<ResourceService>();
-		auto uuid = resourceService->GetUUIDFromPath(cubeMeshPath);
+		auto resService = ServiceLocator::instance()->Get<ResourceService>();
+		auto uuid = resService->GetUUIDFromPath(cubeMeshPath);
 		_ecs->emplace<MeshComponent>(ent).modelUUID = uuid;
 	}
 	else if (id == mono::EProxyCompId::Light)
@@ -184,13 +184,44 @@ void MonoSyncGeSystem::OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyT
 		if (tf.parent != entt::null)
 			GameObjectHelper::SetParent(_ecs, ent, entt::null);
 	}
+
+	tf.MonoHash = std::hash<TransformComponent>{}(tf);
 }
 
 void MonoSyncGeSystem::OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshComp& proxy)
 {
 	auto& mesh = _ecs->get<MeshComponent>(static_cast<entt::entity>(rawEnt));
-	//mesh.texturePath = proxy.TexturePath;
-	//mesh.modelPath = proxy.ModelPath;
+
+	if (proxy.ModelUuid == nullptr)
+	{
+		auto resService = ServiceLocator::instance()->Get<ResourceService>();
+		auto uuid = resService->GetUUIDFromPath(cubeMeshPath);
+		mesh.modelUUID = uuid;
+	}
+	else
+	{
+		char* buffModelUuid = mono_string_to_utf8(proxy.ModelUuid);
+		auto strModelUuid = std::string(buffModelUuid);
+		mesh.modelUUID = boost::lexical_cast<boost::uuids::uuid>(strModelUuid);
+	}
+
+	mesh.materialUUIDs.clear();
+	if (proxy.MaterialsUuids != nullptr)
+	{
+		int length = mono_array_length(proxy.MaterialsUuids);
+		for (int i = 0; i < length; i++)
+		{
+			MonoString* rawMaterialUuid = mono_array_get(proxy.MaterialsUuids, MonoString*, i);
+			if (rawMaterialUuid != nullptr)
+			{
+				char* buffMaterialUuid = mono_string_to_utf8(rawMaterialUuid);
+				auto strMaterialUuid = std::string(buffMaterialUuid);
+				mesh.materialUUIDs.push_back(boost::lexical_cast<boost::uuids::uuid>(strMaterialUuid));
+			}
+		}
+	}
+
+	mesh.MonoHash = std::hash<MeshComponent>{}(mesh);
 }
 
 void MonoSyncGeSystem::OnUpdateLightComp(uint32_t rawEnt, const mono::ProxyLightComp& proxy) {}

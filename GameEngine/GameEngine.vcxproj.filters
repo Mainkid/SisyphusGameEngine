@@ -244,6 +244,7 @@
     <ClInclude Include="vendor\ImGui\ImCurve.h" />
     <ClInclude Include="Engine\Mono\Systems\MonoSyncEgSystem.h" />
     <ClInclude Include="Engine\Mono\Objects\ISyMonoEditorCallbacks.h" />
+    <ClInclude Include="Engine\Tools\HashHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

@@ -1,6 +1,9 @@
-﻿using Leopotam.EcsLite;
+﻿using System;
+using System.Collections.Generic;
+using Leopotam.EcsLite;
 using SyEngine.Core.Comps;
 using SyEngine.Core.ProxyComps;
+using SyEngine.Core.Resources;
 
 namespace SyEngine.Core
 {
@@ -38,7 +41,7 @@ internal class SyEcsSync
     public void SyncEngineWithGame()
     {
         SendTransformsToEngine();
-        //SendMeshesToEngine();
+        SendMeshesToEngine();
     }
 
     //-----------------------------------------------------------
@@ -48,6 +51,11 @@ internal class SyEcsSync
         foreach (int ent in _transformsFilter)
         {
             ref var tf = ref _transformsPool.Get(ent);
+
+            int hash = tf.GetHashCode();
+            if (hash == tf.Hash)
+                continue;
+            tf.Hash = hash;
 
             uint engineParentEnt = default;
             bool hasParent = tf.ParentEnt != null &&
@@ -61,15 +69,17 @@ internal class SyEcsSync
                 HasParent       = hasParent,
                 ParentEngineEnt = engineParentEnt
             };
-
             SyProxyEcs.GeUpdateTransformComp(_ecs.ToEngineEnt(ent), proxy);
+            
+            Console.WriteLine($"[TEST] {ent} transform sent to engine");
         }
     }
 
     public void ReceiveTransformFromEngine(uint engineEnt, ProxyTransformComp proxy)
     {
-        ref var tf = ref _transformsPool.Get(_ecs.ToGameEnt(engineEnt));
+        int gameEnt = _ecs.ToGameEnt(engineEnt);
 
+        ref var tf = ref _transformsPool.Get(gameEnt);
         tf.Position      = proxy.Position;
         tf.Rotation      = proxy.Rotation;
         tf.Scale         = proxy.Scale;
@@ -81,6 +91,10 @@ internal class SyEcsSync
                        _ecs.ToGameEnt(proxy.ParentEngineEnt, out int parentEnt)
             ? (int?)parentEnt
             : null;
+
+        tf.Hash = tf.GetHashCode();
+        
+        Console.WriteLine($"[TEST] {gameEnt} transform received from engine");
     }
 
     //-----------------------------------------------------------
@@ -90,14 +104,48 @@ internal class SyEcsSync
         foreach (int ent in _meshesFilter)
         {
             ref var mesh = ref _meshesPool.Get(ent);
-            SyProxyEcs.GeUpdateMeshComp(_ecs.ToEngineEnt(ent), mesh);
+            
+            int hash = mesh.GetHashCode();
+            if (hash == mesh.Hash)
+                continue;
+            mesh.Hash = hash;
+
+            var proxy = new ProxyMeshComp();
+            proxy.ModelUuid = mesh.Model?.Uuid;
+            if (mesh.Materials == null || mesh.Materials.Count == 0)
+            {
+                proxy.MaterialsUuids = null;
+            }
+            else
+            {
+                proxy.MaterialsUuids = new string[mesh.Materials.Count];
+                for (var i = 0; i < mesh.Materials.Count; i++)
+                    proxy.MaterialsUuids[i] = mesh.Materials[i]?.Uuid;
+            }
+            
+            SyProxyEcs.GeUpdateMeshComp(_ecs.ToEngineEnt(ent), proxy);
+            
+            Console.WriteLine($"[TEST] {ent} mesh sent to engine");
         }
     }
 
-    public void ReceiveMeshFromEngine(uint engineEnt, MeshComp comp)
+    public void ReceiveMeshFromEngine(uint engineEnt, ProxyMeshComp proxy)
     {
-        ref var mesh = ref _meshesPool.Get(_ecs.ToGameEnt(engineEnt));
-        mesh = comp;
+        int gameEnt = _ecs.ToGameEnt(engineEnt);
+        
+        ref var mesh = ref _meshesPool.Get(gameEnt);
+
+        mesh.Model = proxy.ModelUuid == null ? null : new ResRef<ResModel>(proxy.ModelUuid);
+
+        if (mesh.Materials == null)
+            mesh.Materials = new List<ResRef<ResMaterial>>();
+        mesh.Materials.Clear();
+        foreach (string uuid in proxy.MaterialsUuids)
+            mesh.Materials.Add(new ResRef<ResMaterial>(uuid));
+
+        mesh.Hash = mesh.GetHashCode();
+        
+        Console.WriteLine($"[TEST] {gameEnt} mesh received from engine");
     }
 
     //-----------------------------------------------------------

@@ -1,4 +1,5 @@
 ﻿using SyEngine.Core.Datas;
+using SyEngine.Core.Helpers;
 
 namespace SyEngine.Core.Comps
 {
@@ -13,7 +14,13 @@ public struct TransformComp : SyEcs.IComp
     public SyVector3 LocalScale;
 
     public int? ParentEnt;
+
+
+    internal int Hash;
     
     public override string ToString() => $"({Position}, {Rotation}, {Scale})";
+
+    public override int GetHashCode()
+	    => HashHelper.Combine(LocalPosition, LocalRotation, LocalScale);
 }
 }

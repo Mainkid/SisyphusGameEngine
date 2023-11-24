@@ -24,9 +24,11 @@ struct TransformComponent
 	SyVector3 localRotation = SyVector3(0, 0, 0);
 	SyVector3 localScale = SyVector3(1, 1, 1);
 	Matrix transformMatrix = Matrix::Identity;
-	uint32_t hash = 0;
+	size_t hash = 0;
 	uint32_t parent = entt::null;
 	std::set<entt::entity> children = {};
+
+	size_t MonoHash = 0; // read/write only by mono sync system
 
 
 	SER_COMP(TransformComponent,
@@ -41,34 +43,11 @@ struct TransformComponent
 
 namespace std
 {
-	template<> struct hash<SyVector3>
-	{
-		using argument_type = SyVector3;
-		using result_type = std::size_t;
-		result_type operator()(argument_type const& a) const
-		{
-			result_type const h1(std::hash<float>()(a.x));
-			result_type const h2(std::hash<float>()(a.y));
-			result_type const h3(std::hash<float>()(a.z));
-			return h1 * 37 + (h1 * 37 + h2) * 37 +
-				((h1 * 37 + h2) * 37 + h3) * 37;
-		}
-	};
-}
-
-namespace std
-{
 	template<> struct hash<Vector3>
 	{
-		using argument_type = Vector3;
-		using result_type = std::size_t;
-		result_type operator()(argument_type const& a) const
+		size_t operator()(const Vector3& a) const
 		{
-			result_type const h1(std::hash<float>()(a.x));
-			result_type const h2(std::hash<float>()(a.y));
-			result_type const h3(std::hash<float>()(a.z));
-			return h1 * 37 + (h1 * 37 + h2) * 37 +
-				((h1 * 37 + h2) * 37 + h3) * 37;
+			return HashCombine(a.x, a.y, a.z);
 		}
 	};
 }
@@ -77,23 +56,17 @@ namespace std
 {
 	template<> struct hash<TransformComponent>
 	{
-		using argument_type = TransformComponent;
-		using result_type = std::size_t;
-		result_type operator()(argument_type const& a) const
+		size_t operator()(const TransformComponent& a) const noexcept
 		{
-			result_type const h1(std::hash<SyVector3>()(a._position));
-			result_type const h2(std::hash<SyVector3>()(a.scale));
-			result_type const h3(std::hash<SyVector3>()(a._rotation));
-			result_type const h4(std::hash<uint32_t>()(a.parent));
-			result_type const h5(std::hash<SyVector3>()(a.localPosition));
-			result_type const h6(std::hash<SyVector3>()(a.localRotation));
-			result_type const h7(std::hash<SyVector3>()(a.localScale));
-			return h1 * 37 + (h1 * 37 + h2) * 37 +
-				((h1 * 37 + h2) * 37 + h3) * 37+
-				(((h1 * 37 + h2) * 37 + h3) * 37+h4)*37+
-				((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 +h5)*37+
-				(((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37+h6)*37+
-				((((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37 + h6) * 37+h7);
+			return HashCombine(
+				a._position,
+				a._rotation,
+				a.scale,
+				a.parent,
+				a.localPosition,
+				a.localRotation,
+				a.localScale
+			);
 		}
 	};
 }

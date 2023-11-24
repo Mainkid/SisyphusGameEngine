@@ -60,11 +60,6 @@ public class SyProxyEditor
 	{
 		if (_drawers.TryGetValue(type, out drawer))
 			return true;
-		if (type.IsArray || type.Namespace?.StartsWith("System") == true)
-		{
-			//TODO
-			return false;
-		}
 		if (type.IsEnum)
 		{
 			var drawerType = typeof(EditorDrawerEnumBase<>).MakeGenericType(type);
@@ -79,13 +74,27 @@ public class SyProxyEditor
 			_drawers.Add(type, drawer);
 			return true;
 		}
-		if (type.TryExtractGeneric(out var defType, out var genType) &&
-		    defType == typeof(ResRef<>))
+		if (type.TryExtractGeneric(out var defType, out var genType))
 		{
-			var drawerType = typeof(EditorDrawerResRef<,>).MakeGenericType(type, genType);
-			drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this);
-			_drawers.Add(type, drawer);
-			return true;
+			if (defType == typeof(ResRef<>))
+			{
+				var drawerType = typeof(EditorDrawerResRef<,>).MakeGenericType(type, genType);
+				drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this);
+				_drawers.Add(type, drawer);
+				return true;
+			}
+			if (defType == typeof(List<>))
+			{
+				var drawerType = typeof(EditorDrawerList<,>).MakeGenericType(type, genType);
+				drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this);
+				_drawers.Add(type, drawer);
+				return true;
+			}
+		}
+		if (type.IsArray || type.Namespace?.StartsWith("System") == true)
+		{
+			//TODO
+			return false;
 		}
 		if (type.IsClass || type.IsValueType && !type.IsPrimitive)
 		{
@@ -128,8 +137,15 @@ public class SyProxyEditor
 		}
 	}
 
+	
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern void GeDrawCompHeader(string name);
+	internal static extern void GeIndent(bool isIncrease);
+    
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern void GeDrawSeparator(string name);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern void GeDrawText(string name);
 
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern int GeDrawIntField(string name, int val);
@@ -151,5 +167,14 @@ public class SyProxyEditor
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern string GeDrawResField(string name, EResourceType resType, string uuid);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawArrayHead(string name);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern int GeDrawArrayItemButtons(int idx);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawArrayAddButton();
 }
 }

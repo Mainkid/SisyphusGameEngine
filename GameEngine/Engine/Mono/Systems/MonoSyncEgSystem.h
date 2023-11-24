@@ -15,4 +15,7 @@ public:
 
 private:
 	mono::SyMonoEcs* _monoEcs = nullptr;
+
+	void SendTransforms();
+	void SendMeshes();
 };

@@ -2,7 +2,7 @@
 {
 public struct ProxyMeshComp
 {
+	public string   ModelUuid;
 	public string[] MaterialsUuids;
-	public string   TextureUuid;
 }
 }

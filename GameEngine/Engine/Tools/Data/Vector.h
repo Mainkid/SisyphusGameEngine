@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SimpleMath.h"
+#include "../HashHelper.h"
 #include "foundation/PxVec3.h"
 #include "foundation/PxQuat.h"
 
@@ -114,3 +115,15 @@ public:
 		return qq;
 	}
 };
+
+
+namespace std
+{
+	template<> struct hash<SyVector3>
+	{
+		size_t operator()(SyVector3 const& a) const noexcept
+		{
+			return HashCombine(a.x, a.y, a.z);
+		}
+	};
+}

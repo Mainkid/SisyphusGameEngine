@@ -7,10 +7,39 @@
 
 using namespace mono;
 
-void SyMonoEditor::GeDrawCompHeader(MonoString* rawName)
+
+void SyMonoEditor::GeIndent(bool isIncrease)
 {
-	char* name = mono_string_to_utf8(rawName);
-	ImGui::Text(name);
+	if (isIncrease)
+		ImGui::Indent(10.0f);
+	else
+		ImGui::Unindent(10.0f);
+}
+
+void SyMonoEditor::GeDrawSeparator(MonoString* rawName)
+{
+	if (rawName == nullptr)
+	{
+		ImGui::Separator();
+	}
+	else
+	{
+		char* name = mono_string_to_utf8(rawName);
+		ImGui::SeparatorText(name);
+	}
+}
+
+void SyMonoEditor::GeDrawText(MonoString* rawName)
+{
+	if (rawName == nullptr)
+	{
+		ImGui::Text("[NULL]");
+	}
+	else
+	{
+		char* name = mono_string_to_utf8(rawName);
+		ImGui::Text(name);
+	}
 }
 
 int SyMonoEditor::GeDrawIntField(MonoString* rawName, int val)
@@ -87,8 +116,8 @@ MonoString* SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType
 	auto resService = _instance->_resService;
 
 	auto resType = EAssetType::ASSET_NONE;
-	if (rawResType == EProxyResourceType::Texture)
-		resType = EAssetType::ASSET_TEXTURE;
+	if (rawResType == EProxyResourceType::Model)
+		resType = EAssetType::ASSET_MESH;
 	else if (rawResType == EProxyResourceType::Material)
 		resType = EAssetType::ASSET_MATERIAL;
 	if (resType == EAssetType::ASSET_NONE)
@@ -99,10 +128,11 @@ MonoString* SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType
 
 	char* name = mono_string_to_utf8(rawName);
 
-	char* strSelectedUuid = mono_string_length(rawSelectedUuid) > 0
-		? mono_string_to_utf8(rawSelectedUuid)
-		: nullptr;
-	auto selectedUuid = strSelectedUuid == nullptr
+	std::string strSelectedUuid = rawSelectedUuid == nullptr
+		? std::string()
+		: std::string(mono_string_to_utf8(rawSelectedUuid));
+
+	auto selectedUuid = strSelectedUuid.empty()
 		? boost::uuids::nil_uuid()
 		: boost::lexical_cast<boost::uuids::uuid>(strSelectedUuid);
 	std::string selectedName = selectedUuid.is_nil()
@@ -114,10 +144,11 @@ MonoString* SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType
 	if (ImGui::BeginCombo(name, selectedName.c_str()))
 	{
 		auto uuids = resService->GetAllResourcesOfType(resType);
-		for (auto uuid : uuids)
+
+		for (const auto& uuid : uuids)
 		{
 			bool isSelected = uuid == selectedUuid;
-			std::string selectableName = resService->FindFilePathByUUID(uuid, true);
+			std::string selectableName = resService->FindFilePathByUUID(uuid, false);
 			if (ImGui::Selectable(selectableName.c_str(), isSelected))
 			{
 				isSelectedUuidChanged = true;
@@ -131,11 +162,39 @@ MonoString* SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType
 
 	if (isSelectedUuidChanged)
 	{
-		const char* newStrSelectedUuid = boost::lexical_cast<std::string>(selectedUuid).c_str();
+		auto newStrSelectedUuid = boost::lexical_cast<std::string>(selectedUuid);
 		auto monoDomain = mono_object_get_domain(_instance->GetInstance());
-		rawSelectedUuid = mono_string_new(monoDomain, newStrSelectedUuid);
+		rawSelectedUuid = mono_string_new(monoDomain, newStrSelectedUuid.c_str());
 	}
 	return rawSelectedUuid;
+}
+
+bool SyMonoEditor::GeDrawArrayHead(MonoString* rawName)
+{
+	char* name = mono_string_to_utf8(rawName);
+	return ImGui::CollapsingHeader(name);
+}
+
+int SyMonoEditor::GeDrawArrayItemButtons(int idx)
+{
+	int action = 0;
+	ImGui::PushID(idx);
+	ImGui::SameLine();
+	if (ImGui::Button("-"))
+		action = 1;
+	ImGui::SameLine();
+	if (ImGui::Button("/\\"))
+		action = 2;
+	ImGui::SameLine();
+	if (ImGui::Button("\\/"))
+		action = 3;
+	ImGui::PopID();
+	return action;
+}
+
+bool SyMonoEditor::GeDrawArrayAddButton()
+{
+	return ImGui::Button("+");
 }
 
 
@@ -146,7 +205,9 @@ SyResult SyMonoEditor::OnAfterCreate()
 	SY_RESULT_CHECK(EgInit.Bind(this));
 	SY_RESULT_CHECK(EgDrawEntityComps.Bind(this));
 
-	BindCallback(GE_DRAW_COMP_HEADER, &GeDrawCompHeader);
+	BindCallback(GE_INDENT, &GeIndent);
+	BindCallback(GE_DRAW_SEPARATOR, &GeDrawSeparator);
+	BindCallback(GE_DRAW_TEXT, &GeDrawText);
 	BindCallback(GE_DRAW_INT_FIELD, &GeDrawIntField);
 	BindCallback(GE_DRAW_FLOAT_FIELD, &GeDrawFloatField);
 	BindCallback(GE_DRAW_BOOL_FIELD, &GeDrawBoolField);
@@ -154,6 +215,9 @@ SyResult SyMonoEditor::OnAfterCreate()
 	BindCallback(GE_DRAW_COLOR_FIELD, &GeDrawColorField);
 	BindCallback(GE_DRAW_ENUM_FIELD, &GeDrawEnumField);
 	BindCallback(GE_DRAW_RES_FIELD, &GeDrawResField);
+	BindCallback(GE_DRAW_ARRAY_HEAD, &GeDrawArrayHead);
+	BindCallback(GE_DRAW_ARRAY_ITEM_BUTTONS, &GeDrawArrayItemButtons);
+	BindCallback(GE_DRAW_ARRAY_ADD_BUTTON, &GeDrawArrayAddButton);
 
 	_resService = ServiceLocator::instance()->Get<ResourceService>();
 

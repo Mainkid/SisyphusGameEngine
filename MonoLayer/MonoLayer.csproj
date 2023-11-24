@@ -59,13 +59,13 @@
         <Compile Include="Core\Helpers\MathExt.cs" />
         <Compile Include="Core\ProxyComps\ProxyMeshComp.cs" />
         <Compile Include="Core\ProxyComps\ProxyTransformComp.cs" />
-        <Compile Include="Core\Resources\ResTexture.cs" />
+        <Compile Include="Core\Resources\ResModel.cs" />
         <Compile Include="Core\Resources\SyProxyResManager.cs" />
         <Compile Include="Core\SyEcs.cs" />
         <Compile Include="Core\SyEcsSync.cs" />
         <Compile Include="Core\SyEcsSystemBase.cs" />
         <Compile Include="Core\SyProxyEcs.cs" />
-        <Compile Include="Editor\Drawers\EditorDrawerArray.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerList.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerBase.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerBool.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerColor.cs" />

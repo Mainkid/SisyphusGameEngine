@@ -66,13 +66,13 @@ internal class SyProxyEcs
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	public static extern void GeUpdateMeshComp(uint engineEnt, MeshComp comp);
+	public static extern void GeUpdateMeshComp(uint engineEnt, ProxyMeshComp comp);
 
-	public void EgUpdateMeshComp(uint engineEnt, MeshComp comp)
+	public void EgUpdateMeshComp(uint engineEnt, ProxyMeshComp comp)
 	{
 		try
 		{
-			//_ecsSync.ReceiveMeshFromEngine(engineEnt, comp);
+			Sync.ReceiveMeshFromEngine(engineEnt, comp);
 		}
 		catch (Exception e)
 		{

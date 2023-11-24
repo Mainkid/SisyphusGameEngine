@@ -21,7 +21,7 @@ public class EditorDrawerComp<T> : EditorDrawerBase<T>, IEditorDrawerComp where 
 
 	public void DrawComp(int ent)
 	{
-		SyProxyEditor.GeDrawCompHeader(typeof(T).Name);
+		SyProxyEditor.GeDrawSeparator(typeof(T).Name);
 
 		ref var comp = ref _pool.Get(ent);
 		Draw(null, ref comp);

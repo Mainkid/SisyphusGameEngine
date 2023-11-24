@@ -741,6 +741,7 @@
     <ClInclude Include="Engine\Tools\Data\FlagBitmask.h" />
     <ClInclude Include="Engine\Tools\Data\RingBuffer.h" />
     <ClInclude Include="Engine\Tools\ErrorLogger.h" />
+    <ClInclude Include="Engine\Tools\HashHelper.h" />
     <ClInclude Include="Engine\Tools\ImageLoader.h" />
     <ClInclude Include="Engine\Components\ParticleComponent.h" />
     <ClInclude Include="Engine\Components\Particle.h" />

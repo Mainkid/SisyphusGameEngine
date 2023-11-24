@@ -46,6 +46,6 @@ public struct SyColor : IEquatable<SyColor>
 		=> obj is SyColor other && this == other;
 	
 	public override int GetHashCode()
-		=> HashHelper.Combine(R.GetHashCode(), G.GetHashCode(), B.GetHashCode(), A.GetHashCode());
+		=> HashHelper.Combine(R, G, B, A);
 }
 }

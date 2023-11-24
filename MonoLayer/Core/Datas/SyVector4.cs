@@ -1,4 +1,6 @@
-﻿namespace SyEngine.Core.Datas
+﻿using SyEngine.Core.Helpers;
+
+namespace SyEngine.Core.Datas
 {
 public struct SyVector4
 {
@@ -14,5 +16,8 @@ public struct SyVector4
 		Z = z;
 		W = w;
 	}
+
+	public override int GetHashCode()
+		=> HashHelper.Combine(X, Y, Z, W);
 }
 }

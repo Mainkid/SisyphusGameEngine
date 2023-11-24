@@ -2,6 +2,5 @@
 {
 public abstract class ResBase
 {
-	public abstract EResourceType Type     { get; }
 }
 }

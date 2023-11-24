@@ -1,6 +1,6 @@
 ﻿namespace SyEngine.Core.Resources
 {
-public class ResMaterial : ResBase
+public class ResModel : ResBase
 {
 }
 }

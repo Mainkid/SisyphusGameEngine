@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace SyEngine.Editor.Drawers
 {
@@ -20,21 +21,39 @@ public class EditorDrawerReflect<T> : EditorDrawerBase<T>
 		val = (T)rawVal;
 		return isChanged;
 	}
-	
+
 	public override bool DrawRaw(string name, ref object rawVal)
 	{
-		var isObjChanged = false;
-		foreach (var field in _fields)
+		if (name != null)
 		{
-			object fieldVal       = field.GetValue(rawVal);
-			bool   isFieldChanged = _editor.DrawField(field.Name, field.FieldType, ref fieldVal);
-			if (isFieldChanged)
+			SyProxyEditor.GeDrawText(name);
+			SyProxyEditor.GeIndent(true);
+		}
+
+		var isChanged = false;
+		
+		if (rawVal == null)
+		{
+			SyProxyEditor.GeDrawText("[null]");
+		}
+		else
+		{
+			foreach (var field in _fields)
 			{
-				field.SetValue(rawVal, fieldVal);
-				isObjChanged = true;
+				object fieldVal       = field.GetValue(rawVal);
+				bool   isFieldChanged = _editor.DrawField(field.Name, field.FieldType, ref fieldVal);
+				if (isFieldChanged)
+				{
+					field.SetValue(rawVal, fieldVal);
+					isChanged = true;
+				}
 			}
 		}
-		return isObjChanged;
+
+		if (name != null)
+			SyProxyEditor.GeIndent(false);
+		
+		return isChanged;
 	}
 }
 }

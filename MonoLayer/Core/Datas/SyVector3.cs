@@ -34,6 +34,6 @@ public struct SyVector3 : IEquatable<SyVector3>
 		=> obj is SyVector3 other && this == other;
 
 	public override int GetHashCode()
-		=> HashHelper.Combine(X.GetHashCode(), Y.GetHashCode(), Z.GetHashCode());
+		=> HashHelper.Combine(X, Y, Z);
 }
 }

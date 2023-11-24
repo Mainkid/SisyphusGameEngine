@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <mono/jit/jit.h>
 
 #include "../Tools/Data/Vector.h"
 #include "../Core/Rendering/Lights/ELightType.h"
@@ -34,7 +35,7 @@ namespace mono
 
 	enum class EProxyResourceType
 	{
-		Texture,
+		Model,
 		Material
 	};
 
@@ -87,8 +88,8 @@ namespace mono
 
 	struct ProxyMeshComp
 	{
-		std::string TexturePath;
-		std::string ModelPath;
+		MonoString* ModelUuid;
+		MonoArray* MaterialsUuids;
 	};
 
 	struct ProxyLightComp
