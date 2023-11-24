@@ -1,7 +1,7 @@
 #pragma once
 #include "../Core/ECS/SystemBase.h"
 #include "../../Core/ServiceLocator.h"
-#include "HardwareContext.h"
+#include "../Contexts/HardwareContext.h"
 #include <memory>
 
 class EngineCore;

@@ -1,6 +1,6 @@
 #include "EditorCameraSystem.h"
-#include "HardwareContext.h"
-#include "EngineContext.h"
+#include "../Contexts/HardwareContext.h"
+#include "../Contexts/EngineContext.h"
 #include "../Components/CameraComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../Core/ServiceLocator.h"

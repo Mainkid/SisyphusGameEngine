@@ -4,7 +4,7 @@
 #include "Core/EngineCore.h"
 #include "Components/EditorBillboardComponent.h"
 #include "Components/GameObjectComp.h"
-#include "Components/MeshComponent.h"
+#include "Features/Mesh/Components/MeshComponent.h"
 #include "Components/TransformComponent.h"
 
 #include "Scene/GameObjectHelper.h"

@@ -6,8 +6,7 @@
 #include <vector>
 
 #include "SimpleMath.h"
-#include "../../Tools/Data/Vector.h"
-//#include "ParticleSystem/Particle.h"
+#include "../Tools/Structures/Vector.h"
 
 struct HardwareContext;
 
