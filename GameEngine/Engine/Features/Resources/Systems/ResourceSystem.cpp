@@ -1,9 +1,9 @@
 #include "ResourceSystem.h"
-#include "ResourceInfo.h"
-#include "EngineContext.h"
-#include "Rendering/HUD/ResourceHelper.h"
-#include "ResourceService.h"
-#include "../Core/ServiceLocator.h"
+#include "../../Engine/Features/Resources/ResourceInfo.h"
+#include "../../Engine/Contexts/EngineContext.h"
+#include "../../Engine/Features/Rendering/HUD/ResourceHelper.h"
+#include "../../Engine/Features/Resources/ResourceService.h"
+#include "../../Core/ServiceLocator.h"
 #include "json.hpp"
 #include <uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>

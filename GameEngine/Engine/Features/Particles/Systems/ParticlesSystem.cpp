@@ -1,11 +1,11 @@
 #include "ParticlesSystem.h"
-#include "../Core/ServiceLocator.h"
-#include "HardwareContext.h"
-#include "EngineContext.h"
-#include "ResourceService.h"
-#include "../Core/Graphics/ConstantBuffer.h"
-#include "../Tools/ImageLoader.h"
-#include "Rendering/RenderContext.h"
+#include "../../Core/ServiceLocator.h"
+#include "../../Engine/Contexts/HardwareContext.h"
+#include "../../Engine/Contexts/EngineContext.h"
+#include "../../Engine/Features/Resources/ResourceService.h"
+#include "../../Core/Graphics/ConstantBuffer.h"
+#include "../../Core/Tools/ImageLoader.h"
+#include "../../Engine/Contexts/RenderContext.h"
 
 SyResult ParticlesSystem::Init()
 {
