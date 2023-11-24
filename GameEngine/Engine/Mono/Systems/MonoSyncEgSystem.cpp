@@ -5,7 +5,7 @@
 #include <boost/uuid/uuid.hpp>
 
 #include "../SyMono.h"
-#include "../../Components/MeshComponent.h"
+#include "../../Features/Mesh/Components/MeshComponent.h"
 #include "../Components/MonoSyncComp.h"
 #include "../../Components/TransformComponent.h"
 
@@ -42,7 +42,7 @@ void MonoSyncEgSystem::SendTransforms()
 	for (auto ent : view)
 	{
 		auto& tf = view.get<TransformComponent>(ent);
-		size_t hash = std::hash<TransformComponent>{}(tf);
+		size_t hash = hash_value(tf);
 		if (hash == tf.MonoHash)
 			continue;
 		tf.MonoHash = hash;
@@ -70,7 +70,7 @@ void MonoSyncEgSystem::SendMeshes()
 	{
 		auto& mesh = view.get<MeshComponent>(ent);
 
-		size_t hash = std::hash<MeshComponent>{}(mesh);
+		size_t hash = hash_value(mesh);
 		if (hash == mesh.MonoHash)
 			continue;
 		mesh.MonoHash = hash;

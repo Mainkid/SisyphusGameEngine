@@ -64,17 +64,10 @@ struct MeshComponent
 		flags);
 };
 
-
-namespace std
+inline size_t hash_value(const MeshComponent& mesh)
 {
-	template<> struct hash<MeshComponent>
-	{
-		size_t operator()(const MeshComponent& a) const noexcept
-		{
-			return HashCombine(
-				a.modelUUID,
-				a.materialUUIDs
-			);
-		}
-	};
+	size_t hash = 0;
+	boost::hash_combine(hash, mesh.modelUUID);
+	boost::hash_combine(hash, mesh.materialUUIDs);
+	return hash;
 }

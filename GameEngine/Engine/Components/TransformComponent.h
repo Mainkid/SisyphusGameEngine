@@ -43,32 +43,15 @@ struct TransformComponent
 		parent)
 };
 
-namespace std
+inline size_t hash_value(const TransformComponent& tf)
 {
-	template<> struct hash<Vector3>
-	{
-		size_t operator()(const Vector3& a) const
-		{
-			return HashCombine(a.x, a.y, a.z);
-		}
-	};
-}
-
-namespace std
-{
-	template<> struct hash<TransformComponent>
-	{
-		size_t operator()(const TransformComponent& a) const noexcept
-		{
-			return HashCombine(
-				a._position,
-				a._rotation,
-				a.scale,
-				a.parent,
-				a.localPosition,
-				a.localRotation,
-				a.localScale
-			);
-		}
-	};
+	size_t hash = 0;
+	boost::hash_combine(hash, tf._position);
+	boost::hash_combine(hash, tf._rotation);
+	boost::hash_combine(hash, tf.scale);
+	boost::hash_combine(hash, tf.parent);
+	boost::hash_combine(hash, tf.localPosition);
+	boost::hash_combine(hash, tf.localRotation);
+	boost::hash_combine(hash, tf.localScale);
+	return hash;
 }

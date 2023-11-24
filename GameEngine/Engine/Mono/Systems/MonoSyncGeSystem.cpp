@@ -2,11 +2,11 @@
 
 #include "../SyMono.h"
 #include "../Components/MonoSyncComp.h"
-#include "../../Components/MeshComponent.h"
+#include "../../Features/Mesh/Components/MeshComponent.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Core/ServiceLocator.h"
-#include "../../Systems/EngineContext.h"
-#include "../../Systems/ResourceService.h"
+#include "../../Contexts/EngineContext.h"
+#include "../../Features/Resources/ResourceService.h"
 #include "../../Core/ResourcePath.h"
 #include "../../Scene/GameObjectHelper.h"
 
@@ -185,7 +185,7 @@ void MonoSyncGeSystem::OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyT
 			GameObjectHelper::SetParent(_ecs, ent, entt::null);
 	}
 
-	tf.MonoHash = std::hash<TransformComponent>{}(tf);
+	tf.MonoHash = hash_value(tf);
 }
 
 void MonoSyncGeSystem::OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshComp& proxy)
@@ -221,7 +221,7 @@ void MonoSyncGeSystem::OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshCo
 		}
 	}
 
-	mesh.MonoHash = std::hash<MeshComponent>{}(mesh);
+	mesh.MonoHash = hash_value(mesh);
 }
 
 void MonoSyncGeSystem::OnUpdateLightComp(uint32_t rawEnt, const mono::ProxyLightComp& proxy) {}

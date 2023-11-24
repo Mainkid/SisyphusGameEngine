@@ -37,6 +37,7 @@
 #include "../../Features/Rendering/RenderPipeline/ParticleRenderSystem.h"
 #include "../../Features/Rendering/RenderPipeline/EditorColliderRenderSystem.h"
 
-#include "../Mono/Systems/MonoSyncSystem.h"
+#include "../Mono/Systems/MonoSyncEgSystem.h"
+#include "../Mono/Systems/MonoSyncGeSystem.h"
 
 #include "../../Features/Events/Systems/PrepareEventsSystem.h"

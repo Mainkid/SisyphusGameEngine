@@ -28,8 +28,6 @@ SyResult MeshSystem::Run()
 			mesh.model=std::static_pointer_cast<Model>( rs->LoadResource(mesh.modelUUID));
 			mesh.materials.resize(mesh.model->meshes.size());
 			mesh.materialUUIDs.resize(mesh.model->meshes.size());
-
-			std::cout << "[MeshSystem] materials uuids size " << mesh.materialUUIDs.size() << std::endl;
 			
 			for (int i = 0; i < mesh.materials.size(); i++)
 			{
@@ -48,12 +46,8 @@ SyResult MeshSystem::Run()
 			}
 			mesh.hashMaterialUuid = hash;
 
-			std::cout << "[MeshSystem] materials hash changed" << std::endl;
-
 			for (int i = 0; i < mesh.materialUUIDs.size(); i++)
 			{
-				std::cout << "[MeshSystem] mat " << i << " uuid: " << mesh.materialUUIDs[i] << std::endl;
-
 				//rs->UnloadResource(mesh.materials[i]);
 				mesh.materials[i] = std::static_pointer_cast<Material>(rs->LoadResource(mesh.materialUUIDs[i]));
 			}

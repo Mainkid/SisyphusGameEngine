@@ -14,7 +14,6 @@ public:
 	SyResult Destroy() override;
 
 private:
-	std::hash<TransformComponent> hasher;
 	EngineContext* ec;
 };
 

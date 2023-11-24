@@ -8,7 +8,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <set>
-#include "../Tools/Data/FlagBitmask.h"
+#include "../Core/Tools/FlagBitmask.h"
 #include "../Serialization/Serializer.hpp"
 
 

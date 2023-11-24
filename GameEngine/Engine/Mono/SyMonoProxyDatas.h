@@ -4,6 +4,7 @@
 #include <mono/jit/jit.h>
 
 #include "../Core/Tools/Structures/Vector.h"
+#include "../Features/Lighting/Components/LightComponent.h"
 
 namespace mono
 {

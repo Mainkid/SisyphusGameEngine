@@ -1,9 +1,9 @@
 #include "SyMonoEditor.h"
 
 #include "imgui.h"
-#include "../../Tools/MathHelper.h"
+#include "../../Core/Tools/MathHelper.h"
 #include "../../Core/ServiceLocator.h"
-#include "../../Systems/ResourceService.h"
+#include "../../Features/Resources/ResourceService.h"
 
 using namespace mono;
 
