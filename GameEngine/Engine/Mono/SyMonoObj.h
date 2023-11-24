@@ -4,7 +4,7 @@
 
 #include "mono/jit/jit.h"
 
-#include "../Tools/ErrorLogger.h"
+#include "../Core/Tools/ErrorLogger.h"
 
 namespace mono
 {

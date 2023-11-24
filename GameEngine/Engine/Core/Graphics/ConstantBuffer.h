@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "SimpleMath.h"
 #include "../../Core/Rendering/Lights/LightData.h"
-#include "../../Components/Particle.h"
+#include "../../Features/Particles/Particle.h"
 
 class CB_BaseBuffer
 {

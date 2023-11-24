@@ -1,14 +1,14 @@
 #pragma once
 
 #include "../../../vendor/entt/entt.hpp"
-#include "../Tools/Data/Vector.h"
-#include "../../Components/LightComponent.h"
+#include "../Core/Tools/Structures/Vector.h"
+#include "../Features/Lighting/Components/LightComponent.h"
 #include "../../Components/GameObjectComp.h"
-#include "../Components/RBodyComponent.h"
-#include "../Components/MeshComponent.h"
-#include "../Components/ColliderComponent.h"
-#include "../Tools/ErrorLogger.h"
-#include "../Core/ECS/Event.h"
+#include "../Features/Physics/Components/RBodyComponent.h"
+#include "../Features/Physics/Components/ColliderComponent.h"
+#include "../Features/Mesh/Components/MeshComponent.h"
+#include "../Core/Tools/ErrorLogger.h"
+#include "../Features/Events/Tags/SyEventTag.h"
 
 class GameObjectHelper
 {
@@ -42,6 +42,7 @@ public:
 	static entt::entity CreateMesh(entt::registry* ecs, boost::uuids::uuid uuid, Vector3 pos=Vector3::Zero);
 	static SyResult AddMeshComponent(entt::registry* ecs, entt::entity entity, boost::uuids::uuid uuid, unsigned flags = SyEMeshComponentFlags::MESH_RENDER);
 	static SyResult AddCubeMeshComponent(entt::registry* ecs, entt::entity entity);
+	static SyResult AddSphereMeshComponent(entt::registry* ecs, entt::entity entity);
 	static entt::entity CreateParticleSystem(entt::registry* ecs);
 
 	static entt::entity CreateSkybox(entt::registry* ecs,boost::uuids::uuid uuid = boost::uuids::nil_uuid());
