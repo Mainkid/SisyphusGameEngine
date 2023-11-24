@@ -81,15 +81,20 @@ int main()
     auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
     auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
 
-    auto cube = GameObjectHelper::Create(ecs, "Cube", { 0.0f, 5.0f, 8.0f });
-    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube, DYNAMIC);
-    auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube);
+    auto cube1 = GameObjectHelper::Create(ecs, "Cube1", { 0.0f, 5.0f, 8.0f });
+    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC);
+    auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube1);
     SyPrimitiveColliderShapeDesc cubeColDesc;
     cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
-    auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube,
+    auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube1,
         BOX,
         cubeColDesc,
         SyColliderMaterial());
+
+    ecs->get<SyRBodyComponent>(cube1).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
+    
+
+    
     //---------- Serialization test ----------------
 
     // ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;

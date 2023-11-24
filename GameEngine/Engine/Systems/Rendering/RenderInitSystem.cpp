@@ -254,6 +254,10 @@ void RenderInitSystem::CompileShaders() const
 	_rc->EditorGridRenderer->Initialize(L"./Engine/Assets/Shaders/EditorGridShader.hlsl",
 	                                    COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION, "VSMain");
 
+	_rc->EditorColliderRenderer = std::make_unique<Shader>();
+	_rc->EditorColliderRenderer->Initialize(L"./Engine/Assets/Shaders/EditorColliderShader.hlsl",
+		COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION, "VSMain");
+
 	_rc->GaussianBlurX = std::make_unique<Shader>();
 	_rc->GaussianBlurX->Initialize(L"./Engine/Assets/Shaders/GaussianBlur.hlsl",
 	                               COMPILE_VERTEX | COMPILE_PIXEL | COMPILE_GEOM, USE_POSITION | USE_COLOR, "VS_Blur",

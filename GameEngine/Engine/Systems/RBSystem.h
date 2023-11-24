@@ -26,7 +26,7 @@ class SyRBodySystem :
     
     physx::PxPhysics*                               _physics = nullptr;
     physx::PxScene*                                 _scene = nullptr;
-    SyVector3                                       _gravity = { 0.0f, -9.81f, 0.0f };
+    const SyVector3                                 GRAVITY = { 0.0f, -9.81f, 0.0f };
     float                                           _stepsPerSecond = 60.0f;
 public:
     SyResult Init() override;
@@ -38,3 +38,4 @@ private:
 
     friend class SyCollisionSystem;
 };
+

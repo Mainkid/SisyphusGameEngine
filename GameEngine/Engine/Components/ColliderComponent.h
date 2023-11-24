@@ -1,6 +1,8 @@
 ﻿#pragma once
+#include "../../vendor/entt/entt.hpp"
 #include "../Tools/Data/Vector.h"
-
+#include "..\Tools\Data\Geometry.h"
+#include "../Serialization/Serializable.h"
 namespace physx
 {
     class PxShape;
@@ -12,6 +14,12 @@ struct SyColliderMaterial
     float dynamicFriction	= 1.0f;
     float restitution		= 0.3f;
     float density			= 0.1f;
+
+    SER_DATA(   SyColliderMaterial,
+                staticFriction,
+                dynamicFriction,
+                restitution,
+                density)
 };
 
 enum SyEPrimitiveColliderType
@@ -23,36 +31,42 @@ enum SyEPrimitiveColliderType
 
 struct SyPrimitiveColliderShapeDesc
 {
-    SyVector3   Extent; //for box
-    float       Radius; //for sphere and capsule
-    float       HalfHeight; //for capsule
+    SyVector3   Extent      = SyVector3::ONE;   //for box
+    float       Radius      = 1.0f;             //for sphere and capsule
+    float       HalfHeight  = 1.0f;             //for capsule
+
+    SER_DATA(   SyPrimitiveColliderShapeDesc,
+                Extent,
+                Radius,
+                HalfHeight)
 };
 
-struct SyColliderCreateOnNextUpdateTag
-{
-    
-};
+
+
 
 struct SyPrimitiveColliderComponent
 {
 
-    SyPrimitiveColliderComponent(   SyEPrimitiveColliderType colliderType,
-                                    const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
-                                    const SyColliderMaterial& material);
-private:
+    SyPrimitiveColliderComponent(   SyEPrimitiveColliderType colliderType                   = SyEPrimitiveColliderType::BOX,
+                                    const SyPrimitiveColliderShapeDesc& colliderShapeDesc   = SyPrimitiveColliderShapeDesc(),
+                                    const SyColliderMaterial& material                      = SyColliderMaterial());
+    
     //members initialized in constructor
     
-    SyEPrimitiveColliderType _colliderType;
-    SyVector3               _extent;        //for box
-    float                   _radius;        //for sphere and capsule
-    float                   _halfHeight;    //for capsule
-    SyColliderMaterial      _material;
-
+    SyEPrimitiveColliderType ColliderType;  //runtime modification is not supported, but will be added in future. The member has to be added to properties
+    SyVector3               Extent;         //for box //runtime modification is not supported, but will be added in future. The member has to be added to properties
+    float                   Radius;         //for sphere and capsule //runtime modification is not supported, but will be added in future. The member has to be added to properties
+    float                   HalfHeight;     //for capsule //runtime modification is not supported, but will be added in future. The member has to be added to properties
+    SyColliderMaterial      Material;       //runtime modification is not supported, but will be added in future. The member has to be added to properties
+    
     //members initialized in CollisionSystem::InitComponentP
+private:
+    physx::PxShape*			_shape = nullptr;
+    SyGeometry      _colliderGeometry;
     
-    physx::PxShape*			_rbShape = nullptr;
-    
+    friend class SyCollisionPreSystem;
     friend class SyCollisionSystem;
+    friend class EditorColliderRenderSystem;
 };
 
 struct SyTrimeshColliderComponent
@@ -60,9 +74,11 @@ struct SyTrimeshColliderComponent
     SyTrimeshColliderComponent(  const SyColliderMaterial& material = SyColliderMaterial());
     //members initialized in constructor
     
-    SyColliderMaterial      _material;
-    //members initialized in CollisionSystem::InitComponentP
-    
+    SyColliderMaterial      Material; //runtime modification is not supported, but will be added in future. The member has to be added to properties
+
+    //members initialized in CollisionSystem::InitComponentTm
+
+private:
     physx::PxShape* _shape;
     
     friend class SyCollisionSystem;

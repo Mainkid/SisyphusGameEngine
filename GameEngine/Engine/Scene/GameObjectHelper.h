@@ -3,10 +3,12 @@
 #include "../../../vendor/entt/entt.hpp"
 #include "../Tools/Data/Vector.h"
 #include "../../Components/LightComponent.h"
+#include "../../Components/GameObjectComp.h"
 #include "../Components/RBodyComponent.h"
 #include "../Components/MeshComponent.h"
 #include "../Components/ColliderComponent.h"
 #include "../Tools/ErrorLogger.h"
+#include "../Core/ECS/Event.h"
 
 class GameObjectHelper
 {
@@ -40,9 +42,22 @@ public:
 	static entt::entity CreateMesh(entt::registry* ecs, boost::uuids::uuid uuid, Vector3 pos=Vector3::Zero);
 	static SyResult AddMeshComponent(entt::registry* ecs, entt::entity entity, boost::uuids::uuid uuid, unsigned flags = SyEMeshComponentFlags::MESH_RENDER);
 	static SyResult AddCubeMeshComponent(entt::registry* ecs, entt::entity entity);
+	static SyResult AddSphereMeshComponent(entt::registry* ecs, entt::entity entity);
 	static entt::entity CreateParticleSystem(entt::registry* ecs);
 
 	static entt::entity CreateSkybox(entt::registry* ecs,boost::uuids::uuid uuid = boost::uuids::nil_uuid());
 
-	
+	template <typename T_Event, typename ... Args>
+	static SyResult CallEvent(entt::registry* ecs, const std::string& name, Args... eventArgs);
 };
+
+//Calls the event to be listened to NEXT FRAME. Events are only to be listened to in Runtime (it is possible to listen to events in Init(), but it relies on order of systems update). Use the macros from SystemBase.h to listen to event!
+template <typename T_Event, typename ... Args>
+SyResult GameObjectHelper::CallEvent(entt::registry* ecs, const std::string& name, Args... eventArgs)
+{
+	entt::entity ent = ecs->create();
+	ecs->emplace<GameObjectComp>(ent, name);
+	auto c = ecs->emplace<T_Event>(ent, eventArgs...);
+	ecs->emplace<SyEventTag>(ent);
+	return SyResult();
+}

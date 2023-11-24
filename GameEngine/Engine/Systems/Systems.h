@@ -7,6 +7,7 @@
 #include "MeshSystem.h"
 #include "LightSystem.h"
 #include "RBSystem.h"
+#include "CollisionPreSystem.h"
 #include "CollisionSystem.h"
 #include "HardwareInitSystem.h"
 #include "MaterialUpdateSystem.h"
@@ -35,6 +36,7 @@
 #include "Rendering/RenderPipeline/EditorGridRenderSystem.h"
 #include "Rendering/RenderPipeline/HbaoRenderSystem.h"
 #include "Rendering/RenderPipeline/ParticleRenderSystem.h"
+#include "Rendering/RenderPipeline/EditorColliderRenderSystem.h"
 
 #include "../Mono/Systems/MonoSyncGeSystem.h"
 #include "../Mono/Systems/MonoSyncEgSystem.h"

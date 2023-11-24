@@ -3,6 +3,7 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/RBodyComponent.h"
 #include "../Components/MeshComponent.h"
+#include "../Events/SyOnCreateColliderEvent.h"
 #include "PxPhysicsAPI.h"
 #include "RBSystem.h"
 
@@ -16,8 +17,6 @@ SyResult SyCollisionSystem::Init()
 SyResult SyCollisionSystem::Run()
 {
 	SyResult result;
-	if(ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
-		return SyResult();
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
 	if (deltaTime == 0)
 	{
@@ -25,31 +24,56 @@ SyResult SyCollisionSystem::Run()
 		result.message = "EngineContext.deltaTime == 0";
 		return result;
 	}
-	auto toInitPView = _ecs->view<SyRBodyComponent, SyPrimitiveColliderComponent, SyColliderCreateOnNextUpdateTag>();
-	for (auto& entity : toInitPView)
+	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyOnCreateColliderEvent);
+	for (auto& eventEntity : eventView)
 	{
-		auto& rbComponent = _ecs->get<SyRBodyComponent>(entity);
-		auto& cComponent = _ecs->get<SyPrimitiveColliderComponent>(entity);
-		if (InitComponentP(entity, rbComponent, cComponent).code != SY_RESCODE_OK)
+		auto& entity = _ecs->get<SyOnCreateColliderEvent>(eventEntity).Entity;
+		auto* rbComponent = _ecs->try_get<SyRBodyComponent>(entity);
+		if (rbComponent == nullptr)
 		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to initialize PrimitiveCollider component on entity %d", (int)entity);
-			_ecs->remove<SyPrimitiveColliderComponent>(entity);
-		}
-		_ecs->remove<SyColliderCreateOnNextUpdateTag>(entity);
-	}
-	auto toInitTmView = _ecs->view<SyRBodyComponent, SyTrimeshColliderComponent, SyColliderCreateOnNextUpdateTag>();
-	for (auto& entity : toInitTmView)
-	{
-		auto& rbComponent = _ecs->get<SyRBodyComponent>(entity);
-		auto& cComponent = _ecs->get<SyTrimeshColliderComponent>(entity);
-		auto& mComponent = _ecs->get<MeshComponent>(entity);
-		auto& tComponent = _ecs->get<TransformComponent>(entity);
-		if (InitComponentTm(entity, rbComponent, cComponent, mComponent, tComponent).code != SY_RESCODE_OK)
-		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to initialize TrimeshComponent component on entity %d", (int)entity);
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity (%d) is missing the RigidBody Component. Hence, you can't attach a collider component to it. The collider component has been removed. ", (int)entity);
 			_ecs->remove<SyTrimeshColliderComponent>(entity);
 		}
-		_ecs->remove<SyColliderCreateOnNextUpdateTag>(entity);
+		auto* pComponent = _ecs->try_get<SyPrimitiveColliderComponent>(entity);
+		auto* tmComponent = _ecs->try_get<SyTrimeshColliderComponent>(entity);
+		if (pComponent != nullptr)
+		{
+			if (tmComponent != nullptr)
+			{
+				SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "A collider component is already attached to the entity (%d). You can't attach more than one collider to an entity. ", (int)entity);
+				_ecs->remove<SyTrimeshColliderComponent>(entity);
+				continue;
+			}
+			if (InitComponentP(entity, *rbComponent, *pComponent).code != SY_RESCODE_OK)
+			{
+				SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to initialize PrimitiveCollider Component on entity (%d). The PrimitiveCollider Component has been removed.", (int)entity);
+				_ecs->remove<SyPrimitiveColliderComponent>(entity);
+			}
+		}
+		else if (tmComponent != nullptr)
+		{
+			auto* mComponent = _ecs->try_get<MeshComponent>(entity);
+			if (mComponent == nullptr)
+			{
+				SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity (%d) is missing the Mesh Component. Hence, you can't attach a collider component to it. The collider component has been removed. ", (int)entity);
+				_ecs->remove<SyTrimeshColliderComponent>(entity);
+				continue;
+			}
+			auto* tComponent = _ecs->try_get<TransformComponent>(entity);
+			if (tComponent == nullptr)
+			{
+				SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity (%d) is missing the Transform Component. Hence, you can't attach a collider component to it. The collider component has been removed. ", (int)entity);
+				_ecs->remove<SyTrimeshColliderComponent>(entity);
+				continue;
+			}
+			if (InitComponentTm(entity, *rbComponent, *tmComponent, *mComponent, *tComponent).code != SY_RESCODE_OK)
+			{
+				SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to initialize TrimeshComponent Component on entity (%d). The TrimeshComponent Component has been removed.", (int)entity);
+				_ecs->remove<SyTrimeshColliderComponent>(entity);
+			}
+		}
+		else
+			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "No collider components have been detected on entity (%d). Something went wrong. ", (int)entity);
 	}
 	return result;
 }
@@ -63,27 +87,29 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyCo
                                            SyPrimitiveColliderComponent& cComponent)
 {
 	SyResult result;
-	auto& pxMaterial = *SyRBodyComponent::_physics->createMaterial(	cComponent._material.staticFriction,
-																	cComponent._material.dynamicFriction,
-																	cComponent._material.restitution);
-	switch (cComponent._colliderType)
+	auto& pxMaterial = *SyRBodyComponent::_physics->createMaterial(	cComponent.Material.staticFriction,
+																	cComponent.Material.dynamicFriction,
+																	cComponent.Material.restitution);
+	switch (cComponent.ColliderType)
     {
     case BOX:
 		
-    	cComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
-																		PxBoxGeometry(cComponent._extent),
+    	cComponent._shape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
+																		PxBoxGeometry(cComponent.Extent),
 																		pxMaterial);
+		cComponent._colliderGeometry.MakeBox(cComponent.Extent);
 		break;
     case SPHERE:
-    	cComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
-																		PxSphereGeometry(cComponent._radius),
+    	cComponent._shape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
+																		PxSphereGeometry(cComponent.Radius),
 																		pxMaterial);
-		
+		cComponent._colliderGeometry.MakeSphere(cComponent.Radius, 16 * SyMathHelper::Max(1.0f, cComponent.Radius));
 		break;
     case CAPSULE:
-    	cComponent._rbShape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
-																		PxCapsuleGeometry(cComponent._radius, cComponent._halfHeight),
+    	cComponent._shape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
+																		PxCapsuleGeometry(cComponent.Radius, cComponent.HalfHeight),
 																		pxMaterial);
+		cComponent._colliderGeometry.MakeCapsule(cComponent.Radius, cComponent.HalfHeight, 16 * SyMathHelper::Max(1.0f, cComponent.Radius));
 		break;
     default:
     		result.code = SY_RESCODE_ERROR;
@@ -92,9 +118,9 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyCo
     	break;
     }
 	bool updateMassResult = true;
-	if (rbComponent._flags & SyERBodyFlags::USE_DENSITY && rbComponent._rbType == DYNAMIC)
+	if (rbComponent.Flags & SyERBodyFlags::USE_DENSITY && rbComponent.RbType == DYNAMIC)
 		updateMassResult = PxRigidBodyExt::updateMassAndInertia(	*static_cast<PxRigidBody*>(rbComponent._rbActor),
-																	cComponent._material.density);
+																	cComponent.Material.density);
 	if (updateMassResult == false)
 	{
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::updateMassAndInertia returned false");
@@ -110,13 +136,20 @@ SyResult SyCollisionSystem::InitComponentTm(const entt::entity& entity, SyRBodyC
 	if (!(mComponent.flags & SyEMeshComponentFlags::MESH_COLLIDER))
 	{
 		result.code = SY_RESCODE_ERROR;
-		result.message = xstring("You can't use mesh from Mesh Component (entity %d) not marked with flag MESH_COLLIDER as collider. ", (int) entity);
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "You can't use mesh from Mesh Component (entity %d) not marked with flag MESH_COLLIDER as collider. ", (int)entity);
+		result.message = xstring("You can't use mesh from Mesh Component (entity %d) unless it's marked with flag MESH_COLLIDER. ", (int) entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "You can't use mesh from Mesh Component (entity %d) unless it's marked with flag MESH_COLLIDER. ", (int)entity);
 		return result;
 	}
-	auto& pxMaterial = *SyRBodyComponent::_physics->createMaterial(	cComponent._material.staticFriction,
-																	cComponent._material.dynamicFriction,
-																	cComponent._material.restitution);
+	if (!(rbComponent.Flags & SyERBodyFlags::KINEMATIC))
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("You can't create TrimeshCollider Component on entity (%d) unless it's marked with flag KINEMATIC. ", (int) entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "You can't create TrimeshCollider Component on entity (%d) unless it's marked with flag KINEMATIC. ", (int)entity);
+		return result;
+	}
+	auto& pxMaterial = *SyRBodyComponent::_physics->createMaterial(	cComponent.Material.staticFriction,
+																	cComponent.Material.dynamicFriction,
+																	cComponent.Material.restitution);
 	auto meshPtr = mComponent.model->meshes[0];
 	const unsigned NUM_VECTORS_PER_VERTEX = 5;
 	PxTriangleMeshDesc meshDesc;
