@@ -1,5 +1,5 @@
 #pragma once
-#include "../Core/ECS/SystemBase.h"
+#include "../../Core/ECS/SystemBase.h"
 #include <fstream>
 
 class SyErrorLoggingSystem : public SystemBase

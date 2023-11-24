@@ -1,5 +1,7 @@
 #pragma once
 
+#include <boost/container_hash/hash.hpp>
+
 #include "SimpleMath.h"
 #include "foundation/PxVec3.h"
 #include "foundation/PxQuat.h"
@@ -155,4 +157,13 @@ public:
 inline bool operator==(const SyVector3& left, const SyVector3& right)
 {
 	return (left.x == right.x) && (left.y == right.y) && (left.z == right.z);
+}
+
+inline std::size_t hash_value(SyVector3 const& vec)
+{
+	size_t seed = 0;
+	boost::hash_combine(seed, vec.x);
+	boost::hash_combine(seed, vec.y);
+	boost::hash_combine(seed, vec.z);
+	return seed;
 }

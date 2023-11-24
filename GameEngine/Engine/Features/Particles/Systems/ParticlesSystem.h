@@ -1,7 +1,7 @@
 #pragma once
 #include <boost/container_hash/hash.hpp>
 
-#include "../Core/ECS/SystemBase.h"
+#include "../../Core/ECS/SystemBase.h"
 #include "../Components/ParticleComponent.h"
 #include "SimpleMath.h"
 

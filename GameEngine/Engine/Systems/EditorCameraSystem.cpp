@@ -30,9 +30,9 @@ SyResult EditorCameraSystem::Run()
 		TransformComponent& tc = view.get<TransformComponent>(entity);
 		CameraComponent& cc = view.get<CameraComponent>(entity);
 
-		if (tc.hash != cc.transformHash)
+		if (tc.worldHash != cc.transformHash)
 		{
-			cc.transformHash = tc.hash;
+			cc.transformHash = tc.worldHash;
 			UpdateViewMatrix(cc, tc);
 		}
 		uint32_t hash = _hasher(cc);

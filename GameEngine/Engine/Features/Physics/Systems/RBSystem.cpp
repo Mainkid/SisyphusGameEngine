@@ -146,9 +146,8 @@ SyResult SyRBodySystem::Run()
 		PxRigidDynamic* rb = rbComponent._rbActor->is<PxRigidDynamic>();
 		
 		PxTransform rbTrasform = rb->getGlobalPose();
-		trComponent.localPosition = rbTrasform.p;
-		trComponent.localRotation = SyVector3::PxQuatToEuler(rbTrasform.q);
-
+		trComponent._position = rbTrasform.p;
+		trComponent._rotation = SyVector3::PxQuatToEuler(rbTrasform.q);
 		rbComponent.LinearVelocity = rb->getLinearVelocity();
 		rbComponent.AngularVelocity = rb->getAngularVelocity();
 	}

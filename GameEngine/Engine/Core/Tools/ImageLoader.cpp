@@ -1,8 +1,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../../vendor/stb_image.h"
 #include "ImageLoader.h"
-#include "../Systems/HardwareContext.h"
-#include "../Core/ServiceLocator.h"
+#include "../../Engine/Contexts/HardwareContext.h"
+#include "../../Core/ServiceLocator.h"
 #include "filesystem"
 
 
