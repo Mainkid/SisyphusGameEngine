@@ -38,4 +38,6 @@ private:
 	void OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyTransformComp& proxy) override;
 	void OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshComp& proxy) override;
 	void OnUpdateLightComp(uint32_t rawEnt, const mono::ProxyLightComp& proxy) override;
+	void OnUpdateColliderComp(uint32_t rawEnt, const mono::ProxyColliderComp& proxy) override;
+	void OnUpdateRigidComp(uint32_t rawEnt, const mono::ProxyRigidComp& proxy) override;
 };

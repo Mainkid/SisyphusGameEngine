@@ -42,16 +42,3 @@ struct TransformComponent
 		localScale,
 		parent)
 };
-
-inline size_t hash_value(const TransformComponent& tf)
-{
-	size_t hash = 0;
-	boost::hash_combine(hash, tf._position);
-	boost::hash_combine(hash, tf._rotation);
-	boost::hash_combine(hash, tf.scale);
-	boost::hash_combine(hash, tf.parent);
-	boost::hash_combine(hash, tf.localPosition);
-	boost::hash_combine(hash, tf.localRotation);
-	boost::hash_combine(hash, tf.localScale);
-	return hash;
-}

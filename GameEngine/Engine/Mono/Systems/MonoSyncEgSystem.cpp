@@ -8,6 +8,7 @@
 #include "../../Features/Mesh/Components/MeshComponent.h"
 #include "../Components/MonoSyncComp.h"
 #include "../../Components/TransformComponent.h"
+#include "../Helpers/SyMonoHashHelper.h"
 
 
 SyResult MonoSyncEgSystem::Init()
@@ -25,6 +26,8 @@ SyResult MonoSyncEgSystem::Run()
 
 	SendTransforms();
 	SendMeshes();
+	SendLights();
+	SendRigids();
 
 	return {};
 }
@@ -42,7 +45,7 @@ void MonoSyncEgSystem::SendTransforms()
 	for (auto ent : view)
 	{
 		auto& tf = view.get<TransformComponent>(ent);
-		size_t hash = hash_value(tf);
+		size_t hash = mono::SyMonoHashHelper::Hash(tf);
 		if (hash == tf.MonoHash)
 			continue;
 		tf.MonoHash = hash;
@@ -70,7 +73,7 @@ void MonoSyncEgSystem::SendMeshes()
 	{
 		auto& mesh = view.get<MeshComponent>(ent);
 
-		size_t hash = hash_value(mesh);
+		size_t hash = mono::SyMonoHashHelper::Hash(mesh);
 		if (hash == mesh.MonoHash)
 			continue;
 		mesh.MonoHash = hash;
@@ -105,5 +108,41 @@ void MonoSyncEgSystem::SendMeshes()
 		}
 
 		_monoEcs->EgUpdateMeshComp.Invoke(static_cast<uint32_t>(ent), proxy);
+	}
+}
+
+void MonoSyncEgSystem::SendLights()
+{
+	// at this point there is no need to send lights to the game
+}
+
+void MonoSyncEgSystem::SendColliders()
+{
+	// at this point there is no need to send colliders to the game
+}
+
+void MonoSyncEgSystem::SendRigids()
+{
+	mono::ProxyRigidComp proxy;
+
+	auto view = _ecs->view<MonoSyncComp, SyRBodyComponent>();
+	for (auto ent : view)
+	{
+		auto& rigid = view.get<SyRBodyComponent>(ent);
+
+		size_t hash = mono::SyMonoHashHelper::Hash(rigid);
+		if (hash == rigid.MonoHash)
+			continue;
+		rigid.MonoHash = hash;
+
+		proxy.Type = rigid.RbType;
+		proxy.Mass = rigid.Mass;
+		proxy.IsAutoMass = rigid.Flags & SyERBodyFlags::USE_DENSITY;
+		proxy.IsKinematic = rigid.Flags & SyERBodyFlags::KINEMATIC;
+		proxy.IsGravityOn = rigid.Flags & SyERBodyFlags::DISABLE_GRAVITY == 0;
+		proxy.LinearVelocity = rigid.LinearVelocity;
+		proxy.AngularVelocity = rigid.AngularVelocity;
+
+		_monoEcs->EgUpdateRigidComp.Invoke(static_cast<uint32_t>(ent), proxy);
 	}
 }

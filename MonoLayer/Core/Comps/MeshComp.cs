@@ -9,7 +9,7 @@ public struct MeshComp : SyEcs.IComp
 	public List<ResRef<ResMaterial>> Materials;
 	public ResRef<ResModel>          Model;
 
-	internal int Hash;
+	internal int? Hash;
 
 	public override int GetHashCode()
 		=> HashHelper.Combine(Model, HashHelper.HashList(Materials));

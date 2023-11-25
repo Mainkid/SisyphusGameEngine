@@ -5,6 +5,8 @@
 
 #include "../Core/Tools/Structures/Vector.h"
 #include "../Features/Lighting/Components/LightComponent.h"
+#include "../Features/Physics/Components/ColliderComponent.h"
+#include "../Features/Physics/Components/RBodyComponent.h"
 
 namespace mono
 {
@@ -13,6 +15,7 @@ namespace mono
 		Transform,
 		Mesh,
 		Light,
+		Collider,
 		Rigid
 	};
 
@@ -26,6 +29,7 @@ namespace mono
 			case EProxyCompId::Transform: return "Transform";
 			case EProxyCompId::Mesh: return "Mesh";
 			case EProxyCompId::Light: return "Light";
+			case EProxyCompId::Collider: return "Collider";
 			case EProxyCompId::Rigid: return "Rigid";
 			default: return "Missing";
 			}
@@ -97,8 +101,28 @@ namespace mono
 		ELightType LightType;
 		LightBehavior LightBehavior;
 		ProxyVector4 Color;
-		ProxyVector4 ParamsRadiusAndAttenuation;
+		float PointLightRadius;
+		bool ShouldCastShadows;
 	};
 
+	struct ProxyColliderComp
+	{
+		SyEPrimitiveColliderType Type;
+		ProxyVector3 Extent;
+		float Radius;
+		float HalfHeight;
+	};
 
+	struct ProxyRigidComp
+	{
+		SyERBodyType Type;
+		float Mass;
+
+		bool IsAutoMass;
+		bool IsKinematic;
+		bool IsGravityOn;
+
+		ProxyVector3 LinearVelocity;
+		ProxyVector3 AngularVelocity;
+	};
 }

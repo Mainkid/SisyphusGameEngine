@@ -22,7 +22,9 @@ namespace mono
 
 		inline static const std::string GE_UPDATE_TRANSFORM_COMP = "GeUpdateTransformComp";
 		inline static const std::string GE_UPDATE_MESH_COMP = "GeUpdateMeshComp";
-		inline static const std::string GE_UPDATE_LIGHT_COMP = "GeUpdateMeshComp";
+		inline static const std::string GE_UPDATE_LIGHT_COMP = "GeUpdateLightComp";
+		inline static const std::string GE_UPDATE_COLLIDER_COMP = "GeUpdateColliderComp";
+		inline static const std::string GE_UPDATE_RIGID_COMP = "GeUpdateRigidComp";
 
 	private:
 		inline static SyMonoEcs* _instance = nullptr;
@@ -36,6 +38,8 @@ namespace mono
 		static void GeUpdateTransformComp(uint32_t rawEnt, ProxyTransformComp proxy);
 		static void GeUpdateMeshComp(uint32_t rawEnt, ProxyMeshComp proxy);
 		static void GeUpdateLightComp(uint32_t rawEnt, ProxyLightComp proxy);
+		static void GeUpdateColliderComp(uint32_t rawEnt, ProxyColliderComp proxy);
+		static void GeUpdateRigidComp(uint32_t rawEnt, ProxyRigidComp proxy);
 
 	public:
 		SyMonoMethod<uint32_t> EgContinueEntityDestroyCascade { "EgContinueEntityDestroyCascade" };
@@ -43,6 +47,8 @@ namespace mono
 		SyMonoMethod<uint32_t, ProxyTransformComp> EgUpdateTransformComp{ "EgUpdateTransformComp" };
 		SyMonoMethod<uint32_t, ProxyMeshComp> EgUpdateMeshComp{ "EgUpdateMeshComp" };
 		SyMonoMethod<uint32_t, ProxyLightComp> EgUpdateLightComp{ "EgUpdateLightComp" };
+		SyMonoMethod<uint32_t, ProxyColliderComp> EgUpdateColliderComp{ "EgUpdateColliderComp" };
+		SyMonoMethod<uint32_t, ProxyRigidComp> EgUpdateRigidComp{ "EgUpdateRigidComp" };
 
 		void SetCallbackReceiver(ISyMonoEcsCallbacks* receiver);
 	private:

@@ -15,7 +15,7 @@ public:
 	SyResult Run() override;
 	SyResult Destroy() override;
 private:
-	std::hash<LightComponent> hasher;
+	//std::hash<LightComponent> hasher;
 	std::vector<Vector4> GetFrustumCorners(const Matrix& view, const Matrix proj);
 	std::vector<Matrix> GenerateOrthosFromFrustum(LightComponent& lc,Vector3 direction,const Matrix& view, const Matrix proj, float _far);
 	void GenerateOrthoMatrix(LightComponent& lc, float width, float depthPlane, float nearPlane);

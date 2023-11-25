@@ -5,9 +5,9 @@ namespace SyEngine.Core.Comps
 {
 public struct TransformComp : SyEcs.IComp
 {
-    public SyVector3 Position { get; internal set; }
-    public SyVector3 Rotation { get; internal set; }
-    public SyVector3 Scale    { get; internal set; }
+	public SyVector3 Position;
+    public SyVector3 Rotation;
+    public SyVector3 Scale;
 
     public SyVector3 LocalPosition;
     public SyVector3 LocalRotation;
@@ -16,7 +16,7 @@ public struct TransformComp : SyEcs.IComp
     public int? ParentEnt;
 
 
-    internal int Hash;
+    internal int? Hash;
     
     public override string ToString() => $"({Position}, {Rotation}, {Scale})";
 

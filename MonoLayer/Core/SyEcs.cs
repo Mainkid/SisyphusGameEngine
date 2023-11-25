@@ -107,6 +107,7 @@ public class SyEcs
         TryCreateEngineEntity(ent);
 
         ref var comp = ref World.GetPool<TransformComp>().Add(ent);
+        comp.Scale      = SyVector3.One;
         comp.LocalScale = SyVector3.One;
 
         SyProxyEcs.GeAddEngineComp(_gameEntToEngineEnt[ent], SyProxyEcs.EEngineCompId.Transform);
@@ -154,11 +155,11 @@ public class SyEcs
         TryCreateEngineEntity(ent);
 
         ref var comp = ref World.GetPool<LightComp>().Add(ent);
-        comp.Type                       = LightComp.EType.Ambient;
-        comp.Behaviour                  = LightComp.EBehaviour.Movable;
-        comp.Color                      = SyColor.White;
-        comp.ShouldCastShadows          = false;
-        comp.ParamsRadiusAndAttenuation = new SyVector4(0, 1, 1, 1);
+        comp.Type              = LightComp.EType.PointLight;
+        comp.Behaviour         = LightComp.EBehaviour.Movable;
+        comp.Color             = SyColor.White;
+        comp.PointLightRadius  = 1;
+        comp.ShouldCastShadows = false;
 
         SyProxyEcs.GeAddEngineComp(_gameEntToEngineEnt[ent], SyProxyEcs.EEngineCompId.Light);
         IncreaseEngineCompsCount(ent);
@@ -175,6 +176,32 @@ public class SyEcs
         DecreaseEngineCompsCountAndTryDestroy(ent);
     }
 
+    public ref ColliderComp AddColliderComp(int ent)
+    {
+        SyLog.Debug(ELogTag.Ecs, $"add collider comp to g{ent}");
+
+        TryCreateEngineEntity(ent);
+
+        ref var comp = ref World.GetPool<ColliderComp>().Add(ent);
+        comp.Type = ColliderComp.EType.Box;
+        comp.Extent = SyVector3.One;
+
+        SyProxyEcs.GeAddEngineComp(_gameEntToEngineEnt[ent], SyProxyEcs.EEngineCompId.Collider);
+        IncreaseEngineCompsCount(ent);
+
+        return ref comp;
+    }
+
+    public void RemoveCollider(int ent)
+    {
+        SyLog.Debug(ELogTag.Ecs, $"remove collider comp from g{ent}");
+
+        World.GetPool<ColliderComp>().Del(ent);
+        SyProxyEcs.GeRemoveEngineComp(_gameEntToEngineEnt[ent], SyProxyEcs.EEngineCompId.Collider);
+        DecreaseEngineCompsCountAndTryDestroy(ent);
+    }
+    
+
     public ref RigidComp AddRigidComp(int ent)
     {
         SyLog.Debug(ELogTag.Ecs, $"add rigid comp to g{ent}");
@@ -182,6 +209,10 @@ public class SyEcs
         TryCreateEngineEntity(ent);
 
         ref var comp = ref World.GetPool<RigidComp>().Add(ent);
+        comp.Type = RigidComp.EType.Dynamic;
+        comp.Mass = 1f;
+        //comp.IsAutoMass  = true;
+        comp.IsGravityOn = true;
 
         SyProxyEcs.GeAddEngineComp(_gameEntToEngineEnt[ent], SyProxyEcs.EEngineCompId.Rigid);
         IncreaseEngineCompsCount(ent);

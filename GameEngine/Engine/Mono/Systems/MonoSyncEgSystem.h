@@ -18,4 +18,7 @@ private:
 
 	void SendTransforms();
 	void SendMeshes();
+	void SendLights();
+	void SendColliders();
+	void SendRigids();
 };

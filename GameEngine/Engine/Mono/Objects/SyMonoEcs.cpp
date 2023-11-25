@@ -45,6 +45,19 @@ void SyMonoEcs::GeUpdateLightComp(uint32_t rawEnt, ProxyLightComp proxy)
 		_instance->_cbReceiver->OnUpdateLightComp(rawEnt, proxy);
 }
 
+void SyMonoEcs::GeUpdateColliderComp(uint32_t rawEnt, ProxyColliderComp proxy)
+{
+	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
+		_instance->_cbReceiver->OnUpdateColliderComp(rawEnt, proxy);
+}
+
+void SyMonoEcs::GeUpdateRigidComp(uint32_t rawEnt, ProxyRigidComp proxy)
+{
+	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
+		_instance->_cbReceiver->OnUpdateRigidComp(rawEnt, proxy);
+}
+
+
 void SyMonoEcs::SetCallbackReceiver(ISyMonoEcsCallbacks* receiver)
 {
 	_cbReceiver = receiver;
@@ -71,6 +84,9 @@ SyResult SyMonoEcs::OnAfterCreate()
 
 	BindCallback(GE_UPDATE_TRANSFORM_COMP, &GeUpdateTransformComp);
 	BindCallback(GE_UPDATE_MESH_COMP, &GeUpdateMeshComp);
+	BindCallback(GE_UPDATE_LIGHT_COMP, &GeUpdateLightComp);
+	BindCallback(GE_UPDATE_COLLIDER_COMP, &GeUpdateColliderComp);
+	BindCallback(GE_UPDATE_RIGID_COMP, &GeUpdateRigidComp);
 
 	return {};
 }

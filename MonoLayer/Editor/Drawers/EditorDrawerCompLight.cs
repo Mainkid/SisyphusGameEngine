@@ -17,7 +17,7 @@ public class EditorDrawerCompLight : EditorDrawerComp<LightComp>
 
 		if (val.Type == LightComp.EType.PointLight)
 		{
-			isChanged |= Editor.DrawField("Radius", ref val.ParamsRadiusAndAttenuation.X);
+			isChanged |= Editor.DrawField("Radius", ref val.PointLightRadius);
 			isChanged |= Editor.DrawField("Should Cast Shadows", ref val.ShouldCastShadows);
 		}
 		return isChanged;

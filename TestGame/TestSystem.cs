@@ -28,25 +28,32 @@ public class TestSystem : SyEcsSystemBase
 	{
 		_filter = Ecs.BuildFilter<ParentTag>().Inc<TransformComp>().End();
 
-		int parentEnt = Ecs.CreateEntity();
-		Ecs.AddTransformComp(parentEnt).LocalPosition = new SyVector3(-5, 0, 10);
-		Ecs.AddMeshComp(parentEnt);
-		Ecs.AddComp<ParentTag>(parentEnt);
-		ref var testEditorComp = ref Ecs.AddComp<TestEditorComp>(parentEnt);
-		testEditorComp.TestIntVal   = 1;
-		testEditorComp.TestFloatVal = 1.2f;
-		testEditorComp.TestBoolVal  = true;
+		int entA = Ecs.CreateEntity();
+		Ecs.AddTransformComp(entA).Position = new SyVector3(-10, 0, 10);
+		Ecs.AddMeshComp(entA);
+		Ecs.AddComp<ParentTag>(entA);
+		ref var entATest = ref Ecs.AddComp<TestEditorComp>(entA);
+		entATest.TestIntVal   = 1;
+		entATest.TestFloatVal = 1.2f;
+		entATest.TestBoolVal  = true;
 
-		int     childEnt = Ecs.CreateEntity();
-		ref var childTf  = ref Ecs.AddTransformComp(childEnt);
-		childTf.LocalPosition = new SyVector3(-5, 10, 10);
-		childTf.ParentEnt     = parentEnt;
-		Ecs.AddMeshComp(childEnt);
-		Ecs.AddComp<ChildTag>(childEnt);
+		int     entB = Ecs.CreateEntity();
+		ref var entBTf  = ref Ecs.AddTransformComp(entB);
+		entBTf.Position = new SyVector3(0, 10, 0);
+		entBTf.ParentEnt     = entA;
+		Ecs.AddMeshComp(entB);
+		Ecs.AddComp<ChildTag>(entB);
 
-		int lightEnt = Ecs.CreateEntity();
-		Ecs.AddTransformComp(lightEnt).LocalPosition = new SyVector3(-10, 10, 10);
-		Ecs.AddLightComp(lightEnt);
+		int entC = Ecs.CreateEntity();
+		Ecs.AddTransformComp(entC).Position = new SyVector3(10, 10, 10);
+		Ecs.AddLightComp(entC);
+
+		int entD = Ecs.CreateEntity();
+		Ecs.AddTransformComp(entD).Position = new SyVector3(0, 5, 20);
+		Ecs.AddMeshComp(entD);
+		ref var entDRigid    = ref Ecs.AddRigidComp(entD);
+		ref var entDCollider = ref Ecs.AddColliderComp(entD);
+		entDCollider.Extent = SyVector3.One;
 	}
 
 	public override void Run()

@@ -1,6 +1,7 @@
 #include "MonoSyncGeSystem.h"
 
 #include "../SyMono.h"
+#include "../../Components/EditorBillboardComponent.h"
 #include "../Components/MonoSyncComp.h"
 #include "../../Features/Mesh/Components/MeshComponent.h"
 #include "../../Components/TransformComponent.h"
@@ -9,6 +10,9 @@
 #include "../../Features/Resources/ResourceService.h"
 #include "../../Core/ResourcePath.h"
 #include "../../Scene/GameObjectHelper.h"
+#include "../Helpers/SyMonoHashHelper.h"
+#include "../../Features/Physics/Events/SyOnCreateColliderEvent.h"
+#include "../../Features/Physics/Events/SyOnCreateRBodyEvent.h"
 
 SyResult MonoSyncGeSystem::Init()
 {
@@ -64,7 +68,7 @@ SyResult MonoSyncGeSystem::Destroy()
 uint32_t MonoSyncGeSystem::OnCreateEntity()
 {
 	auto ent = _ecs->create();
-	_ecs->emplace<GameObjectComp>(ent).Name = "FromC#";
+	_ecs->emplace<GameObjectComp>(ent).Name = "C# entity";
 	_ecs->emplace<MonoSyncComp>(ent);
 
 	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "engine entity e%d created", static_cast<int>(ent));
@@ -107,6 +111,7 @@ void MonoSyncGeSystem::OnAddComp(uint32_t rawEnt, mono::EProxyCompId id)
 		mono::ProxyCompIdExt::ToStr(id).c_str(),
 		static_cast<int>(rawEnt)
 	);
+	//std::cout << "[TEST] ent e" << rawEnt << " add comp " << mono::ProxyCompIdExt::ToStr(id) << std::endl;
 
 	auto ent = static_cast<entt::entity>(rawEnt);
 	if (id == mono::EProxyCompId::Transform)
@@ -121,11 +126,18 @@ void MonoSyncGeSystem::OnAddComp(uint32_t rawEnt, mono::EProxyCompId id)
 	}
 	else if (id == mono::EProxyCompId::Light)
 	{
-		_ecs->emplace<LightComponent>(ent);
+		auto& light = _ecs->emplace<LightComponent>(ent);
+		light.ParamsRadiusAndAttenuation = Vector4{ 1, 0, 0, 1 };
+	}
+	else if (id == mono::EProxyCompId::Collider)
+	{
+		_ecs->emplace<SyPrimitiveColliderComponent>(ent);
+		CallEvent<SyOnCreateColliderEvent>("OnCreateCollider", ent);
 	}
 	else if (id == mono::EProxyCompId::Rigid)
 	{
-		
+		_ecs->emplace<SyRBodyComponent>(ent);
+		CallEvent<SyOnCreateRBodyEvent>("OnCreateRBody", ent);
 	}
 	else
 	{
@@ -141,6 +153,7 @@ void MonoSyncGeSystem::OnRemoveComp(uint32_t rawEnt, mono::EProxyCompId id)
 		mono::ProxyCompIdExt::ToStr(id).c_str(),
 		static_cast<int>(rawEnt)
 	);
+	//std::cout << "[TEST] ent e" << rawEnt << " remove comp " << mono::ProxyCompIdExt::ToStr(id) << std::endl;
 
 	auto ent = static_cast<entt::entity>(rawEnt);
 	if (id == mono::EProxyCompId::Transform)
@@ -154,10 +167,15 @@ void MonoSyncGeSystem::OnRemoveComp(uint32_t rawEnt, mono::EProxyCompId id)
 	}
 	else if (id == mono::EProxyCompId::Light)
 	{
-		_ecs->emplace<LightComponent>(ent);
+		_ecs->remove<LightComponent>(ent);
+	}
+	else if (id == mono::EProxyCompId::Collider)
+	{
+		_ecs->remove<SyPrimitiveColliderComponent>(ent);
 	}
 	else if (id == mono::EProxyCompId::Rigid)
 	{
+		_ecs->remove<SyRBodyComponent>(ent);
 	}
 	else
 	{
@@ -170,6 +188,9 @@ void MonoSyncGeSystem::OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyT
 	auto ent = static_cast<entt::entity>(rawEnt);
 
 	auto& tf = _ecs->get<TransformComponent>(ent);
+	tf._position = proxy.Position;
+	tf._rotation = proxy.Rotation;
+	tf.scale = proxy.Scale;
 	tf.localPosition = proxy.LocalPosition;
 	tf.localRotation = proxy.LocalRotation;
 	tf.localScale = proxy.LocalScale;
@@ -185,7 +206,7 @@ void MonoSyncGeSystem::OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyT
 			GameObjectHelper::SetParent(_ecs, ent, entt::null);
 	}
 
-	tf.MonoHash = hash_value(tf);
+	tf.MonoHash = mono::SyMonoHashHelper::Hash(tf);
 }
 
 void MonoSyncGeSystem::OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshComp& proxy)
@@ -221,7 +242,42 @@ void MonoSyncGeSystem::OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshCo
 		}
 	}
 
-	mesh.MonoHash = hash_value(mesh);
+	mesh.MonoHash = mono::SyMonoHashHelper::Hash(mesh);
 }
 
-void MonoSyncGeSystem::OnUpdateLightComp(uint32_t rawEnt, const mono::ProxyLightComp& proxy) {}
+void MonoSyncGeSystem::OnUpdateLightComp(uint32_t rawEnt, const mono::ProxyLightComp& proxy)
+{
+	auto& light = _ecs->get<LightComponent>(static_cast<entt::entity>(rawEnt));
+
+	light.LightType = proxy.LightType;
+	light.LightBehavior = proxy.LightBehavior;
+	light.Color = proxy.Color;
+	light.ParamsRadiusAndAttenuation.x = proxy.PointLightRadius;
+	light.CastShadows = proxy.ShouldCastShadows;
+}
+
+void MonoSyncGeSystem::OnUpdateColliderComp(uint32_t rawEnt, const mono::ProxyColliderComp& proxy)
+{
+	auto& collider = _ecs->get<SyPrimitiveColliderComponent>(static_cast<entt::entity>(rawEnt));
+
+	collider.ColliderType = proxy.Type;
+	collider.Extent = proxy.Extent;
+	collider.Radius = proxy.Radius;
+	collider.HalfHeight = proxy.HalfHeight;
+}
+
+void MonoSyncGeSystem::OnUpdateRigidComp(uint32_t rawEnt, const mono::ProxyRigidComp& proxy)
+{
+	auto& rigid = _ecs->get<SyRBodyComponent>(static_cast<entt::entity>(rawEnt));
+
+	rigid.RbType = proxy.Type;
+	rigid.Mass = proxy.Mass;
+	rigid.Flags = 0;
+	rigid.Flags |= proxy.IsAutoMass ? SyERBodyFlags::USE_DENSITY : 0;
+	rigid.Flags |= proxy.IsKinematic ? SyERBodyFlags::KINEMATIC : 0;
+	rigid.Flags |= proxy.IsGravityOn ? 0 : SyERBodyFlags::DISABLE_GRAVITY;
+	rigid.LinearVelocity = proxy.LinearVelocity;
+	rigid.AngularVelocity = proxy.AngularVelocity;
+
+	rigid.MonoHash = mono::SyMonoHashHelper::Hash(rigid);
+}

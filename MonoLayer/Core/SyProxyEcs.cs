@@ -66,13 +66,13 @@ internal class SyProxyEcs
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	public static extern void GeUpdateMeshComp(uint engineEnt, ProxyMeshComp comp);
+	public static extern void GeUpdateMeshComp(uint engineEnt, ProxyMeshComp proxy);
 
-	public void EgUpdateMeshComp(uint engineEnt, ProxyMeshComp comp)
+	public void EgUpdateMeshComp(uint engineEnt, ProxyMeshComp proxy)
 	{
 		try
 		{
-			Sync.ReceiveMeshFromEngine(engineEnt, comp);
+			Sync.ReceiveMeshFromEngine(engineEnt, proxy);
 		}
 		catch (Exception e)
 		{
@@ -83,13 +83,13 @@ internal class SyProxyEcs
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	public static extern void GeUpdateLightComp(uint engineEnt, LightComp comp);
+	public static extern void GeUpdateLightComp(uint engineEnt, ProxyLightComp proxy);
 
-	public void EgUpdateLightComp(uint engineEnt, LightComp comp)
+	public void EgUpdateLightComp(uint engineEnt, ProxyLightComp comp)
 	{
 		try
 		{
-			//_ecsSync.ReceiveMeshFromEngine(engineEnt, comp);
+			Sync.ReceiveLightFromEngine(engineEnt, comp);
 		}
 		catch (Exception e)
 		{
@@ -99,13 +99,30 @@ internal class SyProxyEcs
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	public static extern void GeUpdateRigidComp(uint engineEnt, RigidComp comp);
+	public static extern void GeUpdateColliderComp(uint engineEnt, ProxyColliderComp proxy);
 
-	public void EgUpdateRigidComp(uint engineEnt, RigidComp comp)
+	public void EgUpdateColliderComp(uint engineEnt, ProxyColliderComp proxy)
 	{
 		try
 		{
-			//_ecsSync.ReceiveMeshFromEngine(engineEnt, comp);
+			Sync.ReceiveColliderFromEngine(engineEnt, proxy);
+		}
+		catch (Exception e)
+		{
+			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
+		}
+	}
+	
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	public static extern void GeUpdateRigidComp(uint engineEnt, ProxyRigidComp proxy);
+
+	public void EgUpdateRigidComp(uint engineEnt, ProxyRigidComp proxy)
+	{
+		try
+		{
+			Sync.ReceiveRigidFromEngine(engineEnt, proxy);
 		}
 		catch (Exception e)
 		{
@@ -120,6 +137,7 @@ internal class SyProxyEcs
 		Transform,
 		Mesh,
 		Light,
+		Collider,
 		Rigid
 	}
 }

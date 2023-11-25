@@ -63,11 +63,3 @@ struct MeshComponent
 		materialUUIDs,
 		flags);
 };
-
-inline size_t hash_value(const MeshComponent& mesh)
-{
-	size_t hash = 0;
-	boost::hash_combine(hash, mesh.modelUUID);
-	boost::hash_combine(hash, mesh.materialUUIDs);
-	return hash;
-}
