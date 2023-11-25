@@ -32,9 +32,8 @@ namespace mono
 		SyMonoGame _game;
 		SyMonoGameConfig _gameConfig;
 
-		SyResult InitImpl();
-		SyResult DestroyImpl();
-		SyResult HotReloadImpl();
+		SyResult CreateObjects();
+		SyResult DestroyObjects();
 
 		void ForceDestroy();
 	};

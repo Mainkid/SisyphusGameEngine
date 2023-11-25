@@ -121,7 +121,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;GFSDK_SSAO_D3D11.win64.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;GFSDK_SSAO_D3D11.win64.lib;mono-2.0-sgen.lib;mono-profiler-log.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>
@@ -161,6 +161,7 @@
     <ClCompile Include="Engine\Mono\Objects\SyMonoGame.cpp" />
     <ClCompile Include="Engine\Mono\SyMonoObj.cpp" />
     <ClCompile Include="Engine\Mono\SyMonoRuntime.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoStr.cpp" />
     <ClCompile Include="Engine\Scene\CameraHelper.cpp" />
     <ClCompile Include="Engine\Scene\GameObjectHelper.cpp" />
     <ClCompile Include="Engine\Serialization\SerializableOuters.h" />
@@ -680,6 +681,7 @@
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
     <ClInclude Include="Engine\Features\Physics\Components\ColliderComponent.h" />
     <ClInclude Include="Engine\Core\ResourcePath.h" />
+    <ClInclude Include="Engine\Mono\SyMonoStr.h" />
     <ClInclude Include="Engine\Mono\Objects\ISyMonoEditorCallbacks.h" />
     <ClInclude Include="Engine\Events\SyHotReloadEvent.h" />
     <ClInclude Include="Engine\Events\SyImageBasedLightingUpdateEvent.h" />

@@ -4,6 +4,7 @@
 #include "../../Core/Tools/MathHelper.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../Features/Resources/ResourceService.h"
+#include "../SyMonoStr.h"
 
 using namespace mono;
 
@@ -24,7 +25,7 @@ void SyMonoEditor::GeDrawSeparator(MonoString* rawName)
 	}
 	else
 	{
-		char* name = mono_string_to_utf8(rawName);
+		SyMonoStr name{ rawName };
 		ImGui::SeparatorText(name);
 	}
 }
@@ -37,35 +38,35 @@ void SyMonoEditor::GeDrawText(MonoString* rawName)
 	}
 	else
 	{
-		char* name = mono_string_to_utf8(rawName);
+		SyMonoStr name{ rawName };
 		ImGui::Text(name);
 	}
 }
 
 int SyMonoEditor::GeDrawIntField(MonoString* rawName, int val)
 {
-	char* name = mono_string_to_utf8(rawName);
+	SyMonoStr name{ rawName };
 	ImGui::DragInt(name, &val);
 	return val;
 }
 
 float SyMonoEditor::GeDrawFloatField(MonoString* rawName, float val)
 {
-	char* name = mono_string_to_utf8(rawName);
+	SyMonoStr name{ rawName };
 	ImGui::DragFloat(name, &val, 0.1f);
 	return val;
 }
 
 bool SyMonoEditor::GeDrawBoolField(MonoString* rawName, bool val)
 {
-	char* name = mono_string_to_utf8(rawName);
+	SyMonoStr name{ rawName };
 	ImGui::Checkbox(name, &val);
 	return val;
 }
 
 ProxyVector3 SyMonoEditor::GeDrawVector3Field(MonoString* rawName, ProxyVector3 val)
 {
-	char* name = mono_string_to_utf8(rawName);
+	SyMonoStr name{ rawName };
 	float rawVal[3]{ val.X, val.Y, val.Z };
 	ImGui::DragFloat3(name, rawVal);
 	return { rawVal[0], rawVal[1], rawVal[2] };
@@ -73,7 +74,7 @@ ProxyVector3 SyMonoEditor::GeDrawVector3Field(MonoString* rawName, ProxyVector3 
 
 ProxyVector4 SyMonoEditor::GeDrawColorField(MonoString* rawName, ProxyVector4 val)
 {
-	char* name = mono_string_to_utf8(rawName);
+	SyMonoStr name{ rawName };
 	float rawVal[4]{ val.X, val.Y, val.Z, val.W };
 	ImGui::ColorEdit4(name, rawVal);
 	return { rawVal[0], rawVal[1], rawVal[2], rawVal[3] };
@@ -86,17 +87,17 @@ int SyMonoEditor::GeDrawEnumField(MonoString* rawName, MonoArray* rawItems, int 
 		return 0;
 	SyMathHelper::Clamp(selected, 0, count - 1);
 
-	char* name = mono_string_to_utf8(rawName);
+	SyMonoStr name{ rawName };
 
 	MonoString* rawSelectedItem = mono_array_get(rawItems, MonoString*, selected);
-	char* selectedItem = mono_string_to_utf8(rawSelectedItem);
+	SyMonoStr selectedItem{ rawSelectedItem };
 
 	if (ImGui::BeginCombo(name, selectedItem))
 	{
 		for (int i = 0; i < count; i++)
 		{
 			MonoString* rawItem = mono_array_get(rawItems, MonoString*, i);
-			char* item = mono_string_to_utf8(rawItem);
+			SyMonoStr item { rawName };
 
 			bool isSelected = i == selected;
 			if (ImGui::Selectable(item, isSelected))
@@ -126,15 +127,11 @@ MonoString* SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType
 		return rawSelectedUuid;
 	}
 
-	char* name = mono_string_to_utf8(rawName);
+	SyMonoStr name{ rawName };
+	SyMonoStr strSelectedUuid{ rawSelectedUuid };
 
-	std::string strSelectedUuid = rawSelectedUuid == nullptr
-		? std::string()
-		: std::string(mono_string_to_utf8(rawSelectedUuid));
+	boost::uuids::uuid selectedUuid = strSelectedUuid.ToUuid();
 
-	auto selectedUuid = strSelectedUuid.empty()
-		? boost::uuids::nil_uuid()
-		: boost::lexical_cast<boost::uuids::uuid>(strSelectedUuid);
 	std::string selectedName = selectedUuid.is_nil()
 		? "none"
 		: resService->FindFilePathByUUID(selectedUuid, true);
@@ -171,7 +168,7 @@ MonoString* SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType
 
 bool SyMonoEditor::GeDrawArrayHead(MonoString* rawName)
 {
-	char* name = mono_string_to_utf8(rawName);
+	SyMonoStr name{ rawName };
 	return ImGui::CollapsingHeader(name);
 }
 

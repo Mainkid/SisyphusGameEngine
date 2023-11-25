@@ -13,6 +13,7 @@
 #include "../Helpers/SyMonoHashHelper.h"
 #include "../../Features/Physics/Events/SyOnCreateColliderEvent.h"
 #include "../../Features/Physics/Events/SyOnCreateRBodyEvent.h"
+#include "../SyMonoStr.h"
 
 SyResult MonoSyncGeSystem::Init()
 {
@@ -221,9 +222,8 @@ void MonoSyncGeSystem::OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshCo
 	}
 	else
 	{
-		char* buffModelUuid = mono_string_to_utf8(proxy.ModelUuid);
-		auto strModelUuid = std::string(buffModelUuid);
-		mesh.modelUUID = boost::lexical_cast<boost::uuids::uuid>(strModelUuid);
+		mono::SyMonoStr strModelUuid {proxy.ModelUuid};
+		mesh.modelUUID = strModelUuid.ToUuid();
 	}
 
 	mesh.materialUUIDs.clear();
@@ -235,9 +235,8 @@ void MonoSyncGeSystem::OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshCo
 			MonoString* rawMaterialUuid = mono_array_get(proxy.MaterialsUuids, MonoString*, i);
 			if (rawMaterialUuid != nullptr)
 			{
-				char* buffMaterialUuid = mono_string_to_utf8(rawMaterialUuid);
-				auto strMaterialUuid = std::string(buffMaterialUuid);
-				mesh.materialUUIDs.push_back(boost::lexical_cast<boost::uuids::uuid>(strMaterialUuid));
+				mono::SyMonoStr strMaterialUuid {rawMaterialUuid};
+				mesh.materialUUIDs.push_back(strMaterialUuid.ToUuid());
 			}
 		}
 	}

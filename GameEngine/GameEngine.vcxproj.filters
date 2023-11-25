@@ -104,6 +104,7 @@
     <ClCompile Include="Engine\Mono\Systems\MonoSyncEgSystem.cpp" />
     <ClCompile Include="Engine\Mono\Helpers\SyMonoHashHelper.h" />
     <ClCompile Include="Engine\Mono\Helpers\SyMonoHashHelper.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoStr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -250,6 +251,7 @@
     <ClInclude Include="Engine\Core\Tools\Structures\Geometry.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.h" />
     <ClInclude Include="Engine\Features\Events\Tags\SyEventTag.h" />
+    <ClInclude Include="Engine\Mono\SyMonoStr.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
