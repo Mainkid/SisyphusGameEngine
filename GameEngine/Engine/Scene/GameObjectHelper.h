@@ -10,7 +10,7 @@
 #include "../Core/Tools/ErrorLogger.h"
 #include "../Features/Events/Tags/SyEventTag.h"
 
-#define GET_ENTITY_NAME_CHAR(ecsPtr, entity) ecsPtr->get<GameObjectComp>(entity).Name.c_str()
+
 
 class GameObjectHelper
 {

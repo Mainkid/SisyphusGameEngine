@@ -672,6 +672,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Core\Tools\Macro.h" />
+    <ClInclude Include="Engine\Features\Common\EComponentTypes.h" />
+    <ClInclude Include="Engine\Features\Common\Events\OnAddComponentEvent.h" />
+    <ClInclude Include="Engine\Features\Common\Events\OnRemoveComponentEvent.h" />
     <ClInclude Include="Engine\Features\Events\Tags\SyEventTag.h" />
     <ClInclude Include="Engine\Features\Physics\Components\JointComponent.h" />
     <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateJoint.h" />
@@ -913,6 +917,9 @@
     <Image Include="Engine\Assets\SkyBox\skybox_4.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_5.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Engine\Features\Common\Events\OnRemoveComponentEvent" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,8 +5,9 @@
 #include "../../../Core/Tools/ErrorLogger.h"
 #include "../../../Components/TransformComponent.h"
 #include "../../../Scene/GameObjectHelper.h"
-#include "../Events/SyOnCreateRBodyEvent.h"
-
+#include "../../Common/Events/OnAddComponentEvent.h"
+#include "../../Common/Events/OnRemoveComponentEvent.h"
+#include "../../../Core/Tools/Macro.h"
 
 using namespace physx;
 
@@ -46,28 +47,32 @@ SyResult SyRBodySystem::Run()
 	SyResult result;
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
 	if (deltaTime == 0)
-	{
-		result.code = SY_RESCODE_UNEXPECTED;
-		result.message = "EngineContext.deltaTime == 0";
 		return result;
-	}
 	//initialize components that were created at this frame
 	auto view = _ecs->view<SyRBodyComponent>();
 	for (auto& entity : view)
 	{
-		auto name = GET_ENTITY_NAME_CHAR(_ecs, entity);
+		auto name = SY_GET_ENTITY_NAME_CHAR(_ecs, entity); //for debug
 		auto& rigidBodyC = _ecs->get<SyRBodyComponent>(entity);
 		auto* transformC = _ecs->try_get<TransformComponent>(entity);
 		if (transformC == nullptr)
 		{
-			//TODO
+			_ecs->emplace<TransformComponent>(entity);
+			CallEvent<SyOnAddComponentEvent>("AddTransform", SyEComponentTypes::SY_TRANSFORM, entity);
+			SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+				"Transform Component required for RigidBody Component is missing on entity (%s). The Transform Component has been added in the next frame.",
+				SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
 			continue;
 		}
 		if (rigidBodyC._rbActor == nullptr)
 		{
 			if (InitComponent(entity, rigidBodyC, *transformC).code == SY_RESCODE_ERROR)
 			{
-				//TODO
+				_ecs->remove<SyRBodyComponent>(entity);
+				CallEvent<SyOnRemoveComponentEvent>("RemoveRigidBody", SyEComponentTypes::SY_RIGID_BODY, entity);
+				SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
+					"Failed to initialize RigidBody Componenton entity (%s). The component has been removed.",
+					SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
 				continue;
 			};
 		}
@@ -97,7 +102,7 @@ SyResult SyRBodySystem::Run()
 	//update components member values according to simulation results
 	for (auto& entity : view)
 	{
-		auto name = GET_ENTITY_NAME_CHAR(_ecs, entity);
+		auto name = SY_GET_ENTITY_NAME_CHAR(_ecs, entity); //for debug
 		auto& rigidBodyC = _ecs->get<SyRBodyComponent>(entity);
 		auto* transformC = _ecs->try_get<TransformComponent>(entity);
 		if (rigidBodyC.RbType == STATIC)
@@ -117,6 +122,11 @@ SyResult SyRBodySystem::Run()
 		transformC->_rotation = SyVector3::PxQuatToEuler(rbTrasform.q);
 		rigidBodyC.LinearVelocity = rb->getLinearVelocity();
 		rigidBodyC.AngularVelocity = rb->getAngularVelocity();
+	}
+	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyOnAddComponentEvent);
+	for (auto& entity : view)
+	{
+		std::cout << "";
 	}
 	return SyResult();
 }
@@ -139,11 +149,18 @@ SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyCompone
 		break;
 	case DYNAMIC: rigidBodyC._rbActor = _physics->createRigidDynamic(PxTransform(transformC._position, 
 														SyVector3::EulerToPxQuat(transformC._rotation)));
+		if (rigidBodyC.Mass < 0)
+		{
+			SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+						"Negative mass for RigidBody Component detected on entity (%s). It is illegal. Instead, default mass 1 is used. ", 
+						SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+			rigidBodyC.Mass = 1.0f;
+		}
 		if (PxRigidBodyExt::setMassAndUpdateInertia(*static_cast<PxRigidBody*>(rigidBodyC._rbActor), rigidBodyC.Mass) == false)
 		{
-			result.code = SY_RESCODE_ERROR;
-			result.message = xstring("PxRigidBodyExt::setMassAndUpdateInertia returned false for RigidBody Component on entity (%s). ", GET_ENTITY_NAME_CHAR(_ecs, entity));
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::setMassAndUpdateInertia returned false for RigidBody Component on entity (%s). ", GET_ENTITY_NAME_CHAR(_ecs, entity));
+			SY_PROCESS_PHYS_ERROR(	result,
+									"PxRigidBodyExt::setMassAndUpdateInertia returned false for RigidBody Component on entity (%s). ", 
+									SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
 			return result;
 		}
 		break;
@@ -152,17 +169,15 @@ SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyCompone
 	rigidBodyC._wasActorRecreatedThisFrame = true;
 	if (rigidBodyC._rbActor == nullptr)
 	{
-		result.code = SY_RESCODE_ERROR;
-		result.message = xstring("Failed to create PxRigidActor in RigidBody Component on entity (%s)",
-			GET_ENTITY_NAME_CHAR(_ecs, entity));
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to create PxRigidActor in RigidBody Component on entity (%s)",
-			GET_ENTITY_NAME_CHAR(_ecs, entity));
+		SY_PROCESS_PHYS_ERROR(	result,
+								"Failed to create PxRigidActor in RigidBody Component on entity (%s)",
+								SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
 	}
 	if (_scene->addActor(*rigidBodyC._rbActor) == false)
 	{
-		result.code = SY_RESCODE_ERROR;
-		result.message = xstring("scene->addActor returned false for RigidBody Component on entity (%s). ", GET_ENTITY_NAME_CHAR(_ecs, entity));
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "scene->addActor returned false for RigidBody Component on entity (%s). ", GET_ENTITY_NAME_CHAR(_ecs, entity));
+		SY_PROCESS_PHYS_ERROR(	result,
+								"scene->addActor returned false for RigidBody Component on entity (%s).",
+								SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
 	};
 	return result;
 }
@@ -185,20 +200,27 @@ SyResult SyRBodySystem::UpdateRigidBodyType(const entt::entity& entity, SyRBodyC
 		break;
 	case DYNAMIC: rigidBodyC._rbActor = _physics->createRigidDynamic(PxTransform(transformC._position, 
 														SyVector3::EulerToPxQuat(transformC._rotation)));
-		if (PxRigidBodyExt::setMassAndUpdateInertia(*static_cast<PxRigidBody*>(rigidBodyC._rbActor), rigidBodyC.Mass)  == false)
+		if (rigidBodyC.Mass < 0)
 		{
-			result.code = SY_RESCODE_ERROR;
-			result.message = xstring("PxRigidBodyExt::setMassAndUpdateInertia returned false for RigidBody Component on entity (%s). ", GET_ENTITY_NAME_CHAR(_ecs, entity));
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::setMassAndUpdateInertia returned false for RigidBody Component on entity (%s). ", GET_ENTITY_NAME_CHAR(_ecs, entity));
+			SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+						"Negative mass for RigidBody Component detected on entity (%s). It is illegal. Instead, default mass 1 is used. ", 
+						SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+			rigidBodyC.Mass = 1.0f;
+		}
+		if (PxRigidBodyExt::setMassAndUpdateInertia(*static_cast<PxRigidBody*>(rigidBodyC._rbActor), rigidBodyC.Mass) == false)
+		{
+			SY_PROCESS_PHYS_ERROR(	result,
+									"PxRigidBodyExt::setMassAndUpdateInertia returned false for RigidBody Component on entity (%s). ", 
+									SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
 			return result;
 		}
 		break;
 	};
 	if (_scene->addActor(*rigidBodyC._rbActor) == false)
 	{
-		result.code = SY_RESCODE_ERROR;
-		result.message = xstring("scene->addActor returned false for RigidBody Component on entity (%s). ", GET_ENTITY_NAME_CHAR(_ecs, entity));
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "scene->addActor returned false for RigidBody Component on entity (%s). ", GET_ENTITY_NAME_CHAR(_ecs, entity));
+		SY_PROCESS_PHYS_ERROR(	result,
+								"scene->addActor returned false for RigidBody Component on entity (%s).",
+								SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
 	};
 	return result;
 }
