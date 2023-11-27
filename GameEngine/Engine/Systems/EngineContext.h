@@ -25,7 +25,9 @@ struct HudData
 {
 	std::set<entt::entity> selectedEntityIDs;
 	std::set<entt::entity> copyBufferEntityIDs;
+	std::set<boost::uuids::uuid> copyBufferAssets;
 	SelectedContent selectedContent = { boost::uuids::nil_uuid(),EAssetType::ASSET_NONE };
+	std::set<boost::uuids::uuid> selectedAssets;
 };
 
 struct EngineContext : public IService
