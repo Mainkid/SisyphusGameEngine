@@ -1,25 +1,13 @@
 #pragma once
 
-//#include "../Tools/Data/Vector.h"
-//
-//
-//struct SystemSCTransform
-//{
-//	SyVector3 Origin = { 0.0f, 0.0f, 0.0f };
-//	//SyVector3 Rotation = { 0.0f, 0.0f, 0.0f };
-//};
-
-
-//#include "DirectXHelpers.h"
 #include "SimpleMath.h"
 #include <d3d11.h>
 #include "../Components/Mesh.h"
-#include "../Core/Rendering/Lights/ELightType.h"
 #include <memory>
 #include <vector>
 #include "../Serialization/Serializable.h"
 
-
+//#include "Components/FAudioEngine.h"
 
 
 enum class ESoundType
@@ -28,29 +16,61 @@ enum class ESoundType
 	Sound3D
 };
 
+  /*  
+    1) приватные поля - _privateMember
+    2) публичные поля и методы PublicMember
+    3) константные поля и переменные CONST_VAR
+    4) локальные переменные - localVar
+  */
 
 struct FSoundComponent
 {
-	FSoundComponent()
-	{
-		SoundPath = "Engine/Assets/Audio/LookinAtIt.ogg";
+
+	FSoundComponent() 
+	{ 
+		//this->SoundType = ESoundType::Sound3D;
+		//this->Volume = 1.0f;
+		//this->IsPlay = 0;
+		//this->IsLooping = 0;
+		//this->SoundPath = "Engine/Assets/Audio/LookinAtIt.ogg";
+		//this->Transform = Vector3::Zero;
 	};
 
-	//FSoundComponent(std::string _soundPath) 
-	//{
-	//	this->SoundPath = _soundPath;
-	//};
+	FSoundComponent(std::string soundPath)
+	{
+		this->SoundPath = soundPath;
+	};
 
+	//FSoundComponent(ESoundType type, float volume, bool isoplay, bool ispooping, std::string soundPath, Vector3 pos)
+	//{
+	//	this->SoundType = type;
+	//	this->Volume = volume;
+	//	this->IsPlay = isoplay;
+	//	this->IsLooping = ispooping;
+	//	this->SoundPath = soundPath;
+	//	this->Transform = pos;
+	//};
+ 
 	~FSoundComponent() {}; 
 
+	
+//----User vars----
+	ESoundType SoundType = ESoundType::Sound3D;
+	float Volume = 1.0f;
+	bool IsPlay = false;
 
-	//Vector4 A;
-	//DirectX::SimpleMath::Vector3 Transform;
-	std::string SoundPath = "Engine/Assets/Audio/LookinAtIt.ogg";
-	//ESoundType SoundType;
-	//float Volume;
-
+	bool IsLooping = false;
+	std::string SoundPath = ""; // = "Engine/Assets/Audio/LookinAtIt.ogg";
+	DirectX::SimpleMath::Vector3 Transform = Vector3::Zero;
+	
+//----Engine vars----
+	bool Playing = false;
+	// void SoundEnd();	
+//    FAudioEngine TESTAE;
+//    TESTAE.Init();
+//    TESTAE.LoadSound("Engine/Assets/Audio/LookinAtIt.ogg");
+//    TESTAE.PlayMSound("Engine/Assets/Audio/LookinAtIt.ogg");
+	
 	//SER_COMP(FSoundComponent, texturePath);
-
 };
 

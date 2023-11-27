@@ -253,10 +253,11 @@ entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs, boost::uuids::u
 	return ent;
 }
 
-entt::entity GameObjectHelper::CreateSoundBox(entt::registry* ecs, Vector3 pos)
+
+entt::entity GameObjectHelper::CreateSoundComponent(entt::registry* ecs, std::string path)
 {
-	auto ent = Create(ecs, "SoundObject", pos);
+	auto ent = Create(ecs, "SoundObject");
 	ecs->emplace<EditorBillboardComponent>(ent, "Engine/Assets/Sprites/Sound.png");
-	ecs->emplace<FSoundComponent>(ent);
-	return ent;
+	FSoundComponent& Sound = ecs->emplace<FSoundComponent>(ent, path);
+	return entt::entity();
 }
