@@ -142,8 +142,12 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 					boost::lexical_cast<std::string>(uuid).c_str());
 				filePath = FindFilePathByUUID(baseResourceDB[EAssetType::ASSET_TEXTURE].uuid);
 			}
+			SyResult hr = MeshLoader::LoadTexture(filePath, texture->textureSamplerState.GetAddressOf(), texture->textureSRV.GetAddressOf());
 
-			MeshLoader::LoadTexture(filePath, texture->textureSamplerState.GetAddressOf(), texture->textureSRV.GetAddressOf());
+			if (hr.code != SY_RESCODE_OK)
+			{
+				SY_LOG_REND(SY_LOGLEVEL_ERROR, hr.message.ToString());
+			}
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(texture);
 			return texture;
 		}

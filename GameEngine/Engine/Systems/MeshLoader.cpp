@@ -3,6 +3,8 @@
 #include "../Systems/HardwareContext.h"
 #include <filesystem>
 
+#include "../Tools/ErrorLogger.h"
+
 std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<DirectX::SimpleMath::Vector4> vertices;
@@ -91,13 +93,13 @@ void MeshLoader::ProcessNode(const std::string& modelPath, std::vector<std::shar
 	}
 }
 
-void MeshLoader::LoadTexture(const std::string& texturePath,ID3D11SamplerState** samplerState,
+SyResult MeshLoader::LoadTexture(const std::string& texturePath,ID3D11SamplerState** samplerState,
 	 ID3D11ShaderResourceView** texture,bool isSRGB)
 {
 	HardwareContext* hc = ServiceLocator::instance()->Get<HardwareContext>();
 	
 	if (texturePath == "")
-		return;
+		return SyResult();
 
 	if (samplerState != nullptr)
 	{
@@ -113,7 +115,8 @@ void MeshLoader::LoadTexture(const std::string& texturePath,ID3D11SamplerState**
 		HRESULT hr = hc->device->CreateSamplerState(&sampDesc, samplerState); //Create sampler state
 		if (FAILED(hr))
 		{
-			std::cout << "Texture Loading Failed!" << std::endl;
+			return SyResult(SY_RESCODE_ERROR, "Texture Loading Failed!");
+
 		}
 	}
 
@@ -124,6 +127,8 @@ void MeshLoader::LoadTexture(const std::string& texturePath,ID3D11SamplerState**
 	else
 		HRESULT hr = DirectX::CreateWICTextureFromFileEx(hc->device.Get(), sw, 20000000, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, DirectX::WIC_LOADER_FORCE_SRGB, nullptr, texture);
 	int q = 0;
+
+	return SyResult();
 }
 
 void MeshLoader::LoadModel(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& meshes)
