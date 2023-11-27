@@ -34,7 +34,9 @@ public:
     SyResult Destroy() override;
 
 private:
-    SyResult InitComponent(const entt::entity& entity, SyRBodyComponent& rbComponent, TransformComponent& tComponent);
+    SyResult InitComponent(const entt::entity& entity, SyRBodyComponent& rigidBodyC, TransformComponent& transformC);
+    SyResult UpdateRigidBodyType(const entt::entity& entity, SyRBodyComponent& rigidBodyC, TransformComponent& transformC);
+    SyResult UpdateRigidBodyValues(const entt::entity& entity, SyRBodyComponent& rigidBodyC, TransformComponent& transformC);
 
     friend class SyCollisionSystem;
 };

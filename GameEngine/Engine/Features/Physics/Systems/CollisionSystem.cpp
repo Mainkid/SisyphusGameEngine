@@ -3,7 +3,7 @@
 #include "../../../Components/TransformComponent.h"
 #include "../Components/RBodyComponent.h"
 #include "../../Mesh/Components/MeshComponent.h"
-#include "../Events/SyOnCreateColliderEvent.h"
+#include "..\Events\SyOnCreateCollider.h"
 #include "PxPhysicsAPI.h"
 #include "RBSystem.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <PxMaterial.h>
-
+#include <boost/functional/hash.hpp>
 #include "../../../Core/Tools/Structures/Vector.h"
 #include "../../../Core/Tools/ErrorLogger.h"
 #include "../../../Core/Tools/FlagBitmask.h"
@@ -57,16 +57,19 @@ struct SyRBodyComponent
 private:
 	//members that are used by developers only
 	
-	
-	//private fields initialized in SyPhysicsSystem::Init
-	
 	physx::PxRigidActor*	_rbActor = nullptr;
+
+	std::size_t _hash = 0;
+	SyERBodyType _prevFrameRbodyType = STATIC;
+	bool _wasActorRecreatedThisFrame = false;
 
 	static physx::PxPhysics*	_physics;
 	static physx::PxScene*		_scene;
 	
 	friend class SyCollisionSystem;
 	friend class SyCollisionPreSystem;
-	friend class SyRBodySystem;	
+	friend class SyRBodySystem;
+	friend class SyJointSystem;
 };
 
+std::size_t hash_value(const SyRBodyComponent& rigidBodyC);

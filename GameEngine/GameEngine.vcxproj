@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Features\Physics\Systems\JointSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
     <ClCompile Include="Engine\Features\Physics\Components\ColliderComponent.cpp" />
     <ClCompile Include="Engine\Features\Physics\Systems\CollisionSystem.cpp" />
@@ -672,6 +673,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="Engine\Features\Events\Tags\SyEventTag.h" />
+    <ClInclude Include="Engine\Features\Physics\Components\JointComponent.h" />
+    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateJoint.h" />
+    <ClInclude Include="Engine\Features\Physics\Systems\JointSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.h" />
     <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
@@ -679,7 +683,7 @@
     <ClInclude Include="Engine\Core\ResourcePath.h" />
     <ClInclude Include="Engine\Events\SyHotReloadEvent.h" />
     <ClInclude Include="Engine\Events\SyImageBasedLightingUpdateEvent.h" />
-    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateColliderEvent.h" />
+    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateCollider.h" />
     <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateRBodyEvent.h" />
     <ClInclude Include="Engine\Events\SyPlayModeEndedEvent.h" />
     <ClInclude Include="Engine\Events\SyPlayModeStartedEvent.h" />
