@@ -36,12 +36,6 @@ SyResult MonoSyncGeSystem::Run()
 	if (!_monoEcs->IsValid() || !_monoGame->IsValid())
 		return {};
 
-	if (!_isGameInited)
-	{
-		_monoGame->EgLoopInit.Invoke();
-		_isGameInited = true;
-	}
-
 	//TODO: rewrite when engine-context-time will be fixed.
 	auto time = std::chrono::steady_clock::now();
 	float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(time - _testTimeOnPrevFrame).count() / 1000000.0f;

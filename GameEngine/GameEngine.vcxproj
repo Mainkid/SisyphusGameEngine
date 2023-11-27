@@ -659,6 +659,7 @@
     <ClCompile Include="Engine\Features\Particles\Systems\ParticlesSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
     <ClCompile Include="Engine\Mono\Systems\MonoSyncEgSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Systems\MonoHotReloadSystem.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -796,6 +797,7 @@
     <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.h" />
     <ClInclude Include="Engine\Mono\Systems\MonoSyncEgSystem.h" />
+    <ClInclude Include="Engine\Mono\Systems\MonoHotReloadSystem.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />

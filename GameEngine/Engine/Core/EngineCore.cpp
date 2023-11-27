@@ -4,6 +4,7 @@
 #include "../Features/Mesh/Components/MeshComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/ImageBasedLightingComponent.h"
+#include "../Mono/Systems/MonoHotReloadSystem.h"
 
 
 EngineCore::EngineCore()
@@ -76,7 +77,6 @@ void EngineCore::StartUp()
 	ServiceLocator::instance()->Register<mono::SyMono>();
 	mono::SyMono* mono = ServiceLocator::instance()->Get<mono::SyMono>();
 	mono->Init();
-	mono->HotReload();
 
 	StartUpSystems();
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "All systems initialization complete!");
@@ -109,6 +109,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<ParticlesSystem>();
 	_systems.Add<EditorBillboardSystem>();
 
+	_systems.Add<MonoHotReloadSystem>();
 	_systems.Add<MonoSyncEgSystem>();
 
 	_systems.Add<PreRenderSystem>();

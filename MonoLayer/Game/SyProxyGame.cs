@@ -27,26 +27,20 @@ public class SyProxyGame
         }
     }
 
-    internal void EgLoopInit()
-    {
-        SyLog.Info(ELogTag.ProxyGame, "game loop init starts..");
-        try
-        {
-            _proxyEcs.Ecs.InitSystems();
-            _proxyEcs.Sync.SyncEngineWithGame();
-            
-            SyLog.Info(ELogTag.ProxyGame, "game loop init done");
-        }
-        catch (Exception e)
-        {
-            SyLog.Err(ELogTag.ProxyGame, e.ToString());
-        }
-    }
+    private bool _isSystemsInited;
 
     internal void EgLoopRun(TimeData timeData)
     {
         try
         {
+            if (!_isSystemsInited)
+            {
+                SyLog.Info(ELogTag.ProxyGame, "game loop init starts..");
+                _proxyEcs.Ecs.InitSystems();
+                SyLog.Info(ELogTag.ProxyGame, "game loop init done");
+                _isSystemsInited = true;
+            }
+            
             _proxyEcs.Ecs.GetSingleton<TimeData>() = timeData;
             _proxyEcs.Ecs.RunSystems();
             _proxyEcs.Sync.SyncEngineWithGame();

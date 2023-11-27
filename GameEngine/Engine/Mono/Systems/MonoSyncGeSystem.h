@@ -22,8 +22,6 @@ private:
 	mono::SyMonoEcs* _monoEcs = nullptr;
 	mono::SyMonoGame* _monoGame = nullptr;
 
-	bool _isGameInited = false;
-
 	std::chrono::time_point<std::chrono::steady_clock> _testTimeOnPrevFrame;
 	float _testTotalTime = 0;
 

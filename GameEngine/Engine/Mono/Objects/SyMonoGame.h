@@ -16,7 +16,6 @@ namespace mono
 	public:
 		SyMonoMethod<MonoObject*, MonoObject*> EgInit{ "EgInit" };
 
-		SyMonoMethod<> EgLoopInit{ "EgLoopInit" };
 		SyMonoMethod<ProxyTimeData> EgLoopRun{ "EgLoopRun" };
 		SyMonoMethod<> EgLoopDestroy{ "EgLoopDestroy" };
 
