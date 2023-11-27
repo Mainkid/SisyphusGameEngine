@@ -229,6 +229,38 @@ public class SyEcs
         DecreaseEngineCompsCountAndTryDestroy(ent);
     }
 
+    internal void AddCompRaw(Type compType, int ent)
+    {
+        if (compType == typeof(TransformComp))
+            AddTransformComp(ent);
+        else if (compType == typeof(MeshComp))
+            AddMeshComp(ent);
+        else if (compType == typeof(LightComp))
+            AddLightComp(ent);
+        else if (compType == typeof(ColliderComp))
+            AddColliderComp(ent);
+        else if (compType == typeof(RigidComp))
+            AddRigidComp(ent);
+        else
+            World.GetPoolByType(compType).AddRaw(ent, Activator.CreateInstance(compType));
+    }
+
+    internal void RemoveCompRaw(Type compType, int ent)
+    {
+        if (compType == typeof(TransformComp))
+            RemoveTransformComp(ent);
+        else if (compType == typeof(MeshComp))
+            RemoveMeshComp(ent);
+        else if (compType == typeof(LightComp))
+            RemoveLightComp(ent);
+        else if (compType == typeof(ColliderComp))
+            RemoveCollider(ent);
+        else if (compType == typeof(RigidComp))
+            RemoveRigidComp(ent);
+        else
+            World.GetPoolByType(compType).Del(ent);
+    }
+
     //-----------------------------------------------------------
     //-----------------------------------------------------------
     internal uint ToEngineEnt(int gameEnt)
@@ -250,21 +282,21 @@ public class SyEcs
         return World.Filter<T>();
     }
 
-    public ref T AddSingleton<T>() where T : struct, IGameComp => ref AddSingletonRaw<T>();
+    public ref T AddSingleton<T>() where T : struct, ISingletonGameComp => ref AddSingletonRaw<T>();
 
     public ref T GetSingleton<T>() where T : struct
     {
         return ref World.GetPool<T>().Get(_singletonEntity);
     }
 
-    public void RemoveSingleton<T>() where T : struct, IGameComp => RemoveSingletonRaw<T>();
+    public void RemoveSingleton<T>() where T : struct, ISingletonGameComp => RemoveSingletonRaw<T>();
 
-    internal ref T AddSingletonRaw<T>() where T : struct, IComp
+    internal ref T AddSingletonRaw<T>() where T : struct, ISingletonComp
     {
         return ref World.GetPool<T>().Add(_singletonEntity);
     }
 
-    internal void RemoveSingletonRaw<T>() where T : struct, IComp
+    internal void RemoveSingletonRaw<T>() where T : struct, ISingletonComp
     {
         World.GetPool<T>().Del(_singletonEntity);
     }
@@ -315,5 +347,7 @@ public class SyEcs
     //-----------------------------------------------------------
     public interface IComp { }
     public interface IGameComp : IComp { }
+    public interface ISingletonComp { }
+    public interface ISingletonGameComp : ISingletonComp { }
 }
 }

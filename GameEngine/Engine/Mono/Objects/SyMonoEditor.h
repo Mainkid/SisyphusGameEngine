@@ -15,7 +15,7 @@ namespace mono
 		inline static const std::string CLASS_NAME = "SyProxyEditor";
 
 		inline static const std::string GE_INDENT = "GeIndent";
-		inline static const std::string GE_DRAW_SEPARATOR = "GeDrawSeparator";
+		inline static const std::string GE_DRAW_COMP_HEADER = "GeDrawCompHeader";
 		inline static const std::string GE_DRAW_TEXT = "GeDrawText";
 		inline static const std::string GE_DRAW_INT_FIELD = "GeDrawIntField";
 		inline static const std::string GE_DRAW_FLOAT_FIELD = "GeDrawFloatField";
@@ -27,10 +27,11 @@ namespace mono
 		inline static const std::string GE_DRAW_ARRAY_HEAD = "GeDrawArrayHead";
 		inline static const std::string GE_DRAW_ARRAY_ITEM_BUTTONS = "GeDrawArrayItemButtons";
 		inline static const std::string GE_DRAW_ARRAY_ADD_BUTTON = "GeDrawArrayAddButton";
+		inline static const std::string GE_DRAW_ADD_COMP_MENU = "GeDrawAddCompMenu";
 
 	private:
 		static void GeIndent(bool isIncrease);
-		static void GeDrawSeparator(MonoString* rawName);
+		static int GeDrawCompHeader(MonoString* rawName);
 		static void GeDrawText(MonoString* rawName);
 		static int GeDrawIntField(MonoString* rawName, int val);
 		static float GeDrawFloatField(MonoString* rawName, float val);
@@ -42,6 +43,7 @@ namespace mono
 		static bool GeDrawArrayHead(MonoString* rawName);
 		static int GeDrawArrayItemButtons(int idx);
 		static bool GeDrawArrayAddButton();
+		static int GeDrawAddCompMenu(MonoArray* rawComponents);
 
 	public:
 		SyMonoMethod<MonoObject*> EgInit{ "EgInit" };

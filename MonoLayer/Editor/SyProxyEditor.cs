@@ -15,29 +15,54 @@ public class SyProxyEditor
 {
 	private SyEcs _ecs;
 		
-	private Type[] _compsTypesBuffer = new Type[10];
+	private Type[] _compsTypesBuffer = new Type[20];
 
 	private Dictionary<Type, IEditorDrawer> _drawers;
-	//-----------------------------------------------------------
-	//-----------------------------------------------------------
 
+	private List<Type> _allCompsTypes       = new List<Type>();
+	private List<Type> _availableCompsTypes = new List<Type>();
+	private string[]   _availableCompsNames;
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
+	private int _prevCompsCount = -1;
+	
 	private void DrawEntityComps(uint engineEnt)
 	{
 		if (!_ecs.ToGameEnt(engineEnt, out int gameEnt))
 			return;
-
+		
+		//--------- Existing Components ---------------
 		for (var i = 0; i < _compsTypesBuffer.Length; i++)
 			_compsTypesBuffer[i] = null;
 
-		int count = _ecs.World.GetComponentTypes(gameEnt, ref _compsTypesBuffer);
+		int compsCount = _ecs.World.GetComponentTypes(gameEnt, ref _compsTypesBuffer);
 
-		for (var i = 0; i < count; i++)
+		for (var i = 0; i < compsCount; i++)
 		{
 			var compType = _compsTypesBuffer[i];
 			if (TryGetDrawer(compType, out var drawer) && drawer is IEditorDrawerComp compDrawer)
 			{
 				compDrawer.DrawComp(gameEnt);
 			}
+		}
+		
+		//----------- Add Component ------------------
+		if (_prevCompsCount != compsCount)
+		{
+			_prevCompsCount = compsCount;
+			
+			_availableCompsTypes = new List<Type>(_allCompsTypes);
+			for (var i = 0; i < compsCount; i++)
+				_availableCompsTypes.Remove(_compsTypesBuffer[i]);
+			_availableCompsNames = new string[_availableCompsTypes.Count];
+			for (var i = 0; i < _availableCompsNames.Length; i++)
+				_availableCompsNames[i] = _availableCompsTypes[i].Name;
+		}
+		int result = GeDrawAddCompMenu(_availableCompsNames);
+		if (result >= 0)
+		{
+			var compType = _availableCompsTypes[result];
+			_ecs.AddCompRaw(compType, gameEnt);
 		}
 	}
 
@@ -108,7 +133,7 @@ public class SyProxyEditor
 
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
-	internal void EgInit(SyProxyEcs proxyEcs)
+	private void EgInit(SyProxyEcs proxyEcs)
 	{
 		_ecs = proxyEcs.Ecs;
 
@@ -123,9 +148,17 @@ public class SyProxyEditor
 			{ typeof(TransformComp), new EditorDrawerCompTransform(this, _ecs) },
 			{ typeof(LightComp), new EditorDrawerCompLight(this, _ecs) }
 		};
+
+		var compInterfaceType = typeof(SyEcs.IComp);
+		foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		{
+			foreach (var type in assembly.GetTypes())
+				if (!type.IsInterface && compInterfaceType.IsAssignableFrom(type))
+					_allCompsTypes.Add(type);
+		}
 	}
 
-	internal void EgDrawEntityComps(uint engineEnt)
+	private void EgDrawEntityComps(uint engineEnt)
 	{
 		try
 		{
@@ -142,7 +175,7 @@ public class SyProxyEditor
 	internal static extern void GeIndent(bool isIncrease);
     
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern void GeDrawSeparator(string name);
+	internal static extern int GeDrawCompHeader(string name);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern void GeDrawText(string name);
@@ -176,5 +209,8 @@ public class SyProxyEditor
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern bool GeDrawArrayAddButton();
+
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern int GeDrawAddCompMenu(string[] compsNames);
 }
 }

@@ -10,22 +10,30 @@ public interface IEditorDrawerComp
 
 public class EditorDrawerComp<T> : EditorDrawerBase<T>, IEditorDrawerComp where T: struct
 {
+	private readonly SyEcs      _ecs;
 	private readonly EcsPool<T> _pool;
 
 	private EditorDrawerReflect<T> _fallbackDrawer;
 
 	public EditorDrawerComp(SyProxyEditor editor, SyEcs ecs) : base(editor)
 	{
+		_ecs  = ecs;
 		_pool = ecs.World.GetPool<T>();
 	}
 
 	public void DrawComp(int ent)
 	{
-		SyProxyEditor.GeDrawSeparator(typeof(T).Name);
-
-		ref var comp = ref _pool.Get(ent);
-		Draw(null, ref comp);
-		_pool.Get(ent) = comp;
+		int action = SyProxyEditor.GeDrawCompHeader(typeof(T).Name);
+		if (action == 0)
+		{
+			_ecs.RemoveCompRaw(typeof(T), ent);
+		}
+		else
+		{
+			ref var comp = ref _pool.Get(ent);
+			Draw(null, ref comp);
+			_pool.Get(ent) = comp;	
+		}
 	}
 	
 	public override bool DrawRaw(string name, ref object rawVal)

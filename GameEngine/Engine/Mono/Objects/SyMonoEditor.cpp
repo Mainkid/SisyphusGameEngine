@@ -17,8 +17,10 @@ void SyMonoEditor::GeIndent(bool isIncrease)
 		ImGui::Unindent(10.0f);
 }
 
-void SyMonoEditor::GeDrawSeparator(MonoString* rawName)
+int SyMonoEditor::GeDrawCompHeader(MonoString* rawName)
 {
+	int action = -1;
+
 	if (rawName == nullptr)
 	{
 		ImGui::Separator();
@@ -26,8 +28,13 @@ void SyMonoEditor::GeDrawSeparator(MonoString* rawName)
 	else
 	{
 		SyMonoStr name{ rawName };
+		ImGui::PushID(name);
 		ImGui::SeparatorText(name);
+		if (ImGui::Button("Remove"))
+			action = 0;
+		ImGui::PopID();
 	}
+	return action;
 }
 
 void SyMonoEditor::GeDrawText(MonoString* rawName)
@@ -194,6 +201,29 @@ bool SyMonoEditor::GeDrawArrayAddButton()
 	return ImGui::Button("+");
 }
 
+int SyMonoEditor::GeDrawAddCompMenu(MonoArray* rawComponents)
+{
+	if (ImGui::Button("Add Component"))
+		ImGui::OpenPopup("AddComponentPopup");
+
+	int result = -1;
+
+	if (ImGui::BeginPopupContextWindow("AddComponentPopup"))
+	{
+
+		int length = mono_array_length(rawComponents);
+		for (int i = 0; i < length; i++)
+		{
+			MonoString* rawComp = mono_array_get(rawComponents, MonoString*, i);
+			SyMonoStr comp{ rawComp };
+			if (ImGui::Button(comp.GetChar()))
+				result = i;
+		}
+		ImGui::EndPopup();
+	}
+	return result;
+}
+
 
 SyResult SyMonoEditor::OnAfterCreate()
 {
@@ -203,7 +233,7 @@ SyResult SyMonoEditor::OnAfterCreate()
 	SY_RESULT_CHECK(EgDrawEntityComps.Bind(this));
 
 	BindCallback(GE_INDENT, &GeIndent);
-	BindCallback(GE_DRAW_SEPARATOR, &GeDrawSeparator);
+	BindCallback(GE_DRAW_COMP_HEADER, &GeDrawCompHeader);
 	BindCallback(GE_DRAW_TEXT, &GeDrawText);
 	BindCallback(GE_DRAW_INT_FIELD, &GeDrawIntField);
 	BindCallback(GE_DRAW_FLOAT_FIELD, &GeDrawFloatField);
@@ -215,6 +245,7 @@ SyResult SyMonoEditor::OnAfterCreate()
 	BindCallback(GE_DRAW_ARRAY_HEAD, &GeDrawArrayHead);
 	BindCallback(GE_DRAW_ARRAY_ITEM_BUTTONS, &GeDrawArrayItemButtons);
 	BindCallback(GE_DRAW_ARRAY_ADD_BUTTON, &GeDrawArrayAddButton);
+	BindCallback(GE_DRAW_ADD_COMP_MENU, &GeDrawAddCompMenu);
 
 	_resService = ServiceLocator::instance()->Get<ResourceService>();
 
