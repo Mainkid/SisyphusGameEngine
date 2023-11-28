@@ -14,6 +14,18 @@ struct TransformComponent
 		this->_rotation = _rot;
 		this->scale = _scale;
 	}
+	TransformComponent(const TransformComponent& tc)
+	{
+		this->_position = tc._position;
+		this->_rotation = tc._rotation;
+		this->scale = tc.scale;
+		this->localPosition = tc.localPosition;
+		this->localRotation = tc.localRotation;
+		this->localScale = tc.localScale;
+		this->hash = 0;
+		this->parent = tc.parent;
+	}
+
 	~TransformComponent()
 	{
 	}

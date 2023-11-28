@@ -17,6 +17,7 @@ struct CB
 
 struct ParticleComponent
 {
+	//ParticleComponent(const ParticleComponent& pc) = default;
 
 	//----User vars----
 	boost::uuids::uuid SharedParticlesDataUuid;					

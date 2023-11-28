@@ -40,6 +40,17 @@ SyResult HudHierarchySystem::Run()
 			ImGui::EndDragDropTarget();
 		}
 	}
+
+	if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_C))
+	{
+		ec->hudData.copyBufferEntityIDs = ec->hudData.selectedEntityIDs;
+	}
+
+	if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_V))
+	{
+		GameObjectHelper::CopyEntity(_ecs, ec->hudData.copyBufferEntityIDs);
+	}
+
 	ImGui::End();
 	return SyResult();
 }
@@ -136,15 +147,15 @@ void HudHierarchySystem::ProcessPopUp()
 		}
 		if (ImGui::MenuItem("Copy"))
 		{
-
+			ec->hudData.copyBufferEntityIDs = ec->hudData.selectedEntityIDs;
 		}
 		if (ImGui::MenuItem("Paste"))
 		{
-
+			GameObjectHelper::CopyEntity(_ecs, ec->hudData.copyBufferEntityIDs, entt::null);
 		}
 		if (ImGui::MenuItem("Paste As Child"))
 		{
-
+			GameObjectHelper::CopyEntity(_ecs, ec->hudData.copyBufferEntityIDs, *ec->hudData.selectedEntityIDs.begin());
 		}
 		if (ImGui::MenuItem("Rename"))
 		{

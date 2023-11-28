@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\entt;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
   </PropertyGroup>
@@ -671,6 +671,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Components\Components.h" />
     <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
     <ClInclude Include="Engine\Components\ColliderComponent.h" />
@@ -787,7 +788,56 @@
     <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
     <ClInclude Include="Engine\Systems\Rendering\RenderPipeline\ParticleRenderSystem.h" />
     <ClInclude Include="vendor\Delegates.h" />
+    <ClInclude Include="vendor\entt\core\algorithm.hpp" />
+    <ClInclude Include="vendor\entt\core\any.hpp" />
+    <ClInclude Include="vendor\entt\core\attribute.h" />
+    <ClInclude Include="vendor\entt\core\compressed_pair.hpp" />
+    <ClInclude Include="vendor\entt\core\enum.hpp" />
+    <ClInclude Include="vendor\entt\core\family.hpp" />
+    <ClInclude Include="vendor\entt\core\fwd.hpp" />
+    <ClInclude Include="vendor\entt\core\hashed_string.hpp" />
+    <ClInclude Include="vendor\entt\core\ident.hpp" />
+    <ClInclude Include="vendor\entt\core\iterator.hpp" />
+    <ClInclude Include="vendor\entt\core\memory.hpp" />
+    <ClInclude Include="vendor\entt\core\monostate.hpp" />
+    <ClInclude Include="vendor\entt\core\tuple.hpp" />
+    <ClInclude Include="vendor\entt\core\type_info.hpp" />
+    <ClInclude Include="vendor\entt\core\type_traits.hpp" />
+    <ClInclude Include="vendor\entt\core\utility.hpp" />
+    <ClInclude Include="vendor\entt\entity\component.hpp" />
+    <ClInclude Include="vendor\entt\entity\entity.hpp" />
+    <ClInclude Include="vendor\entt\entity\fwd.hpp" />
+    <ClInclude Include="vendor\entt\entity\group.hpp" />
+    <ClInclude Include="vendor\entt\entity\handle.hpp" />
+    <ClInclude Include="vendor\entt\entity\helper.hpp" />
+    <ClInclude Include="vendor\entt\entity\mixin.hpp" />
+    <ClInclude Include="vendor\entt\entity\observer.hpp" />
+    <ClInclude Include="vendor\entt\entity\organizer.hpp" />
+    <ClInclude Include="vendor\entt\entity\registry.hpp" />
+    <ClInclude Include="vendor\entt\entity\runtime_view.hpp" />
+    <ClInclude Include="vendor\entt\entity\snapshot.hpp" />
+    <ClInclude Include="vendor\entt\entity\sparse_set.hpp" />
+    <ClInclude Include="vendor\entt\entity\storage.hpp" />
+    <ClInclude Include="vendor\entt\entity\view.hpp" />
     <ClInclude Include="vendor\entt\entt.hpp" />
+    <ClInclude Include="vendor\entt\meta\adl_pointer.hpp" />
+    <ClInclude Include="vendor\entt\meta\container.hpp" />
+    <ClInclude Include="vendor\entt\meta\context.hpp" />
+    <ClInclude Include="vendor\entt\meta\factory.hpp" />
+    <ClInclude Include="vendor\entt\meta\fwd.hpp" />
+    <ClInclude Include="vendor\entt\meta\meta.hpp" />
+    <ClInclude Include="vendor\entt\meta\node.hpp" />
+    <ClInclude Include="vendor\entt\meta\pointer.hpp" />
+    <ClInclude Include="vendor\entt\meta\policy.hpp" />
+    <ClInclude Include="vendor\entt\meta\range.hpp" />
+    <ClInclude Include="vendor\entt\meta\resolve.hpp" />
+    <ClInclude Include="vendor\entt\meta\template.hpp" />
+    <ClInclude Include="vendor\entt\meta\type_traits.hpp" />
+    <ClInclude Include="vendor\entt\meta\utility.hpp" />
+    <ClInclude Include="vendor\entt\resource\cache.hpp" />
+    <ClInclude Include="vendor\entt\resource\fwd.hpp" />
+    <ClInclude Include="vendor\entt\resource\loader.hpp" />
+    <ClInclude Include="vendor\entt\resource\resource.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
     <ClInclude Include="vendor\ImGuizmo\ImCurveEdit.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGradient.h" />

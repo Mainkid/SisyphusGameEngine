@@ -43,6 +43,8 @@ struct SyTagColliderVisualizationEnabled
 struct SyPrimitiveColliderComponent
 {
 
+
+
     SyPrimitiveColliderComponent(   SyEPrimitiveColliderType colliderType,
                                     const SyPrimitiveColliderShapeDesc& colliderShapeDesc,
                                     const SyColliderMaterial& material);
