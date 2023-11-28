@@ -46,78 +46,53 @@ SyResult SoundSystem::Init()
     return SyResult();
 }
 
+
+
+
 SyResult SoundSystem::Run()
 {
-
     auto View = _ecs->view<FSoundComponent>();
     for (auto& Entity : View)
     {
-        //SetChannelVolume(Scom.Volume);
-        // TODO 2\3D
-        //LoadSound()
+        auto& Scom = _ecs->get<FSoundComponent>(Entity);
+        std::string name = Scom.SoundPath;
 
-        // do 1
-        auto Scom = _ecs->get<FSoundComponent>(Entity);
-        if ((Scom.IsPlay == true))
-        {
-            std::string name = Scom.SoundPath;
-
-            //auto tFoundit = sgpImplementation->_mEvents.find(name);
-            //if (tFoundit == sgpImplementation->_mEvents.end()) // 1
-            //{
-            //    LoadBank(name, FMOD_STUDIO_LOAD_BANK_NORMAL);
-            //    LoadEvent(name);
-            //    std::cout << " == " << std::endl;
-            //}
-            if (IsEventPlaying(name) == 1)
-            {
-
-                std::cout << " IsEventPlaying " << std::endl;
-            }
-            if (IsEventPlaying(name) == 0)
-            {
-                LoadBank(name, FMOD_STUDIO_LOAD_BANK_NORMAL);
-                LoadEvent(name);
-                PlayEvent(name);
-                //PlayFSound(name);
-                std::cout << " !!!! Event not Playing " << std::endl;
-            }
-
-            //{
-            //    std::cout << " != " << std::endl;
-            //    //if (IsEventPlaying(name) == false)
-            //    {                
-            //        PlayEvent(name);
-            //        PlayFSound(name);
-            //    }
-            //}
-
-
-
-
-              
-        }
-        
-        
-
-        
+       // on
+       if ((Scom.IsPlay) && (!Scom.IsPlaying))
+       {
+            Scom.IsPlaying = true;
+            LoadSound(name, Scom.Sound3D, Scom.IsLooping);
+            Scom.ChanelID = PlayFSound(name, Scom.Transform, Scom.Volume);
+       }
+       //off
+       if (!Scom.IsPlay)
+       {
+           Scom.IsPlaying = false;
+           UnLoadSound(name);
+       }
+          
     }
+
     sgpImplementation->Update();
     return SyResult();
 }
 
 SyResult SoundSystem::Destroy()
 {
-    //TODO: UnLoad all Sound
+// TODO S: I can do this (UnLoad all Sound( ok this)?
+    auto View = _ecs->view<FSoundComponent>();
+    for (auto& Entity : View)
+    {
+        auto& Scom = _ecs->get<FSoundComponent>(Entity);
+        std::string name = Scom.SoundPath;
+        UnLoadSound(name);
+    }
+ 
     delete sgpImplementation;
     return SyResult();
 }
 //============================================================
 
-//void SoundSystem::Update()
-//{
-//    sgpImplementation->Update();
-//}
 
 int SoundSystem::ErrorCheck(FMOD_RESULT result)
 {
@@ -128,7 +103,7 @@ int SoundSystem::ErrorCheck(FMOD_RESULT result)
     return 0;
 }
 
-void SoundSystem::LoadSound(const std::string& strSoundName, bool b3d, bool bLooping, bool bStream)
+void SoundSystem::LoadSound(const std::string& strSoundName, bool b3d, bool bLooping)//, bool bStream)
 {
     auto tFoundIt = sgpImplementation->_mSounds.find(strSoundName);
     if (tFoundIt != sgpImplementation->_mSounds.end())
@@ -137,7 +112,7 @@ void SoundSystem::LoadSound(const std::string& strSoundName, bool b3d, bool bLoo
     FMOD_MODE eMode = FMOD_DEFAULT;
     eMode |= b3d ? FMOD_3D : FMOD_2D;
     eMode |= bLooping ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
-    eMode |= bStream ? FMOD_CREATESTREAM : FMOD_CREATECOMPRESSEDSAMPLE;
+    //eMode |= bStream ? FMOD_CREATESTREAM : FMOD_CREATECOMPRESSEDSAMPLE;
 
     FMOD::Sound* pSound = nullptr;
     SoundSystem::ErrorCheck(sgpImplementation->_mpSystem->createSound(strSoundName.c_str(), eMode, nullptr, &pSound));
@@ -176,31 +151,31 @@ void SoundSystem::SetChannelVolume(int nChannelId, float fVolumedB)
     SoundSystem::ErrorCheck(tFoundIt->second->setVolume(dbToVolume(fVolumedB)));
 }
 
-void SoundSystem::LoadBank(const std::string& strBankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags) {
-    auto tFoundIt = sgpImplementation->_mBanks.find(strBankName);
-    if (tFoundIt != sgpImplementation->_mBanks.end())
-        return;
-    FMOD::Studio::Bank* pBank;
-    SoundSystem::ErrorCheck(sgpImplementation->_mpStudioSystem->loadBankFile(strBankName.c_str(), flags, &pBank));
-    if (pBank) {
-        sgpImplementation->_mBanks[strBankName] = pBank;
-    }
-}
-
-void SoundSystem::LoadEvent(const std::string& strEventName) {
-    auto tFoundit = sgpImplementation->_mEvents.find(strEventName);
-    if (tFoundit != sgpImplementation->_mEvents.end())
-        return;
-    FMOD::Studio::EventDescription* pEventDescription = NULL;
-    SoundSystem::ErrorCheck(sgpImplementation->_mpStudioSystem->getEvent(strEventName.c_str(), &pEventDescription));
-    if (pEventDescription) {
-        FMOD::Studio::EventInstance* pEventInstance = NULL;
-        SoundSystem::ErrorCheck(pEventDescription->createInstance(&pEventInstance));
-        if (pEventInstance) {
-            sgpImplementation->_mEvents[strEventName] = pEventInstance;
-        }
-    }
-}
+//void SoundSystem::LoadBank(const std::string& strBankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags) {
+//    auto tFoundIt = sgpImplementation->_mBanks.find(strBankName);
+//    if (tFoundIt != sgpImplementation->_mBanks.end())
+//        return;
+//    FMOD::Studio::Bank* pBank;
+//    SoundSystem::ErrorCheck(sgpImplementation->_mpStudioSystem->loadBankFile(strBankName.c_str(), flags, &pBank));
+//    if (pBank) {
+//        sgpImplementation->_mBanks[strBankName] = pBank;
+//    }
+//}
+ 
+//void SoundSystem::LoadEvent(const std::string& strEventName) {
+//    auto tFoundit = sgpImplementation->_mEvents.find(strEventName);
+//    if (tFoundit != sgpImplementation->_mEvents.end())
+//        return;
+//    FMOD::Studio::EventDescription* pEventDescription = NULL;
+//    SoundSystem::ErrorCheck(sgpImplementation->_mpStudioSystem->getEvent(strEventName.c_str(), &pEventDescription));
+//    if (pEventDescription) {
+//        FMOD::Studio::EventInstance* pEventInstance = NULL;
+//        SoundSystem::ErrorCheck(pEventDescription->createInstance(&pEventInstance));
+//        if (pEventInstance) {
+//            sgpImplementation->_mEvents[strEventName] = pEventInstance;
+//        }
+//    }
+//}
 
 int SoundSystem::PlayFSound(const std::string& strSoundName, const SyVector3& vPosition, float fVolumedB)
 {
@@ -232,38 +207,38 @@ int SoundSystem::PlayFSound(const std::string& strSoundName, const SyVector3& vP
     return nChannelId;
 }
 
-void SoundSystem::PlayEvent(const  std::string& strEventName) {
-    auto tFoundit = sgpImplementation->_mEvents.find(strEventName);
-    if (tFoundit == sgpImplementation->_mEvents.end()) {
-        LoadEvent(strEventName);
-        tFoundit = sgpImplementation->_mEvents.find(strEventName);
-        if (tFoundit == sgpImplementation->_mEvents.end())
-            return;
-    }
-    tFoundit->second->start();
-}
+//void SoundSystem::PlayEvent(const  std::string& strEventName) {
+//    auto tFoundit = sgpImplementation->_mEvents.find(strEventName);
+//    if (tFoundit == sgpImplementation->_mEvents.end()) {
+//        LoadEvent(strEventName);
+//        tFoundit = sgpImplementation->_mEvents.find(strEventName);
+//        if (tFoundit == sgpImplementation->_mEvents.end())
+//            return;
+//    }
+//    tFoundit->second->start();
+//}
 
-void SoundSystem::StopEvent(const  std::string& strEventName, bool bImmediate) {
-    auto tFoundIt = sgpImplementation->_mEvents.find(strEventName);
-    if (tFoundIt == sgpImplementation->_mEvents.end())
-        return;
+//void SoundSystem::StopEvent(const  std::string& strEventName, bool bImmediate) {
+//    auto tFoundIt = sgpImplementation->_mEvents.find(strEventName);
+//    if (tFoundIt == sgpImplementation->_mEvents.end())
+//        return;
+//
+//    FMOD_STUDIO_STOP_MODE eMode;
+//    eMode = bImmediate ? FMOD_STUDIO_STOP_IMMEDIATE : FMOD_STUDIO_STOP_ALLOWFADEOUT;
+//    SoundSystem::ErrorCheck(tFoundIt->second->stop(eMode));
+//}
 
-    FMOD_STUDIO_STOP_MODE eMode;
-    eMode = bImmediate ? FMOD_STUDIO_STOP_IMMEDIATE : FMOD_STUDIO_STOP_ALLOWFADEOUT;
-    SoundSystem::ErrorCheck(tFoundIt->second->stop(eMode));
-}
-
-bool SoundSystem::IsEventPlaying(const  std::string& strEventName) const {
-    auto tFoundIt = sgpImplementation->_mEvents.find(strEventName);
-    if (tFoundIt == sgpImplementation->_mEvents.end())
-        return false;
-
-    FMOD_STUDIO_PLAYBACK_STATE* state = NULL;
-    if (tFoundIt->second->getPlaybackState(state) == FMOD_STUDIO_PLAYBACK_PLAYING) {
-        return true;
-    }
-    return false;
-}
+//bool SoundSystem::IsEventPlaying(const  std::string& strEventName) const {
+//    auto tFoundIt = sgpImplementation->_mEvents.find(strEventName);
+//    if (tFoundIt == sgpImplementation->_mEvents.end())
+//        return false;
+//
+//    FMOD_STUDIO_PLAYBACK_STATE* state = NULL;
+//    if (tFoundIt->second->getPlaybackState(state) == FMOD_STUDIO_PLAYBACK_PLAYING) {
+//        return true;
+//    }
+//    return false;
+//}
 
 //void SoundSystem::GetEventParameter(const  std::string& strEventName, const  std::string& strEventParameter, float* parameter) {
 //    auto tFoundIt = sgpImplementation->_mEvents.find(strEventName);
@@ -290,10 +265,10 @@ float  SoundSystem::dbToVolume(float dB)
     return powf(10.0f, 0.05f * dB);
 }
 
-float  SoundSystem::VolumeTodb(float volume)
-{
-    return 20.0f * log10f(volume);
-}
+//float  SoundSystem::VolumeTodb(float volume)
+//{
+//    return 20.0f * log10f(volume);
+//}
 
 FMOD_VECTOR SoundSystem::VectorToFmod(const SyVector3& vPosition) {
     FMOD_VECTOR fVec;

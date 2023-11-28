@@ -7,14 +7,12 @@
 #include <vector>
 #include "../Serialization/Serializable.h"
 
-//#include "Components/FAudioEngine.h"
 
-
-enum class ESoundType
-{
-	Sound2D,
-	Sound3D
-};
+//enum class ESoundType
+//{
+//	Sound2D,
+//	Sound3D
+//};
 
   /*  
     1) приватные поля - _privateMember
@@ -55,21 +53,21 @@ struct FSoundComponent
 
 	
 //----User vars----
-	ESoundType SoundType = ESoundType::Sound3D;
+	//ESoundType SoundType = ESoundType::Sound3D;
+	bool Sound3D = false;
 	float Volume = 1.0f;
 	bool IsPlay = false;
-
 	bool IsLooping = false;
+
 	std::string SoundPath = ""; // = "Engine/Assets/Audio/LookinAtIt.ogg";
 	DirectX::SimpleMath::Vector3 Transform = Vector3::Zero;
 	
+
 //----Engine vars----
-	bool Playing = false;
-	// void SoundEnd();	
-//    FAudioEngine TESTAE;
-//    TESTAE.Init();
-//    TESTAE.LoadSound("Engine/Assets/Audio/LookinAtIt.ogg");
-//    TESTAE.PlayMSound("Engine/Assets/Audio/LookinAtIt.ogg");
+	bool IsPlaying = false;
+// TODO S:or should I use int32_t?
+	int ChanelID;
+ 
 	
 	//SER_COMP(FSoundComponent, texturePath);
 };

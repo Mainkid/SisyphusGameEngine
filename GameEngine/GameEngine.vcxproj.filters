@@ -102,7 +102,6 @@
     <ClCompile Include="Engine\Systems\CollisionPreSystem.cpp" />
     <ClCompile Include="Engine\Systems\SoundSystem.cpp" />
     <ClCompile Include="Engine\Components\FAudioEngine.cpp" />
-    <ClCompile Include="Engine\Components\FSoundComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />

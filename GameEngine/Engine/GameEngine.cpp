@@ -12,8 +12,6 @@
 #include "SimpleMath.h"
 #include "Serialization/Serializable.h"
 
-// test
-//#include "Components/FAudioEngine.h"
 
 #define SY_PI 3.14f
 #define SY_PI2 SY_PI / 2
@@ -118,18 +116,9 @@ int main()
     //---------------------------------------------
 
     //sound
-    //auto Sound = 
     GameObjectHelper::CreateSoundComponent(ecs, "Engine/Assets/Audio/LookinAtIt.ogg");
 
-//// test
-//    FAudioEngine TESTAE;
-//    TESTAE.Init();
-//    TESTAE.LoadSound("Engine/Assets/Audio/LookinAtIt.ogg");
-//    TESTAE.PlayMSound("Engine/Assets/Audio/LookinAtIt.ogg");
 
     EngineCore::instance()->Update();
-    EngineCore::instance()->ShutDown();
-    
-
-    
+    EngineCore::instance()->ShutDown();   
 }

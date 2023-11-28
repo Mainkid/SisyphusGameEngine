@@ -102,15 +102,22 @@ SyResult HudPropertiesSystem::Run()
             lc->Color.z = col3[2];
         }
 
+        // TODO S: demo
         if (sc)
         {
             //std::string SoundPath = "Engine/Assets/Audio/LookinAtIt.ogg";
-            ImGui::DragFloat("Sound Volume", &sc->Volume);  // TODO: max-min
-            ImGui::Checkbox("Is Play", &sc->IsPlay);
+            // add max-min ?
+            ImGui::Checkbox("Is Sound3D", &sc->Sound3D);
+            ImGui::DragFloat("Sound Volume", &sc->Volume); 
+            Vector3 vec3Dx = sc->Transform;
+            float vec3[3]{ vec3Dx.x, vec3Dx.y, vec3Dx.z };
+            ImGui::DragFloat3("Location", vec3, 0.1f);
+            sc->Transform.x = vec3[0];
+            sc->Transform.y = vec3[1];
+            sc->Transform.z = vec3[2];
             ImGui::Checkbox("Is Looping", &sc->IsLooping);
+            ImGui::Checkbox("Is Play", &sc->IsPlay);
             
-            //TODO: bool SoundType
-            //ESoundType SoundType;
         }
 
         auto rawEnt = static_cast<uint32_t>(*ec->hudData.selectedEntityIDs.begin());

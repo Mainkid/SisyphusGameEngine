@@ -253,9 +253,10 @@ entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs, boost::uuids::u
 	return ent;
 }
 
-
+// TODO S: creating correctly? 
+// how to link Transform (FSoundComponent and EditorBillboardComponent) ?
 entt::entity GameObjectHelper::CreateSoundComponent(entt::registry* ecs, std::string path)
-{
+{ 
 	auto ent = Create(ecs, "SoundObject");
 	ecs->emplace<EditorBillboardComponent>(ent, "Engine/Assets/Sprites/Sound.png");
 	FSoundComponent& Sound = ecs->emplace<FSoundComponent>(ent, path);
