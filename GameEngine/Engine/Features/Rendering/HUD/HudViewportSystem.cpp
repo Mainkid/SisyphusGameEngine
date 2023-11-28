@@ -14,8 +14,8 @@
 #include "../../Events/SyPlayModeStartedEvent.h"
 #include "../../Events/SySceneLoadEvent.h"
 #include "../../../Components/ImageBasedLightingComponent.h"
-
-
+#include "../../../Scene/Prefab.h"
+#include "../../../Scene/Scene.h"
 
 SyResult HudViewportSystem::Init()
 {
@@ -103,6 +103,17 @@ SyResult HudViewportSystem::Run()
 					MeshComponent& meshComp = _ecs->get<MeshComponent>(static_cast<entt::entity>(enttID.x));
 					meshComp.materialUUIDs[enttID.y] = uuid;
 				}
+			}
+			else if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_PREFAB)
+			{
+				auto prefab = std::static_pointer_cast<Prefab>(rs->LoadResource(uuid));
+				std::cout << std::endl;
+				//TODO: prefab drag drop
+			}
+			else if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_SCENE)
+			{
+				auto scene = std::static_pointer_cast<Scene>(rs->LoadResource(uuid));
+				//TODO: scene drag drop
 			}
 		}
 		ImGui::EndDragDropTarget();

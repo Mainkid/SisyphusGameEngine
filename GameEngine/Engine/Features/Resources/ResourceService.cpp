@@ -247,7 +247,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			file.open(filePath);
 			file >> fileData;
 
-			//TODO: Loading Prefab Resource 
+			prefab->Data = fileData.dump();
 
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(prefab);
 			return prefab;
@@ -263,7 +263,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			file.open(filePath);
 			file >> fileData;
 
-			//TODO: Loading Scene Resource 
+			scene->Data = fileData.dump();
 
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(scene);
 			return scene;
