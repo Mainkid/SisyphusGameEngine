@@ -148,7 +148,7 @@ SyResult HudViewportSystem::Run()
 				transformMat = tc.transformMatrix * deltaMatrix;
 				transformMat = transformMat * TransformHelper::ConstructInverseParentTransform(tc);
 				transformMat.Decompose(scale, rotation, translation);
-				Vector3 deltaRotation = rotation.ToEuler() - tc.localRotation;
+				SyVector3 deltaRotation = SyVector3(rotation.ToEuler()) - tc.localRotation;
 				tc.localRotation = tc.localRotation + deltaRotation;
 				tc.localPosition = translation;
 				tc.localScale = scale;

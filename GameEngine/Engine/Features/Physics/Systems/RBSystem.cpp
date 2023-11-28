@@ -58,7 +58,7 @@ SyResult SyRBodySystem::Run()
 		if (transformC == nullptr)
 		{
 			_ecs->emplace<TransformComponent>(entity);
-			CallEvent<SyOnAddComponentEvent>("AddTransform", SyEComponentTypes::SY_TRANSFORM, entity);
+			CallEvent<SyOnAddComponentEvent>("AddTransform", SyEComponentTypes::TRANSFORM, entity);
 			SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
 				"Transform Component required for RigidBody Component is missing on entity (%s). The Transform Component has been added in the next frame.",
 				SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
@@ -69,7 +69,7 @@ SyResult SyRBodySystem::Run()
 			if (InitComponent(entity, rigidBodyC, *transformC).code == SY_RESCODE_ERROR)
 			{
 				_ecs->remove<SyRBodyComponent>(entity);
-				CallEvent<SyOnRemoveComponentEvent>("RemoveRigidBody", SyEComponentTypes::SY_RIGID_BODY, entity);
+				CallEvent<SyOnRemoveComponentEvent>("RemoveRigidBody", SyEComponentTypes::RIGID_BODY, entity);
 				SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
 					"Failed to initialize RigidBody Componenton entity (%s). The component has been removed.",
 					SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
@@ -77,8 +77,10 @@ SyResult SyRBodySystem::Run()
 			};
 		}
 		else
+		{
 			UpdateRigidBodyType(entity, rigidBodyC, *transformC);
-		UpdateRigidBodyValues(entity, rigidBodyC, *transformC);
+			UpdateRigidBodyValues(entity, rigidBodyC, *transformC);
+		}
 	}
 	
 	//do not simulate if in pause mode
@@ -261,3 +263,4 @@ SyResult SyRBodySystem::UpdateRigidBodyValues(const entt::entity& entity, SyRBod
 	rigidBodyC._rbActor->setActorFlag(PxActorFlag::eVISUALIZATION, false);
 	return SyResult();
 }
+

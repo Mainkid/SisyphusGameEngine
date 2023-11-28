@@ -80,13 +80,11 @@ int main()
     auto sphere1 = GameObjectHelper::Create(ecs, "Sphere", { 0.0f, 0.0f, 0.0f });
     auto result10 = GameObjectHelper::AddRigidBodyComponent(ecs, sphere1, STATIC);
     auto result11 = GameObjectHelper::AddSphereMeshComponent(ecs, sphere1);
-    
-    //ecs->emplace<SyFixedJointComponent>(cube1, SyVector3::ZERO, SyVector3::ZERO);
-#pragma endregion
 
-    auto ent = ecs->create();
-    ecs->emplace<GameObjectComp>(ent, "Test");
-    ecs->emplace<SyRBodyComponent>(ent, DYNAMIC, -1.0);
+    
+    //ecs->emplace<SyFixedJointComponent>(cube1);
+#pragma endregion
+    
     
     //---------- Serialization test ----------------
 

@@ -15,6 +15,11 @@ SyRBodyComponent::~SyRBodyComponent()
 {
 }
 
+bool SyRBodyComponent::WasInit() const
+{
+    return _rbActor != nullptr;
+}
+
 std::size_t hash_value(const SyRBodyComponent& rigidBodyC)
 {
     std::size_t hash = 0;

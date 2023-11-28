@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "../../../Components/TransformComponent.h"
 #include "../../../Core/ECS/SystemBase.h"
 
 
@@ -14,7 +15,12 @@ public:
     SyResult Destroy()  override;
 
 private:
-    SyResult UpdateFixedJoint(const entt::entity& entity,
+    SyResult InitFixedJointComponent(const entt::entity& entity,
                               SyFixedJointComponent& fixedJointC,
-                              SyRBodyComponent rigidBodyС);
+                              SyRBodyComponent& rigidBodyС,
+                              TransformComponent& transformC);
+    SyResult UpdateFixedJointComponent(const entt::entity& entity,
+                              SyFixedJointComponent& fixedJointC,
+                              SyRBodyComponent& rigidBodyС,
+                              TransformComponent& transformC);
 };

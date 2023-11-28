@@ -38,7 +38,7 @@ DEFINE_BITWISE_OPERATORS(SyERBodyFlags);
 
 struct SyRBodyComponent
 {
-	SyRBodyComponent(	const SyERBodyType&	rbType = SyERBodyType::STATIC,
+	SyRBodyComponent(	const SyERBodyType&	rbType = SyERBodyType::DYNAMIC,
 						float 				mass = 1.0f,
 						unsigned			flags = 0);
 	
@@ -65,7 +65,8 @@ private:
 
 	static physx::PxPhysics*	_physics;
 	static physx::PxScene*		_scene;
-	
+
+	bool WasInit() const;
 	friend class SyCollisionSystem;
 	friend class SyCollisionPreSystem;
 	friend class SyRBodySystem;
