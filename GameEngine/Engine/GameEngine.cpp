@@ -82,7 +82,7 @@ int main()
     auto result11 = GameObjectHelper::AddSphereMeshComponent(ecs, sphere1);
 
     
-    //ecs->emplace<SyFixedJointComponent>(cube1);
+    ecs->emplace<SyFixedJointComponent>(cube1);
 #pragma endregion
     
     
