@@ -29,7 +29,7 @@ LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT umessage, WPARAM wparam, LPA
 		//	isInitialized = true;
 		return 0;
 	case WM_ACTIVATEAPP:
-		std::cout << "Activated! " << wparam;
+		//std::cout << "Activated! " << wparam;
 		if (wparam)
 		{
 			ServiceLocator::instance()->Get<ResourceService>()->GenerateMetaFiles(".\\Game\\Assets");

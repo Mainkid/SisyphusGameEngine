@@ -1,7 +1,7 @@
 #include "EngineCore.h"
 #include "../Components/EditorBillboardComponent.h"
 #include "../Components/GameObjectComp.h"
-#include "../Components/MeshComponent.h"
+#include "../Features/Mesh/Components/MeshComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/ImageBasedLightingComponent.h"
 
@@ -95,7 +95,6 @@ void EngineCore::StartUpSystems()
 	_systems.Add<ResourceSystem>();
 	_systems.Add<MeshSystem>();
 	_systems.Add<SyRBodySystem>();
-	_systems.Add<SyCollisionPreSystem>();
 	_systems.Add<SyCollisionSystem>();
 
 	_systems.Add<MonoSyncSystem>();
@@ -124,6 +123,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<ParticleRenderSystem>();
 	_systems.Add<EditorBillboardRenderSystem>();
 	_systems.Add<ToneMappingRenderSystem>();
+	_systems.Add<EditorColliderRenderSystem>();
 	_systems.Add<EditorGridRenderSystem>();
 	_systems.Add<PostViewportRenderSystem>();
 

@@ -11,7 +11,7 @@ cbuffer mycBuffer : register(b0)
 
 struct VS_IN
 {
-    float3 pos : POSITION0;
+    float4 pos : POSITION0;
 };
 
 struct PS_IN
@@ -23,12 +23,13 @@ struct PS_IN
 PS_IN VSMain(VS_IN input)
 {
     PS_IN output = (PS_IN) 0;
-    output.pos = mul(float4(input.pos, 1), worldViewProj);
-    output.worldPos = mul(float4(input.pos, 1), worldView);
+    output.pos = mul(input.pos, world);
+    output.pos = mul(output.pos, worldViewProj);
     return output;
 }
 
 float4 PSMain(PS_IN input) : SV_Target
 {
-    return float4(1, 0, 0, 1);
+    return float4(0, 1, 0, 1);
+
 }

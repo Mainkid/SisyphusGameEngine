@@ -1,5 +1,5 @@
 #pragma once
-#include "ResourceBase.h"
+#include "../Features/Resources/ResourceBase.h"
 #include "string"
 #include "SimpleMath.h"
 #include "Texture.h"

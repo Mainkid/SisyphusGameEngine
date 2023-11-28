@@ -1,13 +1,13 @@
 #pragma once
 #include "CameraComponent.h"
-#include "ColliderComponent.h"
+#include "../Features/Physics/Components/ColliderComponent.h"
 #include "EditorBillboardComponent.h"
 #include "GameObjectComp.h"
 #include "ImageBasedLightingComponent.h"
-#include "LightComponent.h"
-#include "MeshComponent.h"
-#include "ParticleComponent.h"
-#include "RBodyComponent.h"
+#include "../Features/Lighting/Components/LightComponent.h"
+#include "../Features/Mesh/Components/MeshComponent.h"
+#include "../Features/Particles/Components/ParticleComponent.h"
+#include "../Features/Physics/Components/RBodyComponent.h"
 #include "SkyboxComponent.h"
 #include "TransformComponent.h"
 

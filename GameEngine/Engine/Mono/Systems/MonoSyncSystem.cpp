@@ -1,10 +1,10 @@
 #include "MonoSyncSystem.h"
 
-#include "../../Components/MeshComponent.h"
+#include "../../Features/Mesh/Components/MeshComponent.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Core/ServiceLocator.h"
-#include "../../Systems/EngineContext.h"
-#include "../../Systems/ResourceService.h"
+#include "../../Contexts/EngineContext.h"
+#include "../../Features/Resources/ResourceService.h"
 #include "../Components/MonoSyncComp.h"
 #include "../../Core/ResourcePath.h"
 #include "../../Scene/GameObjectHelper.h"

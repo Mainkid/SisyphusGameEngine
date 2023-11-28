@@ -8,6 +8,7 @@ public:
 	static Matrix ConstructLocalTransformMatrix(TransformComponent& tc);
 	static Matrix ConstructInverseParentTransform(TransformComponent& tc);
 	static void UpdateTransformMatrix(TransformComponent& tc);
+	static void UpdateWorldTransformMatrix(TransformComponent& tc,Matrix parentTransform);
 	static void UpdateRelativeToParent(const TransformComponent* parent, TransformComponent& tc);
 	static bool HasHierarchyCycles(entt::registry* ecs, entt::entity sourceGameObject, entt::entity parentGameObject);
 	static Vector3 GetRotationDegrees(TransformComponent& tc);
