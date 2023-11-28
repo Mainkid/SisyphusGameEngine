@@ -5,6 +5,8 @@
 #include "../../Components/SkyboxResource.h"
 #include "../../Events/SySceneLoadEvent.h"
 #include "../../Core/Tools/ImageLoader.h"
+#include "../../Scene/Prefab.h"
+#include "../../Scene/Scene.h"
 
 ResourceService::ResourceService()
 {
@@ -133,7 +135,6 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 		}
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_TEXTURE)
 		{
-			//TODO: ��������� sRGB;
 			auto texture = std::make_shared<Texture>();
 			std::string filePath = FindFilePathByUUID(uuid);
 			if (filePath == "")
@@ -235,6 +236,38 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			return spd;
 
 		}
+		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_PREFAB)
+		{
+			
+			auto prefab = std::make_shared<Prefab>();
+			std::string filePath = FindFilePathByUUID(uuid);
+
+			std::ifstream file;
+			nlohmann::json fileData;
+			file.open(filePath);
+			file >> fileData;
+
+			//TODO: Loading Prefab Resource 
+
+			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(prefab);
+			return prefab;
+
+		}
+		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_SCENE)
+		{
+			auto scene = std::make_shared<Scene>();
+			std::string filePath = FindFilePathByUUID(uuid);
+
+			std::ifstream file;
+			nlohmann::json fileData;
+			file.open(filePath);
+			file >> fileData;
+
+			//TODO: Loading Scene Resource 
+
+			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(scene);
+			return scene;
+		}
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_NONE)
 		{
 			SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with %s uuid! Loading base asset...",
@@ -261,7 +294,6 @@ std::string ResourceService::FindFilePathByUUID(const boost::uuids::uuid& uuid, 
 	{
 		SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't find file path with current UUID. Returning NONE");
 		return "";
-		//TODO: �������� ����� ������, ���� ���� ����������� � ID
 	}
 }
 

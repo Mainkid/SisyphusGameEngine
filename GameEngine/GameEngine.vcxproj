@@ -672,6 +672,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="Engine\Components\Components.h" />
+    <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
     <ClInclude Include="Engine\Features\Events\Tags\SyEventTag.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.h" />
     <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
@@ -698,6 +699,8 @@
     <ClInclude Include="Engine\Scene\CameraHelper.h" />
     <ClInclude Include="Engine\Components\SkyboxComponent.h" />
     <ClInclude Include="Engine\Scene\GameObjectHelper.h" />
+    <ClInclude Include="Engine\Scene\Prefab.h" />
+    <ClInclude Include="Engine\Scene\Scene.h" />
     <ClInclude Include="Engine\Serialization\Serializable.h" />
     <ClInclude Include="Engine\Serialization\SerializableMacros.h" />
     <ClInclude Include="Engine\Serialization\Serializer.hpp" />

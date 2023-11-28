@@ -2,6 +2,7 @@
 #include "../../Core/ServiceLocator.h"
 #include "../../../Contexts/EngineContext.h"
 #include "../../../Components/GameObjectComp.h"
+#include "../../../Events/SyEditorCameraMoveToTarget.h"
 #include "../../../Scene/GameObjectHelper.h"
 #include "../../Components/TransformComponent.h"
 
@@ -94,6 +95,11 @@ void HudHierarchySystem::RenderTree(std::set<entt::entity> entities)
 		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
 		{
 			ImGui::OpenPopup("HierarchyPopUp");
+		}
+
+		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+		{
+			CallEvent<SyEditorCameraMoveToTarget>("SyEditorCameraMoveToTarget", ent);
 		}
 
 		ProcessPopUp();

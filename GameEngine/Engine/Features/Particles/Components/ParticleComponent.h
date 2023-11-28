@@ -22,6 +22,11 @@ struct ParticleComponent
 	boost::uuids::uuid SharedParticlesDataUuid;					
 	std::shared_ptr<SharedParticlesData> SharedParticlesDataResource;
 
+	//ParticleComponent(const ParticleComponent& pc)
+	//{
+
+	//}
+
 	//----Engine vars----
 	std::shared_ptr<Texture> ParticleTexture;
 	std::vector<Particle> ParticlesList;

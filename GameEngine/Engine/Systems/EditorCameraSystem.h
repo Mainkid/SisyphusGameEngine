@@ -23,5 +23,12 @@ private:
 
 	EngineContext* _ec = nullptr;
 	HardwareContext* _hc = nullptr;
+
+	Vector4 offset = Vector4(3, 3, 3, 0);
+	bool _isFlying = false;
+	Vector4 targetPosition = Vector4::Zero;
+	Vector4 startPosition = Vector4::Zero;
+	Quaternion startRotation = Quaternion::Identity;
+	float _flyingTime = 0.0f;
 };
 
