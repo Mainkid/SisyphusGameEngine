@@ -150,7 +150,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Components\ColliderComponent.cpp" />
-    <ClCompile Include="Engine\Components\FAudioEngine.cpp" />
     <ClCompile Include="Engine\Systems\CollisionPreSystem.cpp" />
     <ClCompile Include="Engine\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Engine\Systems\Rendering\RenderPipeline\EditorGridRenderSystem.cpp" />
@@ -673,7 +672,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
-    <ClInclude Include="Engine\Components\FAudioEngine.h" />
     <ClInclude Include="Engine\Components\FSoundComponent.h" />
     <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
