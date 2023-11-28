@@ -16,9 +16,9 @@ struct TransformComponent
 	}
 	TransformComponent(const TransformComponent& tc)
 	{
-		this->_position = tc._position;
-		this->_rotation = tc._rotation;
-		this->scale = tc.scale;
+		//this->_position = tc._position;
+		//this->_rotation = tc._rotation;
+		//this->scale = tc.scale;
 		this->localPosition = tc.localPosition;
 		this->localRotation = tc.localRotation;
 		this->localScale = tc.localScale;
@@ -42,6 +42,7 @@ struct TransformComponent
 	size_t localHash = 0;
 	uint32_t parent = entt::null;
 	std::set<entt::entity> children = {};
+
 
 
 	SER_COMP(TransformComponent,
