@@ -35,7 +35,6 @@ SyResult EditorCameraSystem::Run()
 		
 		targetPosition = Vector4(tc._position.x,tc._position.y,tc._position.z,1);
 		startPosition = Vector4(cameraTc.localPosition.x, cameraTc.localPosition.y, cameraTc.localPosition.z,1);
-		startRotation = Quaternion::CreateFromYawPitchRoll(cameraTc.localRotation);
 		
 		_isFlying = true;
 	}
@@ -65,13 +64,9 @@ SyResult EditorCameraSystem::Run()
 	{
 		_flyingTime += _ec->deltaTime;
 		
-		/*auto lookAt = Vector3(offset / offset.Length());
-		auto targetRot=Quaternion::FromToRotation(lookAt, Vector3(cameraComp.forward));
-		Vector3 rots=Quaternion::Lerp(startRotation, targetRot, _flyingTime / 0.5f).ToEuler();
-		cameraTc.localRotation = rots;*/
-		cameraTc.localPosition=Vector3(Vector4::Lerp(startPosition, targetPosition+offset, _flyingTime/0.5f));
-		//SetLookAtPos(Vector3::Lerp(Vector3(startForwardVector), -Vector3(targetPosition + offset), _flyingTime / 0.5f),cameraTc);
-		if (_flyingTime>0.5f)
+		
+		cameraTc.localPosition=Vector3(Vector4::Lerp(startPosition, targetPosition-cameraComp.forward*_cameraArm, _flyingTime/_flyingTimeMax));
+		if (_flyingTime>_flyingTimeMax)
 		{
 			_isFlying = false;
 			_flyingTime = 0;

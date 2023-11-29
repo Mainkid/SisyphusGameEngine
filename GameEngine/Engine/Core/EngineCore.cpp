@@ -93,7 +93,7 @@ void EngineCore::StartUpSystems()
 	
 	_systems.Add<InputSystem>();
 	_systems.Add<ResourceSystem>();
-	_systems.Add<MeshSystem>();
+	//_systems.Add<MeshSystem>();
 	_systems.Add<SyRBodySystem>();
 	_systems.Add<SyCollisionSystem>();
 
@@ -105,7 +105,7 @@ void EngineCore::StartUpSystems()
 
 	_systems.Add<EditorCameraSystem>();
 
-	_systems.Add<LightSystem>();
+	//_systems.Add<LightSystem>();
 	_systems.Add<MeshSystem>();
 	_systems.Add<SkyboxSystem>();
 	_systems.Add<LightSystem>();

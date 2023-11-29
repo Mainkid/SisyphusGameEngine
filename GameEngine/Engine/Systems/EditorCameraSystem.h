@@ -30,5 +30,7 @@ private:
 	Vector4 startPosition = Vector4::Zero;
 	Quaternion startRotation = Quaternion::Identity;
 	float _flyingTime = 0.0f;
+	float _cameraArm = 5.0f;
+	float _flyingTimeMax = 0.5f;
 };
 
