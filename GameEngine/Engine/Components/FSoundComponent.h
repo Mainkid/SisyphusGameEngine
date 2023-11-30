@@ -60,8 +60,7 @@ struct FSoundComponent
 	bool IsLooping = false;
 
 	std::string SoundPath = ""; // = "Engine/Assets/Audio/LookinAtIt.ogg";
-	DirectX::SimpleMath::Vector3 Transform = Vector3::Zero;
-	
+		
 
 //----Engine vars----
 	bool IsPlaying = false;

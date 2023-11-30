@@ -1,4 +1,7 @@
 #include "SoundSystem.h"
+#include "../Components/TransformComponent.h"
+//#include "../Components/CameraComponent.h"
+#include "../Scene/CameraHelper.h"
 
 Implementation::Implementation()
 {
@@ -46,9 +49,6 @@ SyResult SoundSystem::Init()
     return SyResult();
 }
 
-
-
-
 SyResult SoundSystem::Run()
 {
     auto View = _ecs->view<FSoundComponent>();
@@ -56,21 +56,34 @@ SyResult SoundSystem::Run()
     {
         auto& Scom = _ecs->get<FSoundComponent>(Entity);
         std::string name = Scom.SoundPath;
-
+          
        // on
-       if ((Scom.IsPlay) && (!Scom.IsPlaying))
+       if (Scom.IsPlay)
        {
-            Scom.IsPlaying = true;
-            LoadSound(name, Scom.Sound3D, Scom.IsLooping);
-            Scom.ChanelID = PlayFSound(name, Scom.Transform, Scom.Volume);
+           if (!Scom.IsPlaying)
+           {
+                Scom.IsPlaying = true;
+                LoadSound(name, Scom.Sound3D, Scom.IsLooping);
+                auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
+                Scom.Sound3D ?
+                    ((Scom.ChanelID = PlayFSound(name, ñameraTransform._position, Scom.Volume)))
+                    : (Scom.ChanelID = PlayFSound(name));
+           }
+
+           SetChannelVolume(Scom.ChanelID, Scom.Volume);
+
+           if (Scom.Sound3D)
+           {
+               auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
+               SetChannel3dPosition(Scom.ChanelID, ñameraTransform._position);
+           }
        }
        //off
        if (!Scom.IsPlay)
        {
            Scom.IsPlaying = false;
            UnLoadSound(name);
-       }
-          
+       }    
     }
 
     sgpImplementation->Update();
@@ -80,6 +93,7 @@ SyResult SoundSystem::Run()
 SyResult SoundSystem::Destroy()
 {
 // TODO S: I can do this (UnLoad all Sound( ok this)?
+// A: Seems to be okay.
     auto View = _ecs->view<FSoundComponent>();
     for (auto& Entity : View)
     {

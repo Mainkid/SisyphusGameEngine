@@ -109,12 +109,12 @@ SyResult HudPropertiesSystem::Run()
             // add max-min ?
             ImGui::Checkbox("Is Sound3D", &sc->Sound3D);
             ImGui::DragFloat("Sound Volume", &sc->Volume); 
-            Vector3 vec3Dx = sc->Transform;
-            float vec3[3]{ vec3Dx.x, vec3Dx.y, vec3Dx.z };
-            ImGui::DragFloat3("Location", vec3, 0.1f);
-            sc->Transform.x = vec3[0];
-            sc->Transform.y = vec3[1];
-            sc->Transform.z = vec3[2];
+            //Vector3 vec3Dx = sc->Transform;
+            //float vec3[3]{ vec3Dx.x, vec3Dx.y, vec3Dx.z };
+            //ImGui::DragFloat3("Location", vec3, 0.1f);
+            //sc->Transform.x = vec3[0];
+            //sc->Transform.y = vec3[1];
+            //sc->Transform.z = vec3[2];
             ImGui::Checkbox("Is Looping", &sc->IsLooping);
             ImGui::Checkbox("Is Play", &sc->IsPlay);
             
