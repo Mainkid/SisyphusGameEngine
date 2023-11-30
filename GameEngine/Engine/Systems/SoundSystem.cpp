@@ -1,4 +1,5 @@
 #include "SoundSystem.h"
+#include "../Components/TransformComponent.h"
 
 Implementation::Implementation()
 {
@@ -62,7 +63,9 @@ SyResult SoundSystem::Run()
        {
             Scom.IsPlaying = true;
             LoadSound(name, Scom.Sound3D, Scom.IsLooping);
-            Scom.ChanelID = PlayFSound(name, Scom.Transform, Scom.Volume);
+
+            TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
+            Scom.ChanelID = PlayFSound(name, tc._position, Scom.Volume);
        }
        //off
        if (!Scom.IsPlay)
@@ -80,6 +83,7 @@ SyResult SoundSystem::Run()
 SyResult SoundSystem::Destroy()
 {
 // TODO S: I can do this (UnLoad all Sound( ok this)?
+// A: Seems to be okay.
     auto View = _ecs->view<FSoundComponent>();
     for (auto& Entity : View)
     {
