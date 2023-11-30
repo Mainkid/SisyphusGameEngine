@@ -65,8 +65,13 @@ SyResult SoundSystem::Run()
                 Scom.IsPlaying = true;
                 LoadSound(name, Scom.Sound3D, Scom.IsLooping);
                 auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
+                TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
+                Scom.ChanelID = PlayFSound(name, tc._position, Scom.Volume);
+
                 Scom.Sound3D ?
-                    ((Scom.ChanelID = PlayFSound(name, ñameraTransform._position, Scom.Volume)))
+                    ((Scom.ChanelID = PlayFSound (   name,
+                                                     tc._position - ñameraTransform._position,
+                                                     Scom.Volume)))
                     : (Scom.ChanelID = PlayFSound(name));
            }
 
