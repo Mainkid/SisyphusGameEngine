@@ -92,6 +92,7 @@ void EngineCore::StartUpSystems()
 
 	
 	_systems.Add<InputSystem>();
+	_systems.Add<SyTransformCheckUpsystem>();
 	_systems.Add<ResourceSystem>();
 	_systems.Add<MeshSystem>();
 	_systems.Add<SyRBodySystem>();

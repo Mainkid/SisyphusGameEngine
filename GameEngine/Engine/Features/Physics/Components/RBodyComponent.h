@@ -60,6 +60,7 @@ private:
 	physx::PxRigidActor*	_rbActor = nullptr;
 
 	std::size_t _hash = 0;
+	bool _wasTransformChangedFromOutside = false;
 	SyERBodyType _prevFrameRbodyType = STATIC;
 	bool _wasActorRecreatedThisFrame = false;
 

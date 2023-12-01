@@ -38,5 +38,5 @@
 #include "../../Features/Rendering/RenderPipeline/ParticleRenderSystem.h"
 #include "../../Features/Rendering/RenderPipeline/EditorColliderRenderSystem.h"
 #include "../Mono/Systems/MonoSyncSystem.h"
-
+#include "../../Features/Transform/TransformCheckUpSystem.h"
 #include "../../Features/Events/Systems/PrepareEventsSystem.h"

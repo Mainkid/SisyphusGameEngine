@@ -154,6 +154,7 @@
     <ClCompile Include="Engine\Features\Physics\Components\ColliderComponent.cpp" />
     <ClCompile Include="Engine\Features\Physics\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorGridRenderSystem.cpp" />
+    <ClCompile Include="Engine\Features\Transform\TransformCheckUpSystem.cpp" />
     <ClCompile Include="Engine\Mono\Components\MonoSyncComp.h" />
     <ClCompile Include="Engine\Mono\SyMono.cpp" />
     <ClCompile Include="Engine\Mono\SyMonoProxyDatas.h" />
@@ -696,6 +697,7 @@
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorGridRenderSystem.h" />
     <ClInclude Include="Engine\Components\Material.h" />
     <ClInclude Include="Engine\Components\Model.h" />
+    <ClInclude Include="Engine\Features\Transform\TransformCheckUpSystem.h" />
     <ClInclude Include="Engine\Mono\ISyMonoGameCallbackReceiver.h" />
     <ClInclude Include="Engine\Mono\SyMono.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoGame.h" />

@@ -234,9 +234,13 @@ SyResult SyRBodySystem::UpdateRigidBodyValues(const entt::entity& entity, SyRBod
 	if (rbDyn != nullptr)
 	{
 		PxTransform rbTransform = rbDyn->getGlobalPose();
-		if (SyVector3(rbTransform.p) != transformC.localPosition || SyVector3::PxQuatToEuler(rbTransform.q) != transformC.localRotation)
+		if (SyVector3(rbTransform.p) != transformC._position ||
+			!SyMathHelper::AreEqual(SyVector3::PxQuatToEuler(rbTransform.q),transformC._rotation))
+		{
 			rbDyn->setGlobalPose(PxTransform(transformC._position,
 				SyVector3::EulerToPxQuat(transformC._rotation)));
+		}
+		
 		SyVector3 pxLinearVelocity = rbDyn->getLinearVelocity();
 		if (rigidBodyC.LinearVelocity != pxLinearVelocity)
 			rbDyn->setLinearVelocity(rigidBodyC.LinearVelocity);
@@ -246,7 +250,6 @@ SyResult SyRBodySystem::UpdateRigidBodyValues(const entt::entity& entity, SyRBod
 		float pxMass = rbDyn->getMass();
 		if (rigidBodyC.Mass != pxMass)
 			rbDyn->setMass(rigidBodyC.Mass);
-		auto pxRbFlags = rbDyn->getRigidBodyFlags();
 		if ((rigidBodyC.Flags & SyERBodyFlags::KINEMATIC) != ((bool)(rbDyn->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC)))
 			rbDyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, rigidBodyC.Flags & SyERBodyFlags::KINEMATIC);
 		if ((rigidBodyC.Flags & SyERBodyFlags::DISABLE_GRAVITY) != ((bool)(rigidBodyC._rbActor->getActorFlags() & PxActorFlag::eDISABLE_GRAVITY)))

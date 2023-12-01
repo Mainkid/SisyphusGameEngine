@@ -27,6 +27,7 @@ struct TransformComponent
 	Matrix transformMatrix = Matrix::Identity;
 	size_t worldHash = 0;
 	size_t localHash = 0;
+	bool _wasChangedFromOutside = false;
 	uint32_t parent = entt::null;
 	std::set<entt::entity> children = {};
 

@@ -1,7 +1,18 @@
 ﻿#pragma once
 struct SyMathHelper
 {
+    inline static constexpr float EPS = 0.000001f;
     inline static constexpr float PI = 3.141592f;
+
+    static bool AreEqual(float f1, float f2, float eps = EPS)
+    {
+        return abs(f1 - f2) < eps;
+    }
+
+    static bool AreEqual(const SyVector3& v1, const SyVector3& v2)
+    {
+        return AreEqual(v1.x, v2.x) && AreEqual(v1.y, v2.y) && AreEqual(v1.z, v2.z);
+    }
     template <typename T>
     static const T& Max(const T& x_, const T& y_)
     {
