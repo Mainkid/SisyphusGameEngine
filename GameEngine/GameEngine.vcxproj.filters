@@ -217,9 +217,6 @@
     <ClInclude Include="Engine\Mono\SyMonoRuntime.h" />
     <ClInclude Include="Engine\Mono\Systems\MonoSyncSystem.h" />
     <ClInclude Include="Engine\Mono\SyMonoMethod.h" />
-    <ClInclude Include="Engine\Core\ECS\Event.h" />
-    <ClInclude Include="Engine\Systems\PrepareEventsSystem.h" />
-    <ClInclude Include="Engine\Tools\MathHelper.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoLogger.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoEcs.h" />
