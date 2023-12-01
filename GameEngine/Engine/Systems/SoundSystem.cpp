@@ -58,11 +58,11 @@ SyResult SoundSystem::Run()
         std::string name = Scom.SoundPath;
           
        // on
-       if (Scom.IsPlay)
+       if (Scom.IsPlaying)
        {
-           if (!Scom.IsPlaying)
+           if (!Scom.IsON)
            {
-                Scom.IsPlaying = true;
+                Scom.IsON = true;
                 LoadSound(name, Scom.Sound3D, Scom.IsLooping);
                 auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
                 TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
@@ -84,11 +84,26 @@ SyResult SoundSystem::Run()
            }
        }
        //off
-       if (!Scom.IsPlay)
+       if (!Scom.IsPlaying)
        {
-           Scom.IsPlaying = false;
+           Scom.IsON = false;
            UnLoadSound(name);
-       }    
+       }  
+
+       // auto off
+       if (Scom.IsON)
+       {
+           bool bIsPlaying = false;
+           sgpImplementation->_mChannels.find(Scom.ChanelID)->second->isPlaying(&bIsPlaying);
+           if (!bIsPlaying)
+           {
+               Scom.IsON = false;
+               Scom.IsPlaying = false;
+               UnLoadSound(name);
+           }
+       }
+
+ 
     }
 
     sgpImplementation->Update();
@@ -247,7 +262,8 @@ int SoundSystem::PlayFSound(const std::string& strSoundName, const SyVector3& vP
 //    SoundSystem::ErrorCheck(tFoundIt->second->stop(eMode));
 //}
 
-//bool SoundSystem::IsEventPlaying(const  std::string& strEventName) const {
+//bool SoundSystem::IsEventPlaying(const  std::string& strEventName) const 
+//{
 //    auto tFoundIt = sgpImplementation->_mEvents.find(strEventName);
 //    if (tFoundIt == sgpImplementation->_mEvents.end())
 //        return false;
