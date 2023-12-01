@@ -14,5 +14,6 @@ internal enum ELogTag
 	ProxyGame,
 	ProxyEditor,
 	Ecs,
+	Scene
 }
 }

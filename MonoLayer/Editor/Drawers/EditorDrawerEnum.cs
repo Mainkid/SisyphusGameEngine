@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace SyEngine.Editor.Drawers
 {
-public class EditorDrawerEnumBase<T> : EditorDrawerBase<T> where T: Enum
+public class EditorDrawerEnum<T> : EditorDrawerBase<T> where T: Enum
 {
 	private readonly string[] _names;
 	private readonly T[]      _values;
 
-	public EditorDrawerEnumBase(SyProxyEditor editor) : base(editor)
+	public EditorDrawerEnum(SyProxyEditor editor) : base(editor)
 	{
 		_names  = Enum.GetNames(typeof(T));
 		_values = (T[])Enum.GetValues(typeof(T));

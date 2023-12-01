@@ -87,7 +87,7 @@ public class SyProxyEditor
 			return true;
 		if (type.IsEnum)
 		{
-			var drawerType = typeof(EditorDrawerEnumBase<>).MakeGenericType(type);
+			var drawerType = typeof(EditorDrawerEnum<>).MakeGenericType(type);
 			drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this);
 			_drawers.Add(type, drawer);
 			return true;
@@ -116,7 +116,7 @@ public class SyProxyEditor
 				return true;
 			}
 		}
-		if (type.IsArray || type.Namespace?.StartsWith("System") == true)
+		if (type.IsArray || type.IsDotNetType())
 		{
 			//TODO
 			return false;

@@ -16,5 +16,8 @@ public static class TypesExt
 		genType  = type.GetGenericArguments()[0];
 		return true;
 	}
+
+	public static bool IsDotNetType(this Type type)
+		=> type.Namespace?.StartsWith("System") ?? false;
 }
 }

@@ -29,13 +29,21 @@ SyResult SyMonoRuntime::Init()
     auto path = std::filesystem::path(buffer).parent_path().append("vendor").append("mono").append("runtime");
     auto pathLib = std::filesystem::path(path).append("lib");
     auto pathEtc = std::filesystem::path(path).append("etc");
+    auto pathConfig = std::filesystem::path(pathEtc).append("mono").append("config");
 
-    mono_config_parse(nullptr);
+    mono_config_parse(pathConfig.string().c_str());
 
     mono_set_dirs(pathLib.string().c_str(), pathEtc.string().c_str());
 
+    //static const char* options[] = {
+    //  "--debug"
+    //};
+    //mono_jit_parse_options(1, (char**)options);
+    //mono_debug_init(MONO_DEBUG_FORMAT_MONO);
+
     //mono_profiler_load("log:heapshot=100ms");
 
+    //_rootDomain = mono_jit_init_version("RootDomain", "4.5");
     _rootDomain = mono_jit_init("RootDomain");
 
     if (_rootDomain == nullptr)
