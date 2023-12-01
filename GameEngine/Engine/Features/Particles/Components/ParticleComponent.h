@@ -16,10 +16,16 @@ struct CB
 
 struct ParticleComponent
 {
+	//ParticleComponent(const ParticleComponent& pc) = default;
 
 	//----User vars----
 	boost::uuids::uuid SharedParticlesDataUuid;					
 	std::shared_ptr<SharedParticlesData> SharedParticlesDataResource;
+
+	//ParticleComponent(const ParticleComponent& pc)
+	//{
+
+	//}
 
 	//----Engine vars----
 	std::shared_ptr<Texture> ParticleTexture;

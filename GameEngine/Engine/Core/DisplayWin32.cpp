@@ -107,12 +107,12 @@ HWND DisplayWin32::GetHWND()
 
 float DisplayWin32::GetHeight()
 {
-	return clientHeight;
+	return 720;
 }
 
 float DisplayWin32::GetWidth()
 {
-	return clientWidth;
+	return 1280;
 }
 
 void DisplayWin32::HandleResize(int width, int height)

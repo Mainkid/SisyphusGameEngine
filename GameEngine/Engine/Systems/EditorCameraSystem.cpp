@@ -7,6 +7,8 @@
 #include "../../../vendor/ImGui/imgui.h"
 #include "../../../vendor/ImGui/imgui_impl_dx11.h"
 #include "../../../vendor/ImGui/imgui_impl_win32.h"
+#include "../Events/SyEditorCameraMoveToTarget.h"
+#include "../Scene/CameraHelper.h"
 #include "../Scene/GameObjectHelper.h"
 
 SyResult EditorCameraSystem::Init()
@@ -24,6 +26,19 @@ SyResult EditorCameraSystem::Init()
 
 SyResult EditorCameraSystem::Run()
 {
+	auto [cameraComp, cameraTc] = CameraHelper::Find(_ecs);
+	auto eventView = _ecs->view<SyEditorCameraMoveToTarget>();
+	for (auto& entEvent : eventView)
+	{
+		auto& ent = _ecs->get<SyEditorCameraMoveToTarget>(entEvent);
+		auto& tc=_ecs->get<TransformComponent>(ent.targetEntity);
+		
+		targetPosition = Vector4(tc._position.x,tc._position.y,tc._position.z,1);
+		startPosition = Vector4(cameraTc.localPosition.x, cameraTc.localPosition.y, cameraTc.localPosition.z,1);
+		
+		_isFlying = true;
+	}
+
 	auto view = _ecs->view<TransformComponent, CameraComponent>();
 	for (auto& entity : view)
 	{
@@ -43,6 +58,21 @@ SyResult EditorCameraSystem::Run()
 		}
 		ProcessInput(cc, tc);
 	}
+	
+
+	if (_isFlying )
+	{
+		_flyingTime += _ec->deltaTime;
+		
+		
+		cameraTc.localPosition=Vector3(Vector4::Lerp(startPosition, targetPosition-cameraComp.forward*_cameraArm, _flyingTime/_flyingTimeMax));
+		if (_flyingTime>_flyingTimeMax)
+		{
+			_isFlying = false;
+			_flyingTime = 0;
+		}
+	}
+
 	return SyResult();
 }
 
