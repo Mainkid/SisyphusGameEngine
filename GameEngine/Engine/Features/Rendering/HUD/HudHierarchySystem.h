@@ -22,9 +22,12 @@ private:
     HardwareContext* hc;
     std::string windowID;
     bool isFocused;
+    entt::entity isRenaiming = entt::null;
+    char renamingString[64];
     
     const ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow |
         ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
     void RenderTree(std::set<entt::entity> entities);
+    void ProcessPopUp();
     
 };

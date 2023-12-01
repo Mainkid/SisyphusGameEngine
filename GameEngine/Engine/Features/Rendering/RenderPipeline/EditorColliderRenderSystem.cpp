@@ -80,3 +80,7 @@ SyResult EditorColliderRenderSystem::Destroy()
 
 	return SyResult();
 }
+
+
+
+
