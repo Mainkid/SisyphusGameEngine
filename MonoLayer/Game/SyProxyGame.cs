@@ -48,7 +48,6 @@ public class SyProxyGame
             
             _proxyEcs.Ecs.GetSingleton<TimeData>() = timeData;
             _proxyEcs.Ecs.RunSystems();
-            _proxyEcs.Sync.SyncEngineWithGame();
         }
         catch (Exception e)
         {

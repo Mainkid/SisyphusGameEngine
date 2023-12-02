@@ -27,6 +27,7 @@ SyResult MonoSyncEgSystem::Run()
 	SendTransforms();
 	SendMeshes();
 	SendLights();
+	SendColliders();
 	SendRigids();
 
 	return {};
@@ -41,7 +42,7 @@ void MonoSyncEgSystem::SendTransforms()
 {
 	mono::ProxyTransformComp proxy;
 
-	auto view = _ecs->view<MonoSyncComp, TransformComponent>();
+	auto view = _ecs->view<GameObjectComp, TransformComponent>();
 	for (auto ent : view)
 	{
 		auto& tf = view.get<TransformComponent>(ent);
@@ -68,7 +69,7 @@ void MonoSyncEgSystem::SendMeshes()
 
 	mono::ProxyMeshComp proxy;
 
-	auto view = _ecs->view<MonoSyncComp, MeshComponent>();
+	auto view = _ecs->view<GameObjectComp, MeshComponent>();
 	for (auto ent : view)
 	{
 		auto& mesh = view.get<MeshComponent>(ent);
@@ -113,19 +114,56 @@ void MonoSyncEgSystem::SendMeshes()
 
 void MonoSyncEgSystem::SendLights()
 {
-	// at this point there is no need to send lights to the game
+	mono::ProxyLightComp proxy;
+
+	auto view = _ecs->view<GameObjectComp, LightComponent>();
+	for (auto ent : view)
+	{
+		auto& light = view.get<LightComponent>(ent);
+
+		size_t hash = mono::SyMonoHashHelper::Hash(light);
+		if (hash == light.MonoHash)
+			continue;
+		light.MonoHash = hash;
+
+		proxy.LightType = light.LightType;
+		proxy.LightBehavior = light.LightBehavior;
+		proxy.Color = light.Color;
+		proxy.PointLightRadius = light.ParamsRadiusAndAttenuation.x;
+		proxy.ShouldCastShadows = light.CastShadows;
+
+		_monoEcs->EgUpdateLightComp.Invoke(static_cast<uint32_t>(ent), proxy);
+	}
 }
 
 void MonoSyncEgSystem::SendColliders()
 {
-	// at this point there is no need to send colliders to the game
+	mono::ProxyColliderComp proxy;
+
+	auto view = _ecs->view<GameObjectComp, SyPrimitiveColliderComponent>();
+	for (auto ent : view)
+	{
+		auto& collider = view.get<SyPrimitiveColliderComponent>(ent);
+
+		size_t hash = mono::SyMonoHashHelper::Hash(collider);
+		if (hash == collider.MonoHash)
+			continue;
+		collider.MonoHash = hash;
+
+		proxy.Type = collider.ColliderType;
+		proxy.Extent = collider.Extent;
+		proxy.Radius = collider.Radius;
+		proxy.HalfHeight = collider.HalfHeight;
+
+		_monoEcs->EgUpdateColliderComp.Invoke(static_cast<uint32_t>(ent), proxy);
+	}
 }
 
 void MonoSyncEgSystem::SendRigids()
 {
 	mono::ProxyRigidComp proxy;
 
-	auto view = _ecs->view<MonoSyncComp, SyRBodyComponent>();
+	auto view = _ecs->view<GameObjectComp, SyRBodyComponent>();
 	for (auto ent : view)
 	{
 		auto& rigid = view.get<SyRBodyComponent>(ent);
@@ -139,7 +177,7 @@ void MonoSyncEgSystem::SendRigids()
 		proxy.Mass = rigid.Mass;
 		proxy.IsAutoMass = rigid.Flags & SyERBodyFlags::USE_DENSITY;
 		proxy.IsKinematic = rigid.Flags & SyERBodyFlags::KINEMATIC;
-		proxy.IsGravityOn = rigid.Flags & SyERBodyFlags::DISABLE_GRAVITY == 0;
+		proxy.IsGravityOn = (rigid.Flags & SyERBodyFlags::DISABLE_GRAVITY) == 0;
 		proxy.LinearVelocity = rigid.LinearVelocity;
 		proxy.AngularVelocity = rigid.AngularVelocity;
 

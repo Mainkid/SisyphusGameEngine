@@ -210,7 +210,7 @@ namespace Leopotam.EcsLite {
 #endif
             return ref _denseItems[_sparseItems[entity]];
         }
-
+        
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
         public bool Has (int entity) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS

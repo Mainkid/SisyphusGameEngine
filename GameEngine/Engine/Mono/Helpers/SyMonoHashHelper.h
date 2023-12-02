@@ -1,5 +1,7 @@
 #pragma once
 
+struct SyPrimitiveColliderComponent;
+struct LightComponent;
 struct TransformComponent;
 struct MeshComponent;
 struct SyRBodyComponent;
@@ -9,8 +11,10 @@ namespace mono
 	class SyMonoHashHelper
 	{
 	public:
-		static size_t Hash(const TransformComponent& comp);
-		static size_t Hash(const MeshComponent& comp);
-		static size_t Hash(const SyRBodyComponent& comp);
+		static size_t Hash(const TransformComponent& tf);
+		static size_t Hash(const MeshComponent& mesh);
+		static size_t Hash(const LightComponent& light);
+		static size_t Hash(const SyPrimitiveColliderComponent& collider);
+		static size_t Hash(const SyRBodyComponent& rigid);
 	};
 }

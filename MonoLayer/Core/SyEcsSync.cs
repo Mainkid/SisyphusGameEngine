@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Leopotam.EcsLite;
 using SyEngine.Core.Comps;
+using SyEngine.Core.Datas;
 using SyEngine.Core.ProxyComps;
 using SyEngine.Core.Resources;
 
@@ -92,8 +93,9 @@ internal class SyEcsSync
 
     public void ReceiveTransformFromEngine(uint engineEnt, ProxyTransformComp proxy)
     {
-        int gameEnt = _ecs.ToGameEnt(engineEnt);
-
+        int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
+        _ecs.CreateCompByEngineIfNone<TransformComp>(gameEnt);
+        
         ref var tf = ref _transformsPool.Get(gameEnt);
         tf.Position      = proxy.Position;
         tf.Rotation      = proxy.Rotation;
@@ -146,7 +148,8 @@ internal class SyEcsSync
 
     public void ReceiveMeshFromEngine(uint engineEnt, ProxyMeshComp proxy)
     {
-        int gameEnt = _ecs.ToGameEnt(engineEnt);
+        int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
+        _ecs.CreateCompByEngineIfNone<MeshComp>(gameEnt);
         
         ref var mesh = ref _meshesPool.Get(gameEnt);
 
@@ -193,7 +196,19 @@ internal class SyEcsSync
 
     public void ReceiveLightFromEngine(uint engineEnt, ProxyLightComp proxy)
     {
-        //at this point we do not receive lights from engine
+        int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
+        _ecs.CreateCompByEngineIfNone<LightComp>(gameEnt);
+
+        ref var light = ref _lightsPool.Get(gameEnt);
+        light.Type              = proxy.Type;
+        light.Behaviour         = proxy.Behaviour;
+        light.Color             = new SyColor(proxy.Color.X, proxy.Color.Y, proxy.Color.Z, proxy.Color.W);
+        light.PointLightRadius  = proxy.PointLightRadius;
+        light.ShouldCastShadows = proxy.ShouldCastShadows;
+        
+        light.Hash = light.GetHashCode();
+        
+        Console.WriteLine($"[TEST] g{gameEnt} light received from engine");
     }
 
     //-----------------------------------------------------------
@@ -224,7 +239,18 @@ internal class SyEcsSync
 
     public void ReceiveColliderFromEngine(uint engineEnt, ProxyColliderComp proxy)
     {
-        // at this point we do not receive colliders from engine
+        int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
+        _ecs.CreateCompByEngineIfNone<ColliderComp>(gameEnt);
+
+        ref var collider = ref _collidersPool.Get(gameEnt);
+        collider.Type       = proxy.Type;
+        collider.Extent     = proxy.Extent;
+        collider.Radius     = proxy.Radius;
+        collider.HalfHeight = proxy.HalfHeight;
+
+        collider.Hash = collider.GetHashCode();
+        
+        Console.WriteLine($"[TEST] g{gameEnt} collider received from engine");
     }
 
     //-----------------------------------------------------------
@@ -259,9 +285,10 @@ internal class SyEcsSync
 
     public void ReceiveRigidFromEngine(uint engineEnt, ProxyRigidComp proxy)
     {
-        int ent = _ecs.ToGameEnt(engineEnt);
+        int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
+        _ecs.CreateCompByEngineIfNone<RigidComp>(gameEnt);
 
-        ref var rigid = ref _rigidsPool.Get(ent);
+        ref var rigid = ref _rigidsPool.Get(gameEnt);
 
         rigid.Type            = proxy.Type;
         rigid.Mass            = proxy.Mass;
@@ -273,7 +300,7 @@ internal class SyEcsSync
 
         rigid.Hash = rigid.GetHashCode();
         
-        Console.WriteLine($"[TEST] g{ent} rigid received from engine");
+        Console.WriteLine($"[TEST] g{gameEnt} rigid received from engine");
     }
 }
 }

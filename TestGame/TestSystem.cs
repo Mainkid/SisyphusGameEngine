@@ -1,4 +1,5 @@
-﻿using Leopotam.EcsLite;
+﻿using System;
+using Leopotam.EcsLite;
 using SyEngine.Core;
 using SyEngine.Core.Comps;
 using SyEngine.Core.Datas;
@@ -6,10 +7,10 @@ using SyEngine.Logger;
 
 namespace TestGame
 {
-struct ParentTag : SyEcs.IGameComp { }
-struct ChildTag : SyEcs.IGameComp { }
+struct ParentTag : SyEcs.IComp { }
+struct ChildTag : SyEcs.IComp { }
 
-struct TestEditorComp : SyEcs.IGameComp
+struct TestEditorComp : SyEcs.IComp
 {
 	public int   TestIntVal;
 	public bool  TestBoolVal;
@@ -29,8 +30,8 @@ public class TestSystem : SyEcsSystemBase
 		_filter = Ecs.BuildFilter<ParentTag>().Inc<TransformComp>().End();
 
 		int entA = Ecs.CreateEntity();
-		Ecs.AddTransformComp(entA).Position = new SyVector3(-10, 0, 10);
-		Ecs.AddMeshComp(entA);
+		Ecs.AddComp<TransformComp>(entA).Position = new SyVector3(-10, 0, 10);
+		Ecs.AddComp<MeshComp>(entA);
 		Ecs.AddComp<ParentTag>(entA);
 		ref var entATest = ref Ecs.AddComp<TestEditorComp>(entA);
 		entATest.TestIntVal   = 1;
@@ -38,21 +39,21 @@ public class TestSystem : SyEcsSystemBase
 		entATest.TestBoolVal  = true;
 
 		int     entB = Ecs.CreateEntity();
-		ref var entBTf  = ref Ecs.AddTransformComp(entB);
+		ref var entBTf  = ref Ecs.AddComp<TransformComp>(entB);
 		entBTf.Position = new SyVector3(0, 10, 0);
 		entBTf.ParentEnt     = entA;
-		Ecs.AddMeshComp(entB);
+		Ecs.AddComp<MeshComp>(entB);
 		Ecs.AddComp<ChildTag>(entB);
 
 		int entC = Ecs.CreateEntity();
-		Ecs.AddTransformComp(entC).Position = new SyVector3(10, 10, 10);
-		Ecs.AddLightComp(entC);
+		Ecs.AddComp<TransformComp>(entC).Position = new SyVector3(10, 10, 10);
+		Ecs.AddComp<LightComp>(entC);
 
 		int entD = Ecs.CreateEntity();
-		Ecs.AddTransformComp(entD).Position = new SyVector3(0, 5, 20);
-		Ecs.AddMeshComp(entD);
-		ref var entDRigid    = ref Ecs.AddRigidComp(entD);
-		ref var entDCollider = ref Ecs.AddColliderComp(entD);
+		Ecs.AddComp<TransformComp>(entD).Position = new SyVector3(0, 5, 20);
+		Ecs.AddComp<MeshComp>(entD);
+		ref var entDRigid    = ref Ecs.AddComp<RigidComp>(entD);
+		ref var entDCollider = ref Ecs.AddComp<ColliderComp>(entD);
 		entDCollider.Extent = SyVector3.One;
 	}
 

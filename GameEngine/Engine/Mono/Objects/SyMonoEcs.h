@@ -42,7 +42,9 @@ namespace mono
 		static void GeUpdateRigidComp(uint32_t rawEnt, ProxyRigidComp proxy);
 
 	public:
-		SyMonoMethod<uint32_t> EgContinueEntityDestroyCascade { "EgContinueEntityDestroyCascade" };
+		SyMonoMethod<> EgSyncEngineWithGame{ "EgSyncEngineWithGame" };
+
+		SyMonoMethod<uint32_t> EgDestroyEntity { "EgDestroyEntity" };
 
 		SyMonoMethod<uint32_t, ProxyTransformComp> EgUpdateTransformComp{ "EgUpdateTransformComp" };
 		SyMonoMethod<uint32_t, ProxyMeshComp> EgUpdateMeshComp{ "EgUpdateMeshComp" };

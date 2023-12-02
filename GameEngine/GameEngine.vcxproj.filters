@@ -79,7 +79,6 @@
     <ClCompile Include="Engine\Core\ECS\SystemsGroup.cpp" />
     <ClCompile Include="Engine\Features\Rendering\HUD\HudConsoleSystem.cpp" />
     <ClCompile Include="Engine\Features\ErrorLogging\Systems\ErrorLoggingSystem.cpp" />
-    <ClCompile Include="Engine\Mono\Systems\MonoSyncSystem.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoLogger.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoEcs.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoGameConfig.cpp" />
@@ -162,7 +161,6 @@
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorGridRenderSystem.h" />
     <ClInclude Include="Engine\Components\Material.h" />
     <ClInclude Include="Engine\Components\Model.h" />
-    <ClInclude Include="Engine\Mono\ISyMonoGameCallbackReceiver.h" />
     <ClInclude Include="Engine\Mono\SyMono.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoGame.h" />
     <ClInclude Include="Engine\Mono\SyMonoMethod.h" />
@@ -255,7 +253,6 @@
     <ClInclude Include="Engine\Core\ECS\SystemsGroup.h" />
     <ClInclude Include="Engine\Features\Rendering\HUD\HudConsoleSystem.h" />
     <ClInclude Include="Engine\Features\ErrorLogging\Systems\ErrorLoggingSystem.h" />
-    <ClInclude Include="Engine\Mono\Systems\MonoSyncSystem.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoLogger.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoEcs.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoGameConfig.h" />

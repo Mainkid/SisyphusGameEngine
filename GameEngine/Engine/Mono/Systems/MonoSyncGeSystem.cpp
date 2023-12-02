@@ -36,17 +36,22 @@ SyResult MonoSyncGeSystem::Run()
 	if (!_monoEcs->IsValid() || !_monoGame->IsValid())
 		return {};
 
-	//TODO: rewrite when engine-context-time will be fixed.
-	auto time = std::chrono::steady_clock::now();
-	float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(time - _testTimeOnPrevFrame).count() / 1000000.0f;
-	_testTotalTime += deltaTime;
-	_testTimeOnPrevFrame = time;
+	if (false)
+	{
+		//TODO: rewrite when engine-context-time will be fixed.
+		auto time = std::chrono::steady_clock::now();
+		float deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(time - _testTimeOnPrevFrame).count() / 1000000.0f;
+		_testTotalTime += deltaTime;
+		_testTimeOnPrevFrame = time;
 
-	mono::ProxyTimeData timeData;
-	timeData.TotalTime = _testTotalTime;
-	timeData.DeltaTime = deltaTime;
+		mono::ProxyTimeData timeData;
+		timeData.TotalTime = _testTotalTime;
+		timeData.DeltaTime = deltaTime;
 
-	_monoGame->EgLoopRun.Invoke(timeData);
+		_monoGame->EgLoopRun.Invoke(timeData);
+	}
+
+	_monoEcs->EgSyncEngineWithGame.Invoke();
 
 	return {};
 }
@@ -89,7 +94,7 @@ void MonoSyncGeSystem::OnDestroyEngineEntityImpl(entt::entity ent, bool isRecurs
 			{
 				SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "continue entity destroy cascade, e%d destroy", static_cast<int>(childEnt));
 				OnDestroyEngineEntityImpl(childEnt, true);
-				_monoEcs->EgContinueEntityDestroyCascade.Invoke(static_cast<uint32_t>(childEnt));
+				_monoEcs->EgDestroyEntity.Invoke(static_cast<uint32_t>(childEnt));
 			}
 		}
 		if (!isRecursionStep)
@@ -247,6 +252,8 @@ void MonoSyncGeSystem::OnUpdateLightComp(uint32_t rawEnt, const mono::ProxyLight
 	light.Color = proxy.Color;
 	light.ParamsRadiusAndAttenuation.x = proxy.PointLightRadius;
 	light.CastShadows = proxy.ShouldCastShadows;
+
+	light.MonoHash = mono::SyMonoHashHelper::Hash(light);
 }
 
 void MonoSyncGeSystem::OnUpdateColliderComp(uint32_t rawEnt, const mono::ProxyColliderComp& proxy)
@@ -257,6 +264,8 @@ void MonoSyncGeSystem::OnUpdateColliderComp(uint32_t rawEnt, const mono::ProxyCo
 	collider.Extent = proxy.Extent;
 	collider.Radius = proxy.Radius;
 	collider.HalfHeight = proxy.HalfHeight;
+
+	collider.MonoHash = mono::SyMonoHashHelper::Hash(collider);
 }
 
 void MonoSyncGeSystem::OnUpdateRigidComp(uint32_t rawEnt, const mono::ProxyRigidComp& proxy)

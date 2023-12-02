@@ -71,10 +71,13 @@ SyResult SyMonoEcs::OnAfterCreate()
 
 	_instance = this;
 
-	SY_RESULT_CHECK(EgContinueEntityDestroyCascade.Bind(this));
+	SY_RESULT_CHECK(EgSyncEngineWithGame.Bind(this));
+	SY_RESULT_CHECK(EgDestroyEntity.Bind(this));
 	SY_RESULT_CHECK(EgUpdateTransformComp.Bind(this));
 	SY_RESULT_CHECK(EgUpdateMeshComp.Bind(this));
 	SY_RESULT_CHECK(EgUpdateLightComp.Bind(this));
+	SY_RESULT_CHECK(EgUpdateColliderComp.Bind(this));
+	SY_RESULT_CHECK(EgUpdateRigidComp.Bind(this));
 
 	BindCallback(GE_CREATE_ENTITY, &GeCreateEntity);
 	BindCallback(GE_DESTROY_ENTITY, &GeDestroyEntity);
@@ -95,10 +98,13 @@ SyResult SyMonoEcs::OnBeforeDestroy()
 {
 	_instance = nullptr;
 
-	EgContinueEntityDestroyCascade.UnBind();
+	EgSyncEngineWithGame.UnBind();
+	EgDestroyEntity.UnBind();
 	EgUpdateTransformComp.UnBind();
 	EgUpdateMeshComp.UnBind();
 	EgUpdateLightComp.UnBind();
+	EgUpdateColliderComp.UnBind();
+	EgUpdateRigidComp.UnBind();
 
 	return {};
 }
