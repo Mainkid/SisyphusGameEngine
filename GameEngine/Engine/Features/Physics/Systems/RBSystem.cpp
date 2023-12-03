@@ -118,12 +118,14 @@ SyResult SyRigidBodySystem::Run()
 			continue;
 		}
 		PxRigidDynamic* rb = rigidBodyC._rbActor->is<PxRigidDynamic>();
-		
 		PxTransform rbTrasform = rb->getGlobalPose();
 		transformC->_position = rbTrasform.p;
 		transformC->_rotation = SyVector3::PxQuatToEuler(rbTrasform.q);
-		rigidBodyC.LinearVelocity = rb->getLinearVelocity();
-		rigidBodyC.AngularVelocity = rb->getAngularVelocity();
+		if (rigidBodyC._wasTransformChangedFromOutside == false)
+		{
+			rigidBodyC.LinearVelocity = rb->getLinearVelocity();
+			rigidBodyC.AngularVelocity = rb->getAngularVelocity();
+		}
 	}
 
 	return SyResult();
@@ -233,8 +235,20 @@ SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, Sy
 		if (SyVector3(rbTransform.p) != transformC._position ||
 			!SyMathHelper::AreEqual(SyVector3::PxQuatToEuler(rbTransform.q), transformC._rotation))
 		{
-			rbDyn->setGlobalPose(PxTransform(transformC._position,
-				SyVector3::EulerToPxQuat(transformC._rotation)));
+			rbDyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+			rbDyn->setKinematicTarget(	PxTransform(transformC._position,
+										SyVector3::EulerToPxQuat(transformC._rotation)));
+			rigidBodyC._wasTransformChangedFromOutside = true;
+			
+			return SyResult();
+		}
+		if (rigidBodyC._wasTransformChangedFromOutside == true)
+		{
+			rigidBodyC._wasTransformChangedFromOutside = false;
+			rbDyn->wakeUp();
+			rbDyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, false);
+			rbDyn->setLinearVelocity(rigidBodyC.LinearVelocity);
+			rbDyn->setAngularVelocity(rigidBodyC.AngularVelocity);
 		}
 		SyVector3 pxLinearVelocity = rbDyn->getLinearVelocity();
 		if (rigidBodyC.LinearVelocity != pxLinearVelocity)

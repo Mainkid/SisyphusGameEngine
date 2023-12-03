@@ -74,7 +74,7 @@ int main()
         cubeColDesc,
         SyColliderMaterial());
 
-    ecs->get<SyRBodyComponent>(cube1).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
+    //ecs->get<SyRBodyComponent>(cube1).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
 #pragma endregion
 #pragma region Test Sphere 1
     auto sphere1 = GameObjectHelper::Create(ecs, "Sphere", { 0.0f, 0.0f, 0.0f });
