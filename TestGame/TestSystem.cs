@@ -27,6 +27,7 @@ public class TestSystem : SyEcsSystemBase
 	//-----------------------------------------------------------
 	public override void Init()
 	{
+		return;
 		_filter = Ecs.BuildFilter<ParentTag>().Inc<TransformComp>().End();
 
 		int entA = Ecs.CreateEntity();

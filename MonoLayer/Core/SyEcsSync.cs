@@ -12,12 +12,14 @@ internal class SyEcsSync
 {
     private readonly SyEcs _ecs;
 
+    private readonly EcsPool<NameComp>      _namesPool;
     private readonly EcsPool<TransformComp> _transformsPool;
     private readonly EcsPool<MeshComp>      _meshesPool;
     private readonly EcsPool<LightComp>     _lightsPool;
     private readonly EcsPool<ColliderComp>  _collidersPool;
     private readonly EcsPool<RigidComp>     _rigidsPool;
 
+    private readonly EcsFilter _namesFilter;
     private readonly EcsFilter _transformsFilter;
     private readonly EcsFilter _meshesFilter;
     private readonly EcsFilter _lightsFilter;
@@ -28,12 +30,14 @@ internal class SyEcsSync
     {
         _ecs = ecs;
 
+        _namesPool      = ecs.World.GetPool<NameComp>();
         _transformsPool = ecs.World.GetPool<TransformComp>();
         _meshesPool     = ecs.World.GetPool<MeshComp>();
         _lightsPool     = ecs.World.GetPool<LightComp>();
         _collidersPool  = ecs.World.GetPool<ColliderComp>();
         _rigidsPool     = ecs.World.GetPool<RigidComp>();
 
+        _namesFilter      = ecs.World.Filter<NameComp>().End();
         _transformsFilter = ecs.World.Filter<TransformComp>().End();
         _meshesFilter     = ecs.World.Filter<MeshComp>().End();
         _lightsFilter     = ecs.World.Filter<LightComp>().End();
@@ -57,6 +61,36 @@ internal class SyEcsSync
         SendRigidsToEngine();
     }
 
+    //-----------------------------------------------------------
+    //-----------------------------------------------------------
+    private void SendEntitiesNamesToEngine()
+    {
+        foreach (int ent in _namesFilter)
+        {
+            ref var nameComp = ref _namesPool.Get(ent);
+
+            if (nameComp.Name == nameComp.PrevName)
+                continue;
+            nameComp.PrevName = nameComp.Name;
+
+            if (_ecs.ToEngineEnt(ent, out uint engineEnt))
+                SyProxyEcs.GeUpdateEntityName(engineEnt, nameComp.Name);
+        }
+    }
+
+    public void ReceiveEntityNameFromEngine(uint engineEnt, string name)
+    {
+        if (!_ecs.ToGameEnt(engineEnt, out int gameEnt))
+            return;
+
+        if (!_namesPool.Has(gameEnt))
+            _namesPool.Add(gameEnt);
+
+        ref var comp = ref _namesPool.Get(gameEnt);
+        comp.Name     = name;
+        comp.PrevName = name;
+    }
+    
     //-----------------------------------------------------------
     //-----------------------------------------------------------
     private void SendTransformsToEngine()
@@ -158,9 +192,11 @@ internal class SyEcsSync
         if (mesh.Materials == null)
             mesh.Materials = new List<ResRef<ResMaterial>>();
         mesh.Materials.Clear();
-        foreach (string uuid in proxy.MaterialsUuids)
-            mesh.Materials.Add(new ResRef<ResMaterial>(uuid));
-
+        
+        if (proxy.MaterialsUuids != null)
+            foreach (string uuid in proxy.MaterialsUuids)
+                mesh.Materials.Add(new ResRef<ResMaterial>(uuid));
+        
         mesh.Hash = mesh.GetHashCode();
         
         Console.WriteLine($"[TEST] g{gameEnt} mesh received from engine");

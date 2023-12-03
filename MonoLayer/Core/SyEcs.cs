@@ -21,6 +21,8 @@ public class SyEcs
 
         _singletonEntity = World.NewEntity();
         World.GetPool<SingletonsTag>().Add(_singletonEntity);
+
+        _namesPool = World.GetPool<NameComp>();
     }
 
     //-----------------------------------------------------------
@@ -28,6 +30,8 @@ public class SyEcs
     private List<SyEcsSystemBase> _systems = new List<SyEcsSystemBase>();
 
     private int _singletonEntity;
+    
+    private EcsPool<NameComp> _namesPool;
 
 
     internal void SetSystems(List<SyEcsSystemBase> systems)
@@ -151,10 +155,23 @@ public class SyEcs
         }
     }
 
-    public ref T GetComp<T>(int ent) where T : struct, IComp
+    public bool HasComp<T>(int ent) where T : struct, IComp
+    {
+        return World.GetPool<T>().Has(ent);
+    }
+    
+    public ref T GetCompFast<T>(int ent) where T : struct, IComp
     {
         return ref World.GetPool<T>().Get(ent);
     }
+
+    public ref T GetComp<T>(int ent) where T : struct, IComp
+    {
+        if (HasComp<T>(ent))
+            return ref GetCompFast<T>(ent);
+        return ref AddComp<T>(ent);
+    }
+    
     
     internal void AddCompRaw(Type compType, int ent)
     {

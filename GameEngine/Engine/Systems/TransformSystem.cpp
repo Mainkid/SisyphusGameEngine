@@ -61,7 +61,7 @@ SyResult TransformSystem::Run()
 		{
 			tc.localHash = lHash;
 			TransformHelper::UpdateTransformMatrix(tc);
-			std::cout << std::endl;
+			//std::cout << std::endl;
 		}
 		else if (tc.worldHash != wHash)
 		{

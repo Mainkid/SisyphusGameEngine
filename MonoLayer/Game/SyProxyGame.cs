@@ -11,8 +11,10 @@ public class SyProxyGame
 
     private SyScene _scene;
     
-
-    internal void EgInit(SyProxyEcs proxyEcs, SyGameConfigBase config)
+    private bool _isGameSystemsInited;
+    
+    
+    private void EgInit(SyProxyEcs proxyEcs, SyGameConfigBase config)
     {
         SyLog.Info(ELogTag.ProxyGame, "game init starts..");
         try
@@ -23,6 +25,8 @@ public class SyProxyGame
             _proxyEcs.Ecs.AddSingletonRaw<TimeData>();
 
             _scene = new SyScene(_proxyEcs.Ecs);
+            _scene.Load();
+            
             
             SyLog.Info(ELogTag.ProxyGame, "game init done");
         }
@@ -32,9 +36,7 @@ public class SyProxyGame
         }
     }
 
-    private bool _isGameSystemsInited;
-
-    internal void EgLoopRun(TimeData timeData)
+    private void EgLoopRun(TimeData timeData)
     {
         try
         {
@@ -55,7 +57,7 @@ public class SyProxyGame
         }
     }
 
-    internal void EgLoopDestroy()
+    private void EgLoopDestroy()
     {
         SyLog.Info(ELogTag.ProxyGame, "game loop destroy starts..");
         try
@@ -70,6 +72,19 @@ public class SyProxyGame
         }
     }
 
+    
+    private void EgSaveScene()
+    {
+        try
+        {
+            _scene.Save();
+        }
+        catch (Exception e)
+        {
+            SyLog.Err(ELogTag.ProxyGame, e.ToString());
+        }
+    }
+    
     //-----------------------------------------------------------
     //-----------------------------------------------------------
 }

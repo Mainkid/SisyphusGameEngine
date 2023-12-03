@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Leopotam.EcsLite;
 using SyEngine.Core;
 using SyEngine.Logger;
@@ -34,8 +35,6 @@ public class SyScene
 		
 		foreach (int ent in entities)
 		{
-			Console.WriteLine($"ent to save: {ent}");
-			
 			var entDto = new EntityDto
 			{
 				Entity = ent,
@@ -55,12 +54,20 @@ public class SyScene
 			if (entDto.Comps.Count > 0)
 				sceneDto.Entities.Add(entDto);
 		}
+
+		string json = SerializeHelper.ToJson(sceneDto);
+		File.WriteAllText("test_scene.json", json);
 	}
 	
 	
 	
-	public void Load(string json)
+	public void Load()
 	{
+		if (!File.Exists("test_scene.json"))
+			return;
+		
+		string json = File.ReadAllText("test_scene.json");
+		
 		var sceneDto = SerializeHelper.FromJson<SceneDto>(json);
 		if (sceneDto == null)
 		{

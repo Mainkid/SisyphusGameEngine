@@ -64,6 +64,22 @@ internal class SyProxyEcs
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
 	[MethodImpl(MethodImplOptions.InternalCall)]
+	public static extern void GeUpdateEntityName(uint engineEnt, string name);
+
+	private void EgUpdateEntityName(uint engineEnt, string name)
+	{
+		try
+		{
+		}
+		catch (Exception e)
+		{
+			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
+		}
+	}
+	
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
+	[MethodImpl(MethodImplOptions.InternalCall)]
 	public static extern void GeUpdateTransformComp(uint engineEnt, ProxyTransformComp proxy);
 
 	private void EgUpdateTransformComp(uint engineEnt, ProxyTransformComp proxy)

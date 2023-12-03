@@ -2,24 +2,38 @@
 
 #include "../SyMono.h"
 #include "../../Events/SyHotReloadEvent.h"
+#include "../../Events/SyPlayModeEndedEvent.h"
 #include "../Components/MonoSyncComp.h"
 
 SyResult MonoHotReloadSystem::Init()
 {
 	_mono = ServiceLocator::instance()->Get<mono::SyMono>();
 
-	_mono->HotReload();
+	//_mono->HotReload();
 
 	return {};
 }
 
 SyResult MonoHotReloadSystem::Run()
 {
-	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyHotReloadEvent);
-	if (eventView.size_hint() == 0)
+	bool isHotReloadRequested = false;
+
+	if (!_isInitialHotReloadDone)
+	{
+		_mono->HotReload();
+		_isInitialHotReloadDone = true;
+	}
+
+	auto hotReloadView = SY_GET_THIS_FRAME_EVENT_VIEW(SyHotReloadEvent);
+	isHotReloadRequested |= hotReloadView.size_hint() > 0;
+
+	auto playModeEndView = SY_GET_THIS_FRAME_EVENT_VIEW(SyPlayModeEndedEvent);
+	isHotReloadRequested |= playModeEndView.size_hint() > 0;
+
+	if (!isHotReloadRequested)
 		return {};
-	
-	auto view = _ecs->view<MonoSyncComp>();
+
+	auto view = _ecs->view<GameObjectComp>();
 	for (auto ent : view)
 		_ecs->destroy(ent);
 

@@ -14,5 +14,7 @@ public:
 	SyResult Destroy() override;
 
 private:
-	mono::SyMono* _mono;
+	mono::SyMono* _mono = nullptr;
+
+	bool _isInitialHotReloadDone = false;
 };

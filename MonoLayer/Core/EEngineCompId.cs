@@ -15,7 +15,7 @@ public enum EEngineCompId
 
 public static class EngineCompIdHelper
 {
-	private static Dictionary<Type, EEngineCompId> _map = new Dictionary<Type, EEngineCompId>()
+	private static readonly Dictionary<Type, EEngineCompId> _map = new Dictionary<Type, EEngineCompId>()
 	{
 		{typeof(TransformComp), EEngineCompId.Transform},
 		{typeof(MeshComp), EEngineCompId.Mesh},

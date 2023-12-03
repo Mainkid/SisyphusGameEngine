@@ -108,8 +108,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<LightSystem>();
 	_systems.Add<ParticlesSystem>();
 	_systems.Add<EditorBillboardSystem>();
-
-	_systems.Add<MonoHotReloadSystem>();
+	
 	_systems.Add<MonoSyncEgSystem>();
 
 	_systems.Add<PreRenderSystem>();
@@ -136,6 +135,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<SyErrorLoggingSystem>();
 	_systems.Add<HudPostRenderSystem>();
 
+	_systems.Add<MonoHotReloadSystem>();
 	_systems.Add<MonoSyncGeSystem>();
 
 	_systems.Add<SyPrepareEventsSystem>();

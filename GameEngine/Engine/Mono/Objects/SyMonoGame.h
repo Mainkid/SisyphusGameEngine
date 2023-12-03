@@ -19,6 +19,8 @@ namespace mono
 		SyMonoMethod<ProxyTimeData> EgLoopRun{ "EgLoopRun" };
 		SyMonoMethod<> EgLoopDestroy{ "EgLoopDestroy" };
 
+		SyMonoMethod<> EgSaveScene{ "EgSaveScene" };
+
 	private:
 		SyResult OnAfterCreate() override;
 		SyResult OnBeforeDestroy() override;

@@ -21,6 +21,11 @@ struct HardwareContext;
 struct RenderContext;
 class ResourceService;
 
+namespace mono
+{
+	class SyMonoGame;
+}
+
 
 class HudViewportSystem : public SystemBase
 {
@@ -33,6 +38,8 @@ private:
 	RenderContext* rc;
 	HardwareContext* hc;
 	ResourceService* rs;
+
+	mono::SyMonoGame* _monoGame = nullptr;
 
 	void InitSRV();
 	void HandleResize();

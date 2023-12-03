@@ -21,10 +21,7 @@ SyResult MonoSyncGeSystem::Init()
 	_monoEcs = mono->GetEcs();
 	_monoGame = mono->GetGame();
 
-	if (_monoEcs->IsValid())
-		_monoEcs->SetCallbackReceiver(this);
-	else
-		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "failed to attach callbacks due to mono ecs invalid");
+	_monoEcs->SetCallbackReceiver(this);
 
 	_testTimeOnPrevFrame = std::chrono::steady_clock::now();
 
@@ -72,6 +69,7 @@ uint32_t MonoSyncGeSystem::OnCreateEntity()
 	_ecs->emplace<MonoSyncComp>(ent);
 
 	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "engine entity e%d created", static_cast<int>(ent));
+	std::cout << "[mono] engine entity " << static_cast<uint32_t>(ent) << " created" << std::endl;
 
 	return static_cast<uint32_t>(ent);
 }
@@ -111,7 +109,7 @@ void MonoSyncGeSystem::OnAddComp(uint32_t rawEnt, mono::EProxyCompId id)
 		mono::ProxyCompIdExt::ToStr(id).c_str(),
 		static_cast<int>(rawEnt)
 	);
-	//std::cout << "[TEST] ent e" << rawEnt << " add comp " << mono::ProxyCompIdExt::ToStr(id) << std::endl;
+	std::cout << "[mono] ent e" << rawEnt << " add comp " << mono::ProxyCompIdExt::ToStr(id) << std::endl;
 
 	auto ent = static_cast<entt::entity>(rawEnt);
 	if (id == mono::EProxyCompId::Transform)
@@ -186,46 +184,57 @@ void MonoSyncGeSystem::OnRemoveComp(uint32_t rawEnt, mono::EProxyCompId id)
 void MonoSyncGeSystem::OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyTransformComp& proxy)
 {
 	auto ent = static_cast<entt::entity>(rawEnt);
+	auto tf = _ecs->try_get<TransformComponent>(ent);
+	if (tf == nullptr)
+	{
+		std::cout << "[mono] e" << rawEnt << "does not have transform" << std::endl;
+		return;
+	}
 
-	auto& tf = _ecs->get<TransformComponent>(ent);
-	tf._position = proxy.Position;
-	tf._rotation = proxy.Rotation;
-	tf.scale = proxy.Scale;
-	tf.localPosition = proxy.LocalPosition;
-	tf.localRotation = proxy.LocalRotation;
-	tf.localScale = proxy.LocalScale;
+	tf->_position = proxy.Position;
+	tf->_rotation = proxy.Rotation;
+	tf->scale = proxy.Scale;
+	tf->localPosition = proxy.LocalPosition;
+	tf->localRotation = proxy.LocalRotation;
+	tf->localScale = proxy.LocalScale;
 
 	if (proxy.HasParent)
 	{
-		if (tf.parent != proxy.ParentEngineEnt)
+		if (tf->parent != proxy.ParentEngineEnt)
 			GameObjectHelper::SetParent(_ecs, ent, static_cast<entt::entity>(proxy.ParentEngineEnt));
 	}
 	else
 	{
-		if (tf.parent != entt::null)
+		if (tf->parent != entt::null)
 			GameObjectHelper::SetParent(_ecs, ent, entt::null);
 	}
 
-	tf.MonoHash = mono::SyMonoHashHelper::Hash(tf);
+	tf->MonoHash = mono::SyMonoHashHelper::Hash(*tf);
 }
 
 void MonoSyncGeSystem::OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshComp& proxy)
 {
-	auto& mesh = _ecs->get<MeshComponent>(static_cast<entt::entity>(rawEnt));
+	auto ent = static_cast<entt::entity>(rawEnt);
+	auto mesh = _ecs->try_get<MeshComponent>(ent);
+	if (mesh == nullptr)
+	{
+		std::cout << "[mono] e" << rawEnt << "does not have mesh" << std::endl;
+		return;
+	}
 
 	if (proxy.ModelUuid == nullptr)
 	{
 		auto resService = ServiceLocator::instance()->Get<ResourceService>();
 		auto uuid = resService->GetUUIDFromPath(cubeMeshPath);
-		mesh.modelUUID = uuid;
+		mesh->modelUUID = uuid;
 	}
 	else
 	{
 		mono::SyMonoStr strModelUuid {proxy.ModelUuid};
-		mesh.modelUUID = strModelUuid.ToUuid();
+		mesh->modelUUID = strModelUuid.ToUuid();
 	}
 
-	mesh.materialUUIDs.clear();
+	mesh->materialUUIDs.clear();
 	if (proxy.MaterialsUuids != nullptr)
 	{
 		int length = mono_array_length(proxy.MaterialsUuids);
@@ -235,51 +244,69 @@ void MonoSyncGeSystem::OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshCo
 			if (rawMaterialUuid != nullptr)
 			{
 				mono::SyMonoStr strMaterialUuid {rawMaterialUuid};
-				mesh.materialUUIDs.push_back(strMaterialUuid.ToUuid());
+				mesh->materialUUIDs.push_back(strMaterialUuid.ToUuid());
 			}
 		}
 	}
 
-	mesh.MonoHash = mono::SyMonoHashHelper::Hash(mesh);
+	mesh->MonoHash = mono::SyMonoHashHelper::Hash(*mesh);
 }
 
 void MonoSyncGeSystem::OnUpdateLightComp(uint32_t rawEnt, const mono::ProxyLightComp& proxy)
 {
-	auto& light = _ecs->get<LightComponent>(static_cast<entt::entity>(rawEnt));
+	auto ent = static_cast<entt::entity>(rawEnt);
+	auto light = _ecs->try_get<LightComponent>(ent);
+	if (light == nullptr)
+	{
+		std::cout << "[mono] e" << rawEnt << "does not have light" << std::endl;
+		return;
+	}
 
-	light.LightType = proxy.LightType;
-	light.LightBehavior = proxy.LightBehavior;
-	light.Color = proxy.Color;
-	light.ParamsRadiusAndAttenuation.x = proxy.PointLightRadius;
-	light.CastShadows = proxy.ShouldCastShadows;
+	light->LightType = proxy.LightType;
+	light->LightBehavior = proxy.LightBehavior;
+	light->Color = proxy.Color;
+	light->ParamsRadiusAndAttenuation.x = proxy.PointLightRadius;
+	light->CastShadows = proxy.ShouldCastShadows;
 
-	light.MonoHash = mono::SyMonoHashHelper::Hash(light);
+	light->MonoHash = mono::SyMonoHashHelper::Hash(*light);
 }
 
 void MonoSyncGeSystem::OnUpdateColliderComp(uint32_t rawEnt, const mono::ProxyColliderComp& proxy)
 {
-	auto& collider = _ecs->get<SyPrimitiveColliderComponent>(static_cast<entt::entity>(rawEnt));
+	auto ent = static_cast<entt::entity>(rawEnt);
+	auto collider = _ecs->try_get<SyPrimitiveColliderComponent>(ent);
+	if (collider == nullptr)
+	{
+		std::cout << "[mono] e" << rawEnt << "does not have collider" << std::endl;
+		return;
+	}
 
-	collider.ColliderType = proxy.Type;
-	collider.Extent = proxy.Extent;
-	collider.Radius = proxy.Radius;
-	collider.HalfHeight = proxy.HalfHeight;
+	collider->ColliderType = proxy.Type;
+	collider->Extent = proxy.Extent;
+	collider->Radius = proxy.Radius;
+	collider->HalfHeight = proxy.HalfHeight;
 
-	collider.MonoHash = mono::SyMonoHashHelper::Hash(collider);
+	collider->MonoHash = mono::SyMonoHashHelper::Hash(*collider);
 }
 
 void MonoSyncGeSystem::OnUpdateRigidComp(uint32_t rawEnt, const mono::ProxyRigidComp& proxy)
 {
-	auto& rigid = _ecs->get<SyRBodyComponent>(static_cast<entt::entity>(rawEnt));
+	auto ent = static_cast<entt::entity>(rawEnt);
+	auto rigid = _ecs->try_get<SyRBodyComponent>(ent);
+	if (rigid == nullptr)
+	{
+		std::cout << "[mono] e" << rawEnt << "does not have rigid" << std::endl;
+		return;
+	}
 
-	rigid.RbType = proxy.Type;
-	rigid.Mass = proxy.Mass;
-	rigid.Flags = 0;
-	rigid.Flags |= proxy.IsAutoMass ? SyERBodyFlags::USE_DENSITY : 0;
-	rigid.Flags |= proxy.IsKinematic ? SyERBodyFlags::KINEMATIC : 0;
-	rigid.Flags |= proxy.IsGravityOn ? 0 : SyERBodyFlags::DISABLE_GRAVITY;
-	rigid.LinearVelocity = proxy.LinearVelocity;
-	rigid.AngularVelocity = proxy.AngularVelocity;
+	rigid->RbType = proxy.Type;
+	rigid->Mass = proxy.Mass;
+	rigid->Flags = 0;
+	rigid->Flags |= proxy.IsAutoMass ? SyERBodyFlags::USE_DENSITY : 0;
+	rigid->Flags |= proxy.IsKinematic ? SyERBodyFlags::KINEMATIC : 0;
+	rigid->Flags |= proxy.IsGravityOn ? 0 : SyERBodyFlags::DISABLE_GRAVITY;
+	rigid->LinearVelocity = proxy.LinearVelocity;
+	rigid->AngularVelocity = proxy.AngularVelocity;
 
-	rigid.MonoHash = mono::SyMonoHashHelper::Hash(rigid);
+	rigid->MonoHash = mono::SyMonoHashHelper::Hash(*rigid);
 }
