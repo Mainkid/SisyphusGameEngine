@@ -14,7 +14,7 @@ using namespace physx;
 PxPhysics* SyRBodyComponent::_physics;
 PxScene* SyRBodyComponent::_scene;
 
-SyResult SyRBodySystem::Init() 
+SyResult SyRigidBodySystem::Init() 
 {
 	allocator = std::make_shared<PxDefaultAllocator>();
 	errorCallback = std::make_shared<PxDefaultErrorCallback>();
@@ -42,7 +42,7 @@ SyResult SyRBodySystem::Init()
 	return SyResult();
 }
 
-SyResult SyRBodySystem::Run()
+SyResult SyRigidBodySystem::Run()
 {
 	SyResult result;
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
@@ -71,12 +71,12 @@ SyResult SyRBodySystem::Run()
 				_ecs->remove<SyRBodyComponent>(entity);
 				CallEvent<SyOnRemoveComponentEvent>("RemoveRigidBody", SyEComponentTypes::RIGID_BODY, entity);
 				SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
-					"Failed to initialize RigidBody Componenton entity (%s). The component has been removed.",
+					"Failed to initialize RigidBody Component on entity (%s). The component has been removed.",
 					SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
 				continue;
 			};
 		}
-		else
+		else if (ServiceLocator::instance()->Get<EngineContext>()->playModeState == EngineContext::EPlayModeState::PlayMode)
 		{
 			UpdateRigidBodyType(entity, rigidBodyC, *transformC);
 			UpdateRigidBodyValues(entity, rigidBodyC, *transformC);
@@ -125,22 +125,18 @@ SyResult SyRBodySystem::Run()
 		rigidBodyC.LinearVelocity = rb->getLinearVelocity();
 		rigidBodyC.AngularVelocity = rb->getAngularVelocity();
 	}
-	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyOnAddComponentEvent);
-	for (auto& entity : view)
-	{
-		std::cout << "";
-	}
+
 	return SyResult();
 }
 
-SyResult SyRBodySystem::Destroy()
+SyResult SyRigidBodySystem::Destroy()
 {
 	PX_RELEASE(_physics);
 	PX_RELEASE(_foundation);
 	return SyResult();
 }
 
-SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyComponent& rigidBodyC,
+SyResult SyRigidBodySystem::InitComponent(const entt::entity& entity, SyRBodyComponent& rigidBodyC,
 	TransformComponent& transformC)
 {
 	SyResult result;
@@ -184,7 +180,7 @@ SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyCompone
 	return result;
 }
 
-SyResult SyRBodySystem::UpdateRigidBodyType(const entt::entity& entity, SyRBodyComponent& rigidBodyC, TransformComponent& transformC)
+SyResult SyRigidBodySystem::UpdateRigidBodyType(const entt::entity& entity, SyRBodyComponent& rigidBodyC, TransformComponent& transformC)
 {
 	SyResult result;
 	if (rigidBodyC._prevFrameRbodyType == rigidBodyC.RbType)
@@ -227,16 +223,19 @@ SyResult SyRBodySystem::UpdateRigidBodyType(const entt::entity& entity, SyRBodyC
 	return result;
 }
 
-SyResult SyRBodySystem::UpdateRigidBodyValues(const entt::entity& entity, SyRBodyComponent& rigidBodyC,
+SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, SyRBodyComponent& rigidBodyC,
 	TransformComponent& transformC)
 {
 	PxRigidDynamic* rbDyn = rigidBodyC._rbActor->is<PxRigidDynamic>();
 	if (rbDyn != nullptr)
 	{
 		PxTransform rbTransform = rbDyn->getGlobalPose();
-		if (SyVector3(rbTransform.p) != transformC.localPosition || SyVector3::PxQuatToEuler(rbTransform.q) != transformC.localRotation)
+		if (SyVector3(rbTransform.p) != transformC._position ||
+			!SyMathHelper::AreEqual(SyVector3::PxQuatToEuler(rbTransform.q), transformC._rotation))
+		{
 			rbDyn->setGlobalPose(PxTransform(transformC._position,
 				SyVector3::EulerToPxQuat(transformC._rotation)));
+		}
 		SyVector3 pxLinearVelocity = rbDyn->getLinearVelocity();
 		if (rigidBodyC.LinearVelocity != pxLinearVelocity)
 			rbDyn->setLinearVelocity(rigidBodyC.LinearVelocity);
@@ -246,7 +245,6 @@ SyResult SyRBodySystem::UpdateRigidBodyValues(const entt::entity& entity, SyRBod
 		float pxMass = rbDyn->getMass();
 		if (rigidBodyC.Mass != pxMass)
 			rbDyn->setMass(rigidBodyC.Mass);
-		auto pxRbFlags = rbDyn->getRigidBodyFlags();
 		if ((rigidBodyC.Flags & SyERBodyFlags::KINEMATIC) != ((bool)(rbDyn->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC)))
 			rbDyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, rigidBodyC.Flags & SyERBodyFlags::KINEMATIC);
 		if ((rigidBodyC.Flags & SyERBodyFlags::DISABLE_GRAVITY) != ((bool)(rigidBodyC._rbActor->getActorFlags() & PxActorFlag::eDISABLE_GRAVITY)))

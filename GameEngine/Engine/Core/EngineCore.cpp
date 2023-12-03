@@ -94,9 +94,10 @@ void EngineCore::StartUpSystems()
 	_systems.Add<InputSystem>();
 	_systems.Add<ResourceSystem>();
 	_systems.Add<MeshSystem>();
-	_systems.Add<SyRBodySystem>();
-	_systems.Add<SyCollisionSystem>();
 	_systems.Add<SyJointSystem>();
+	_systems.Add<SyRigidBodySystem>();
+	_systems.Add<SyCollisionSystem>();
+
 	
 	_systems.Add<MonoSyncSystem>();
 

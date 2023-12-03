@@ -78,11 +78,11 @@ int main()
 #pragma endregion
 #pragma region Test Sphere 1
     auto sphere1 = GameObjectHelper::Create(ecs, "Sphere", { 0.0f, 0.0f, 0.0f });
-    auto result10 = GameObjectHelper::AddRigidBodyComponent(ecs, sphere1, STATIC);
+    auto result10 = GameObjectHelper::AddRigidBodyComponent(ecs, sphere1, DYNAMIC, 2, SyERBodyFlags::DISABLE_GRAVITY);
     auto result11 = GameObjectHelper::AddSphereMeshComponent(ecs, sphere1);
 
     
-    ecs->emplace<SyFixedJointComponent>(cube1);
+    //ecs->emplace<SyFixedJointComponent>(cube1, sphere1);
 #pragma endregion
     
     

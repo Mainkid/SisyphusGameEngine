@@ -101,6 +101,8 @@
     <ClCompile Include="Engine\Features\Particles\Systems\ParticlesSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
+    <ClCompile Include="Engine\Features\Physics\Systems\JointSystem.cpp" />
+    <ClCompile Include="Engine\Features\Physics\Systems\RBodySimulationSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -217,9 +219,6 @@
     <ClInclude Include="Engine\Mono\SyMonoRuntime.h" />
     <ClInclude Include="Engine\Mono\Systems\MonoSyncSystem.h" />
     <ClInclude Include="Engine\Mono\SyMonoMethod.h" />
-    <ClInclude Include="Engine\Core\ECS\Event.h" />
-    <ClInclude Include="Engine\Systems\PrepareEventsSystem.h" />
-    <ClInclude Include="Engine\Tools\MathHelper.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoLogger.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoEcs.h" />
@@ -240,7 +239,6 @@
     <ClInclude Include="vendor\ImGui\ImCurve.h" />
     <ClInclude Include="Engine\Events\SyHotReloadEvent.h" />
     <ClInclude Include="Engine\Events\SyImageBasedLightingUpdateEvent.h" />
-    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateColliderEvent.h" />
     <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateRBodyEvent.h" />
     <ClInclude Include="Engine\Events\SyPlayModeEndedEvent.h" />
     <ClInclude Include="Engine\Events\SyPlayModeStartedEvent.h" />
@@ -248,6 +246,15 @@
     <ClInclude Include="Engine\Core\Tools\Structures\Geometry.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.h" />
     <ClInclude Include="Engine\Features\Events\Tags\SyEventTag.h" />
+    <ClInclude Include="Engine\Core\Tools\Macro.h" />
+    <ClInclude Include="Engine\Features\Common\EComponentTypes.h" />
+    <ClInclude Include="Engine\Features\Common\Events\OnAddComponentEvent.h" />
+    <ClInclude Include="Engine\Features\Common\Events\OnRemoveComponentEvent.h" />
+    <ClInclude Include="Engine\Features\Physics\Components\JointComponent.h" />
+    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateJoint.h" />
+    <ClInclude Include="Engine\Features\Physics\Systems\JointSystem.h" />
+    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateCollider.h" />
+    <ClInclude Include="Engine\Features\Physics\Systems\RBodySimulationSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />

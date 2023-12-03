@@ -77,7 +77,7 @@ SyResult SyJointSystem::Run()
                     SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
             }
         }
-        else
+        else if (ServiceLocator::instance()->Get<EngineContext>()->playModeState == EngineContext::EPlayModeState::PlayMode)
         {
             UpdateFixedJointComponent(entity, fixedJointC, *rigidBodyCPtr, transformC);
         }
@@ -127,19 +127,37 @@ SyResult SyJointSystem::UpdateFixedJointComponent(const entt::entity& entity, Sy
                                          SyRBodyComponent& rigidBodyС, TransformComponent& transformC)
 {
     SyResult result;
-    auto* actor = rigidBodyС._rbActor;
-    auto* otherActor = (fixedJointC.OtherEntity == entt::null) ? nullptr :
-            _ecs->get<SyRBodyComponent>(fixedJointC.OtherEntity)._rbActor;
-    fixedJointC._fixedJoint->setActors(actor, otherActor);
-    TransformComponent* otherTransformCPtr = (fixedJointC.OtherEntity == entt::null) ? nullptr :
-            _ecs->try_get<TransformComponent>(fixedJointC.OtherEntity);
-    SyVector3 position = transformC._position;
-    SyVector3 rotation = transformC._rotation;
-    SyVector3 otherPosition = (otherTransformCPtr == nullptr) ? SyVector3::ZERO : otherTransformCPtr->_position;
-    SyVector3 otherRotation = (otherTransformCPtr == nullptr) ? SyVector3::ZERO : otherTransformCPtr->_rotation;
-    physx::PxTransform localFrame(otherPosition - position, SyVector3::EulerToPxQuat(otherRotation - rotation));
-    physx::PxTransform otherLocalFrame(SyVector3::ZERO, SyVector3::EulerToPxQuat(SyVector3::ZERO));
-    fixedJointC._fixedJoint->setLocalPose(physx::PxJointActorIndex::eACTOR0, localFrame);
-    fixedJointC._fixedJoint->setLocalPose(physx::PxJointActorIndex::eACTOR1, otherLocalFrame);
+    auto* otherRigidBodyCPtr = (fixedJointC.OtherEntity == entt::null) ? nullptr : _ecs->try_get<SyRBodyComponent>(fixedJointC.OtherEntity);
+    if (rigidBodyС._wasActorRecreatedThisFrame || (otherRigidBodyCPtr != nullptr && otherRigidBodyCPtr->_wasActorRecreatedThisFrame))
+    {
+        auto* actor = rigidBodyС._rbActor;
+        auto* otherActor = (fixedJointC.OtherEntity == entt::null) ? nullptr :
+                _ecs->get<SyRBodyComponent>(fixedJointC.OtherEntity)._rbActor;
+        fixedJointC._fixedJoint->setActors(actor, otherActor);
+    }
+    size_t wHash = 0;
+    boost::hash_combine(wHash, transformC._position);
+    boost::hash_combine(wHash, transformC._rotation);
+    boost::hash_combine(wHash, transformC.scale);
+
+    size_t lHash = 0;
+    boost::hash_combine(lHash, transformC.localPosition);
+    boost::hash_combine(lHash, transformC.localRotation);
+    boost::hash_combine(lHash, transformC.localScale);
+    //if (rigidBodyС._wasTransformChangedFromOutside == true)
+    //{
+    //    TransformComponent* otherTransformCPtr = (fixedJointC.OtherEntity == entt::null) ? nullptr :
+    //            _ecs->try_get<TransformComponent>(fixedJointC.OtherEntity);
+    //    SyVector3 position = transformC._position;
+    //    SyVector3 rotation = /*SyVector3::ZERO;*/
+    //        transformC._rotation;
+    //    SyVector3 otherPosition = (otherTransformCPtr == nullptr) ? SyVector3::ZERO : otherTransformCPtr->_position;
+    //    SyVector3 otherRotation = /*SyVector3::ZERO;*/
+    //        (otherTransformCPtr == nullptr) ? SyVector3::ZERO : otherTransformCPtr->_rotation;
+    //    physx::PxTransform localFrame(otherPosition - position, SyVector3::EulerToPxQuat(otherRotation - rotation));
+    //    physx::PxTransform otherLocalFrame(SyVector3::ZERO, SyVector3::EulerToPxQuat(SyVector3::ZERO));
+    //    fixedJointC._fixedJoint->setLocalPose(physx::PxJointActorIndex::eACTOR0, localFrame);
+    //    fixedJointC._fixedJoint->setLocalPose(physx::PxJointActorIndex::eACTOR1, otherLocalFrame);
+    //}
     return result;
 }
