@@ -15,6 +15,7 @@ namespace mono
 		virtual void OnAddComp(uint32_t rawEnt, EProxyCompId id) = 0;
 		virtual void OnRemoveComp(uint32_t rawEnt, EProxyCompId id) = 0;
 
+		virtual void OnUpdateSceneObjectComp(uint32_t rawEnt, const ProxySceneObjectComp& proxy) = 0;
 		virtual void OnUpdateTransformComp(uint32_t rawEnt, const ProxyTransformComp& proxy) = 0;
 		virtual void OnUpdateMeshComp(uint32_t rawEnt, const ProxyMeshComp& proxy) = 0;
 		virtual void OnUpdateLightComp(uint32_t rawEnt, const ProxyLightComp& proxy) = 0;

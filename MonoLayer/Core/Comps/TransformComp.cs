@@ -3,7 +3,7 @@ using SyEngine.Core.Helpers;
 
 namespace SyEngine.Core.Comps
 {
-public struct TransformComp : SyEcs.IComp
+public struct TransformComp : SyEcs.IInternalComp
 {
 	public SyVector3 Position;
     public SyVector3 Rotation;

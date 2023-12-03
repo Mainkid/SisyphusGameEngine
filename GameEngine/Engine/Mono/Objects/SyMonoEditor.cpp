@@ -17,23 +17,16 @@ void SyMonoEditor::GeIndent(bool isIncrease)
 		ImGui::Unindent(10.0f);
 }
 
-int SyMonoEditor::GeDrawCompHeader(MonoString* rawName)
+int SyMonoEditor::GeDrawCompHeader(MonoString* rawName, bool isRemovable)
 {
 	int action = -1;
 
-	if (rawName == nullptr)
-	{
-		ImGui::Separator();
-	}
-	else
-	{
-		SyMonoStr name{ rawName };
-		ImGui::PushID(name);
-		ImGui::SeparatorText(name);
-		if (ImGui::Button("Remove"))
-			action = 0;
-		ImGui::PopID();
-	}
+	SyMonoStr name{ rawName };
+	ImGui::PushID(name);
+	ImGui::SeparatorText(name);
+	if (isRemovable && ImGui::Button("Remove"))
+		action = 0;
+	ImGui::PopID();
 	return action;
 }
 

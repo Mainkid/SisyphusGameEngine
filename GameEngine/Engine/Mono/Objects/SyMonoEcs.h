@@ -20,6 +20,7 @@ namespace mono
 		inline static const std::string GE_ADD_COMP = "GeAddEngineComp";
 		inline static const std::string GE_REMOVE_COMP = "GeRemoveEngineComp";
 
+		inline static const std::string GE_UPDATE_SCENE_OBJECT_COMP = "GeUpdateSceneObjectComp";
 		inline static const std::string GE_UPDATE_TRANSFORM_COMP = "GeUpdateTransformComp";
 		inline static const std::string GE_UPDATE_MESH_COMP = "GeUpdateMeshComp";
 		inline static const std::string GE_UPDATE_LIGHT_COMP = "GeUpdateLightComp";
@@ -35,6 +36,7 @@ namespace mono
 		static void GeAddComp(uint32_t rawEnt, EProxyCompId id);
 		static void GeRemoveComp(uint32_t rawEnt, EProxyCompId id);
 
+		static void GeUpdateSceneObjectComp(uint32_t rawEnt, ProxySceneObjectComp proxy);
 		static void GeUpdateTransformComp(uint32_t rawEnt, ProxyTransformComp proxy);
 		static void GeUpdateMeshComp(uint32_t rawEnt, ProxyMeshComp proxy);
 		static void GeUpdateLightComp(uint32_t rawEnt, ProxyLightComp proxy);
@@ -46,6 +48,7 @@ namespace mono
 
 		SyMonoMethod<uint32_t> EgDestroyEntity { "EgDestroyEntity" };
 
+		SyMonoMethod<uint32_t, ProxySceneObjectComp> EgUpdateSceneObjectComp{ "EgUpdateSceneObjectComp" };
 		SyMonoMethod<uint32_t, ProxyTransformComp> EgUpdateTransformComp{ "EgUpdateTransformComp" };
 		SyMonoMethod<uint32_t, ProxyMeshComp> EgUpdateMeshComp{ "EgUpdateMeshComp" };
 		SyMonoMethod<uint32_t, ProxyLightComp> EgUpdateLightComp{ "EgUpdateLightComp" };

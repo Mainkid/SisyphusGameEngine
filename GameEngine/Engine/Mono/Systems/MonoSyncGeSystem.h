@@ -33,6 +33,7 @@ private:
 	void OnAddComp(uint32_t rawEnt, mono::EProxyCompId id) override;
 	void OnRemoveComp(uint32_t rawEnt, mono::EProxyCompId id) override;
 
+	void OnUpdateSceneObjectComp(uint32_t rawEnt, const mono::ProxySceneObjectComp& proxy) override;
 	void OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyTransformComp& proxy) override;
 	void OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshComp& proxy) override;
 	void OnUpdateLightComp(uint32_t rawEnt, const mono::ProxyLightComp& proxy) override;

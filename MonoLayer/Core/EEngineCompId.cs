@@ -6,6 +6,7 @@ namespace SyEngine.Core
 {
 public enum EEngineCompId
 {
+	SceneObject,
 	Transform,
 	Mesh,
 	Light,
@@ -17,6 +18,7 @@ public static class EngineCompIdHelper
 {
 	private static readonly Dictionary<Type, EEngineCompId> _map = new Dictionary<Type, EEngineCompId>()
 	{
+		{typeof(SceneObjectComp), EEngineCompId.Mesh},
 		{typeof(TransformComp), EEngineCompId.Transform},
 		{typeof(MeshComp), EEngineCompId.Mesh},
 		{typeof(LightComp), EEngineCompId.Light},

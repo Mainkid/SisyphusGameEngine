@@ -12,6 +12,7 @@ namespace mono
 {
 	enum class EProxyCompId
 	{
+		SceneObject,
 		Transform,
 		Mesh,
 		Light,
@@ -26,6 +27,7 @@ namespace mono
 		{
 			switch(id)
 			{
+			case EProxyCompId::SceneObject: return "SceneObject";
 			case EProxyCompId::Transform: return "Transform";
 			case EProxyCompId::Mesh: return "Mesh";
 			case EProxyCompId::Light: return "Light";
@@ -75,6 +77,12 @@ namespace mono
 	{
 		float TotalTime;
 		float DeltaTime;
+	};
+
+	struct ProxySceneObjectComp
+	{
+		MonoString* Name;
+		bool IsActive;
 	};
 
 	struct ProxyTransformComp

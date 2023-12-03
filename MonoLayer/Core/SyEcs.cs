@@ -11,9 +11,8 @@ public class SyEcs
 {
     internal readonly EcsWorld World;
 
-    private readonly Dictionary<int, uint> _gameEntToEngineEnt        = new Dictionary<int, uint>();
-    private readonly Dictionary<uint, int> _engineEntToGameEnt        = new Dictionary<uint, int>();
-    private readonly Dictionary<int, int>  _gameEntToEngineCompsCount = new Dictionary<int, int>();
+    private readonly Dictionary<int, uint> _gameEntToEngineEnt = new Dictionary<int, uint>();
+    private readonly Dictionary<uint, int> _engineEntToGameEnt = new Dictionary<uint, int>();
 
     internal SyEcs()
     {
@@ -22,7 +21,8 @@ public class SyEcs
         _singletonEntity = World.NewEntity();
         World.GetPool<SingletonsTag>().Add(_singletonEntity);
 
-        _namesPool = World.GetPool<NameComp>();
+        _sceneObjectsPool      = World.GetPool<SceneObjectComp>();
+        _transformsPool = World.GetPool<TransformComp>();
     }
 
     //-----------------------------------------------------------
@@ -30,8 +30,9 @@ public class SyEcs
     private List<SyEcsSystemBase> _systems = new List<SyEcsSystemBase>();
 
     private int _singletonEntity;
-    
-    private EcsPool<NameComp> _namesPool;
+
+    private EcsPool<SceneObjectComp> _sceneObjectsPool;
+    private EcsPool<TransformComp>   _transformsPool;
 
 
     internal void SetSystems(List<SyEcsSystemBase> systems)
@@ -62,15 +63,26 @@ public class SyEcs
 
     //-----------------------------------------------------------
     //-----------------------------------------------------------
-    public int CreateEntity()
+    public int CreateEntity(bool isSceneObject)
     {
-        return World.NewEntity();
+        int ent = World.NewEntity();
+        if (isSceneObject)
+            CreateEntitiesPairByGameEnt(ent);
+        return ent;
     }
 
     public void DestroyEntity(int gameEnt)
     {
         World.DelEntity(gameEnt);
-        DestroyEntitiesPairIfExists(gameEnt);
+
+        if (_gameEntToEngineEnt.TryGetValue(gameEnt, out uint engineEnt))
+        {
+            SyLog.Debug(ELogTag.Ecs, $"destroy e{engineEnt}");
+            SyProxyEcs.GeDestroyEngineEntity(engineEnt);
+
+            _gameEntToEngineEnt.Remove(gameEnt);
+            _engineEntToGameEnt.Remove(engineEnt);
+        }
     }
     
     
@@ -79,12 +91,11 @@ public class SyEcs
         if (!_engineEntToGameEnt.TryGetValue(engineEnt, out int gameEnt))
             return;
 
-        SyLog.Debug(ELogTag.Ecs, $"g{gameEnt} destroy by engine");
+        SyLog.Debug(ELogTag.Ecs, $"destroy g{gameEnt} by engine");
         World.DelEntity(gameEnt);
 
         _gameEntToEngineEnt.Remove(gameEnt);
         _engineEntToGameEnt.Remove(engineEnt);
-        _gameEntToEngineCompsCount.Remove(gameEnt);
     }
 
 
@@ -95,20 +106,19 @@ public class SyEcs
         var engineCompId = EngineCompIdHelper.GetFromCompType(typeof(T));
         if (engineCompId != null)
         {
-            uint engineEnt = GetOrCreateEntitiesPairByGameEnt(ent);
+            if (!_gameEntToEngineEnt.TryGetValue(ent, out uint engineEnt))
+                throw new Exception($"cannot add scene component {engineCompId} to non-scene entity {ent}");
             SyLog.Debug(ELogTag.Ecs, $"add {engineCompId} to g{ent}");
             SyProxyEcs.GeAddEngineComp(engineEnt, engineCompId.Value);
-            IncreaseEngineCompsCount(ent);
         }
 
         ref var comp = ref World.GetPool<T>().Add(ent);
         
         switch (engineCompId)
         {
-            case EEngineCompId.Transform:
-                ref var tf = ref World.GetPool<TransformComp>().Get(ent);
-                tf.Scale      = SyVector3.One;
-                tf.LocalScale = SyVector3.One;
+            case EEngineCompId.SceneObject: //impossible
+                break;
+            case EEngineCompId.Transform: //impossible
                 break;
             case EEngineCompId.Mesh:
                 break;
@@ -143,15 +153,13 @@ public class SyEcs
 
     public void RemoveComp<T>(int ent) where T : struct, IComp
     {
-        var engineCompId = EngineCompIdHelper.GetFromCompType(typeof(T));
-        
         World.GetPool<T>().Del(ent);
-
+        
+        var engineCompId = EngineCompIdHelper.GetFromCompType(typeof(T));
         if (engineCompId != null)
         {
             SyLog.Debug(ELogTag.Ecs, $"remove {engineCompId} comp from g{ent}");
             SyProxyEcs.GeRemoveEngineComp(_gameEntToEngineEnt[ent], engineCompId.Value);
-            DecreaseEngineCompsCount(ent);
         }
     }
 
@@ -160,24 +168,26 @@ public class SyEcs
         return World.GetPool<T>().Has(ent);
     }
     
-    public ref T GetCompFast<T>(int ent) where T : struct, IComp
+    public ref T GetComp<T>(int ent) where T : struct, IInternalComp
     {
         return ref World.GetPool<T>().Get(ent);
     }
 
-    public ref T GetComp<T>(int ent) where T : struct, IComp
+    public ref T GetOrAddComp<T>(int ent) where T : struct, IComp
     {
         if (HasComp<T>(ent))
-            return ref GetCompFast<T>(ent);
+            return ref GetComp<T>(ent);
         return ref AddComp<T>(ent);
     }
     
     
     internal void AddCompRaw(Type compType, int ent)
     {
-        if (compType == typeof(TransformComp))
-            AddComp<TransformComp>(ent);
-        else if (compType == typeof(MeshComp))
+        if (compType == typeof(SceneObjectComp) || 
+            compType == typeof(TransformComp))
+            throw new Exception($"cannot add {compType.Name}");
+        
+        if (compType == typeof(MeshComp))
             AddComp<MeshComp>(ent);
         else if (compType == typeof(LightComp))
             AddComp<LightComp>(ent);
@@ -191,9 +201,11 @@ public class SyEcs
 
     internal void RemoveCompRaw(Type compType, int ent)
     {
-        if (compType == typeof(TransformComp))
-            RemoveComp<TransformComp>(ent);
-        else if (compType == typeof(MeshComp))
+        if (compType == typeof(SceneObjectComp) || 
+            compType == typeof(TransformComp))
+            throw new Exception($"cannot remove {compType.Name}");
+        
+        if (compType == typeof(MeshComp))
             RemoveComp<MeshComp>(ent);
         else if (compType == typeof(LightComp))
             RemoveComp<LightComp>(ent);
@@ -203,16 +215,6 @@ public class SyEcs
             RemoveComp<RigidComp>(ent);
         else
             World.GetPoolByType(compType).Del(ent);
-    }
-
-    internal void CreateCompByEngineIfNone<T>(int gameEnt) where T: struct, IComp
-    {
-        var pool = World.GetPool<T>();
-        if (!pool.Has(gameEnt))
-        {
-            pool.Add(gameEnt);
-            IncreaseEngineCompsCount(gameEnt);
-        }
     }
 
     //-----------------------------------------------------------
@@ -255,20 +257,22 @@ public class SyEcs
     internal bool ToGameEnt(uint engineEnt, out int gameEnt)
         => _engineEntToGameEnt.TryGetValue(engineEnt, out gameEnt);
 
-    private uint GetOrCreateEntitiesPairByGameEnt(int gameEnt)
+    private void CreateEntitiesPairByGameEnt(int gameEnt)
     {
-        if (_gameEntToEngineEnt.TryGetValue(gameEnt, out uint engineEnt))
-            return engineEnt;
-
+        ref var sceneObject = ref _sceneObjectsPool.Add(gameEnt);
+        sceneObject.Name     = "New Entity";
+        sceneObject.IsActive = true;
+        
+        ref var tf = ref _transformsPool.Add(gameEnt);
+        tf.Scale      = SyVector3.One;
+        tf.LocalScale = SyVector3.One;
+        
         SyLog.Debug(ELogTag.Ecs, "create engine entity");
-        engineEnt = SyProxyEcs.GeCreateEngineEntity();
+        uint engineEnt = SyProxyEcs.GeCreateEngineEntity();
 
-        _gameEntToEngineEnt[gameEnt]        = engineEnt;
-        _engineEntToGameEnt[engineEnt]      = gameEnt;
-        _gameEntToEngineCompsCount[gameEnt] = 0;
+        _gameEntToEngineEnt[gameEnt]   = engineEnt;
+        _engineEntToGameEnt[engineEnt] = gameEnt;
         SyLog.Debug(ELogTag.Ecs, $"entities paired g{gameEnt} : e{engineEnt}");
-
-        return engineEnt;
     }
     
     internal int GetOrCreateEntitiesPairByEngineEnt(uint engineEnt)
@@ -277,44 +281,28 @@ public class SyEcs
             return gameEnt;
 
         gameEnt = World.NewEntity();
+        ref var sceneObject = ref _sceneObjectsPool.Add(gameEnt);
+        sceneObject.Name     = "New Entity";
+        sceneObject.IsActive = true;
+        
+        ref var tf = ref _transformsPool.Add(gameEnt);
+        tf.Scale      = SyVector3.One;
+        tf.LocalScale = SyVector3.One;
 
-        _gameEntToEngineEnt[gameEnt]        = engineEnt;
-        _engineEntToGameEnt[engineEnt]      = gameEnt;
-        _gameEntToEngineCompsCount[gameEnt] = 0;
+        _gameEntToEngineEnt[gameEnt]   = engineEnt;
+        _engineEntToGameEnt[engineEnt] = gameEnt;
         SyLog.Debug(ELogTag.Ecs, $"entities paired g{gameEnt} : e{engineEnt}");
         
         return gameEnt;
     }
     
-
-    private void DestroyEntitiesPairIfExists(int gameEnt)
-    {
-        if (!_gameEntToEngineEnt.TryGetValue(gameEnt, out uint engineEnt))
-            return;
-
-        SyLog.Debug(ELogTag.Ecs, $"destroy entity e{engineEnt}");
-        SyProxyEcs.GeDestroyEngineEntity(engineEnt);
-
-        _gameEntToEngineEnt.Remove(gameEnt);
-        _engineEntToGameEnt.Remove(engineEnt);
-        _gameEntToEngineCompsCount.Remove(gameEnt);
-    }
-    
-    private void IncreaseEngineCompsCount(int gameEnt)
-    {
-        _gameEntToEngineCompsCount[gameEnt] += 1;
-    }
-
-    private void DecreaseEngineCompsCount(int gameEnt)
-    {
-        _gameEntToEngineCompsCount[gameEnt] -= 1;
-        if (_gameEntToEngineCompsCount[gameEnt] == 0)
-            DestroyEntitiesPairIfExists(gameEnt);
-    }
-    
     //-----------------------------------------------------------
     //-----------------------------------------------------------
-    public interface IComp { }
+    public interface IInternalComp { }
+    public interface IComp : IInternalComp
+    {
+    }
+    
     public interface ISingletonComp { }
     public interface ISingletonGameComp : ISingletonComp { }
 }

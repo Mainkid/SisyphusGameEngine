@@ -10,6 +10,10 @@ struct GameObjectComp
 	std::string Tag = "None";
 
 
+
+	size_t MonoHash = 0; // read/write only by mono sync system
+
+
 	SER_COMP(GameObjectComp,
 		Name,
 		Tag)

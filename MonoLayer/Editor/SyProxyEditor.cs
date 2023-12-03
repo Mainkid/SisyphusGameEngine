@@ -175,7 +175,7 @@ public class SyProxyEditor
 	internal static extern void GeIndent(bool isIncrease);
     
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern int GeDrawCompHeader(string name);
+	internal static extern int GeDrawCompHeader(string name, bool isRemovable);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern void GeDrawText(string name);

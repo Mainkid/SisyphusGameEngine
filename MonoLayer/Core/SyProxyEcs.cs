@@ -64,12 +64,13 @@ internal class SyProxyEcs
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	public static extern void GeUpdateEntityName(uint engineEnt, string name);
+	public static extern void GeUpdateSceneObjectComp(uint engineEnt, ProxySceneObjectComp proxy);
 
-	private void EgUpdateEntityName(uint engineEnt, string name)
+	private void EgUpdateSceneObjectComp(uint engineEnt, ProxySceneObjectComp proxy)
 	{
 		try
 		{
+			Sync.ReceiveSceneObjectFromEngine(engineEnt, proxy);
 		}
 		catch (Exception e)
 		{

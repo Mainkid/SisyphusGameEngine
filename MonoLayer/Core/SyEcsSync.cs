@@ -12,14 +12,14 @@ internal class SyEcsSync
 {
     private readonly SyEcs _ecs;
 
-    private readonly EcsPool<NameComp>      _namesPool;
-    private readonly EcsPool<TransformComp> _transformsPool;
-    private readonly EcsPool<MeshComp>      _meshesPool;
-    private readonly EcsPool<LightComp>     _lightsPool;
-    private readonly EcsPool<ColliderComp>  _collidersPool;
-    private readonly EcsPool<RigidComp>     _rigidsPool;
+    private readonly EcsPool<SceneObjectComp> _sceneObjectsPool;
+    private readonly EcsPool<TransformComp>   _transformsPool;
+    private readonly EcsPool<MeshComp>        _meshesPool;
+    private readonly EcsPool<LightComp>       _lightsPool;
+    private readonly EcsPool<ColliderComp>    _collidersPool;
+    private readonly EcsPool<RigidComp>       _rigidsPool;
 
-    private readonly EcsFilter _namesFilter;
+    private readonly EcsFilter _sceneObjectsFilter;
     private readonly EcsFilter _transformsFilter;
     private readonly EcsFilter _meshesFilter;
     private readonly EcsFilter _lightsFilter;
@@ -30,14 +30,14 @@ internal class SyEcsSync
     {
         _ecs = ecs;
 
-        _namesPool      = ecs.World.GetPool<NameComp>();
+        _sceneObjectsPool      = ecs.World.GetPool<SceneObjectComp>();
         _transformsPool = ecs.World.GetPool<TransformComp>();
         _meshesPool     = ecs.World.GetPool<MeshComp>();
         _lightsPool     = ecs.World.GetPool<LightComp>();
         _collidersPool  = ecs.World.GetPool<ColliderComp>();
         _rigidsPool     = ecs.World.GetPool<RigidComp>();
 
-        _namesFilter      = ecs.World.Filter<NameComp>().End();
+        _sceneObjectsFilter      = ecs.World.Filter<SceneObjectComp>().End();
         _transformsFilter = ecs.World.Filter<TransformComp>().End();
         _meshesFilter     = ecs.World.Filter<MeshComp>().End();
         _lightsFilter     = ecs.World.Filter<LightComp>().End();
@@ -49,6 +49,7 @@ internal class SyEcsSync
     //-----------------------------------------------------------
     public void SyncEngineWithGame()
     {
+        SendSceneObjectsToEngine();
         //Console.WriteLine("[TEST] send transforms");
         SendTransformsToEngine();
         //Console.WriteLine("[TEST] send meshes");
@@ -63,32 +64,40 @@ internal class SyEcsSync
 
     //-----------------------------------------------------------
     //-----------------------------------------------------------
-    private void SendEntitiesNamesToEngine()
+    private void SendSceneObjectsToEngine()
     {
-        foreach (int ent in _namesFilter)
+        foreach (int ent in _sceneObjectsFilter)
         {
-            ref var nameComp = ref _namesPool.Get(ent);
+            ref var sceneObject = ref _sceneObjectsPool.Get(ent);
 
-            if (nameComp.Name == nameComp.PrevName)
+            int hash = sceneObject.GetHashCode();
+            if (hash == sceneObject.Hash)
                 continue;
-            nameComp.PrevName = nameComp.Name;
+            sceneObject.Hash = hash;
 
-            if (_ecs.ToEngineEnt(ent, out uint engineEnt))
-                SyProxyEcs.GeUpdateEntityName(engineEnt, nameComp.Name);
+            var proxy = new ProxySceneObjectComp
+            {
+                Name     = sceneObject.Name,
+                IsActive = sceneObject.IsActive
+            };
+            SyProxyEcs.GeUpdateSceneObjectComp(_ecs.ToEngineEnt(ent), proxy);
+            
+            Console.WriteLine($"[TEST] g{ent} scene object sent to engine");
         }
     }
 
-    public void ReceiveEntityNameFromEngine(uint engineEnt, string name)
+    public void ReceiveSceneObjectFromEngine(uint engineEnt, ProxySceneObjectComp proxy)
     {
-        if (!_ecs.ToGameEnt(engineEnt, out int gameEnt))
-            return;
+        int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
+        // sceneObject is added automatically on entities pair create
 
-        if (!_namesPool.Has(gameEnt))
-            _namesPool.Add(gameEnt);
+        ref var comp = ref _sceneObjectsPool.Get(gameEnt);
+        comp.Name     = proxy.Name;
+        comp.IsActive = proxy.IsActive;
 
-        ref var comp = ref _namesPool.Get(gameEnt);
-        comp.Name     = name;
-        comp.PrevName = name;
+        comp.Hash = comp.GetHashCode();
+        
+        Console.WriteLine($"[TEST] g{gameEnt} scene object received from engine");
     }
     
     //-----------------------------------------------------------
@@ -128,7 +137,7 @@ internal class SyEcsSync
     public void ReceiveTransformFromEngine(uint engineEnt, ProxyTransformComp proxy)
     {
         int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
-        _ecs.CreateCompByEngineIfNone<TransformComp>(gameEnt);
+        // transform is added automatically on entities pair create
         
         ref var tf = ref _transformsPool.Get(gameEnt);
         tf.Position      = proxy.Position;
@@ -183,7 +192,8 @@ internal class SyEcsSync
     public void ReceiveMeshFromEngine(uint engineEnt, ProxyMeshComp proxy)
     {
         int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
-        _ecs.CreateCompByEngineIfNone<MeshComp>(gameEnt);
+        if (!_meshesPool.Has(gameEnt))
+            _meshesPool.Add(gameEnt);
         
         ref var mesh = ref _meshesPool.Get(gameEnt);
 
@@ -233,7 +243,8 @@ internal class SyEcsSync
     public void ReceiveLightFromEngine(uint engineEnt, ProxyLightComp proxy)
     {
         int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
-        _ecs.CreateCompByEngineIfNone<LightComp>(gameEnt);
+        if (!_lightsPool.Has(gameEnt))
+            _lightsPool.Add(gameEnt);
 
         ref var light = ref _lightsPool.Get(gameEnt);
         light.Type              = proxy.Type;
@@ -276,7 +287,8 @@ internal class SyEcsSync
     public void ReceiveColliderFromEngine(uint engineEnt, ProxyColliderComp proxy)
     {
         int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
-        _ecs.CreateCompByEngineIfNone<ColliderComp>(gameEnt);
+        if (!_collidersPool.Has(gameEnt))
+            _collidersPool.Add(gameEnt);
 
         ref var collider = ref _collidersPool.Get(gameEnt);
         collider.Type       = proxy.Type;
@@ -322,7 +334,8 @@ internal class SyEcsSync
     public void ReceiveRigidFromEngine(uint engineEnt, ProxyRigidComp proxy)
     {
         int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
-        _ecs.CreateCompByEngineIfNone<RigidComp>(gameEnt);
+        if (!_rigidsPool.Has(gameEnt))
+            _rigidsPool.Add(gameEnt);
 
         ref var rigid = ref _rigidsPool.Get(gameEnt);
 

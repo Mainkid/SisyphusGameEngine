@@ -153,7 +153,6 @@
     <ClCompile Include="Engine\Features\Physics\Components\ColliderComponent.cpp" />
     <ClCompile Include="Engine\Features\Physics\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorGridRenderSystem.cpp" />
-    <ClCompile Include="Engine\Mono\Components\MonoSyncComp.h" />
     <ClCompile Include="Engine\Mono\Helpers\SyMonoHashHelper.cpp" />
     <ClCompile Include="Engine\Mono\Helpers\SyMonoHashHelper.h" />
     <ClCompile Include="Engine\Mono\SyMono.cpp" />

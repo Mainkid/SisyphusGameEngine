@@ -6,7 +6,6 @@
 
 #include "../SyMono.h"
 #include "../../Features/Mesh/Components/MeshComponent.h"
-#include "../Components/MonoSyncComp.h"
 #include "../../Components/TransformComponent.h"
 #include "../Helpers/SyMonoHashHelper.h"
 
@@ -24,6 +23,7 @@ SyResult MonoSyncEgSystem::Run()
 	if (!_monoEcs->IsValid())
 		return {};
 
+	SendSceneObjects();
 	SendTransforms();
 	SendMeshes();
 	SendLights();
@@ -36,6 +36,28 @@ SyResult MonoSyncEgSystem::Run()
 SyResult MonoSyncEgSystem::Destroy()
 {
 	return {};
+}
+
+void MonoSyncEgSystem::SendSceneObjects()
+{
+	MonoDomain* monoDomain = mono_object_get_domain(_monoEcs->GetInstance());
+
+	mono::ProxySceneObjectComp proxy;
+
+	auto view = _ecs->view<GameObjectComp>();
+	for (auto ent : view)
+	{
+		auto& go = view.get<GameObjectComp>(ent);
+		size_t hash = mono::SyMonoHashHelper::Hash(go);
+		if (hash == go.MonoHash)
+			continue;
+		go.MonoHash = hash;
+
+		proxy.Name = mono_string_new(monoDomain, go.Name.c_str());
+		proxy.IsActive = true;
+
+		_monoEcs->EgUpdateSceneObjectComp.Invoke(static_cast<uint32_t>(ent), proxy);
+	}
 }
 
 void MonoSyncEgSystem::SendTransforms()

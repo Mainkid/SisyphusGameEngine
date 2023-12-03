@@ -26,6 +26,12 @@ void SyMonoEcs::GeRemoveComp(uint32_t rawEnt, EProxyCompId id)
 		_instance->_cbReceiver->OnRemoveComp(rawEnt, id);
 }
 
+void SyMonoEcs::GeUpdateSceneObjectComp(uint32_t rawEnt, ProxySceneObjectComp proxy)
+{
+	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
+		_instance->_cbReceiver->OnUpdateSceneObjectComp(rawEnt, proxy);
+}
+
 
 void SyMonoEcs::GeUpdateTransformComp(uint32_t rawEnt, ProxyTransformComp proxy)
 {
@@ -73,6 +79,7 @@ SyResult SyMonoEcs::OnAfterCreate()
 
 	SY_RESULT_CHECK(EgSyncEngineWithGame.Bind(this));
 	SY_RESULT_CHECK(EgDestroyEntity.Bind(this));
+	SY_RESULT_CHECK(EgUpdateSceneObjectComp.Bind(this));
 	SY_RESULT_CHECK(EgUpdateTransformComp.Bind(this));
 	SY_RESULT_CHECK(EgUpdateMeshComp.Bind(this));
 	SY_RESULT_CHECK(EgUpdateLightComp.Bind(this));
@@ -85,6 +92,7 @@ SyResult SyMonoEcs::OnAfterCreate()
 	BindCallback(GE_ADD_COMP, &GeAddComp);
 	BindCallback(GE_REMOVE_COMP, &GeRemoveComp);
 
+	BindCallback(GE_UPDATE_SCENE_OBJECT_COMP, &GeUpdateSceneObjectComp);
 	BindCallback(GE_UPDATE_TRANSFORM_COMP, &GeUpdateTransformComp);
 	BindCallback(GE_UPDATE_MESH_COMP, &GeUpdateMeshComp);
 	BindCallback(GE_UPDATE_LIGHT_COMP, &GeUpdateLightComp);
@@ -100,6 +108,7 @@ SyResult SyMonoEcs::OnBeforeDestroy()
 
 	EgSyncEngineWithGame.UnBind();
 	EgDestroyEntity.UnBind();
+	EgUpdateSceneObjectComp.UnBind();
 	EgUpdateTransformComp.UnBind();
 	EgUpdateMeshComp.UnBind();
 	EgUpdateLightComp.UnBind();

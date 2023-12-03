@@ -2,7 +2,6 @@
 
 #include "../SyMono.h"
 #include "../../Components/EditorBillboardComponent.h"
-#include "../Components/MonoSyncComp.h"
 #include "../../Features/Mesh/Components/MeshComponent.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Core/ServiceLocator.h"
@@ -66,7 +65,7 @@ uint32_t MonoSyncGeSystem::OnCreateEntity()
 {
 	auto ent = _ecs->create();
 	_ecs->emplace<GameObjectComp>(ent).Name = "C# entity";
-	_ecs->emplace<MonoSyncComp>(ent);
+	_ecs->emplace<TransformComponent>(ent);
 
 	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "engine entity e%d created", static_cast<int>(ent));
 	std::cout << "[mono] engine entity " << static_cast<uint32_t>(ent) << " created" << std::endl;
@@ -112,11 +111,9 @@ void MonoSyncGeSystem::OnAddComp(uint32_t rawEnt, mono::EProxyCompId id)
 	std::cout << "[mono] ent e" << rawEnt << " add comp " << mono::ProxyCompIdExt::ToStr(id) << std::endl;
 
 	auto ent = static_cast<entt::entity>(rawEnt);
-	if (id == mono::EProxyCompId::Transform)
-	{
-		_ecs->emplace<TransformComponent>(ent);
-	}
-	else if (id == mono::EProxyCompId::Mesh)
+
+	// SceneObject and Transform are impossible to add manually.
+	if (id == mono::EProxyCompId::Mesh)
 	{
 		auto resService = ServiceLocator::instance()->Get<ResourceService>();
 		auto uuid = resService->GetUUIDFromPath(cubeMeshPath);
@@ -154,12 +151,9 @@ void MonoSyncGeSystem::OnRemoveComp(uint32_t rawEnt, mono::EProxyCompId id)
 	//std::cout << "[TEST] ent e" << rawEnt << " remove comp " << mono::ProxyCompIdExt::ToStr(id) << std::endl;
 
 	auto ent = static_cast<entt::entity>(rawEnt);
-	if (id == mono::EProxyCompId::Transform)
-	{
-		GameObjectHelper::SetParent(_ecs, ent, entt::null);
-		_ecs->remove<TransformComponent>(ent);
-	}
-	else if (id == mono::EProxyCompId::Mesh)
+
+	// SceneObject and Transform are impossible to remove manually.
+	if (id == mono::EProxyCompId::Mesh)
 	{
 		_ecs->remove<MeshComponent>(ent);
 	}
@@ -179,6 +173,22 @@ void MonoSyncGeSystem::OnRemoveComp(uint32_t rawEnt, mono::EProxyCompId id)
 	{
 		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "not implemented");
 	}
+}
+
+void MonoSyncGeSystem::OnUpdateSceneObjectComp(uint32_t rawEnt, const mono::ProxySceneObjectComp& proxy)
+{
+	auto ent = static_cast<entt::entity>(rawEnt);
+	auto go = _ecs->try_get<GameObjectComp>(ent);
+	if (go == nullptr)
+	{
+		std::cout << "[mono] e" << rawEnt << "does not have game object comp" << std::endl;
+		return;
+	}
+
+	mono::SyMonoStr name {proxy.Name};
+	go->Name = name.ToStr();
+
+	go->MonoHash = mono::SyMonoHashHelper::Hash(*go);
 }
 
 void MonoSyncGeSystem::OnUpdateTransformComp(uint32_t rawEnt, const mono::ProxyTransformComp& proxy)

@@ -1,5 +1,6 @@
 ﻿using Leopotam.EcsLite;
 using SyEngine.Core;
+using SyEngine.Core.Comps;
 
 namespace SyEngine.Editor.Drawers
 {
@@ -12,6 +13,7 @@ public class EditorDrawerComp<T> : EditorDrawerBase<T>, IEditorDrawerComp where 
 {
 	private readonly SyEcs      _ecs;
 	private readonly EcsPool<T> _pool;
+	private readonly bool       _isRemovable;
 
 	private EditorDrawerReflect<T> _fallbackDrawer;
 
@@ -19,11 +21,13 @@ public class EditorDrawerComp<T> : EditorDrawerBase<T>, IEditorDrawerComp where 
 	{
 		_ecs  = ecs;
 		_pool = ecs.World.GetPool<T>();
+		_isRemovable = typeof(T) != typeof(SceneObjectComp) &&
+		               typeof(T) != typeof(TransformComp);
 	}
 
 	public void DrawComp(int ent)
-	{
-		int action = SyProxyEditor.GeDrawCompHeader(typeof(T).Name);
+	{	
+		int action = SyProxyEditor.GeDrawCompHeader(typeof(T).Name, _isRemovable);
 		if (action == 0)
 		{
 			_ecs.RemoveCompRaw(typeof(T), ent);

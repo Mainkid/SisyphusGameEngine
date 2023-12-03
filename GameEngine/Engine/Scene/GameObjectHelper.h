@@ -146,7 +146,7 @@ template <typename T_Event, typename ... Args>
 SyResult GameObjectHelper::CallEvent(entt::registry* ecs, const std::string& name, Args... eventArgs)
 {
 	entt::entity ent = ecs->create();
-	ecs->emplace<GameObjectComp>(ent, name);
+	//ecs->emplace<GameObjectComp>(ent, name);
 	auto c = ecs->emplace<T_Event>(ent, eventArgs...);
 	ecs->emplace<SyEventTag>(ent);
 	return SyResult();

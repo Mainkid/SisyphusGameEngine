@@ -2,6 +2,7 @@
 
 #include <boost/container_hash/hash.hpp>
 
+#include "../../Components/GameObjectComp.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Features/Lighting/Components/LightComponent.h"
 #include "../../Features/Mesh/Components/MeshComponent.h"
@@ -9,6 +10,13 @@
 #include "../../Features/Physics/Components/RBodyComponent.h"
 
 using namespace mono;
+
+size_t SyMonoHashHelper::Hash(const GameObjectComp& go)
+{
+	size_t hash = 0;
+	boost::hash_combine(hash, go.Name);
+	return hash;
+}
 
 size_t SyMonoHashHelper::Hash(const TransformComponent& tf)
 {

@@ -16,6 +16,7 @@ public:
 private:
 	mono::SyMonoEcs* _monoEcs = nullptr;
 
+	void SendSceneObjects();
 	void SendTransforms();
 	void SendMeshes();
 	void SendLights();

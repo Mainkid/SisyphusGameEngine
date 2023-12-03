@@ -3,7 +3,6 @@
 #include "../SyMono.h"
 #include "../../Events/SyHotReloadEvent.h"
 #include "../../Events/SyPlayModeEndedEvent.h"
-#include "../Components/MonoSyncComp.h"
 
 SyResult MonoHotReloadSystem::Init()
 {

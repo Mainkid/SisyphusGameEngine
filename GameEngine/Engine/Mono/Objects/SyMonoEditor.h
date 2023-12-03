@@ -31,7 +31,7 @@ namespace mono
 
 	private:
 		static void GeIndent(bool isIncrease);
-		static int GeDrawCompHeader(MonoString* rawName);
+		static int GeDrawCompHeader(MonoString* rawName, bool isRemovable);
 		static void GeDrawText(MonoString* rawName);
 		static int GeDrawIntField(MonoString* rawName, int val);
 		static float GeDrawFloatField(MonoString* rawName, float val);

@@ -41,13 +41,14 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Core\Comps\ColliderComp.cs" />
-        <Compile Include="Core\Comps\NameComp.cs" />
+        <Compile Include="Core\Comps\SceneObjectComp.cs" />
         <Compile Include="Core\EEngineCompId.cs" />
         <Compile Include="Core\Helpers\CollectionsExt.cs" />
         <Compile Include="Core\Helpers\TypesExt.cs" />
         <Compile Include="Core\ProxyComps\ProxyColliderComp.cs" />
         <Compile Include="Core\ProxyComps\ProxyLightComp.cs" />
         <Compile Include="Core\ProxyComps\ProxyRigidComp.cs" />
+        <Compile Include="Core\ProxyComps\ProxySceneObjectComp.cs" />
         <Compile Include="Core\Resources\EResourceType.cs" />
         <Compile Include="Core\Resources\ResHelper.cs" />
         <Compile Include="Core\Resources\SyResManager.cs" />

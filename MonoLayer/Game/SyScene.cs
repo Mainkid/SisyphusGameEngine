@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Leopotam.EcsLite;
 using SyEngine.Core;
+using SyEngine.Core.Comps;
 using SyEngine.Logger;
 using SyEngine.Serialization;
 
@@ -24,22 +25,21 @@ public class SyScene
 		var pools      = new IEcsPool[poolsCount];
 		_ecs.World.GetAllPools(ref pools);
 
-		int entitiesCount = _ecs.World.GetEntitiesCount();
-		var entities      = new int[entitiesCount];
-		_ecs.World.GetAllEntities(ref entities);
+		var sceneObjectsFilter = _ecs.World.Filter<SceneObjectComp>().End();
 
 		var sceneDto = new SceneDto
 		{
 			Entities = new List<EntityDto>()
 		};
 		
-		foreach (int ent in entities)
+		foreach (int ent in sceneObjectsFilter)
 		{
 			var entDto = new EntityDto
 			{
 				Entity = ent,
 				Comps  = new List<CompDto>()
 			};
+			
 			foreach (var pool in pools)
 				if (pool.Has(ent))
 				{
@@ -88,7 +88,7 @@ public class SyScene
 				continue;
 			}
 			
-			int ent = _ecs.CreateEntity();
+			int ent = _ecs.CreateEntity(true);
 			foreach (var compDto in entDto.Comps)
 			{
 				var type = Type.GetType(compDto.TypeFullName);
@@ -102,7 +102,11 @@ public class SyScene
 					SyLog.Err(ELogTag.Scene, $"failed to load comp {compDto.TypeFullName}; body is null");
 					continue;
 				}
-				_ecs.AddCompRaw(type, ent);
+				
+				if (type != typeof(SceneObjectComp) &&
+				    type != typeof(TransformComp))
+					_ecs.AddCompRaw(type, ent);
+				
 				_ecs.World.GetPoolByType(type).SetRaw(ent, compDto.Comp);
 			}
 		}
@@ -115,7 +119,7 @@ public class SyScene
 	{
 		public List<EntityDto> Entities;
 	}
-	
+
 	private class EntityDto
 	{
 		public int           Entity;
