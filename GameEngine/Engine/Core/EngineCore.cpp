@@ -111,16 +111,17 @@ void EngineCore::StartUpSystems()
 	_systems.Add<LightSystem>();
 	_systems.Add<ParticlesSystem>();
 	_systems.Add<EditorBillboardSystem>();
-
 	_systems.Add<PreRenderSystem>();
 	_systems.Add<ShadowRenderSystem>();
-	_systems.Add<SkyboxRenderSystem>();
 	_systems.Add<ImageBasedLightingSystem>();
 	_systems.Add<OpaqueRenderSystem>();
 	_systems.Add<HbaoRenderSystem>();
 	_systems.Add<ShadowMapGenerationSystem>();
 	_systems.Add<LightRenderSystem>();
+	_systems.Add<SkyboxRenderSystem>();
 	_systems.Add<ParticleRenderSystem>();
+	
+
 	_systems.Add<EditorBillboardRenderSystem>();
 	_systems.Add<ToneMappingRenderSystem>();
 	_systems.Add<EditorColliderRenderSystem>();

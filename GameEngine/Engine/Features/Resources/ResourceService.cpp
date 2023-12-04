@@ -426,6 +426,14 @@ void ResourceService::SaveSceneToFile(std::filesystem::path filePath, entt::regi
 	file.close();
 }
 
+void ResourceService::SaveStringToFile(std::filesystem::path filePath, std::string data)
+{
+	std::ofstream file;
+	file.open(filePath);
+	file << data;
+	file.close();
+}
+
 void ResourceService::GenerateMetaFiles(std::filesystem::path currentDirectory)
 {
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Generating metafiles in %s folder",currentDirectory.string().c_str());
