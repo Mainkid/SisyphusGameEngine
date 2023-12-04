@@ -20,6 +20,7 @@ SyResult EditorGridRenderSystem::Init()
 
 SyResult EditorGridRenderSystem::Run()
 {
+	OPTICK_EVENT();
 	CB_GridEditorBuffer dataOpaque;
 
 	_hc->context->OMSetBlendState(_rc->GridBlendState.Get(), nullptr, 0xffffffff);

@@ -29,7 +29,7 @@ SyResult HudContentBrowserSystem::Destroy()
 
 SyResult HudContentBrowserSystem::Run()
 {
-    
+    OPTICK_EVENT();
     static std::filesystem::path previousFrameDirectory = "";
     static bool initialized = false;
     if (!initialized)

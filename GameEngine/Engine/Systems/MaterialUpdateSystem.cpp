@@ -17,7 +17,7 @@ SyResult MaterialUpdateSystem::Init()
 
 SyResult MaterialUpdateSystem::Run()
 {
-
+	OPTICK_EVENT();
 	return SyResult();
 }
 

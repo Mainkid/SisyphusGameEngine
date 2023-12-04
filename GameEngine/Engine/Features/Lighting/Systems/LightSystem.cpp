@@ -17,6 +17,7 @@ SyResult LightSystem::Init()
 
 SyResult LightSystem::Run()
 {
+    OPTICK_EVENT();
     auto viewCamera = _ecs->view<TransformComponent, CameraComponent>();
     auto [cameraTf, camera] = viewCamera.get(viewCamera.front());
 

@@ -20,6 +20,7 @@ SyResult ShadowMapGenerationSystem::Init()
 
 SyResult ShadowMapGenerationSystem::Run()
 {
+    OPTICK_EVENT();
     CB_LightBuffer lightBuffer;
 
 

@@ -25,6 +25,7 @@ SyResult ParticleRenderSystem::Init()
 
 SyResult ParticleRenderSystem::Run()
 {
+    OPTICK_EVENT();
     _hc->context->OMSetDepthStencilState(_rc->OffStencilState.Get(), 0);
     auto view = _ecs->view<TransformComponent, ParticleComponent>();
 

@@ -11,6 +11,7 @@
 #include "../Scene/CameraHelper.h"
 #include "../Scene/GameObjectHelper.h"
 
+
 SyResult EditorCameraSystem::Init()
 {
 	_ec = ServiceLocator::instance()->Get<EngineContext>();
@@ -26,6 +27,7 @@ SyResult EditorCameraSystem::Init()
 
 SyResult EditorCameraSystem::Run()
 {
+	OPTICK_EVENT();
 	auto [cameraComp, cameraTc] = CameraHelper::Find(_ecs);
 	auto eventView = _ecs->view<SyEditorCameraMoveToTarget>();
 	for (auto& entEvent : eventView)

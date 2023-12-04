@@ -37,6 +37,7 @@ SyResult HudPreRenderSystem::Init()
 
 SyResult HudPreRenderSystem::Run()
 {
+    OPTICK_EVENT();
     hc->context->OMSetRenderTargets(1, hc->rtv.GetAddressOf(), nullptr);
     bool show = true;
     ImGuiIO& io = ImGui::GetIO(); (void)io;

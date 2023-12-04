@@ -20,6 +20,7 @@ SyResult OpaqueRenderSystem::Init()
 
 SyResult OpaqueRenderSystem::Run()
 {
+    OPTICK_EVENT();
     _hc->context->RSSetState(_rc->CullBackRasterizerState.Get());
 
     auto view =_ecs->view<TransformComponent, MeshComponent>();

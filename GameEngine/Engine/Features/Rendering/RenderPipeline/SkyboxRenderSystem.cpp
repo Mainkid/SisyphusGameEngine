@@ -19,6 +19,7 @@ SyResult SkyboxRenderSystem::Init()
 
 SyResult SkyboxRenderSystem::Run()
 {
+    OPTICK_EVENT();
     entt::entity skyboxEnt = _ecs->view<SkyboxComponent>().front();
     SkyboxComponent& skybox = _ecs->get<SkyboxComponent>(skyboxEnt);
 

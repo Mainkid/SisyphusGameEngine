@@ -3,6 +3,7 @@
 #include "../Tools/ErrorLogger.h"
 #include "../../Components/GameObjectComp.h"
 #include "../../Features/Events/Tags/SyEventTag.h"
+#include "optick.h"
 #define SY_GET_THIS_FRAME_EVENT_VIEW(eventType_) _ecs->view<eventType_, SyThisFrameEventTag>()
 
 class SystemBase

@@ -25,6 +25,7 @@ SyResult HbaoRenderSystem::Init()
 
 SyResult HbaoRenderSystem::Run()
 {
+	OPTICK_EVENT();
 	auto [camera, cameraTf] = CameraHelper::Find(_ecs);
 
 	_rc->Input.DepthData.DepthTextureType = GFSDK_SSAO_HARDWARE_DEPTHS;

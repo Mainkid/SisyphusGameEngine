@@ -16,6 +16,7 @@ SyResult MeshSystem::Init()
 
 SyResult MeshSystem::Run()
 {
+	OPTICK_EVENT();
 	auto view = _ecs->view<MeshComponent>();
 	for (auto& entity : view)
 	{

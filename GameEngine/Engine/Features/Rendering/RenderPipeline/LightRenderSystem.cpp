@@ -21,7 +21,7 @@ SyResult LightRenderSystem::Init()
 
 SyResult LightRenderSystem::Run()
 {
-
+    OPTICK_EVENT();
     CB_LightBuffer lightBuffer;
 
     

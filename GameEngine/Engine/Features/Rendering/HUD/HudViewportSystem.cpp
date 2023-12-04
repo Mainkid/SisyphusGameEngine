@@ -16,6 +16,7 @@
 #include "../../../Components/ImageBasedLightingComponent.h"
 #include "../../../Scene/Prefab.h"
 #include "../../../Scene/Scene.h"
+#include "optick.h"
 
 SyResult HudViewportSystem::Init()
 {
@@ -31,6 +32,8 @@ SyResult HudViewportSystem::Init()
 
 SyResult HudViewportSystem::Run()
 {
+	OPTICK_EVENT();
+
 	ImGui::Begin(windowID.c_str());
 	DrawMainMenuBar();
 
