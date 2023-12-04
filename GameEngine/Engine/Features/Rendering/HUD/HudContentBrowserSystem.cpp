@@ -38,7 +38,10 @@ SyResult HudContentBrowserSystem::Run()
         return SyResult();
     }
     
-    
+    //if (ImGui::IsKeyPressed(ImGuiKey_T))
+    //{
+    //    rs->SaveStringToFile("./Game/Assets/hello.scene", "YOPTA");
+    //}
 
 
     ImGui::Begin("Content Browser");
