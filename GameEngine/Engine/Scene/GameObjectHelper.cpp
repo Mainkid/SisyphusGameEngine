@@ -246,8 +246,7 @@ entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 
 entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs, boost::uuids::uuid uuid)
 {
-	auto ent = ecs->create();
-	ecs->emplace<GameObjectComp>(ent);
+	auto ent = GameObjectHelper::Create(ecs,"Skybox");
 	ecs->emplace<SkyboxComponent>(ent);
 	ecs->emplace<ImageBasedLightingComponent>(ent);
 	

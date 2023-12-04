@@ -191,7 +191,8 @@ float4 PS_Ambient(PS_IN input) : SV_Target
     float2 envBRDF = iblLookUpTexture.Sample(textureSampler, float2(max(dot(normal, -toEye), 0.0f), roughness));
     float3 specular = prefilteredColor * (kS * envBRDF.x + envBRDF.y);
 
-    resColor = (instanceID.x > 0) * ssaoParam * lightIntensity*
-    (diffuse + specular) + skyBoxColor * (instanceID.x < 0);
+    resColor = (instanceID.x > 0) * ssaoParam * lightIntensity *
+    (diffuse + specular);
+    //+ skyBoxColor * (instanceID.x < 0);
     return float4(resColor, 1.0f);
 }
