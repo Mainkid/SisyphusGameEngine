@@ -456,10 +456,29 @@ void ResourceService::GenerateMetaFiles(std::filesystem::path currentDirectory)
 
 				file.open(directoryEntry.path().string() + ".meta");
 
+				EAssetType assetType;
+
 				if (extensionToAssetTypeMap.count(extension) > 0)
+				{
 					fileData["AssetType"] = static_cast<int>(extensionToAssetTypeMap.at(extension));
+					assetType = extensionToAssetTypeMap.at(extension);
+				}
 				else
+				{
 					fileData["AssetType"] = static_cast<int>(EAssetType::ASSET_NONE);
+					assetType = EAssetType::ASSET_NONE;
+				}
+
+				switch (assetType)
+				{
+				case EAssetType::ASSET_TEXTURE:
+					fileData["TextureType"] = 0;
+					fileData["sRGB"] = false;
+					fileData["GenerateMipMaps"] = false;
+					fileData["WrapMode"] = 0;
+					fileData["FilterMode"] = 0;
+					break;
+				}
 
 				file << fileData;
 				file.close();

@@ -88,6 +88,17 @@ public:
 			{"AssetType", static_cast<int>(assetType)}
 		};
 
+		switch (assetType)
+		{
+		case EAssetType::ASSET_TEXTURE:
+			fileData["TextureType"] = 0;
+			fileData["sRGB"] = 0;
+			fileData["GenerateMipMaps"] = 0;
+			fileData["WrapMode"] = 0;
+			fileData["FilterMode"] = 0;
+			break;
+		}
+
 		file << fileData;
 		file.close();
 	}

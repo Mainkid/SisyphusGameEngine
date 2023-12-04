@@ -20,6 +20,26 @@ enum class EAssetType
 	ASSET_TYPE_AMOUNT
 };
 
+enum class EWrapMode
+{
+	WRAP_REPEAT,
+	WRAP_CLAMP,
+	WRAP_MIRROR
+};
+
+enum class EFilterMode
+{
+	FILTER_BILINEAR,
+	FILTER_ANISOTROPIC,
+	FILTER_POINT
+};
+
+enum class ETextureType
+{
+	TEXTURE_2D,
+	TEXTURE_CUBEMAP
+};
+
 struct ResourceInfo
 {
 	EAssetType assetType;
