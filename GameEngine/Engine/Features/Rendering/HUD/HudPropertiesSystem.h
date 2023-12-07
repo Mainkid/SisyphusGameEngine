@@ -51,5 +51,6 @@ private:
     bool isFocused;
     
     void DrawMaterialProperties();
+    void DrawTextureProperties();
     void UpdateHudProperties(bool);
 };

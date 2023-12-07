@@ -117,7 +117,7 @@ float4 PS_Directional(PS_IN input) : SV_Target
     float roughnessColor = MetallicTex.Sample(textureSampler, input.col.xy).a;
     float4 emissiveColor = EmissiveTex.Sample(textureSampler, input.col.xy);
     normal = normalize(normal);
-  
+    metallicColor = metallicColor.xxx;
 
     float3 lightVec = -normalize(lightData.dir.xyz).xyz;
     float3 toEye = normalize(eyePos.xyz - worldPos.xyz);
