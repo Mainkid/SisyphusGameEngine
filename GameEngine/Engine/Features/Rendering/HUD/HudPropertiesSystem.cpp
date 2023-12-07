@@ -122,6 +122,9 @@ SyResult HudPropertiesSystem::Run()
             case EAssetType::ASSET_TEXTURE:
                 DrawTextureProperties();
                 break;
+            case EAssetType::ASSET_CUBEMAP:
+                DrawTextureProperties();
+                break;
             }
 
         }
@@ -402,12 +405,25 @@ void HudPropertiesSystem::DrawTextureProperties()
         data["FilterMode"] = filterMode;
         data["WrapMode"] = wrapMode;
 
+        if (textureType == 1)
+        {
+            rs->resourceLibrary[ec->hudData.selectedContent.uuid].assetType = EAssetType::ASSET_CUBEMAP;
+            data["AssetType"] = static_cast<int>(EAssetType::ASSET_CUBEMAP);
+        }
+        else if (textureType == 0)
+        {
+            rs->resourceLibrary[ec->hudData.selectedContent.uuid].assetType = EAssetType::ASSET_TEXTURE;
+            data["AssetType"] = static_cast<int>(EAssetType::ASSET_TEXTURE);
+        }
+
         std::ofstream out_file;
         out_file.open(metafilePath);
         out_file << data;
         out_file.close();
 
-        rs->LoadResource(ec->hudData.selectedContent.uuid, true);
+        
+
+        //rs->LoadResource(ec->hudData.selectedContent.uuid, true);
     }
 }
 

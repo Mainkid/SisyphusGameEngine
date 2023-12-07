@@ -57,7 +57,7 @@ const std::unordered_map<std::string, EAssetType> extensionToAssetTypeMap =
 	{".wav",EAssetType::ASSET_SOUND},
 	{".png",EAssetType::ASSET_TEXTURE},
 	{".bmp",EAssetType::ASSET_TEXTURE},
-	{".hdr",EAssetType::ASSET_CUBEMAP},
+	{".hdr",EAssetType::ASSET_TEXTURE},
 	{".jpg",EAssetType::ASSET_TEXTURE},
 	{".ps",EAssetType::ASSET_PARTICLESYS},
 	{".scene", EAssetType::ASSET_SCENE},

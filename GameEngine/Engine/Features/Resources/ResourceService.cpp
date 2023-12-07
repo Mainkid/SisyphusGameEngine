@@ -200,8 +200,14 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 				data[i].SysMemPitch = sizeof(float) * width * 4;
 				data[i].SysMemSlicePitch = 0;
 			}
+			
 			HRESULT result = _hc->device->CreateTexture2D(&textureDesc_, data, skyboxResource->cubemapTexture.GetAddressOf());
 			
+			for (int i=0; i<6 ;i++)
+			{
+				delete cubeMapArray[i];
+			}
+
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 			srvDesc.Format = textureDesc_.Format;
 			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
