@@ -60,6 +60,20 @@ SyResult SoundSystem::Run()
        // on
        if (Scom.IsPlaying)
        {
+
+           //auto& rigidBodyC = _ecs->get<SyRBodyComponent>(entity);
+           //auto* transformC = _ecs->try_get<TransformComponent>(entity);
+           //if (transformC == nullptr)
+           //{
+           //    _ecs->emplace<TransformComponent>(entity);
+           //    CallEvent<SyOnAddComponentEvent>("AddTransform", SyEComponentTypes::TRANSFORM, entity);
+           //    SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+           //        "Transform Component required for RigidBody Component is missing on entity (%s). The Transform Component has been added in the next frame.",
+           //        SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+           //    continue;
+           //}
+
+
            if (!Scom.IsON)
            {
                 Scom.IsON = true;
@@ -80,7 +94,8 @@ SyResult SoundSystem::Run()
            if (Scom.Sound3D)
            {
                auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
-               SetChannel3dPosition(Scom.ChanelID, ñameraTransform._position);
+               TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
+               SetChannel3dPosition(Scom.ChanelID, tc._position - ñameraTransform._position);
            }
        }
        //off
@@ -90,22 +105,21 @@ SyResult SoundSystem::Run()
            UnLoadSound(name);
        }  
 
+
        // auto off
        if (Scom.IsON)
        {
            bool bIsPlaying = false;
            sgpImplementation->_mChannels.find(Scom.ChanelID)->second->isPlaying(&bIsPlaying);
+          
            if (!bIsPlaying)
            {
                Scom.IsON = false;
                Scom.IsPlaying = false;
                UnLoadSound(name);
            }
-       }
-
- 
+       } 
     }
-
     sgpImplementation->Update();
     return SyResult();
 }
