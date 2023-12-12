@@ -60,51 +60,47 @@ SyResult SoundSystem::Run()
        // on
        if (Scom.IsPlaying)
        {
-
-           //auto& rigidBodyC = _ecs->get<SyRBodyComponent>(entity);
-           //auto* transformC = _ecs->try_get<TransformComponent>(entity);
-           //if (transformC == nullptr)
-           //{
-           //    _ecs->emplace<TransformComponent>(entity);
-           //    CallEvent<SyOnAddComponentEvent>("AddTransform", SyEComponentTypes::TRANSFORM, entity);
-           //    SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
-           //        "Transform Component required for RigidBody Component is missing on entity (%s). The Transform Component has been added in the next frame.",
-           //        SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
-           //    continue;
-           //}
-
-
-           if (!Scom.IsON)
+           // àdd transform comp
+           auto* transformC = _ecs->try_get<TransformComponent>(Entity);
+           if (transformC == nullptr)
            {
-                Scom.IsON = true;
-                LoadSound(name, Scom.Sound3D, Scom.IsLooping);
-                auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
-                TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
-                Scom.ChanelID = PlayFSound(name, tc._position, Scom.Volume);
-
-                Scom.Sound3D ?
-                    ((Scom.ChanelID = PlayFSound (   name,
-                                                     tc._position - ñameraTransform._position,
-                                                     Scom.Volume)))
-                    : (Scom.ChanelID = PlayFSound(name));
+               _ecs->emplace<TransformComponent>(Entity);
            }
 
-           SetChannelVolume(Scom.ChanelID, Scom.Volume);
-
-           if (Scom.Sound3D)
+           else if (transformC != nullptr)
            {
-               auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
-               TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
-               SetChannel3dPosition(Scom.ChanelID, tc._position - ñameraTransform._position);
-           }
+               if (!Scom.IsON)
+               {
+                   Scom.IsON = true;
+                   LoadSound(name, Scom.Sound3D, Scom.IsLooping);
+                   auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
+                   TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
+                   Scom.ChanelID = PlayFSound(name, tc._position, Scom.Volume);
+
+                   Scom.Sound3D ?
+                       ((Scom.ChanelID = PlayFSound(name,
+                           tc._position - ñameraTransform._position,
+                           Scom.Volume)))
+                       : (Scom.ChanelID = PlayFSound(name));
+               }
+
+               SetChannelVolume(Scom.ChanelID, Scom.Volume);
+
+               if (Scom.Sound3D)
+               {
+                   auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
+                   TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
+                   SetChannel3dPosition(Scom.ChanelID, tc._position - ñameraTransform._position);
+               }
+           }    
        }
+
        //off
        if (!Scom.IsPlaying)
        {
            Scom.IsON = false;
            UnLoadSound(name);
        }  
-
 
        // auto off
        if (Scom.IsON)
