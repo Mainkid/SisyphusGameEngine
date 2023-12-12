@@ -126,8 +126,8 @@ struct RenderContext : public IService
 	 * Shadows
 	 *
 	 */
-	int ShadowmapWidth = 1024;
-	int ShadowmapHeight = 1024;
+	int ShadowmapWidth = 512;
+	int ShadowmapHeight = 512;
 	
 
 	/*

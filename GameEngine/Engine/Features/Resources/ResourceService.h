@@ -57,6 +57,7 @@ public:
 	std::vector<boost::uuids::uuid> GetAllResourcesOfType(EAssetType assetType);
 	std::vector<std::string> GetAllResourcesFilePaths(EAssetType assetType, bool findFullPath = false);
 	SyDelegates::MulticastDelegate<bool> updateContentBrowser;
+	SyDelegates::MulticastDelegate<bool> updateFolderHierarchy;
 	
 	void LoadSceneFromFile(std::filesystem::path file, entt::registry* ecs);
 	void SaveSceneToFile(std::filesystem::path file, entt::registry* ecs);

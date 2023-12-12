@@ -9,6 +9,7 @@
 #include <uuid.hpp>
 #include <fstream>
 #include "../../../Core/Tools/MathHelper.h"
+#include <ctime>
 
 SyResult HudContentBrowserSystem::Init()
 {
@@ -18,6 +19,10 @@ SyResult HudContentBrowserSystem::Init()
     rs = ServiceLocator::instance()->Get<ResourceService>();
 
     rs->updateContentBrowser.AddRaw(this, &HudContentBrowserSystem::UpdatePathFileViewsEvent);
+    rs->updateFolderHierarchy.AddRaw(this, &HudContentBrowserSystem::UpdateFolderHierarchyEvent);
+
+    InitializeDirectoryTree(".\\Game", dirTree);
+
     InitImagesSRV();
     return SyResult();
 }
@@ -30,6 +35,11 @@ SyResult HudContentBrowserSystem::Destroy()
 SyResult HudContentBrowserSystem::Run()
 {
     OPTICK_EVENT();
+    OPTICK_TAG("START","");
+    std::clock_t start;
+    double duration;
+    start = std::clock();
+    
     static std::filesystem::path previousFrameDirectory = "";
     static bool initialized = false;
     if (!initialized)
@@ -38,7 +48,7 @@ SyResult HudContentBrowserSystem::Run()
         return SyResult();
     }
     
-    
+    OPTICK_TAG("START2", "");
 
 
     ImGui::Begin("Content Browser");
@@ -60,6 +70,7 @@ SyResult HudContentBrowserSystem::Run()
     itemWasHovered = false;
     Splitter(true, 4.0f, &windowLeftSizeX, &windowRightSizeX, 8, 8, contentAreaAvailable.y);
     DrawTreeFolderWindow(windowLeftSizeX);
+    OPTICK_EVENT();
 
     
     ImGui::SameLine();
@@ -116,30 +127,30 @@ SyResult HudContentBrowserSystem::Run()
 
                     ImGui::TableSetColumnIndex(column);
                     auto directoryEntry = fileViewsVec[index];
-                    const auto& path = directoryEntry.path();
-                    auto relativePath = std::filesystem::relative(directoryEntry.path(), assetsDirectory);
+                    const auto& path = directoryEntry.fileView.path();
+                    auto relativePath = directoryEntry.relativePath;
                     std::string  fileNameStr = relativePath.filename().string();
                     std::string fileExtension = relativePath.extension().string();
 
                     if (fileExtension == ".meta")
-                        continue;
+                       continue;
 
                     ImVec4 bg = bg_col;
-                    if (selectedFiles.count(directoryEntry) > 0)
+                    if (selectedFiles.count(directoryEntry.fileView) > 0)
                         bg = bg_col_selected;
 
-                    ImGui::ImageButton(directoryEntry.path().string().data(), iconSRV[fileAssetTypeVec[index]],
+                    ImGui::ImageButton(directoryEntry.fileView.path().string().data(), iconSRV[fileAssetTypeVec[index]],
                         ImVec2(thumbnailSize, thumbnailSize), ImVec2(0, 0), ImVec2(1, 1), bg, tint_col);
 
 
                     if (ImGui::BeginDragDropSource())
                     {
-                        auto uuidTemp = rs->GetUUIDFromPath(directoryEntry);
+                        auto uuidTemp = rs->GetUUIDFromPath(directoryEntry.fileView);
                         std::string uuid = boost::lexical_cast<std::string>(uuidTemp);
 
                         uuid.shrink_to_fit();
                         ImGui::SetDragDropPayload("_CONTENTBROWSER", (uuid.data()), uuid.size());
-                        selectedFiles.insert(directoryEntry);
+                        selectedFiles.insert(directoryEntry.fileView);
                         ImGui::EndDragDropSource();
                     }
 
@@ -151,7 +162,7 @@ SyResult HudContentBrowserSystem::Run()
 
                             for (auto& item : selectedFiles)
                             {
-                                ResourceHelper::MoveFile_(item, directoryEntry);
+                                ResourceHelper::MoveFile_(item, directoryEntry.fileView);
 
                             }
                             selectedFiles.clear();
@@ -167,7 +178,7 @@ SyResult HudContentBrowserSystem::Run()
                         if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
                         {
 
-                            if (directoryEntry.is_directory())
+                            if (directoryEntry.fileView.is_directory())
                             {
                                 curDirectory /= path.filename();
                                 ec->hudData.selectedAssets.clear();
@@ -181,19 +192,19 @@ SyResult HudContentBrowserSystem::Run()
                                 selectedFiles.clear();
                                 ec->hudData.selectedAssets.clear();
                             }
-                            if (selectedFiles.count(directoryEntry) == 0)
+                            if (selectedFiles.count(directoryEntry.fileView) == 0)
                             {
-                                auto uuid = rs->GetUUIDFromPath(directoryEntry);
+                                auto uuid = rs->GetUUIDFromPath(directoryEntry.fileView);
                                 ec->hudData.selectedContent = { uuid, rs->resourceLibrary[uuid].assetType };
                                 ec->hudData.selectedEntityIDs.clear();
                                 ec->hudData.selectedAssets.insert(uuid);
-                                selectedFiles.insert(directoryEntry);
+                                selectedFiles.insert(directoryEntry.fileView);
 
                             }
                             else
                             {
-                                selectedFiles.erase(directoryEntry);
-                                ec->hudData.selectedAssets.erase(rs->GetUUIDFromPath(directoryEntry));
+                                selectedFiles.erase(directoryEntry.fileView);
+                                ec->hudData.selectedAssets.erase(rs->GetUUIDFromPath(directoryEntry.fileView));
                             }
 
 
@@ -201,8 +212,8 @@ SyResult HudContentBrowserSystem::Run()
                         else if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
                         {
 
-                            selectedFiles.insert(directoryEntry);
-                            ec->hudData.selectedAssets.insert(rs->GetUUIDFromPath(directoryEntry));
+                            selectedFiles.insert(directoryEntry.fileView);
+                            ec->hudData.selectedAssets.insert(rs->GetUUIDFromPath(directoryEntry.fileView));
                             ImGui::OpenPopup("ContentPopUp");
                             ProcessPopUp();
                         }
@@ -212,7 +223,7 @@ SyResult HudContentBrowserSystem::Run()
 
 
 
-                    if (directoryEntry != renamingFileName)
+                    if (directoryEntry.fileView != renamingFileName)
                         ImGui::Text(fileNameStr.c_str());
                     else
                     {
@@ -222,12 +233,13 @@ SyResult HudContentBrowserSystem::Run()
                             renamingFileName = (renamingFileName.remove_filename().string() + renamingFileString);
                             if (std::filesystem::exists(renamingFileName))
                             {
-                                renamingFileName = directoryEntry;
+                                renamingFileName = directoryEntry.fileView;
                             }
                             else
                             {
-                                ResourceHelper::RenameFile(directoryEntry, renamingFileName);
+                                ResourceHelper::RenameFile(directoryEntry.fileView, renamingFileName);
                                 InitializePathFileViews(curDirectory);
+                                UpdateFolderHierarchyEvent(true);
                             }
                             renamingFileName = "";
 
@@ -271,6 +283,12 @@ SyResult HudContentBrowserSystem::Run()
     
     ImGui::EndChild();
     ImGui::End();
+
+    duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
+
+    std::cout << "printf: " << duration << '\n';
+
+    OPTICK_TAG("FINISH", "");
     return SyResult();
 }
 
@@ -343,6 +361,7 @@ void HudContentBrowserSystem::ProcessPopUp()
             {
                 case 0:
                     ResourceHelper::ConstructFile(curDirectory.string() + "\\NewFolder");
+                    UpdateFolderHierarchyEvent(true);
                     break;
                 case 1:
                     auto createdFile = ResourceHelper::ConstructFile(curDirectory.string() + "\\Material.mat");
@@ -398,30 +417,27 @@ void HudContentBrowserSystem::ProcessPopUp()
 void HudContentBrowserSystem::DrawTreeFolderWindow(float windowLeftSizeX)
 {
     ImGui::BeginChild("child", ImVec2(windowLeftSizeX, ImGui::GetContentRegionAvail().y));
-    RenderTree(".\\Game");
+    
+   
+    RenderTree(dirTree);
     ImGui::EndChild();
 }
 
-void HudContentBrowserSystem::RenderTree(std::filesystem::path path)
+void HudContentBrowserSystem::RenderTree(DirectoryTree& dirTree)
 {
-    if (!std::filesystem::exists(path))
+    if (!std::filesystem::exists(dirTree.path))
         return;
 
     ImGuiIO& io = ImGui::GetIO(); (void)io;
    
-
-    for (auto& directoryEntry : std::filesystem::directory_iterator(path))
+    
+    for (auto& subDir : dirTree.subDirs)
     {
-        if (directoryEntry.path().filename().extension() == ".meta")
-            continue;
 
         ImGuiTreeNodeFlags treeFlags= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_None | ImGuiTreeNodeFlags_DefaultOpen;
-        if (!directoryEntry.is_directory())
-        {
-            continue;
-        }
         
-        bool opened = ImGui::TreeNodeEx(directoryEntry.path().filename().string().c_str(), treeFlags);
+        
+        bool opened = ImGui::TreeNodeEx(subDir.path.filename().string().c_str(), treeFlags);
 
         if (ImGui::IsItemHovered())
             itemWasHovered = true;
@@ -430,7 +446,7 @@ void HudContentBrowserSystem::RenderTree(std::filesystem::path path)
         {
             selectedFiles.clear();
             ImGui::SetDragDropPayload("_CONTENTBROWSER", nullptr, 0);
-            selectedFiles.insert(directoryEntry);
+            selectedFiles.insert(subDir.path);
             ImGui::EndDragDropSource();
         }
 
@@ -442,7 +458,7 @@ void HudContentBrowserSystem::RenderTree(std::filesystem::path path)
 
                 for (auto& item : selectedFiles)
                 {
-                    ResourceHelper::MoveFile_(item, directoryEntry);
+                    ResourceHelper::MoveFile_(item, subDir.path);
                 }
                 if (!std::filesystem::exists(curDirectory))
                     curDirectory = assetsDirectory;
@@ -455,19 +471,45 @@ void HudContentBrowserSystem::RenderTree(std::filesystem::path path)
 
         if (ImGui::IsItemHovered()&&ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
         {
-            curDirectory = directoryEntry;
+            curDirectory = subDir.path;
             selectedFiles.clear();
         }
 
         if(opened)
         {
-            RenderTree(directoryEntry);
+            RenderTree(subDir);
             ImGui::TreePop();
         }
 
        
     }
 
+    
+}
+
+void HudContentBrowserSystem::InitializeDirectoryTree(std::filesystem::path path, DirectoryTree& dirTree)
+{
+    if (!std::filesystem::exists(path))
+        return;
+
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    dirTree.path = path;
+    for (auto& directoryEntry : std::filesystem::directory_iterator(path))
+    {
+
+        if (!directoryEntry.is_directory())
+        {
+            continue;
+        }
+
+        if (directoryEntry.path().filename().extension() == ".meta")
+            continue;
+
+        dirTree.subDirs.push_back(DirectoryTree());
+        InitializeDirectoryTree(directoryEntry.path(), dirTree.subDirs[dirTree.subDirs.size()-1]);
+        
+    }
     
 }
 
@@ -492,6 +534,7 @@ void HudContentBrowserSystem::InitializePathFileViews(const std::filesystem::pat
     fileViewsVec.clear();
     fileAssetTypeVec.clear();
 
+
     for (auto& directoryEntry : std::filesystem::directory_iterator(path))
     {
         const auto& path = directoryEntry.path();
@@ -500,7 +543,7 @@ void HudContentBrowserSystem::InitializePathFileViews(const std::filesystem::pat
         if (relativePath.extension() == ".meta")
             continue;
         
-        fileViewsVec.push_back(directoryEntry);
+        fileViewsVec.push_back(FileViews(directoryEntry, std::filesystem::relative(directoryEntry.path(), assetsDirectory)));
         if (!directoryEntry.is_directory())
             fileAssetTypeVec.push_back(rs->resourceLibrary[rs->GetUUIDFromPath(directoryEntry.path())].assetType);
         else
@@ -513,7 +556,17 @@ void HudContentBrowserSystem::InitializePathFileViews(const std::filesystem::pat
 void HudContentBrowserSystem::UpdatePathFileViewsEvent(bool shouldUpdate)
 {
     if (shouldUpdate)
+    {
         InitializePathFileViews(curDirectory);
+        UpdateFolderHierarchyEvent(true);
+    }
+}
+
+void HudContentBrowserSystem::UpdateFolderHierarchyEvent(bool shouldUpdate)
+{
+    dirTree.path = "";
+    dirTree.subDirs.clear();
+    InitializeDirectoryTree(".\\Game", dirTree);
 }
 
 bool HudContentBrowserSystem::CheckRemovingResourceReferences(const std::filesystem::path& path)
