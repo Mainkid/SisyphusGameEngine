@@ -133,8 +133,9 @@ SyResult SyRigidBodySystem::Run()
 		rigidBodyC._wasTransformChangedFromOutside = false;
 		rigidBodyC._mustSaveUserVelocity = false;
 		rbDyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, rigidBodyC.Flags & SyERBodyFlags::KINEMATIC);
-	}
 
+		ServiceLocator::instance()->Get<EngineContext>()->transformSystemPtr->Run();
+	}
 	return SyResult();
 }
 
@@ -285,7 +286,7 @@ SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, Sy
 	{
 		PxRigidStatic* rbSt = rigidBodyC._rbActor->is<PxRigidStatic>();
 		PxTransform rbTransform = rbSt->getGlobalPose();
-		if (SyVector3(rbTransform.p) != transformC.localPosition || SyVector3::PxQuatToEuler(rbTransform.q) != transformC.localRotation)
+		if (SyVector3(rbTransform.p) != transformC._position || SyVector3::PxQuatToEuler(rbTransform.q) != transformC._rotation)
 		{
 			rbSt->setGlobalPose(PxTransform(transformC._position,
 				SyVector3::EulerToPxQuat(transformC._rotation)));

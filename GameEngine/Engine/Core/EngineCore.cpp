@@ -99,7 +99,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<SyJointSystem>();
 	_systems.Add<SyRigidBodySystem>();
 	_systems.Add<SyCollisionSystem>();
-	
+
 	_systems.Add<MonoSyncSystem>();
 
 	

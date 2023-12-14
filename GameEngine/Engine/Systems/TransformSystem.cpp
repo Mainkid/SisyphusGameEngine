@@ -10,6 +10,7 @@ SyResult TransformSystem::Init()
 {
 	SyResult result;
 	ec = ServiceLocator::instance()->Get<EngineContext>();
+	ec->transformSystemPtr = this;
 	return result;
 }
 
@@ -53,6 +54,7 @@ SyResult TransformSystem::Run()
 		}
 	}
 
+	static bool mustUpdateChildrenIncremental = true;
 	for (auto& entity :view)
 	{
 		TransformComponent& tc = view.get<TransformComponent>(entity);
@@ -66,7 +68,7 @@ SyResult TransformSystem::Run()
 		boost::hash_combine(lHash, tc.localPosition);
 		boost::hash_combine(lHash, tc.localRotation);
 		boost::hash_combine(lHash, tc.localScale);
-
+		
 		if (tc.worldHash != wHash)
 		{
 			tc.worldHash = wHash;
@@ -81,14 +83,11 @@ SyResult TransformSystem::Run()
 		if (tc.localHash != lHash )
 		{
 			tc.localHash = lHash;
-			TransformHelper::UpdateTransformMatrix(tc);
+			TransformHelper::UpdateTransformMatrix(tc, mustUpdateChildrenIncremental);
 		}
-		
-
-		
-		
 
 	}
+	mustUpdateChildrenIncremental = !mustUpdateChildrenIncremental;
 	return result;
 }
 

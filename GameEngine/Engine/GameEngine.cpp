@@ -65,7 +65,7 @@ int main()
 #pragma endregion
 #pragma region Test Cube 1
     auto cube1 = GameObjectHelper::Create(ecs, "Cube1", { 0.0f, 5.0f, 8.0f });
-    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC, 10);
+    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
     auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube1);
     SyPrimitiveColliderShapeDesc cubeColDesc;
     cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
@@ -77,12 +77,12 @@ int main()
     ecs->get<SyRBodyComponent>(cube1).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
 #pragma endregion
 #pragma region Test Sphere 1
-    auto sphere1 = GameObjectHelper::Create(ecs, "Sphere", { 0.0f, 0.0f, 0.0f });
-    auto result10 = GameObjectHelper::AddRigidBodyComponent(ecs, sphere1, DYNAMIC, 2/*, SyERBodyFlags::DISABLE_GRAVITY*/);
+    auto sphere1 = GameObjectHelper::Create(ecs, "Sphere", { 0.0f, 0.0f, 8.0f });
+    auto result10 = GameObjectHelper::AddRigidBodyComponent(ecs, sphere1, DYNAMIC, 2, SyERBodyFlags::DISABLE_GRAVITY);
     auto result11 = GameObjectHelper::AddSphereMeshComponent(ecs, sphere1);
 
     
-    ecs->emplace<SyFixedJointComponent>(cube1, sphere1);
+    //ecs->emplace<SyFixedJointComponent>(cube1, sphere1);
 #pragma endregion
     
     
