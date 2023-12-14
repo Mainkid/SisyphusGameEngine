@@ -8,6 +8,7 @@
 #include "../../Common/Events/OnAddComponentEvent.h"
 #include "../../Common/Events/OnRemoveComponentEvent.h"
 #include "../../../Core/Tools/Macro.h"
+#include "../Components/JointComponent.h"
 
 using namespace physx;
 
@@ -16,9 +17,9 @@ PxScene* SyRBodyComponent::_scene;
 
 SyResult SyRigidBodySystem::Init() 
 {
-	allocator = std::make_shared<PxDefaultAllocator>();
-	errorCallback = std::make_shared<PxDefaultErrorCallback>();
-	_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, *allocator, *errorCallback);
+	_allocator = std::make_shared<PxDefaultAllocator>();
+	_errorCallback = std::make_shared<PxDefaultErrorCallback>();
+	_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, *_allocator, *_errorCallback);
 	if (_foundation == nullptr)
 	{
 		SY_LOG_PHYS(SY_LOGLEVEL_CRITICAL, "PxCreate_foundation returned nullptr. ");
@@ -117,13 +118,21 @@ SyResult SyRigidBodySystem::Run()
 			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
 			continue;
 		}
-		PxRigidDynamic* rb = rigidBodyC._rbActor->is<PxRigidDynamic>();
+		PxRigidDynamic* rbDyn = rigidBodyC._rbActor->is<PxRigidDynamic>();
 		
-		PxTransform rbTrasform = rb->getGlobalPose();
+		PxTransform rbTrasform = rbDyn->getGlobalPose();
 		transformC->_position = rbTrasform.p;
 		transformC->_rotation = SyVector3::PxQuatToEuler(rbTrasform.q);
-		rigidBodyC.LinearVelocity = rb->getLinearVelocity();
-		rigidBodyC.AngularVelocity = rb->getAngularVelocity();
+		if (rigidBodyC._mustSaveUserVelocity == false)
+		{
+			rigidBodyC.LinearVelocity = rbDyn->getLinearVelocity();
+			rigidBodyC.AngularVelocity = rbDyn->getAngularVelocity();
+		}
+		else
+			std::cout << std::endl;
+		rigidBodyC._wasTransformChangedFromOutside = false;
+		rigidBodyC._mustSaveUserVelocity = false;
+		rbDyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, rigidBodyC.Flags & SyERBodyFlags::KINEMATIC);
 	}
 
 	return SyResult();
@@ -233,8 +242,30 @@ SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, Sy
 		if (SyVector3(rbTransform.p) != transformC._position ||
 			!SyMathHelper::AreEqual(SyVector3::PxQuatToEuler(rbTransform.q), transformC._rotation))
 		{
-			rbDyn->setGlobalPose(PxTransform(transformC._position,
-				SyVector3::EulerToPxQuat(transformC._rotation)));
+			rigidBodyC._wasTransformChangedFromOutside = true;
+			rigidBodyC._mustSaveUserVelocity = true;
+			auto* fixedJointCPtr = _ecs->try_get<SyFixedJointComponent>(entity);
+			auto* fixedJointCHelperPtr = _ecs->try_get<SyFixedJointComponentHelper>(entity);
+			if (fixedJointCPtr != nullptr)
+			{
+				SyRBodyComponent* otherRBodyCPtr = _ecs->try_get<SyRBodyComponent>(fixedJointCPtr->OtherEntity);
+				if (otherRBodyCPtr != nullptr)
+					otherRBodyCPtr->_mustSaveUserVelocity = true;
+			}
+			else if (fixedJointCHelperPtr != nullptr)
+			{
+				SyRBodyComponent* otherRBodyCPtr = _ecs->try_get<SyRBodyComponent>(fixedJointCHelperPtr->fixedJointHolder);
+				if (otherRBodyCPtr != nullptr)
+					otherRBodyCPtr->_mustSaveUserVelocity = true;
+			}
+			rbDyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+			rbDyn->setKinematicTarget(PxTransform(	transformC._position,
+													SyVector3::EulerToPxQuat(transformC._rotation)));
+			return SyResult();
+		}
+		else
+		{
+
 		}
 		SyVector3 pxLinearVelocity = rbDyn->getLinearVelocity();
 		if (rigidBodyC.LinearVelocity != pxLinearVelocity)
@@ -255,8 +286,18 @@ SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, Sy
 		PxRigidStatic* rbSt = rigidBodyC._rbActor->is<PxRigidStatic>();
 		PxTransform rbTransform = rbSt->getGlobalPose();
 		if (SyVector3(rbTransform.p) != transformC.localPosition || SyVector3::PxQuatToEuler(rbTransform.q) != transformC.localRotation)
+		{
 			rbSt->setGlobalPose(PxTransform(transformC._position,
 				SyVector3::EulerToPxQuat(transformC._rotation)));
+			rigidBodyC._wasTransformChangedFromOutside = true;
+			rigidBodyC._rbActor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, true);
+			return SyResult();
+		}
+		else
+		{
+			rigidBodyC._wasTransformChangedFromOutside = false;
+			rigidBodyC._rbActor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, false);
+		}
 	}
 	rigidBodyC._rbActor->setActorFlag(PxActorFlag::eVISUALIZATION, false);
 	return SyResult();

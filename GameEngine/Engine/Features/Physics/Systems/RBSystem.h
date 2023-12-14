@@ -20,8 +20,8 @@ struct SyRBodyComponent;
 class SyRigidBodySystem :
     public SystemBase
 {
-    std::shared_ptr<physx::PxDefaultAllocator>		allocator = nullptr;
-    std::shared_ptr<physx::PxDefaultErrorCallback>	errorCallback = nullptr;
+    std::shared_ptr<physx::PxDefaultAllocator>		_allocator = nullptr;
+    std::shared_ptr<physx::PxDefaultErrorCallback>	_errorCallback = nullptr;
     physx::PxFoundation* _foundation = nullptr;
     
     physx::PxPhysics*                               _physics = nullptr;

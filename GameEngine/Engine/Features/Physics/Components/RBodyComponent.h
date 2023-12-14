@@ -63,6 +63,7 @@ private:
 	bool _wasTransformChangedFromOutside = false;
 	SyERBodyType _prevFrameRbodyType = STATIC;
 	bool _wasActorRecreatedThisFrame = false;
+	bool _mustSaveUserVelocity = false;
 
 	static physx::PxPhysics*	_physics;
 	static physx::PxScene*		_scene;

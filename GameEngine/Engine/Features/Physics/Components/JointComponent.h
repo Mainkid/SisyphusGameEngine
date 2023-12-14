@@ -63,6 +63,24 @@ private:
     //friend std::size_t hash_value(const SyFixedJointComponent& joint);
 };
 
+struct SyFixedJointComponentHelper
+{
+    entt::entity fixedJointHolder = entt::null;
+    SyFixedJointComponent* fixedJointCPtr;
+};
+
+struct SyEngineFixedJointComponent
+{
+    SyEngineFixedJointComponent(  const entt::entity& otherEntity = entt::null) :
+    _fixedJointC(SyFixedJointComponent(otherEntity)) {};
+
+private:
+    SyFixedJointComponent _fixedJointC;
+
+    friend SyJointSystem;
+    //friend std::size_t hash_value(const SyFixedJointComponent& joint);
+};
+
 // inline std::size_t hash_value(const SyFixedJointComponent& joint)
 // {
 //     std::size_t hash = 0;

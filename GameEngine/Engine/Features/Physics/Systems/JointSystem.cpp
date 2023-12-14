@@ -25,65 +25,123 @@ SyResult SyJointSystem::Run()
     //if (ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
     //    return result;
 #pragma region Fixed Joint
-    auto view = _ecs->view<SyFixedJointComponent>();
-    for (auto& entity : view)
     {
-        auto& fixedJointC           = _ecs->get<SyFixedJointComponent>(entity);
-        auto* rigidBodyCPtr         = _ecs->try_get<SyRBodyComponent>(entity);
-        auto* otherRigidBodyCPtr    = _ecs->try_get<SyRBodyComponent>(fixedJointC.OtherEntity);
-        if (rigidBodyCPtr == nullptr)
+        auto view = _ecs->view<SyFixedJointComponent>();
+        for (auto& entity : view)
         {
-            _ecs->emplace<SyRBodyComponent>(entity);
-            CallEvent<SyOnAddComponentEvent>("AddRBody", SyEComponentTypes::RIGID_BODY, entity);
-            SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
-                "RigidBody Component required for RigidBody Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
-                SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
-            continue;
-        }
-        if (fixedJointC.OtherEntity != entt::null && otherRigidBodyCPtr == nullptr)
-        {
-            _ecs->emplace<SyRBodyComponent>(fixedJointC.OtherEntity);
-            CallEvent<SyOnAddComponentEvent>("AddRBody", SyEComponentTypes::RIGID_BODY, fixedJointC.OtherEntity);
-            SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
-                "RigidBody Component required for RigidBody Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
-                SY_GET_ENTITY_NAME_CHAR(_ecs, fixedJointC.OtherEntity));
-            continue;
-        }
-        if (rigidBodyCPtr->WasInit() == false)
-        {
-            SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
-               "RigidBody Component on entity (%s) has not been initialized. The corresponding JointComponent was not initialized",
-               SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
-            continue;
-        }
-        if (fixedJointC.OtherEntity != entt::null && otherRigidBodyCPtr->WasInit() == false)
-        {
-            SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
-              "RigidBody Component on entity (%s) has not been initialized. The corresponding JointComponent was not initialized",
-              SY_GET_ENTITY_NAME_CHAR(_ecs, fixedJointC.OtherEntity));
-            continue;
-        }
-        auto& transformC = _ecs->get<TransformComponent>(entity);
-        boost::hash<SyJointBase> hasher;
-        std::size_t newfjHash = hasher(fixedJointC);
-        if (fixedJointC._fixedJoint == nullptr)
-        {
-            if (InitFixedJointComponent(entity, fixedJointC, *rigidBodyCPtr, transformC).code == SY_RESCODE_ERROR)
+            auto& fixedJointC           = _ecs->get<SyFixedJointComponent>(entity);
+            auto* rigidBodyCPtr         = _ecs->try_get<SyRBodyComponent>(entity);
+            auto* otherRigidBodyCPtr    = _ecs->try_get<SyRBodyComponent>(fixedJointC.OtherEntity);
+            if (rigidBodyCPtr == nullptr)
             {
-                _ecs->remove<SyFixedJointComponent>(entity);
-                CallEvent<SyOnRemoveComponentEvent>("RemoveFixedJoint", SyEComponentTypes::FIXED_JOINT, entity);
-                SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
-                    "Failed to initialize FixedJoint Componenton entity (%s). The component has been removed.",
+                _ecs->emplace<SyRBodyComponent>(entity);
+                CallEvent<SyOnAddComponentEvent>("AddRBody", SyEComponentTypes::RIGID_BODY, entity);
+                SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+                    "RigidBody Component required for RigidBody Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
                     SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+                continue;
             }
-        }
-        else if (ServiceLocator::instance()->Get<EngineContext>()->playModeState == EngineContext::EPlayModeState::PlayMode)
-        {
-            UpdateFixedJointComponent(entity, fixedJointC, *rigidBodyCPtr, transformC);
+            if (fixedJointC.OtherEntity != entt::null && otherRigidBodyCPtr == nullptr)
+            {
+                _ecs->emplace<SyRBodyComponent>(fixedJointC.OtherEntity);
+                CallEvent<SyOnAddComponentEvent>("AddRBody", SyEComponentTypes::RIGID_BODY, fixedJointC.OtherEntity);
+                SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+                    "RigidBody Component required for RigidBody Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
+                    SY_GET_ENTITY_NAME_CHAR(_ecs, fixedJointC.OtherEntity));
+                continue;
+            }
+            if (rigidBodyCPtr->WasInit() == false)
+            {
+                SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+                   "RigidBody Component on entity (%s) has not been initialized. The corresponding JointComponent was not initialized",
+                   SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+                continue;
+            }
+            if (fixedJointC.OtherEntity != entt::null && otherRigidBodyCPtr->WasInit() == false)
+            {
+                SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+                  "RigidBody Component on entity (%s) has not been initialized. The corresponding JointComponent was not initialized",
+                  SY_GET_ENTITY_NAME_CHAR(_ecs, fixedJointC.OtherEntity));
+                continue;
+            }
+            auto& transformC = _ecs->get<TransformComponent>(entity);
+            if (fixedJointC._fixedJoint == nullptr && ServiceLocator::instance()->Get<EngineContext>()->playModeState == EngineContext::EPlayModeState::PlayMode)
+            {
+                if (InitFixedJointComponent(entity, fixedJointC, *rigidBodyCPtr, transformC).code == SY_RESCODE_ERROR)
+                {
+                    _ecs->remove<SyFixedJointComponent>(entity);
+                    CallEvent<SyOnRemoveComponentEvent>("RemoveFixedJoint", SyEComponentTypes::FIXED_JOINT, entity);
+                    SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
+                        "Failed to initialize FixedJoint Componenton entity (%s). The component has been removed.",
+                        SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+                }
+            }
+            else if (fixedJointC._fixedJoint != nullptr)
+            {
+                UpdateFixedJointComponent(entity, fixedJointC, *rigidBodyCPtr, transformC);
+            }
         }
     }
 #pragma endregion
-
+#pragma region Engine Fixed Joint
+    // {
+    //     auto view = _ecs->view<SyRBodyComponent>();
+    //     for (auto& entity : view)
+    //     {
+    //         auto& transformC = _ecs->get<TransformComponent>(entity);
+    //         
+    //             
+    //         auto* engineFixedJointCPtr  = _ecs->try_get<SyEngineFixedJointComponent>(entity);
+    //         if (engineFixedJointCPtr == nullptr)
+    //         {
+    //             _ecs->emplace<SyEngineFixedJointComponent>(entity);
+    //             CallEvent<SyOnAddComponentEvent>("AddRBody", SyEComponentTypes::RIGID_BODY, entity);
+    //             continue;
+    //         }
+    //         auto& fixedJointC            = engineFixedJointCPtr->_fixedJointC;
+    //         auto* rigidBodyC            = _ecs->try_get<SyRBodyComponent>(entity);
+    //         auto* otherRigidBodyCPtr    = _ecs->try_get<SyRBodyComponent>(fixedJointC.OtherEntity);
+    //         if (fixedJointC.OtherEntity != entt::null && otherRigidBodyCPtr == nullptr)
+    //         {
+    //             _ecs->emplace<SyRBodyComponent>(fixedJointC.OtherEntity);
+    //             CallEvent<SyOnAddComponentEvent>("AddRBody", SyEComponentTypes::RIGID_BODY, fixedJointC.OtherEntity);
+    //             SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+    //                 "RigidBody Component required for RigidBody Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
+    //                 SY_GET_ENTITY_NAME_CHAR(_ecs, fixedJointC.OtherEntity));
+    //             continue;
+    //         }
+    //         if (rigidBodyC->WasInit() == false)
+    //         {
+    //             SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+    //                "RigidBody Component on entity (%s) has not been initialized. The corresponding JointComponent was not initialized",
+    //                SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+    //             continue;
+    //         }
+    //         if (fixedJointC.OtherEntity != entt::null && otherRigidBodyCPtr->WasInit() == false)
+    //         {
+    //             SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+    //                  "RigidBody Component on entity (%s) has not been initialized. The corresponding JointComponent was not initialized",
+    //                  SY_GET_ENTITY_NAME_CHAR(_ecs, fixedJointC.OtherEntity));
+    //             continue;
+    //         }
+    //         if (fixedJointC._fixedJoint == nullptr && ServiceLocator::instance()->Get<EngineContext>()->playModeState == EngineContext::EPlayModeState::PlayMode)
+    //         {
+    //             if (InitFixedJointComponent(entity, fixedJointC, *rigidBodyC, transformC).code == SY_RESCODE_ERROR)
+    //             {
+    //                 _ecs->remove<SyFixedJointComponent>(entity);
+    //                 CallEvent<SyOnRemoveComponentEvent>("RemoveFixedJoint", SyEComponentTypes::FIXED_JOINT, entity);
+    //                 SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
+    //                     "Failed to initialize FixedJoint Componenton entity (%s). The component has been removed.",
+    //                     SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+    //             }
+    //         }
+    //         else if (fixedJointC._fixedJoint != nullptr)
+    //         {
+    //             UpdateFixedJointComponent(entity, fixedJointC, *rigidBodyC, transformC);
+    //         }
+    //     }
+    // }
+#pragma endregion
     return SyResult();
 }
 
@@ -96,6 +154,8 @@ SyResult SyJointSystem::InitFixedJointComponent(const entt::entity& entity, SyFi
     SyRBodyComponent& rigidBodyС, TransformComponent& transformC)
 {
     SyResult result;
+    if (fixedJointC.OtherEntity != entt::null)
+        _ecs->emplace<SyFixedJointComponentHelper>(fixedJointC.OtherEntity, entity, &fixedJointC);
     if (fixedJointC._fixedJoint != nullptr)
         fixedJointC._fixedJoint->release();
     auto* actor = rigidBodyС._rbActor;
@@ -130,34 +190,17 @@ SyResult SyJointSystem::UpdateFixedJointComponent(const entt::entity& entity, Sy
     auto* otherRigidBodyCPtr = (fixedJointC.OtherEntity == entt::null) ? nullptr : _ecs->try_get<SyRBodyComponent>(fixedJointC.OtherEntity);
     if (rigidBodyС._wasActorRecreatedThisFrame || (otherRigidBodyCPtr != nullptr && otherRigidBodyCPtr->_wasActorRecreatedThisFrame))
     {
-        auto* actor = rigidBodyС._rbActor;
+        fixedJointC._fixedJoint->release();
+        fixedJointC._fixedJoint = nullptr;
+        /*auto* actor = rigidBodyС._rbActor;
         auto* otherActor = (fixedJointC.OtherEntity == entt::null) ? nullptr :
                 _ecs->get<SyRBodyComponent>(fixedJointC.OtherEntity)._rbActor;
-        fixedJointC._fixedJoint->setActors(actor, otherActor);
+        fixedJointC._fixedJoint->setActors(actor, otherActor);*/
     }
-    size_t wHash = 0;
-    boost::hash_combine(wHash, transformC._position);
-    boost::hash_combine(wHash, transformC._rotation);
-    boost::hash_combine(wHash, transformC.scale);
-
-    size_t lHash = 0;
-    boost::hash_combine(lHash, transformC.localPosition);
-    boost::hash_combine(lHash, transformC.localRotation);
-    boost::hash_combine(lHash, transformC.localScale);
-    //if (rigidBodyС._wasTransformChangedFromOutside == true)
-    //{
-    //    TransformComponent* otherTransformCPtr = (fixedJointC.OtherEntity == entt::null) ? nullptr :
-    //            _ecs->try_get<TransformComponent>(fixedJointC.OtherEntity);
-    //    SyVector3 position = transformC._position;
-    //    SyVector3 rotation = /*SyVector3::ZERO;*/
-    //        transformC._rotation;
-    //    SyVector3 otherPosition = (otherTransformCPtr == nullptr) ? SyVector3::ZERO : otherTransformCPtr->_position;
-    //    SyVector3 otherRotation = /*SyVector3::ZERO;*/
-    //        (otherTransformCPtr == nullptr) ? SyVector3::ZERO : otherTransformCPtr->_rotation;
-    //    physx::PxTransform localFrame(otherPosition - position, SyVector3::EulerToPxQuat(otherRotation - rotation));
-    //    physx::PxTransform otherLocalFrame(SyVector3::ZERO, SyVector3::EulerToPxQuat(SyVector3::ZERO));
-    //    fixedJointC._fixedJoint->setLocalPose(physx::PxJointActorIndex::eACTOR0, localFrame);
-    //    fixedJointC._fixedJoint->setLocalPose(physx::PxJointActorIndex::eACTOR1, otherLocalFrame);
-    //}
+    else if (rigidBodyС._wasTransformChangedFromOutside == true|| (otherRigidBodyCPtr != nullptr && otherRigidBodyCPtr->_wasTransformChangedFromOutside))
+    {
+        fixedJointC._fixedJoint->release();
+        fixedJointC._fixedJoint = nullptr;
+    }
     return result;
 }

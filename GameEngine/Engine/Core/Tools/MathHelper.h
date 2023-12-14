@@ -1,7 +1,7 @@
 ﻿#pragma once
 struct SyMathHelper
 {
-    inline static constexpr float EPS = 0.000001f;
+    inline static constexpr float EPS = 0.001f;
     inline static constexpr float PI = 3.141592f;
 
     static bool AreEqual(float f1, float f2, float eps = EPS)
