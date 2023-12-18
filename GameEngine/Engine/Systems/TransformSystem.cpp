@@ -87,7 +87,7 @@ SyResult TransformSystem::Run()
 		}
 
 	}
-	mustUpdateChildrenIncremental = !mustUpdateChildrenIncremental;
+	//mustUpdateChildrenIncremental = !mustUpdateChildrenIncremental;
 	return result;
 }
 

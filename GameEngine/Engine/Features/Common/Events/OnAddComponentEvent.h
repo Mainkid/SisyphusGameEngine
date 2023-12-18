@@ -3,8 +3,8 @@
 #include "../../vendor/entt/entt.hpp"
 struct SyOnAddComponentEvent
 {
-    SyOnAddComponentEvent(SyEComponentTypes componentType, entt::entity entity) :
+    SyOnAddComponentEvent(SyEComponentType componentType, entt::entity entity) :
                             ComponentType(componentType), Entity(entity) {}
-    SyEComponentTypes ComponentType;
+    SyEComponentType ComponentType;
     entt::entity Entity;
 };

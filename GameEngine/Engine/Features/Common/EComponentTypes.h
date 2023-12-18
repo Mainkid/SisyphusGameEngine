@@ -1,7 +1,7 @@
 ﻿#pragma once
-enum SyEComponentTypes
+enum SyEComponentType
 {
     TRANSFORM,
     RIGID_BODY,
-    FIXED_JOINT
+    JOINT
 };

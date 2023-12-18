@@ -59,7 +59,7 @@ SyResult SyRigidBodySystem::Run()
 		if (transformC == nullptr)
 		{
 			_ecs->emplace<TransformComponent>(entity);
-			CallEvent<SyOnAddComponentEvent>("AddTransform", SyEComponentTypes::TRANSFORM, entity);
+			CallEvent<SyOnAddComponentEvent>("AddTransform", SyEComponentType::TRANSFORM, entity);
 			SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
 				"Transform Component required for RigidBody Component is missing on entity (%s). The Transform Component has been added in the next frame.",
 				SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
@@ -70,7 +70,7 @@ SyResult SyRigidBodySystem::Run()
 			if (InitComponent(entity, rigidBodyC, *transformC).code == SY_RESCODE_ERROR)
 			{
 				_ecs->remove<SyRBodyComponent>(entity);
-				CallEvent<SyOnRemoveComponentEvent>("RemoveRigidBody", SyEComponentTypes::RIGID_BODY, entity);
+				CallEvent<SyOnRemoveComponentEvent>("RemoveRigidBody", SyEComponentType::RIGID_BODY, entity);
 				SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
 					"Failed to initialize RigidBody Component on entity (%s). The component has been removed.",
 					SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
@@ -128,13 +128,10 @@ SyResult SyRigidBodySystem::Run()
 			rigidBodyC.LinearVelocity = rbDyn->getLinearVelocity();
 			rigidBodyC.AngularVelocity = rbDyn->getAngularVelocity();
 		}
-		else
-			std::cout << std::endl;
 		rigidBodyC._wasTransformChangedFromOutside = false;
 		rigidBodyC._mustSaveUserVelocity = false;
 		rbDyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, rigidBodyC.Flags & SyERBodyFlags::KINEMATIC);
-
-		ServiceLocator::instance()->Get<EngineContext>()->transformSystemPtr->Run();
+		
 	}
 	return SyResult();
 }
@@ -245,17 +242,17 @@ SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, Sy
 		{
 			rigidBodyC._wasTransformChangedFromOutside = true;
 			rigidBodyC._mustSaveUserVelocity = true;
-			auto* fixedJointCPtr = _ecs->try_get<SyFixedJointComponent>(entity);
-			auto* fixedJointCHelperPtr = _ecs->try_get<SyFixedJointComponentHelper>(entity);
-			if (fixedJointCPtr != nullptr)
+			auto* jointCPtr = _ecs->try_get<SyJointComponent>(entity);
+			auto* jointCHelperPtr = _ecs->try_get<SyComponentHelper>(entity);
+			if (jointCPtr != nullptr)
 			{
-				SyRBodyComponent* otherRBodyCPtr = _ecs->try_get<SyRBodyComponent>(fixedJointCPtr->OtherEntity);
+				SyRBodyComponent* otherRBodyCPtr = _ecs->try_get<SyRBodyComponent>(jointCPtr->OtherEntity);
 				if (otherRBodyCPtr != nullptr)
 					otherRBodyCPtr->_mustSaveUserVelocity = true;
 			}
-			else if (fixedJointCHelperPtr != nullptr)
+			else if (jointCHelperPtr != nullptr)
 			{
-				SyRBodyComponent* otherRBodyCPtr = _ecs->try_get<SyRBodyComponent>(fixedJointCHelperPtr->fixedJointHolder);
+				SyRBodyComponent* otherRBodyCPtr = _ecs->try_get<SyRBodyComponent>(jointCHelperPtr->jointHolder);
 				if (otherRBodyCPtr != nullptr)
 					otherRBodyCPtr->_mustSaveUserVelocity = true;
 			}
@@ -264,10 +261,7 @@ SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, Sy
 													SyVector3::EulerToPxQuat(transformC._rotation)));
 			return SyResult();
 		}
-		else
-		{
 
-		}
 		SyVector3 pxLinearVelocity = rbDyn->getLinearVelocity();
 		if (rigidBodyC.LinearVelocity != pxLinearVelocity)
 			rbDyn->setLinearVelocity(rigidBodyC.LinearVelocity);

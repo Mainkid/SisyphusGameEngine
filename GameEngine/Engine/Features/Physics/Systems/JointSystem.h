@@ -2,7 +2,7 @@
 #include "../../../Components/TransformComponent.h"
 #include "../../../Core/ECS/SystemBase.h"
 
-
+struct SyJointComponent;
 struct SyFixedJointComponent;
 struct SyRBodyComponent;
 
@@ -15,12 +15,9 @@ public:
     SyResult Destroy()  override;
 
 private:
-    SyResult InitFixedJointComponent(const entt::entity& entity,
-                              SyFixedJointComponent& fixedJointC,
-                              SyRBodyComponent& rigidBodyС,
-                              TransformComponent& transformC);
-    SyResult UpdateFixedJointComponent(const entt::entity& entity,
-                              SyFixedJointComponent& fixedJointC,
-                              SyRBodyComponent& rigidBodyС,
-                              TransformComponent& transformC);
+    SyResult InitJointComponent(const entt::entity& entity,
+                                SyJointComponent& jointC,
+                                SyRBodyComponent& rigidBodyС,
+                                TransformComponent& transformC);
+    std::string GetJointComponentName(const SyJointComponent& jointComponent);
 };

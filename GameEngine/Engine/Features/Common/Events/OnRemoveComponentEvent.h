@@ -4,8 +4,8 @@
 
 struct SyOnRemoveComponentEvent
 {
-    SyOnRemoveComponentEvent(SyEComponentTypes componentType, entt::entity entity) :
+    SyOnRemoveComponentEvent(SyEComponentType componentType, entt::entity entity) :
                             ComponentType(componentType), Entity(entity) {}
-    SyEComponentTypes ComponentType;
+    SyEComponentType ComponentType;
     entt::entity Entity;
 };
