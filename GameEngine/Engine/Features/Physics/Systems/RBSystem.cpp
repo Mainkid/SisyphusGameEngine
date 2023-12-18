@@ -243,7 +243,7 @@ SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, Sy
 			rigidBodyC._wasTransformChangedFromOutside = true;
 			rigidBodyC._mustSaveUserVelocity = true;
 			auto* jointCPtr = _ecs->try_get<SyJointComponent>(entity);
-			auto* jointCHelperPtr = _ecs->try_get<SyComponentHelper>(entity);
+			auto* jointCHelperPtr = _ecs->try_get<SyJointComponentHelper>(entity);
 			if (jointCPtr != nullptr)
 			{
 				SyRBodyComponent* otherRBodyCPtr = _ecs->try_get<SyRBodyComponent>(jointCPtr->OtherEntity);

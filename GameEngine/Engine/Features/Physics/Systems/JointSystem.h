@@ -15,9 +15,9 @@ public:
     SyResult Destroy()  override;
 
 private:
-    SyResult InitJointComponent(const entt::entity& entity,
-                                SyJointComponent& jointC,
-                                SyRBodyComponent& rigidBodyС,
-                                TransformComponent& transformC);
-    std::string GetJointComponentName(const SyJointComponent& jointComponent);
+
+    SyResult ValidateJointComponent(const entt::entity& entity,
+                            const entt::entity& otherEntity,
+                            const std::string& jointCName);
+    SyResult InitFixedJointComponent(const entt::entity& entity);
 };

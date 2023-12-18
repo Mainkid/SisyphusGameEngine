@@ -3,5 +3,5 @@ enum SyEComponentType
 {
     TRANSFORM,
     RIGID_BODY,
-    JOINT
+    FIXED_JOINT
 };

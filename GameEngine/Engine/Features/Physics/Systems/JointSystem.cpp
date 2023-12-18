@@ -25,59 +25,24 @@ SyResult SyJointSystem::Run()
     
 #pragma region Fixed Joint
     {
-        auto view = _ecs->view<SyJointComponent>();
+        auto view = _ecs->view<SyFixedJointComponent>();
         for (auto& entity : view)
         {
-            auto& jointC                = _ecs->get<SyJointComponent>(entity);
-            auto* rigidBodyCPtr         = _ecs->try_get<SyRBodyComponent>(entity);
-            auto* otherRigidBodyCPtr    = _ecs->try_get<SyRBodyComponent>(jointC.OtherEntity);
-            if (rigidBodyCPtr == nullptr)
-            {
-                _ecs->emplace<SyRBodyComponent>(entity);
-                CallEvent<SyOnAddComponentEvent>("AddRBody", SyEComponentType::RIGID_BODY, entity);
-                SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
-                "RigidBody Component required for %s Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
-                GetJointComponentName(jointC).c_str(),
-                    SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+            auto& fixedJointC = _ecs->get<SyFixedJointComponent>(entity);
+            bool validationSuccessful = ValidateJointComponent(entity, fixedJointC.OtherEntity, "FixedJoint").code == SY_RESCODE_OK;
+            if (validationSuccessful == false)
                 continue;
-            }
-            if (jointC.OtherEntity != entt::null && otherRigidBodyCPtr == nullptr)
+            static boost::hash<SyFixedJointComponent> jointHasher;
+            std::size_t newHash = jointHasher(fixedJointC);
+            if (fixedJointC._fixedJointPtr == nullptr || fixedJointC._hash != newHash)
             {
-                _ecs->emplace<SyRBodyComponent>(jointC.OtherEntity);
-                CallEvent<SyOnAddComponentEvent>("AddRBody", SyEComponentType::RIGID_BODY, jointC.OtherEntity);
-                SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
-                    "RigidBody Component required for %s Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
-                    GetJointComponentName(jointC).c_str(),
-                    SY_GET_ENTITY_NAME_CHAR(_ecs, jointC.OtherEntity));
-                continue;
-            }
-            if (rigidBodyCPtr->WasInit() == false)
-            {
-                SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
-                   "RigidBody Component on entity (%s) has not been initialized. The corresponding JointComponent was not initialized",
-                   SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
-                continue;
-            }
-            if (jointC.OtherEntity != entt::null && otherRigidBodyCPtr->WasInit() == false)
-            {
-                SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
-                  "RigidBody Component on entity (%s) has not been initialized. The corresponding JointComponent was not initialized",
-                  SY_GET_ENTITY_NAME_CHAR(_ecs, jointC.OtherEntity));
-                continue;
-            }
-            auto& transformC = _ecs->get<TransformComponent>(entity);
-            static boost::hash<SyJointComponent> jointHasher;
-            std::size_t newHash = jointHasher(jointC);
-            if (jointC._jointPtr == nullptr || jointC._hash != newHash)
-            {
-                jointC._hash = newHash;
-                if (InitJointComponent(entity, jointC, *rigidBodyCPtr, transformC).code == SY_RESCODE_ERROR)
+                fixedJointC._hash = newHash;
+                if (InitFixedJointComponent(entity).code == SY_RESCODE_ERROR)
                 {
                     _ecs->remove<SyFixedJointComponent>(entity);
-                    CallEvent<SyOnRemoveComponentEvent>("RemoveFixedJoint", SyEComponentType::JOINT, entity);
+                    CallEvent<SyOnRemoveComponentEvent>("RemoveJoint", SyEComponentType::FIXED_JOINT, entity);
                     SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
-                        "Failed to initialize %s Component on entity (%s). The component has been removed.",
-                        GetJointComponentName(jointC).c_str(),
+                        "Failed to initialize FixedJoint Component on entity (%s). The component has been removed.",
                         SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
                 }
             }
@@ -93,56 +58,95 @@ SyResult SyJointSystem::Destroy()
     return SyResult();
 }
 
-SyResult SyJointSystem::InitJointComponent(const entt::entity& entity, SyJointComponent& jointC,
-                                           SyRBodyComponent& rigidBodyС, TransformComponent& transformC)
+SyResult SyJointSystem::ValidateJointComponent(const entt::entity& entity, const entt::entity& otherEntity, const std::string& jointCName)
 {
     SyResult result;
-    if (jointC._jointPtr != nullptr)
-        jointC._jointPtr->release();
-    if (jointC.OtherEntity != entt::null)
-        _ecs->emplace_or_replace<SyComponentHelper>(jointC.OtherEntity, entity, &jointC);
+    auto* rigidBodyCPtr = _ecs->try_get<SyRBodyComponent>(entity);
+    auto* otherRigidBodyCPtr = _ecs->try_get<SyRBodyComponent>(otherEntity);
+    if (rigidBodyCPtr == nullptr)
+    {
+        _ecs->emplace<SyRBodyComponent>(entity);
+        CallEvent<SyOnAddComponentEvent>("AddRBody", SyEComponentType::RIGID_BODY, entity);
+        SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+        "RigidBody Component required for %s Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
+        jointCName.c_str(),
+        SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+        result.code = SY_RESCODE_UNEXPECTED;
+        result.message = xstring("RigidBody Component required for %s Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
+                jointCName.c_str(),
+                SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+        return result;
+    }
+    if (otherEntity != entt::null && otherRigidBodyCPtr == nullptr)
+    {
+        _ecs->emplace<SyRBodyComponent>(otherEntity);
+        CallEvent<SyOnAddComponentEvent>("AddRBody", SyEComponentType::RIGID_BODY, otherEntity);
+        SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+               "RigidBody Component required for %s Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
+               jointCName.c_str(),
+               SY_GET_ENTITY_NAME_CHAR(_ecs, otherEntity));
+        result.code = SY_RESCODE_UNEXPECTED;
+        result.message = xstring(   "RigidBody Component required for %s Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
+                                    jointCName.c_str(),
+                                    SY_GET_ENTITY_NAME_CHAR(_ecs, otherEntity));
+        return result;
+    }
+    if (rigidBodyCPtr->WasInit() == false)
+    {
+        result.code = SY_RESCODE_UNEXPECTED;
+        result.message = xstring(   "RigidBody Component on entity (%s) has not been initialized. The corresponding %s Component was not initialized",
+                                    SY_GET_ENTITY_NAME_CHAR(_ecs, entity),
+                                    jointCName.c_str());
+        return result;
+    }
+    if (otherEntity != entt::null && otherRigidBodyCPtr->WasInit() == false)
+    {
+        result.code = SY_RESCODE_UNEXPECTED;
+        result.message = xstring(   "RigidBody Component on entity (%s) has not been initialized. The corresponding %s Component was not initialized",
+                                    SY_GET_ENTITY_NAME_CHAR(_ecs, otherEntity),
+                                    jointCName.c_str());
+        return result;
+    }
+    return result;
+}
+
+SyResult SyJointSystem::InitFixedJointComponent(const entt::entity& entity)
+{
+    SyResult result;
+    auto& fixedJointC = _ecs->get<SyFixedJointComponent>(entity);
+    auto& rigidBodyС =  _ecs->get<SyRBodyComponent>(entity);
+    auto& transformC =  _ecs->get<TransformComponent>(entity);
+    if (fixedJointC._fixedJointPtr != nullptr)
+        fixedJointC._fixedJointPtr->release();
+    if (fixedJointC.OtherEntity != entt::null)
+        _ecs->emplace_or_replace<SyJointComponentHelper>(fixedJointC.OtherEntity, entity);
+    //physx::PxFixedJoint keeps localFrame and otherLocalFrame at the same global point. To avoid snapping entities together
+    //we have to make local frame the transform of OtherEntity in entity's local frame, and otherLocalFrame a zero transform
+
     auto* actor = rigidBodyС._rbActor;
-    auto* otherActor = (jointC.OtherEntity == entt::null) ? nullptr :
-            _ecs->get<SyRBodyComponent>(jointC.OtherEntity)._rbActor;
-    TransformComponent* otherTransformCPtr = (jointC.OtherEntity == entt::null) ? nullptr :
-            _ecs->try_get<TransformComponent>(jointC.OtherEntity);
+    auto* otherActor = (fixedJointC.OtherEntity == entt::null) ? nullptr :
+            _ecs->get<SyRBodyComponent>(fixedJointC.OtherEntity)._rbActor;
+    TransformComponent* otherTransformCPtr = (fixedJointC.OtherEntity == entt::null) ? nullptr :
+            _ecs->try_get<TransformComponent>(fixedJointC.OtherEntity);
     SyVector3 position = transformC._position;
     SyVector3 rotation = transformC._rotation;
     SyVector3 otherPosition = (otherTransformCPtr == nullptr) ? SyVector3::ZERO : otherTransformCPtr->_position;
     SyVector3 otherRotation = (otherTransformCPtr == nullptr) ? SyVector3::ZERO : otherTransformCPtr->_rotation;
     physx::PxTransform localFrame(otherPosition - position, SyVector3::EulerToPxQuat(otherRotation - rotation));
     physx::PxTransform otherLocalFrame(SyVector3::ZERO, SyVector3::EulerToPxQuat(SyVector3::ZERO));
-    switch (jointC.JointType)
-    {
-    case (SyEJointType::FIXED_JOINT) :
-        jointC._jointPtr = physx::PxFixedJointCreate(*SyRBodyComponent::_physics,
+    fixedJointC._fixedJointPtr = physx::PxFixedJointCreate(*SyRBodyComponent::_physics,
                                                         actor,
                                                         localFrame,
                                                         otherActor,
                                                         otherLocalFrame);
-        break;
-    }
-    if (jointC._jointPtr == nullptr)
+    if (fixedJointC._fixedJointPtr == nullptr)
     {
         result.code = SY_RESCODE_ERROR;
-        result.message = xstring("Failed to create %s Component on entity(%d) due to internal PhysX error.",
-            GetJointComponentName(jointC).c_str(),
+        result.message = xstring("Failed to create FixedJoint Component on entity(%d) due to internal PhysX error.",
             (int)entity);
         SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to create %s Component on entity(%d) due to internal PhysX error.",
-            GetJointComponentName(jointC).c_str(),
             (int)entity);
     }
     return result;
 }
 
-
-std::string SyJointSystem::GetJointComponentName(const SyJointComponent& jointComponent)
-{
-    switch (jointComponent.JointType)
-    {
-    case (SyEJointType::FIXED_JOINT):
-            return std::string("FixedJoint");
-    case (SyEJointType::HINGE_JOINT) :
-        return std::string("HingeJoint");
-    }
-}
