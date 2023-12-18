@@ -1,5 +1,7 @@
 #include "SoundSystem.h"
 #include "../Components/TransformComponent.h"
+//#include "../Components/CameraComponent.h"
+#include "../Scene/CameraHelper.h"
 
 Implementation::Implementation()
 {
@@ -47,9 +49,6 @@ SyResult SoundSystem::Init()
     return SyResult();
 }
 
-
-
-
 SyResult SoundSystem::Run()
 {
     auto View = _ecs->view<FSoundComponent>();
@@ -57,25 +56,66 @@ SyResult SoundSystem::Run()
     {
         auto& Scom = _ecs->get<FSoundComponent>(Entity);
         std::string name = Scom.SoundPath;
-
-       // on
-       if ((Scom.IsPlay) && (!Scom.IsPlaying))
-       {
-            Scom.IsPlaying = true;
-            LoadSound(name, Scom.Sound3D, Scom.IsLooping);
-
-            TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
-            Scom.ChanelID = PlayFSound(name, tc._position, Scom.Volume);
-       }
-       //off
-       if (!Scom.IsPlay)
-       {
-           Scom.IsPlaying = false;
-           UnLoadSound(name);
-       }
           
-    }
+       // on
+       if (Scom.IsPlaying)
+       {
+           // àdd transform comp
+           auto* transformC = _ecs->try_get<TransformComponent>(Entity);
+           if (transformC == nullptr)
+           {
+               _ecs->emplace<TransformComponent>(Entity);
+           }
 
+           else if (transformC != nullptr)
+           {
+               if (!Scom.IsON)
+               {
+                   Scom.IsON = true;
+                   LoadSound(name, Scom.Sound3D, Scom.IsLooping);
+                   auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
+                   TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
+                   Scom.ChanelID = PlayFSound(name, tc._position, Scom.Volume);
+
+                   Scom.Sound3D ?
+                       ((Scom.ChanelID = PlayFSound(name,
+                           tc._position - ñameraTransform._position,
+                           Scom.Volume)))
+                       : (Scom.ChanelID = PlayFSound(name));
+               }
+
+               SetChannelVolume(Scom.ChanelID, Scom.Volume);
+
+               if (Scom.Sound3D)
+               {
+                   auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
+                   TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
+                   SetChannel3dPosition(Scom.ChanelID, tc._position - ñameraTransform._position);
+               }
+           }    
+       }
+
+       //off
+       if (!Scom.IsPlaying)
+       {
+           Scom.IsON = false;
+           UnLoadSound(name);
+       }  
+
+       // auto off
+       if (Scom.IsON)
+       {
+           bool bIsPlaying = false;
+           sgpImplementation->_mChannels.find(Scom.ChanelID)->second->isPlaying(&bIsPlaying);
+          
+           if (!bIsPlaying)
+           {
+               Scom.IsON = false;
+               Scom.IsPlaying = false;
+               UnLoadSound(name);
+           }
+       } 
+    }
     sgpImplementation->Update();
     return SyResult();
 }
@@ -232,7 +272,8 @@ int SoundSystem::PlayFSound(const std::string& strSoundName, const SyVector3& vP
 //    SoundSystem::ErrorCheck(tFoundIt->second->stop(eMode));
 //}
 
-//bool SoundSystem::IsEventPlaying(const  std::string& strEventName) const {
+//bool SoundSystem::IsEventPlaying(const  std::string& strEventName) const 
+//{
 //    auto tFoundIt = sgpImplementation->_mEvents.find(strEventName);
 //    if (tFoundIt == sgpImplementation->_mEvents.end())
 //        return false;

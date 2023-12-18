@@ -7,13 +7,6 @@
 #include <vector>
 #include "../Serialization/Serializable.h"
 
-
-//enum class ESoundType
-//{
-//	Sound2D,
-//	Sound3D
-//};
-
   /*  
     1) приватные поля - _privateMember
     2) публичные поля и методы PublicMember
@@ -38,36 +31,23 @@ struct FSoundComponent
 	{
 		this->SoundPath = soundPath;
 	};
-
-	//FSoundComponent(ESoundType type, float volume, bool isoplay, bool ispooping, std::string soundPath, Vector3 pos)
-	//{
-	//	this->SoundType = type;
-	//	this->Volume = volume;
-	//	this->IsPlay = isoplay;
-	//	this->IsLooping = ispooping;
-	//	this->SoundPath = soundPath;
-	//	this->Transform = pos;
-	//};
  
 	~FSoundComponent() {}; 
 
 	
 //----User vars----
-	//ESoundType SoundType = ESoundType::Sound3D;
 	bool Sound3D = false;
 	float Volume = 1.0f;
-	bool IsPlay = false;
-	bool IsLooping = false;
-
-	std::string SoundPath = ""; // = "Engine/Assets/Audio/LookinAtIt.ogg";
-	DirectX::SimpleMath::Vector3 Transform = Vector3::Zero;
-	
-
-//----Engine vars----
 	bool IsPlaying = false;
-// TODO S:or should I use int32_t?
+	bool IsLooping = false;
+	// количество повторов 
+	// 0 - бесконевчно
+	std::string SoundPath = ""; // = "Engine/Assets/Audio/LookinAtIt.ogg";
+	
+//----Engine vars----
+	bool IsON = false;
+	//bool HasStarted = false;
 	int ChanelID;
- 
 	
 	//SER_COMP(FSoundComponent, texturePath);
 };
