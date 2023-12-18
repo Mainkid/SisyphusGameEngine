@@ -47,6 +47,15 @@ SyResult MeshSystem::Run()
 			}
 		}
 
+		if (mesh.model->skeleton)
+		{
+			mesh.model->skeleton->Update(ec->deltaTime);
+			for (int q = 0; q < mesh.model->skeleton->GetNumMeshes(); q++)
+			{
+				auto animMesh = mesh.model->skeleton->GetMesh(q);
+				std::cout <<q<<std::endl;
+			}
+		}
 	}
 
 	return SyResult();

@@ -7,6 +7,7 @@
 #include "assimp/cimport.h"
 #include "../../vendor/WICTextureLoader.h"
 #include "../../Core/Tools/ErrorLogger.h"
+#include <SkeletalAnimation/SkeletalModel.h>
 
 class MeshLoader
 {
@@ -15,7 +16,7 @@ public:
 	static void ProcessNode(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& mesh, aiNode* node, const aiScene* scene);
 	static SyResult LoadTexture(const std::string& meshPath, ID3D11SamplerState** samplerState,
 		ID3D11ShaderResourceView** texture,bool isSRGB=false);
-	static void LoadModel(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& meshes);
+	static void LoadModel(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& meshes, std::shared_ptr <SA::SkeletalModel> skeleton = nullptr);
 	static std::shared_ptr<Mesh> LoadSimpleMesh(const std::string& modelPath);
 	static void GenerateTangentAndBitangent(
 		std::vector<DirectX::SimpleMath::Vector4>& vertices,

@@ -155,6 +155,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_MESH)
 		{
 			auto model = std::make_shared<Model>();
+			model->skeleton = std::make_shared<SA::SkeletalModel>();
 			std::string filePath = FindFilePathByUUID(uuid);
 			if (filePath == "")
 			{
@@ -162,7 +163,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 					boost::lexical_cast<std::string>(uuid).c_str());
 				filePath = FindFilePathByUUID(baseResourceDB[EAssetType::ASSET_MESH].uuid);
 			}
-			MeshLoader::LoadModel(filePath, model->meshes);
+			MeshLoader::LoadModel(filePath, model->meshes,model->skeleton);
 
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>( model);
 			return model;

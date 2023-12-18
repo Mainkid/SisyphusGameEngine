@@ -43,6 +43,7 @@ void TransformHelper::UpdateTransformMatrix(TransformComponent& tc)
 	{
 		UpdateTransformMatrix(context->ecs.get<TransformComponent>(child));
 	}
+
 	Quaternion q;
 	Vector3 scaleNew = tc.scale;
 	Vector3 positionNew = tc._position;

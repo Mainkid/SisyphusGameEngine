@@ -7,6 +7,10 @@
 
 #include "../../Core/Tools/ErrorLogger.h"
 #include "..\Resources\ResourceInfo.h"
+#include "../../../vendor/skeletalAnim/AssimpConverter/AssimpConverter.h"
+#include "../../../vendor/skeletalAnim/SkeletalAnimation/SkeletalModel.h"
+
+
 
 std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
@@ -158,12 +162,17 @@ SyResult MeshLoader::LoadTexture(const std::string& texturePath,ID3D11SamplerSta
 	return SyResult();
 }
 
-void MeshLoader::LoadModel(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& meshes)
+void MeshLoader::LoadModel(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& meshes, std::shared_ptr<SA::SkeletalModel> skeleton)
 {
 
 	Assimp::Importer importer;
 	const aiScene* pScene = importer.ReadFile(modelPath, aiProcess_Triangulate | 
-		aiProcess_SortByPType | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast);
+		aiProcess_SortByPType | aiProcess_LimitBoneWeights |
+		aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast);
+
+	
+	if (skeleton != nullptr)
+		AssimpConverter::Convert(pScene, *skeleton.get());
 
 	if (pScene == nullptr)
 		return;

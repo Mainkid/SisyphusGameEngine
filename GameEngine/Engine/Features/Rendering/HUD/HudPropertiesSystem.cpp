@@ -11,7 +11,8 @@
 #include "../../Core/ServiceLocator.h"
 #include "../../Lighting/Components/LightComponent.h"
 #include "../../../../vendor/ImGui/curve_v122.hpp"
-
+#include "../../../../vendor/StateMachine/imgui_node_graph_test.h"
+#include "../../../../vendor/StateMachine/StateMachineLayer.h"
 
 #include "json.hpp"
 
@@ -37,6 +38,8 @@ SyResult HudPropertiesSystem::Run()
 {
     ImGui::Begin(windowID.c_str());
     //Widget::Render();
+    bool tr = true;
+    ShowStateMachineGraph(&tr);
 
     //ImCurve::ShowBezierDemo();
 
