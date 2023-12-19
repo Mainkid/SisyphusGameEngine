@@ -37,7 +37,8 @@ private:
     SyResult InitComponent(const entt::entity& entity, SyRBodyComponent& rigidBodyC, TransformComponent& transformC);
     SyResult UpdateRigidBodyType(const entt::entity& entity, SyRBodyComponent& rigidBodyC, TransformComponent& transformC);
     SyResult UpdateRigidBodyValues(const entt::entity& entity, SyRBodyComponent& rigidBodyC, TransformComponent& transformC);
-    
+
+    std::vector<entt::entity> GetJointOtherEntities(const entt::entity& entity);
     friend class SyCollisionSystem;
     friend class SyRBodySimulationSystem;
 };

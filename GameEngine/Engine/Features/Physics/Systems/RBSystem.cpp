@@ -242,19 +242,27 @@ SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, Sy
 		{
 			rigidBodyC._wasTransformChangedFromOutside = true;
 			rigidBodyC._mustSaveUserVelocity = true;
-			auto* jointCPtr = _ecs->try_get<SyJointComponent>(entity);
-			auto* jointCHelperPtr = _ecs->try_get<SyJointComponentHelper>(entity);
-			if (jointCPtr != nullptr)
+			auto otherEntities = GetJointOtherEntities(entity);
+			for (auto& anotherEntity : otherEntities)
 			{
-				SyRBodyComponent* otherRBodyCPtr = _ecs->try_get<SyRBodyComponent>(jointCPtr->OtherEntity);
-				if (otherRBodyCPtr != nullptr)
-					otherRBodyCPtr->_mustSaveUserVelocity = true;
+				SyRBodyComponent* anotherRBodyCPtr = _ecs->try_get<SyRBodyComponent>(anotherEntity);
+				if (anotherRBodyCPtr != nullptr)
+					anotherRBodyCPtr->_mustSaveUserVelocity = true;
+				else
+				SY_LOG_PHYS(SY_LOGLEVEL_DEBUG,
+					"No rigid body was found on entity (%s) with a joint atached. That is weird",
+					SY_GET_ENTITY_NAME_CHAR(_ecs, anotherEntity));
 			}
-			else if (jointCHelperPtr != nullptr)
+			auto* jointCHelperPtr = _ecs->try_get<SyJointComponentHelper>(entity);
+			if (jointCHelperPtr != nullptr)
 			{
 				SyRBodyComponent* otherRBodyCPtr = _ecs->try_get<SyRBodyComponent>(jointCHelperPtr->jointHolder);
 				if (otherRBodyCPtr != nullptr)
 					otherRBodyCPtr->_mustSaveUserVelocity = true;
+				else
+					SY_LOG_PHYS(SY_LOGLEVEL_DEBUG,
+						"No rigid body was found on entity (%s) with a joint atached. That is weird",
+						SY_GET_ENTITY_NAME_CHAR(_ecs, jointCHelperPtr->jointHolder));
 			}
 			rbDyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 			rbDyn->setKinematicTarget(PxTransform(	transformC._position,
@@ -296,5 +304,19 @@ SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, Sy
 	}
 	rigidBodyC._rbActor->setActorFlag(PxActorFlag::eVISUALIZATION, false);
 	return SyResult();
+}
+
+std::vector<entt::entity> SyRigidBodySystem::GetJointOtherEntities(const entt::entity& entity)
+{
+	std::vector<entt::entity> result;
+	auto* fixedJointCPtr = _ecs->try_get<SyFixedJointComponent>(entity);
+	if (fixedJointCPtr != nullptr)
+		result.push_back(fixedJointCPtr->OtherEntity);
+	auto* hingeJointCPtr = _ecs->try_get<SyHingeJointComponent>(entity);
+	if (hingeJointCPtr != nullptr)
+		result.push_back(hingeJointCPtr->OtherEntity);
+	//and other joint types
+	return result;
+	
 }
 

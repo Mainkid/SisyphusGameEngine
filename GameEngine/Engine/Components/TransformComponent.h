@@ -31,6 +31,11 @@ struct TransformComponent
 	std::set<entt::entity> children = {};
 
 
+	bool _wasChangedFromEditor = false;
+
+	friend class TransformSystem;
+	friend class SyRigidBodySystem;
+
 	SER_COMP(TransformComponent,
 		_position,
 		_rotation,
