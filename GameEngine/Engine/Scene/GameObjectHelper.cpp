@@ -117,7 +117,7 @@ SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::enti
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks Transform Component. You can't attach RigidBody Component to it.", (int)entity);
 		return result;
 	}
-	ecs->emplace<SyRBodyComponent>(	entity,
+	ecs->emplace<SyRigidBodyComponent>(	entity,
 									rbType,
 									mass,
 									flags);
@@ -131,7 +131,7 @@ SyResult GameObjectHelper::AddPrimitiveColliderComponent(entt::registry* ecs, en
 	const SyColliderMaterial& material)
 {
 	SyResult result;
-	auto* rbComponent = ecs->try_get<SyRBodyComponent>(entity);
+	auto* rbComponent = ecs->try_get<SyRigidBodyComponent>(entity);
 	if (rbComponent == nullptr)
 	{
 		result.code = SY_RESCODE_ERROR;
@@ -157,7 +157,7 @@ SyResult GameObjectHelper::AddTrimeshColliderComponent(entt::registry* ecs, entt
 	const SyColliderMaterial& material)
 {
 	SyResult result;
-	auto* rbComponent = ecs->try_get<SyRBodyComponent>(entity);
+	auto* rbComponent = ecs->try_get<SyRigidBodyComponent>(entity);
 	if (rbComponent == nullptr)
 	{
 		result.code = SY_RESCODE_ERROR;

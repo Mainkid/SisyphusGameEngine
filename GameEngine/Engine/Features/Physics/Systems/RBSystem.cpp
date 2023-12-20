@@ -12,8 +12,8 @@
 
 using namespace physx;
 
-PxPhysics* SyRBodyComponent::_physics;
-PxScene* SyRBodyComponent::_scene;
+PxPhysics* SyRigidBodyComponent::_physics;
+PxScene* SyRigidBodyComponent::_scene;
 
 SyResult SyRigidBodySystem::Init() 
 {
@@ -26,7 +26,7 @@ SyResult SyRigidBodySystem::Init()
 		exit(-1);
 	}
 	_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *_foundation, PxTolerancesScale(), true, nullptr);
-	SyRBodyComponent::_physics = _physics;
+	SyRigidBodyComponent::_physics = _physics;
 	if (_physics == nullptr)
 	{
 		SY_LOG_PHYS(SY_LOGLEVEL_CRITICAL, "PxCreatePhysics returned nullptr. ");
@@ -39,7 +39,7 @@ SyResult SyRigidBodySystem::Init()
 	_scene = _physics->createScene(sceneDesc);
 	_scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
 	_scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
-	SyRBodyComponent::_scene = _scene;
+	SyRigidBodyComponent::_scene = _scene;
 	return SyResult();
 }
 
@@ -50,11 +50,11 @@ SyResult SyRigidBodySystem::Run()
 	if (deltaTime == 0)
 		return result;
 	//initialize components that were created at this frame
-	auto view = _ecs->view<SyRBodyComponent>();
+	auto view = _ecs->view<SyRigidBodyComponent>();
 	for (auto& entity : view)
 	{
 		auto name = SY_GET_ENTITY_NAME_CHAR(_ecs, entity); //for debug
-		auto& rigidBodyC = _ecs->get<SyRBodyComponent>(entity);
+		auto& rigidBodyC = _ecs->get<SyRigidBodyComponent>(entity);
 		auto* transformC = _ecs->try_get<TransformComponent>(entity);
 		if (transformC == nullptr)
 		{
@@ -69,7 +69,7 @@ SyResult SyRigidBodySystem::Run()
 		{
 			if (InitComponent(entity, rigidBodyC, *transformC).code == SY_RESCODE_ERROR)
 			{
-				_ecs->remove<SyRBodyComponent>(entity);
+				_ecs->remove<SyRigidBodyComponent>(entity);
 				CallEvent<SyOnRemoveComponentEvent>("RemoveRigidBody", SyEComponentType::RIGID_BODY, entity);
 				SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
 					"Failed to initialize RigidBody Component on entity (%s). The component has been removed.",
@@ -106,7 +106,7 @@ SyResult SyRigidBodySystem::Run()
 	for (auto& entity : view)
 	{
 		auto name = SY_GET_ENTITY_NAME_CHAR(_ecs, entity); //for debug
-		auto& rigidBodyC = _ecs->get<SyRBodyComponent>(entity);
+		auto& rigidBodyC = _ecs->get<SyRigidBodyComponent>(entity);
 		auto* transformC = _ecs->try_get<TransformComponent>(entity);
 		if (rigidBodyC.RbType == STATIC)
 			continue;
@@ -114,7 +114,7 @@ SyResult SyRigidBodySystem::Run()
 		{
 			result.code = SY_RESCODE_ERROR;
 			result.message = "rbComponent.rbActor is nullptr.";
-			_ecs->remove<SyRBodyComponent>(entity);
+			_ecs->remove<SyRigidBodyComponent>(entity);
 			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
 			continue;
 		}
@@ -143,7 +143,7 @@ SyResult SyRigidBodySystem::Destroy()
 	return SyResult();
 }
 
-SyResult SyRigidBodySystem::InitComponent(const entt::entity& entity, SyRBodyComponent& rigidBodyC,
+SyResult SyRigidBodySystem::InitComponent(const entt::entity& entity, SyRigidBodyComponent& rigidBodyC,
 	TransformComponent& transformC)
 {
 	SyResult result;
@@ -187,7 +187,7 @@ SyResult SyRigidBodySystem::InitComponent(const entt::entity& entity, SyRBodyCom
 	return result;
 }
 
-SyResult SyRigidBodySystem::UpdateRigidBodyType(const entt::entity& entity, SyRBodyComponent& rigidBodyC, TransformComponent& transformC)
+SyResult SyRigidBodySystem::UpdateRigidBodyType(const entt::entity& entity, SyRigidBodyComponent& rigidBodyC, TransformComponent& transformC)
 {
 	SyResult result;
 	if (rigidBodyC._prevFrameRbodyType == rigidBodyC.RbType)
@@ -230,7 +230,7 @@ SyResult SyRigidBodySystem::UpdateRigidBodyType(const entt::entity& entity, SyRB
 	return result;
 }
 
-SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, SyRBodyComponent& rigidBodyC,
+SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, SyRigidBodyComponent& rigidBodyC,
 	TransformComponent& transformC)
 {
 	PxRigidDynamic* rbDyn = rigidBodyC._rbActor->is<PxRigidDynamic>();
@@ -245,7 +245,7 @@ SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, Sy
 			auto otherEntities = GetJointOtherEntities(entity);
 			for (auto& anotherEntity : otherEntities)
 			{
-				SyRBodyComponent* anotherRBodyCPtr = _ecs->try_get<SyRBodyComponent>(anotherEntity);
+				SyRigidBodyComponent* anotherRBodyCPtr = _ecs->try_get<SyRigidBodyComponent>(anotherEntity);
 				if (anotherRBodyCPtr != nullptr)
 					anotherRBodyCPtr->_mustSaveUserVelocity = true;
 				else
@@ -256,7 +256,7 @@ SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, Sy
 			auto* jointCHelperPtr = _ecs->try_get<SyJointComponentHelper>(entity);
 			if (jointCHelperPtr != nullptr)
 			{
-				SyRBodyComponent* otherRBodyCPtr = _ecs->try_get<SyRBodyComponent>(jointCHelperPtr->jointHolder);
+				SyRigidBodyComponent* otherRBodyCPtr = _ecs->try_get<SyRigidBodyComponent>(jointCHelperPtr->jointHolder);
 				if (otherRBodyCPtr != nullptr)
 					otherRBodyCPtr->_mustSaveUserVelocity = true;
 				else

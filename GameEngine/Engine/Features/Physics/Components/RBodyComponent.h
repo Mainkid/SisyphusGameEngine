@@ -36,13 +36,13 @@ enum SyERBodyFlags
 };
 DEFINE_BITWISE_OPERATORS(SyERBodyFlags);
 
-struct SyRBodyComponent
+struct SyRigidBodyComponent
 {
-	SyRBodyComponent(	const SyERBodyType&	rbType = SyERBodyType::DYNAMIC,
+	SyRigidBodyComponent(	const SyERBodyType&	rbType = SyERBodyType::DYNAMIC,
 						float 				mass = 1.0f,
 						unsigned			flags = 0);
 	
-	~SyRBodyComponent();
+	~SyRigidBodyComponent();
 
 	//public fields initialized in constructor and can be modified during runtime
 	SyERBodyType		RbType; //runtime modification is not supported, but will be added in future. The member has to be added to properties
@@ -75,4 +75,4 @@ private:
 	friend class SyJointSystem;
 };
 
-std::size_t hash_value(const SyRBodyComponent& rigidBodyC);
+std::size_t hash_value(const SyRigidBodyComponent& rigidBodyC);

@@ -4,7 +4,7 @@
 
 struct SyJointComponent;
 struct SyFixedJointComponent;
-struct SyRBodyComponent;
+struct SyRigidBodyComponent;
 
 
 class SyJointSystem : public SystemBase

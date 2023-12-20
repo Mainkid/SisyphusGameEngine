@@ -15,7 +15,7 @@ struct SyJointComponentHelper
     entt::entity jointHolder = entt::null;
 };
 
-
+//if you want to add a new joint, do not forget to include it in SyRigidBodySystem::GetJointOtherEntities!!!
 
 struct SyFixedJointComponent
 {

@@ -2,7 +2,7 @@
 using namespace physx;
 
 
-SyRBodyComponent::SyRBodyComponent( const SyERBodyType&      rbType,
+SyRigidBodyComponent::SyRigidBodyComponent( const SyERBodyType&      rbType,
                                     float                   mass,
                                     unsigned flags)
 {
@@ -11,16 +11,16 @@ SyRBodyComponent::SyRBodyComponent( const SyERBodyType&      rbType,
     Flags  = flags;
 }
 
-SyRBodyComponent::~SyRBodyComponent()
+SyRigidBodyComponent::~SyRigidBodyComponent()
 {
 }
 
-bool SyRBodyComponent::WasInit() const
+bool SyRigidBodyComponent::WasInit() const
 {
     return _rbActor != nullptr;
 }
 
-std::size_t hash_value(const SyRBodyComponent& rigidBodyC)
+std::size_t hash_value(const SyRigidBodyComponent& rigidBodyC)
 {
     std::size_t hash = 0;
     boost::hash<float> massHash;
