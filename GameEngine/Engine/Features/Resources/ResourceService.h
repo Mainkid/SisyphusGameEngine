@@ -60,6 +60,7 @@ public:
 	
 	void LoadSceneFromFile(std::filesystem::path file, entt::registry* ecs);
 	void SaveSceneToFile(std::filesystem::path file, entt::registry* ecs);
+	void SaveStringToFile(std::filesystem::path file, std::string data);
 
 private:
 	const std::string baseTexture = ".\\Engine\\Assets\\Resources\\Textures\\spotlight_1.png";

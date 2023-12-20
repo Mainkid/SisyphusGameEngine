@@ -17,6 +17,7 @@
 #include "../../../Mono/SyMono.h"
 #include "../../../Scene/Prefab.h"
 #include "../../../Scene/Scene.h"
+#include "json.hpp"
 
 SyResult HudViewportSystem::Init()
 {
@@ -119,6 +120,12 @@ SyResult HudViewportSystem::Run()
 			{
 				auto scene = std::static_pointer_cast<Scene>(rs->LoadResource(uuid));
 				//TODO: scene drag drop
+			}
+			else if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_CUBEMAP)
+			{
+
+				GameObjectHelper::CreateSkybox(_ecs, uuid);
+
 			}
 		}
 		ImGui::EndDragDropTarget();

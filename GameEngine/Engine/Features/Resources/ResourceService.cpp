@@ -200,8 +200,14 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 				data[i].SysMemPitch = sizeof(float) * width * 4;
 				data[i].SysMemSlicePitch = 0;
 			}
+			
 			HRESULT result = _hc->device->CreateTexture2D(&textureDesc_, data, skyboxResource->cubemapTexture.GetAddressOf());
 			
+			for (int i=0; i<6 ;i++)
+			{
+				delete cubeMapArray[i];
+			}
+
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 			srvDesc.Format = textureDesc_.Format;
 			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
@@ -426,6 +432,14 @@ void ResourceService::SaveSceneToFile(std::filesystem::path filePath, entt::regi
 	file.close();
 }
 
+void ResourceService::SaveStringToFile(std::filesystem::path filePath, std::string data)
+{
+	std::ofstream file;
+	file.open(filePath);
+	file << data;
+	file.close();
+}
+
 void ResourceService::GenerateMetaFiles(std::filesystem::path currentDirectory)
 {
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Generating metafiles in %s folder",currentDirectory.string().c_str());
@@ -448,10 +462,29 @@ void ResourceService::GenerateMetaFiles(std::filesystem::path currentDirectory)
 
 				file.open(directoryEntry.path().string() + ".meta");
 
+				EAssetType assetType;
+
 				if (extensionToAssetTypeMap.count(extension) > 0)
+				{
 					fileData["AssetType"] = static_cast<int>(extensionToAssetTypeMap.at(extension));
+					assetType = extensionToAssetTypeMap.at(extension);
+				}
 				else
+				{
 					fileData["AssetType"] = static_cast<int>(EAssetType::ASSET_NONE);
+					assetType = EAssetType::ASSET_NONE;
+				}
+
+				switch (assetType)
+				{
+				case EAssetType::ASSET_TEXTURE:
+					fileData["TextureType"] = 0;
+					fileData["sRGB"] = false;
+					fileData["GenerateMipMaps"] = false;
+					fileData["WrapMode"] = 0;
+					fileData["FilterMode"] = 0;
+					break;
+				}
 
 				file << fileData;
 				file.close();
