@@ -13,6 +13,7 @@ public class SyEcs
 
     private readonly Dictionary<int, uint> _gameEntToEngineEnt = new Dictionary<int, uint>();
     private readonly Dictionary<uint, int> _engineEntToGameEnt = new Dictionary<uint, int>();
+    
 
     internal SyEcs()
     {
@@ -142,6 +143,8 @@ public class SyEcs
                 //comp.IsAutoMass  = true;
                 rigid.IsGravityOn = true;
                 break;
+            case EEngineCompId.Skybox:
+                break;
             case null:
                 break;
             default:
@@ -168,7 +171,7 @@ public class SyEcs
         return World.GetPool<T>().Has(ent);
     }
     
-    public ref T GetComp<T>(int ent) where T : struct, IInternalComp
+    public ref T GetComp<T>(int ent) where T : struct, IComp
     {
         return ref World.GetPool<T>().Get(ent);
     }
@@ -195,6 +198,8 @@ public class SyEcs
             AddComp<ColliderComp>(ent);
         else if (compType == typeof(RigidComp))
             AddComp<RigidComp>(ent);
+        else if (compType == typeof(SkyboxComp))
+            AddComp<SkyboxComp>(ent);
         else
             World.GetPoolByType(compType).AddRaw(ent, Activator.CreateInstance(compType));
     }
@@ -213,6 +218,8 @@ public class SyEcs
             RemoveComp<ColliderComp>(ent);
         else if (compType == typeof(RigidComp))
             RemoveComp<RigidComp>(ent);
+        else if (compType == typeof(SkyboxComp))
+            RemoveComp<SkyboxComp>(ent);
         else
             World.GetPoolByType(compType).Del(ent);
     }

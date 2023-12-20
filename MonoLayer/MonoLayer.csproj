@@ -42,6 +42,7 @@
     <ItemGroup>
         <Compile Include="Core\Comps\ColliderComp.cs" />
         <Compile Include="Core\Comps\SceneObjectComp.cs" />
+        <Compile Include="Core\Comps\SkyboxComp.cs" />
         <Compile Include="Core\EEngineCompId.cs" />
         <Compile Include="Core\Helpers\CollectionsExt.cs" />
         <Compile Include="Core\Helpers\TypesExt.cs" />
@@ -49,8 +50,10 @@
         <Compile Include="Core\ProxyComps\ProxyLightComp.cs" />
         <Compile Include="Core\ProxyComps\ProxyRigidComp.cs" />
         <Compile Include="Core\ProxyComps\ProxySceneObjectComp.cs" />
+        <Compile Include="Core\ProxyComps\ProxySkyboxComp.cs" />
         <Compile Include="Core\Resources\EResourceType.cs" />
         <Compile Include="Core\Resources\ResHelper.cs" />
+        <Compile Include="Core\Resources\ResCubemap.cs" />
         <Compile Include="Core\Resources\SyResManager.cs" />
         <Compile Include="Core\Resources\ResMaterial.cs" />
         <Compile Include="Core\Resources\ResBase.cs" />

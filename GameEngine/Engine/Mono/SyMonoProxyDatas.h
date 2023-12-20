@@ -17,7 +17,8 @@ namespace mono
 		Mesh,
 		Light,
 		Collider,
-		Rigid
+		Rigid,
+		Skybox
 	};
 
 	class ProxyCompIdExt
@@ -33,6 +34,7 @@ namespace mono
 			case EProxyCompId::Light: return "Light";
 			case EProxyCompId::Collider: return "Collider";
 			case EProxyCompId::Rigid: return "Rigid";
+			case EProxyCompId::Skybox: return "Skybox";
 			default: return "Missing";
 			}
 		}
@@ -42,7 +44,8 @@ namespace mono
 	enum class EProxyResourceType
 	{
 		Model,
-		Material
+		Material,
+		Cubemap
 	};
 
 
@@ -132,5 +135,10 @@ namespace mono
 
 		ProxyVector3 LinearVelocity;
 		ProxyVector3 AngularVelocity;
+	};
+
+	struct ProxySkyboxComp
+	{
+		MonoString* CubemapUuid;
 	};
 }

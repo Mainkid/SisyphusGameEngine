@@ -18,6 +18,7 @@ internal class SyEcsSync
     private readonly EcsPool<LightComp>       _lightsPool;
     private readonly EcsPool<ColliderComp>    _collidersPool;
     private readonly EcsPool<RigidComp>       _rigidsPool;
+    private readonly EcsPool<SkyboxComp>      _skyboxesPool;
 
     private readonly EcsFilter _sceneObjectsFilter;
     private readonly EcsFilter _transformsFilter;
@@ -25,24 +26,27 @@ internal class SyEcsSync
     private readonly EcsFilter _lightsFilter;
     private readonly EcsFilter _colliderFilter;
     private readonly EcsFilter _rigidsFilter;
+    private readonly EcsFilter _skyboxesFilter;
 
     public SyEcsSync(SyEcs ecs)
     {
         _ecs = ecs;
 
-        _sceneObjectsPool      = ecs.World.GetPool<SceneObjectComp>();
-        _transformsPool = ecs.World.GetPool<TransformComp>();
-        _meshesPool     = ecs.World.GetPool<MeshComp>();
-        _lightsPool     = ecs.World.GetPool<LightComp>();
-        _collidersPool  = ecs.World.GetPool<ColliderComp>();
-        _rigidsPool     = ecs.World.GetPool<RigidComp>();
+        _sceneObjectsPool = ecs.World.GetPool<SceneObjectComp>();
+        _transformsPool   = ecs.World.GetPool<TransformComp>();
+        _meshesPool       = ecs.World.GetPool<MeshComp>();
+        _lightsPool       = ecs.World.GetPool<LightComp>();
+        _collidersPool    = ecs.World.GetPool<ColliderComp>();
+        _rigidsPool       = ecs.World.GetPool<RigidComp>();
+        _skyboxesPool     = ecs.World.GetPool<SkyboxComp>();
 
-        _sceneObjectsFilter      = ecs.World.Filter<SceneObjectComp>().End();
-        _transformsFilter = ecs.World.Filter<TransformComp>().End();
-        _meshesFilter     = ecs.World.Filter<MeshComp>().End();
-        _lightsFilter     = ecs.World.Filter<LightComp>().End();
-        _colliderFilter   = ecs.World.Filter<ColliderComp>().End();
-        _rigidsFilter     = ecs.World.Filter<RigidComp>().End();
+        _sceneObjectsFilter = ecs.World.Filter<SceneObjectComp>().End();
+        _transformsFilter   = ecs.World.Filter<TransformComp>().End();
+        _meshesFilter       = ecs.World.Filter<MeshComp>().End();
+        _lightsFilter       = ecs.World.Filter<LightComp>().End();
+        _colliderFilter     = ecs.World.Filter<ColliderComp>().End();
+        _rigidsFilter       = ecs.World.Filter<RigidComp>().End();
+        _skyboxesFilter     = ecs.World.Filter<SkyboxComp>().End();
     }
 
     //-----------------------------------------------------------
@@ -60,6 +64,7 @@ internal class SyEcsSync
         SendCollidersToEngine();
         //Console.WriteLine("[TEST] send rigids");
         SendRigidsToEngine();
+        SendSkyboxesToEngine();
     }
 
     //-----------------------------------------------------------
@@ -350,6 +355,43 @@ internal class SyEcsSync
         rigid.Hash = rigid.GetHashCode();
         
         Console.WriteLine($"[TEST] g{gameEnt} rigid received from engine");
+    }
+
+    //-----------------------------------------------------------
+    //-----------------------------------------------------------
+    private void SendSkyboxesToEngine()
+    {
+        foreach (int ent in _skyboxesFilter)
+        {
+            ref var skybox = ref _skyboxesPool.Get(ent);
+            int     hash   = skybox.GetHashCode();
+            if (hash == skybox.Hash)
+                continue;
+            skybox.Hash = hash;
+
+            var proxy = new ProxySkyboxComp
+            {
+                CubemapUuid = skybox.Cubemap?.Uuid
+            };
+            
+            SyProxyEcs.GeUpdateSkyboxComp(_ecs.ToEngineEnt(ent), proxy);
+            
+            Console.WriteLine($"[TEST] g{ent} skybox sent to engine");
+        }
+    }
+
+    public void ReceiveSkyboxFromEngine(uint engineEnt, ProxySkyboxComp proxy)
+    {
+        int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
+        if (!_skyboxesPool.Has(gameEnt))
+            _skyboxesPool.Add(gameEnt);
+
+        ref var skybox = ref _skyboxesPool.Get(gameEnt);
+        skybox.Cubemap = proxy.CubemapUuid == null ? null : new ResRef<ResCubemap>(proxy.CubemapUuid);
+
+        skybox.Hash = skybox.GetHashCode();
+        
+        Console.WriteLine($"[TEST] g{gameEnt} skybox received from engine");
     }
 }
 }

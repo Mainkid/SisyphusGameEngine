@@ -164,5 +164,22 @@ internal class SyProxyEcs
 	
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	public static extern void GeUpdateSkyboxComp(uint engineEnt, ProxySkyboxComp proxy);
+
+	private void EgUpdateSkyboxComp(uint engineEnt, ProxySkyboxComp proxy)
+	{
+		try
+		{
+			Sync.ReceiveSkyboxFromEngine(engineEnt, proxy);
+		}
+		catch (Exception e)
+		{
+			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
+		}
+	}
+
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
 }
 }

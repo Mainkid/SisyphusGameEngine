@@ -121,6 +121,8 @@ MonoString* SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType
 		resType = EAssetType::ASSET_MESH;
 	else if (rawResType == EProxyResourceType::Material)
 		resType = EAssetType::ASSET_MATERIAL;
+	else if (rawResType == EProxyResourceType::Cubemap)
+		resType = EAssetType::ASSET_CUBEMAP;
 	if (resType == EAssetType::ASSET_NONE)
 	{
 		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "failed to convert resource type");

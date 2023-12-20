@@ -11,7 +11,8 @@ public enum EEngineCompId
 	Mesh,
 	Light,
 	Collider,
-	Rigid
+	Rigid,
+	Skybox
 }
 
 public static class EngineCompIdHelper
@@ -24,6 +25,7 @@ public static class EngineCompIdHelper
 		{typeof(LightComp), EEngineCompId.Light},
 		{typeof(ColliderComp), EEngineCompId.Collider},
 		{typeof(RigidComp), EEngineCompId.Rigid},
+		{typeof(SkyboxComp), EEngineCompId.Skybox}
 	};
 
 	public static EEngineCompId? GetFromCompType(Type compType)

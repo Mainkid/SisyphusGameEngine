@@ -26,6 +26,7 @@ namespace mono
 		inline static const std::string GE_UPDATE_LIGHT_COMP = "GeUpdateLightComp";
 		inline static const std::string GE_UPDATE_COLLIDER_COMP = "GeUpdateColliderComp";
 		inline static const std::string GE_UPDATE_RIGID_COMP = "GeUpdateRigidComp";
+		inline static const std::string GE_UPDATE_SKYBOX_COMP = "GeUpdateSkyboxComp";
 
 	private:
 		inline static SyMonoEcs* _instance = nullptr;
@@ -42,6 +43,7 @@ namespace mono
 		static void GeUpdateLightComp(uint32_t rawEnt, ProxyLightComp proxy);
 		static void GeUpdateColliderComp(uint32_t rawEnt, ProxyColliderComp proxy);
 		static void GeUpdateRigidComp(uint32_t rawEnt, ProxyRigidComp proxy);
+		static void GeUpdateSkyboxComp(uint32_t rawEnt, ProxySkyboxComp proxy);
 
 	public:
 		SyMonoMethod<> EgSyncEngineWithGame{ "EgSyncEngineWithGame" };
@@ -54,6 +56,7 @@ namespace mono
 		SyMonoMethod<uint32_t, ProxyLightComp> EgUpdateLightComp{ "EgUpdateLightComp" };
 		SyMonoMethod<uint32_t, ProxyColliderComp> EgUpdateColliderComp{ "EgUpdateColliderComp" };
 		SyMonoMethod<uint32_t, ProxyRigidComp> EgUpdateRigidComp{ "EgUpdateRigidComp" };
+		SyMonoMethod<uint32_t, ProxySkyboxComp> EgUpdateSkyboxComp{ "EgUpdateSkyboxComp" };
 
 		void SetCallbackReceiver(ISyMonoEcsCallbacks* receiver);
 	private:

@@ -1,5 +1,6 @@
 #pragma once
 
+struct SkyboxComponent;
 struct GameObjectComp;
 struct SyPrimitiveColliderComponent;
 struct LightComponent;
@@ -18,5 +19,6 @@ namespace mono
 		static size_t Hash(const LightComponent& light);
 		static size_t Hash(const SyPrimitiveColliderComponent& collider);
 		static size_t Hash(const SyRBodyComponent& rigid);
+		static size_t Hash(const SkyboxComponent& skybox);
 	};
 }

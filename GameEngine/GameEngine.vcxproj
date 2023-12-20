@@ -684,7 +684,6 @@
     <ClInclude Include="Engine\Features\Physics\Components\ColliderComponent.h" />
     <ClInclude Include="Engine\Core\ResourcePath.h" />
     <ClInclude Include="Engine\Mono\SyMonoStr.h" />
-    <ClInclude Include="Engine\Mono\Objects\ISyMonoEditorCallbacks.h" />
     <ClInclude Include="Engine\Events\SyHotReloadEvent.h" />
     <ClInclude Include="Engine\Events\SyImageBasedLightingUpdateEvent.h" />
     <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateColliderEvent.h" />

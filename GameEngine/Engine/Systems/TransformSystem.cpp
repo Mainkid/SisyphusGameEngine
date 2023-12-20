@@ -19,29 +19,6 @@ SyResult TransformSystem::Run()
 	SyResult result;
 	auto view = _ecs->view<TransformComponent>();
 
-	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SySceneLoadEvent);
-
-	auto view2 = SY_GET_THIS_FRAME_EVENT_VIEW(SyHotReloadEvent);
-
-
-
-	if (eventView.size_hint()>0)
-	{
-		ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
-		for (auto& entity : view)
-		{
-			TransformComponent& tc = view.get<TransformComponent>(entity);
-			tc.parent = static_cast<uint32_t>(ser.GetContextEntityToEntity(static_cast<entt::entity>(tc.parent)));
-
-		}
-
-		for (auto& entity : view)
-		{
-			TransformComponent& tc = view.get<TransformComponent>(entity);
-			GameObjectHelper::AddChild(_ecs, static_cast<entt::entity>(tc.parent), entity);
-		}
-	}
-
 	for (auto& entity :view)
 	{
 		TransformComponent& tc = view.get<TransformComponent>(entity);

@@ -3,6 +3,7 @@
 public enum EResourceType
 {
 	Model,
-	Material
+	Material,
+	Cubemap
 }
 }

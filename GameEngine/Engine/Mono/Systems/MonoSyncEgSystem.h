@@ -22,4 +22,5 @@ private:
 	void SendLights();
 	void SendColliders();
 	void SendRigids();
+	void SendSkyboxes();
 };

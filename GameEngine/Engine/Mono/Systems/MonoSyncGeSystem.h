@@ -39,4 +39,5 @@ private:
 	void OnUpdateLightComp(uint32_t rawEnt, const mono::ProxyLightComp& proxy) override;
 	void OnUpdateColliderComp(uint32_t rawEnt, const mono::ProxyColliderComp& proxy) override;
 	void OnUpdateRigidComp(uint32_t rawEnt, const mono::ProxyRigidComp& proxy) override;
+	void OnUpdateSkyboxComp(uint32_t rawEnt, const mono::ProxySkyboxComp& proxy) override;
 };

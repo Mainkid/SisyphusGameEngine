@@ -23,6 +23,10 @@ struct SkyboxComponent
 	std::unique_ptr<Buffer> IndexBuffer;
 	std::shared_ptr<SkyboxResource> SkyboxRes;
 	size_t Hash;
+
+	size_t MonoHash; // read/write only by mono sync system
+
+
 	SER_COMP(SkyboxComponent,
 		uuid)
 };

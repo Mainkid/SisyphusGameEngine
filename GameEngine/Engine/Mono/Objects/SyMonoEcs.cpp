@@ -63,6 +63,12 @@ void SyMonoEcs::GeUpdateRigidComp(uint32_t rawEnt, ProxyRigidComp proxy)
 		_instance->_cbReceiver->OnUpdateRigidComp(rawEnt, proxy);
 }
 
+void SyMonoEcs::GeUpdateSkyboxComp(uint32_t rawEnt, ProxySkyboxComp proxy)
+{
+	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
+		_instance->_cbReceiver->OnUpdateSkyboxComp(rawEnt, proxy);
+}
+
 
 void SyMonoEcs::SetCallbackReceiver(ISyMonoEcsCallbacks* receiver)
 {
@@ -85,6 +91,7 @@ SyResult SyMonoEcs::OnAfterCreate()
 	SY_RESULT_CHECK(EgUpdateLightComp.Bind(this));
 	SY_RESULT_CHECK(EgUpdateColliderComp.Bind(this));
 	SY_RESULT_CHECK(EgUpdateRigidComp.Bind(this));
+	SY_RESULT_CHECK(EgUpdateSkyboxComp.Bind(this));
 
 	BindCallback(GE_CREATE_ENTITY, &GeCreateEntity);
 	BindCallback(GE_DESTROY_ENTITY, &GeDestroyEntity);
@@ -98,6 +105,7 @@ SyResult SyMonoEcs::OnAfterCreate()
 	BindCallback(GE_UPDATE_LIGHT_COMP, &GeUpdateLightComp);
 	BindCallback(GE_UPDATE_COLLIDER_COMP, &GeUpdateColliderComp);
 	BindCallback(GE_UPDATE_RIGID_COMP, &GeUpdateRigidComp);
+	BindCallback(GE_UPDATE_SKYBOX_COMP, &GeUpdateSkyboxComp);
 
 	return {};
 }

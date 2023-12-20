@@ -134,6 +134,12 @@ void MonoSyncGeSystem::OnAddComp(uint32_t rawEnt, mono::EProxyCompId id)
 		_ecs->emplace<SyRBodyComponent>(ent);
 		CallEvent<SyOnCreateRBodyEvent>("OnCreateRBody", ent);
 	}
+	else if (id == mono::EProxyCompId::Skybox)
+	{
+		auto resService = ServiceLocator::instance()->Get<ResourceService>();
+		_ecs->emplace<SkyboxComponent>(ent).uuid = resService->baseResourceDB[EAssetType::ASSET_CUBEMAP].uuid;
+		_ecs->emplace<ImageBasedLightingComponent>(ent);
+	}
 	else
 	{
 		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "not implemented");
@@ -148,7 +154,7 @@ void MonoSyncGeSystem::OnRemoveComp(uint32_t rawEnt, mono::EProxyCompId id)
 		mono::ProxyCompIdExt::ToStr(id).c_str(),
 		static_cast<int>(rawEnt)
 	);
-	//std::cout << "[TEST] ent e" << rawEnt << " remove comp " << mono::ProxyCompIdExt::ToStr(id) << std::endl;
+	std::cout << "[mono] ent e" << rawEnt << " remove comp " << mono::ProxyCompIdExt::ToStr(id) << std::endl;
 
 	auto ent = static_cast<entt::entity>(rawEnt);
 
@@ -168,6 +174,11 @@ void MonoSyncGeSystem::OnRemoveComp(uint32_t rawEnt, mono::EProxyCompId id)
 	else if (id == mono::EProxyCompId::Rigid)
 	{
 		_ecs->remove<SyRBodyComponent>(ent);
+	}
+	else if (id == mono::EProxyCompId::Skybox)
+	{
+		_ecs->remove<SkyboxComponent>(ent);
+		_ecs->remove<ImageBasedLightingComponent>(ent);
 	}
 	else
 	{
@@ -232,11 +243,15 @@ void MonoSyncGeSystem::OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshCo
 		return;
 	}
 
+	bool areFieldsCorrected = false;
+
 	if (proxy.ModelUuid == nullptr)
 	{
 		auto resService = ServiceLocator::instance()->Get<ResourceService>();
 		auto uuid = resService->GetUUIDFromPath(cubeMeshPath);
 		mesh->modelUUID = uuid;
+
+		areFieldsCorrected = true;
 	}
 	else
 	{
@@ -259,7 +274,10 @@ void MonoSyncGeSystem::OnUpdateMeshComp(uint32_t rawEnt, const mono::ProxyMeshCo
 		}
 	}
 
-	mesh->MonoHash = mono::SyMonoHashHelper::Hash(*mesh);
+	if (areFieldsCorrected)
+		mesh->MonoHash = 0;
+	else
+		mesh->MonoHash = mono::SyMonoHashHelper::Hash(*mesh);
 }
 
 void MonoSyncGeSystem::OnUpdateLightComp(uint32_t rawEnt, const mono::ProxyLightComp& proxy)
@@ -319,4 +337,35 @@ void MonoSyncGeSystem::OnUpdateRigidComp(uint32_t rawEnt, const mono::ProxyRigid
 	rigid->AngularVelocity = proxy.AngularVelocity;
 
 	rigid->MonoHash = mono::SyMonoHashHelper::Hash(*rigid);
+}
+
+void MonoSyncGeSystem::OnUpdateSkyboxComp(uint32_t rawEnt, const mono::ProxySkyboxComp& proxy)
+{
+	auto ent = static_cast<entt::entity>(rawEnt);
+	auto skybox = _ecs->try_get<SkyboxComponent>(ent);
+	if (skybox == nullptr)
+	{
+		std::cout << "[mono] e" << rawEnt << "does not have skybox" << std::endl;
+		return;
+	}
+
+	bool areFieldsCorrected = false;
+
+	if (proxy.CubemapUuid == nullptr)
+	{
+		auto resService = ServiceLocator::instance()->Get<ResourceService>();
+		skybox->uuid = resService->baseResourceDB[EAssetType::ASSET_CUBEMAP].uuid;
+
+		areFieldsCorrected = true;
+	}
+	else
+	{
+		mono::SyMonoStr strUuid{ proxy.CubemapUuid };
+		skybox->uuid = strUuid.ToUuid();
+	}
+
+	if (areFieldsCorrected)
+		skybox->MonoHash = 0;
+	else
+		skybox->MonoHash = mono::SyMonoHashHelper::Hash(*skybox);
 }

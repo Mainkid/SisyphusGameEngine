@@ -7,8 +7,6 @@ class ResourceService;
 
 namespace mono
 {
-	class ISyMonoEditorCallbacks;
-
 	class SyMonoEditor : public SyMonoObj
 	{
 		inline static const std::string NAMESPACE = "SyEngine.Editor";

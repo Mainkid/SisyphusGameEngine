@@ -3,6 +3,7 @@
 #include <boost/container_hash/hash.hpp>
 
 #include "../../Components/GameObjectComp.h"
+#include "../../Components/SkyboxComponent.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Features/Lighting/Components/LightComponent.h"
 #include "../../Features/Mesh/Components/MeshComponent.h"
@@ -74,5 +75,12 @@ size_t SyMonoHashHelper::Hash(const SyRBodyComponent& rigid)
 	boost::hash_combine(hash, rigid.Flags);
 	boost::hash_combine(hash, rigid.LinearVelocity);
 	boost::hash_combine(hash, rigid.AngularVelocity);
+	return hash;
+}
+
+size_t SyMonoHashHelper::Hash(const SkyboxComponent& skybox)
+{
+	size_t hash = 0;
+	boost::hash_combine(hash, skybox.uuid);
 	return hash;
 }

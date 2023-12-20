@@ -119,7 +119,6 @@
     <ClCompile Include="Engine\Mono\SyMonoRuntime.cpp" />
     <ClCompile Include="Engine\Mono\SyMonoProxyDatas.h" />
     <ClCompile Include="Engine\Mono\Systems\MonoSyncGeSystem.cpp" />
-    <ClCompile Include="Engine\Mono\Components\MonoSyncComp.h" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoLogger.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoEcs.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoGameConfig.cpp" />
@@ -382,7 +381,6 @@
     <ClInclude Include="vendor\ImGui\curve_v122.hpp" />
     <ClInclude Include="vendor\ImGui\ImCurve.h" />
     <ClInclude Include="Engine\Mono\Systems\MonoSyncEgSystem.h" />
-    <ClInclude Include="Engine\Mono\Objects\ISyMonoEditorCallbacks.h" />
     <ClInclude Include="Engine\Events\SyHotReloadEvent.h" />
     <ClInclude Include="Engine\Events\SyImageBasedLightingUpdateEvent.h" />
     <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateColliderEvent.h" />

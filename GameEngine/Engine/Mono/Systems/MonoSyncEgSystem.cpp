@@ -5,6 +5,7 @@
 #include <boost/uuid/uuid.hpp>
 
 #include "../SyMono.h"
+#include "../../Components/SkyboxComponent.h"
 #include "../../Features/Mesh/Components/MeshComponent.h"
 #include "../../Components/TransformComponent.h"
 #include "../Helpers/SyMonoHashHelper.h"
@@ -29,6 +30,7 @@ SyResult MonoSyncEgSystem::Run()
 	SendLights();
 	SendColliders();
 	SendRigids();
+	SendSkyboxes();
 
 	return {};
 }
@@ -204,5 +206,35 @@ void MonoSyncEgSystem::SendRigids()
 		proxy.AngularVelocity = rigid.AngularVelocity;
 
 		_monoEcs->EgUpdateRigidComp.Invoke(static_cast<uint32_t>(ent), proxy);
+	}
+}
+
+void MonoSyncEgSystem::SendSkyboxes()
+{
+	MonoDomain* monoDomain = mono_object_get_domain(_monoEcs->GetInstance());
+
+	mono::ProxySkyboxComp proxy;
+
+	auto view = _ecs->view<GameObjectComp, SkyboxComponent>();
+	for (auto ent : view)
+	{
+		auto& skybox = view.get<SkyboxComponent>(ent);
+
+		size_t hash = mono::SyMonoHashHelper::Hash(skybox);
+		if (hash == skybox.MonoHash)
+			continue;
+		skybox.MonoHash = hash;
+
+		if (skybox.uuid.is_nil())
+		{
+			proxy.CubemapUuid = nullptr;
+		}
+		else
+		{
+			auto strModelUuid = boost::lexical_cast<std::string>(skybox.uuid);
+			proxy.CubemapUuid = mono_string_new(monoDomain, strModelUuid.c_str());
+		}
+
+		_monoEcs->EgUpdateSkyboxComp.Invoke(static_cast<uint32_t>(ent), proxy);
 	}
 }
