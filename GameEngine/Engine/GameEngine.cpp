@@ -27,17 +27,17 @@ int main()
     auto light = GameObjectHelper::CreateLight(ecs, ELightType::Ambient);
     ecs->get<LightComponent>(light).Color = Vector4(0.15f, 0.15f, 0.15f, 0.15f);
 
-    auto lightPoint = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
+   /* auto lightPoint = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
     ecs->get<LightComponent>(lightPoint).ParamsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
     ecs->get<LightComponent>(lightPoint).Color = Vector4(1, 1, 0.0f, 3.0f);
     ecs->get<TransformComponent>(lightPoint)._position = Vector3(3, 0, 0);
 
-    auto lightPoint2 = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
+    auto lightPoint2 = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);*/
 
-    ecs->get<LightComponent>(lightPoint2).ParamsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
-    ecs->get<LightComponent>(lightPoint2).Color = Vector4(1, 0, 0.0f, 3.0f);
-    ecs->get<TransformComponent>(lightPoint2)._position = Vector3(3, 0, 0);
-    ecs->get<LightComponent>(lightPoint2).LightBehavior = LightBehavior::Movable;
+    //ecs->get<LightComponent>(lightPoint2).ParamsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
+    //ecs->get<LightComponent>(lightPoint2).Color = Vector4(1, 0, 0.0f, 3.0f);
+    //ecs->get<TransformComponent>(lightPoint2)._position = Vector3(3, 0, 0);
+    //ecs->get<LightComponent>(lightPoint2).LightBehavior = LightBehavior::Movable;
 
     auto base = GameObjectHelper::Create(ecs, "Base", { 0.0f, -5.0f, 13.0f });
     ecs->get<TransformComponent>(base).scale = {10.0f, 1.0f, 10.0f};

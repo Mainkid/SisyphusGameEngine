@@ -1,4 +1,7 @@
 
+#define MAX_BONES 100
+#define MAX_BONES_INFLUENCE 4
+
 cbuffer mycBuffer : register(b0)
 {
     row_major float4x4 world;
@@ -12,6 +15,11 @@ cbuffer mycBuffer : register(b0)
     float4 emissiveVec;
     float4 specularVec;
     float4 instanceID;
+};
+
+cbuffer SkeletalBuffer : register(b1)
+{
+   row_major float4x4 finalBonesMatrices[MAX_BONES];
 };
 
 Texture2D albedoTex : TEXTURE : register(t0);
@@ -29,6 +37,8 @@ struct VS_IN
     float4 normals : NORMAL;
     float4 tangents : TANGENT;
     float4 bitangents : BITANGENT;
+    float4x1 boneIDs : BONE;
+    float4x1 boneWeights : BONEWEIGHTS;
 };
 
 struct PS_IN
@@ -56,13 +66,32 @@ PS_IN VSMain(VS_IN input)
 {
     PS_IN output = (PS_IN) 0;
 	
-    float4 res = input.col;
+    float4 totalPosition = float4(0, 0, 0, 0);
+    for (int i = 0; i < MAX_BONES_INFLUENCE; i++)
+    {
+        if (input.boneIDs[i] < 0)
+            continue;
+        //if (input.boneIDs[i] >= MAX_BONES)
+        //{
+        //    totalPosition = input.pos;
+        //    break;
+        //}
+        float4 localPosition = mul(input.pos, finalBonesMatrices[int(input.boneIDs[i])]);
+        totalPosition += localPosition * float(input.boneWeights[i]);
+        input.normals = mul(input.normals, finalBonesMatrices[int(input.boneIDs[i])]);
+    }
+    
+    if (input.boneIDs[0] < 0)
+        totalPosition = input.pos;
 
+        
     output.normals.xyz = normalize(mul(input.normals.xyz, (float3x3) worldViewInverseT));
-    output.posH = mul(input.pos, worldViewProj);
-    output.posW = mul(input.pos, world);
-    output.posWV = mul(input.pos, worldView);
+    output.posH = mul(totalPosition, worldViewProj);
+    output.posW = mul(totalPosition, world);
+    output.posWV = mul(totalPosition, worldView);
     output.col = input.col;
+    
+    
     float3 T = normalize(mul(float3(input.tangents.xyz), (float3x3) world));
     float3 B = normalize(mul(float3(input.bitangents.xyz), (float3x3) world));
     float3 N = normalize(mul(float3(input.normals.xyz), (float3x3) world));

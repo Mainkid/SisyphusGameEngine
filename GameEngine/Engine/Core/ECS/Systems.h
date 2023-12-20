@@ -36,6 +36,7 @@
 #include "../../Features/Rendering/RenderPipeline/HbaoRenderSystem.h"
 #include "../../Features/Rendering/RenderPipeline/ParticleRenderSystem.h"
 #include "../../Features/Rendering/RenderPipeline/EditorColliderRenderSystem.h"
+#include "../../Features/Animations/Systems/SkeletalAnimationSystem.h"
 
 #include "../Mono/Systems/MonoSyncSystem.h"
 

@@ -93,18 +93,18 @@ namespace AssimpConverter
 		for (unsigned int i = 0; i < a_pScene->mNumMeshes; ++i)
 		{
 			aiMesh* pMesh = a_pScene->mMeshes[i];
-			//
-			sAnimatedMesh AnimMesh;
-			AnimMesh.NumVertices = pMesh->mNumVertices;
-			AnimMesh.pVertices = new Vector3[AnimMesh.NumVertices];
-			AnimMesh.pTransformedVertices = new Vector3[AnimMesh.NumVertices];
-			AnimMesh.pNormals = new Vector3[AnimMesh.NumVertices];
-			AnimMesh.pTransformedNormals = new Vector3[AnimMesh.NumVertices];
-			AnimMesh.NumIndices = pMesh->mNumFaces * 3;
-			AnimMesh.pIndices = new unsigned int[AnimMesh.NumIndices];
+			////
+			//sAnimatedMesh AnimMesh;
+			//AnimMesh.NumVertices = pMesh->mNumVertices;
+			//AnimMesh.pVertices = new Vector3[AnimMesh.NumVertices];
+			//AnimMesh.pTransformedVertices = new Vector3[AnimMesh.NumVertices];
+			//AnimMesh.pNormals = new Vector3[AnimMesh.NumVertices];
+			//AnimMesh.pTransformedNormals = new Vector3[AnimMesh.NumVertices];
+			//AnimMesh.NumIndices = pMesh->mNumFaces * 3;
+			//AnimMesh.pIndices = new unsigned int[AnimMesh.NumIndices];
 
-			memcpy(AnimMesh.pVertices, pMesh->mVertices, AnimMesh.NumVertices*sizeof(aiVector3D));
-			memcpy(AnimMesh.pNormals, pMesh->mNormals, AnimMesh.NumVertices*sizeof(aiVector3D));
+			//memcpy(AnimMesh.pVertices, pMesh->mVertices, AnimMesh.NumVertices*sizeof(aiVector3D));
+			//memcpy(AnimMesh.pNormals, pMesh->mNormals, AnimMesh.NumVertices*sizeof(aiVector3D));
 			for (unsigned int i = 0; i < pMesh->mNumBones; ++i)
 			{
 				aiBone* pBone = pMesh->mBones[i];
@@ -119,17 +119,17 @@ namespace AssimpConverter
 				}
 			}
 
-			for (unsigned int i = 0; i < pMesh->mNumFaces; ++i)
-			{
-				aiFace Face = pMesh->mFaces[i];
-				//CORE_ASSERT(Face.mNumIndices == 3);
-				AnimMesh.pIndices[i * 3 + 0] = Face.mIndices[0];
-				AnimMesh.pIndices[i * 3 + 1] = Face.mIndices[1];
-				AnimMesh.pIndices[i * 3 + 2] = Face.mIndices[2];
-			}
+			//for (unsigned int i = 0; i < pMesh->mNumFaces; ++i)
+			//{
+			//	aiFace Face = pMesh->mFaces[i];
+			//	//CORE_ASSERT(Face.mNumIndices == 3);
+			//	AnimMesh.pIndices[i * 3 + 0] = Face.mIndices[0];
+			//	AnimMesh.pIndices[i * 3 + 1] = Face.mIndices[1];
+			//	AnimMesh.pIndices[i * 3 + 2] = Face.mIndices[2];
+			//}
 
 			//
-			a_OutModel.AddMesh(AnimMesh);
+			//a_OutModel.AddMesh(AnimMesh);
 		}
 	}
 

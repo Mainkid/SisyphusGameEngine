@@ -102,11 +102,13 @@ void EngineCore::StartUpSystems()
 	
 
 	_systems.Add<TransformSystem>();
+	
 
 	_systems.Add<EditorCameraSystem>();
 
 	//_systems.Add<LightSystem>();
 	_systems.Add<MeshSystem>();
+	_systems.Add<SkeletalAnimationSystem>();
 	_systems.Add<SkyboxSystem>();
 	_systems.Add<LightSystem>();
 	_systems.Add<ParticlesSystem>();

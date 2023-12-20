@@ -91,7 +91,7 @@ SyResult ShadowRenderSystem::Run()
                     //!_hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                     //    engineActor->model->strides, engineActor->model->offsets);
                     _hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
-                        meshComp.strides, meshComp.offsets);
+                        _rc->RhData.strides112, _rc->RhData.offsets0);
                     _hc->context->DrawIndexedInstanced(mesh->indexBuffer->size, 4, 0, 0,0);
                 }
             }
@@ -170,7 +170,7 @@ SyResult ShadowRenderSystem::Run()
                     //!_hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                     //    engineActor->model->strides, engineActor->model->offsets);
                     _hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
-                        meshComp.strides, meshComp.offsets);
+                        _rc->RhData.strides112, _rc->RhData.offsets0);
                     _hc->context->DrawIndexedInstanced(mesh->indexBuffer->size, 6, 0, 0,0);
                     
                 }

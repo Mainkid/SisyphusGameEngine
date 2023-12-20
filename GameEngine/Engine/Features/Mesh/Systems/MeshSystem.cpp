@@ -46,16 +46,6 @@ SyResult MeshSystem::Run()
 				mesh.materials[i] = std::static_pointer_cast<Material>(rs->LoadResource(mesh.materialUUIDs[i]));
 			}
 		}
-
-		if (mesh.model->skeleton)
-		{
-			mesh.model->skeleton->Update(ec->deltaTime);
-			for (int q = 0; q < mesh.model->skeleton->GetNumMeshes(); q++)
-			{
-				auto animMesh = mesh.model->skeleton->GetMesh(q);
-				std::cout <<q<<std::endl;
-			}
-		}
 	}
 
 	return SyResult();

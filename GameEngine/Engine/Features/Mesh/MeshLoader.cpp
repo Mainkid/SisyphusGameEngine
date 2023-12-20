@@ -9,8 +9,241 @@
 #include "..\Resources\ResourceInfo.h"
 #include "../../../vendor/skeletalAnim/AssimpConverter/AssimpConverter.h"
 #include "../../../vendor/skeletalAnim/SkeletalAnimation/SkeletalModel.h"
+#include "../Animations/SkeletalAnimation.h"
+
+#define MAX_BONE_WEIGHTS 4
 
 
+Bone MeshLoader::CreateBone(const std::string& name, int ID, const aiNodeAnim* channel)
+{
+	Bone bone;
+
+	bone.m_NumPositions = channel->mNumPositionKeys;
+	bone.m_Name = name;
+	bone.m_ID = ID;
+
+	for (int positionIndex = 0; positionIndex < bone.m_NumPositions; ++positionIndex)
+	{
+		aiVector3D aiPosition = channel->mPositionKeys[positionIndex].mValue;
+		float timeStamp = channel->mPositionKeys[positionIndex].mTime;
+		KeyPosition data;
+		data.position = aiToGlm(aiPosition);
+		data.timeStamp = timeStamp;
+		bone.m_Positions.push_back(data);
+	}
+
+	bone.m_NumRotations = channel->mNumRotationKeys;
+	for (int rotationIndex = 0; rotationIndex < bone.m_NumRotations; ++rotationIndex)
+	{
+		aiQuaternion aiOrientation = channel->mRotationKeys[rotationIndex].mValue;
+		float timeStamp = channel->mRotationKeys[rotationIndex].mTime;
+		KeyRotation data;
+		data.orientation = aiToGlm(aiOrientation);
+		data.timeStamp = timeStamp;
+		bone.m_Rotations.push_back(data);
+	}
+
+	bone.m_NumScalings = channel->mNumScalingKeys;
+	for (int keyIndex = 0; keyIndex < bone.m_NumScalings; ++keyIndex)
+	{
+		aiVector3D scale = channel->mScalingKeys[keyIndex].mValue;
+		float timeStamp = channel->mScalingKeys[keyIndex].mTime;
+		KeyScale data;
+		data.scale = aiToGlm(scale);
+		data.timeStamp = timeStamp;
+		bone.m_Scales.push_back(data);
+	}
+
+	return bone;
+}
+
+void MeshLoader::ReadMissingBones(const aiAnimation* animation, SkeletalAnimation* skeletalAnim, std::map<std::string, BoneInfo>& boneMap, aiMesh* mesh)
+{
+	int size = animation->mNumChannels;
+
+	auto& boneInfoMap = boneMap;//getting m_BoneInfoMap from Model class
+	int boneCount = boneMap.size(); //getting the m_BoneCounter from Model class
+
+	//reading channels(bones engaged in an animation and their keyframes)
+	for (int i = 0; i < size; i++)
+	{
+		auto channel = animation->mChannels[i];
+		std::string boneName = channel->mNodeName.data;
+
+		if (boneInfoMap.find(boneName) == boneInfoMap.end())
+		{
+			boneInfoMap[boneName].id = boneCount;
+			boneCount++;
+		}
+		skeletalAnim->m_Bones.push_back(CreateBone(channel->mNodeName.data,
+			boneInfoMap[channel->mNodeName.data].id, channel));
+	}
+
+	for (int i = 0; i < mesh->mNumBones; i++)
+	{
+		std::string boneName = mesh->mBones[i]->mName.C_Str();
+		if (boneInfoMap.find(boneName) == boneInfoMap.end())
+		{
+			boneInfoMap[boneName].id = boneCount;
+			boneInfoMap[boneName].offset = aiToGlm(mesh->mBones[i]->mOffsetMatrix);
+			boneCount++;
+		}
+	}
+	skeletalAnim->m_BoneInfoMap = boneInfoMap;
+}
+
+void MeshLoader::ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src, std::map<std::string, BoneInfo>& boneMap)
+{
+	assert(src);
+
+	dest.name = src->mName.data;
+	dest.transformation = aiToGlm(src->mTransformation);
+	dest.childrenCount = src->mNumChildren;
+
+
+	for (int i = 0; i < src->mNumChildren; i++)
+	{
+		AssimpNodeData newData;
+		ReadHeirarchyData(newData, src->mChildren[i],boneMap);
+		dest.children.push_back(newData);
+	}
+}
+
+std::shared_ptr<SkeletalAnimation> MeshLoader::LoadAnimation(const std::string& animationPath, std::map<std::string,BoneInfo>& boneMap )
+{
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
+	assert(scene && scene->mRootNode);
+
+	std::shared_ptr<SkeletalAnimation> skeletalAnim = std::make_shared<SkeletalAnimation>();
+
+	if (scene->mNumAnimations == 0)
+		return nullptr;
+
+	auto animation = scene->mAnimations[0];
+	skeletalAnim->m_Duration = animation->mDuration;
+	skeletalAnim->m_TicksPerSecond = animation->mTicksPerSecond;
+	ReadHeirarchyData(skeletalAnim->m_RootNode, scene->mRootNode,boneMap);
+	for (UINT i = 0; i < scene->mNumMeshes; i++)
+	{
+		aiMesh* mesh = scene->mMeshes[i];
+		ReadMissingBones(animation, skeletalAnim.get(), boneMap, mesh);
+	}
+	
+	SA::SkeletalModel mod;
+	AssimpConverter::Convert(scene, mod);
+	return skeletalAnim;
+}
+
+Matrix MeshLoader::aiToGlm(const aiMatrix4x4& v)
+{
+	Matrix out;
+	assert(sizeof(out) == sizeof(v));
+	memcpy(&out, &v, sizeof(v));
+	return out.Transpose();
+}
+
+
+
+
+
+Vector3 MeshLoader::aiToGlm(const aiVector3D& v)
+{
+	Vector3 out;
+	assert(sizeof(out) == sizeof(v));
+	memcpy(&out, &v, sizeof(v));
+	return out;
+}
+
+
+
+
+
+Quaternion MeshLoader::aiToGlm(const aiQuaternion& v)
+{
+
+	return Quaternion(v.x, v.y, v.z,v.w);
+}
+
+DirectX::SimpleMath::Matrix MeshLoader::AssimpToMatrix(aiMatrix4x4& from)
+{
+	return Matrix(
+		(double)from.a1, (double)from.b1, (double)from.c1, (double)from.d1,
+		(double)from.a2, (double)from.b2, (double)from.c2, (double)from.d2,
+		(double)from.a3, (double)from.b3, (double)from.c3, (double)from.d3,
+		(double)from.a4, (double)from.b4, (double)from.c4, (double)from.d4
+	);
+}
+
+void MeshLoader::SetVertexBoneData(std::vector<Vector4>& vertices,int vertexID, int boneID, float weight)
+{
+	Vector4& boneIDs = vertices[vertexID * 7 + 5];
+	Vector4& boneWeights = vertices[vertexID * 7 + 6];
+	
+	if (boneIDs.x < 0 && boneWeights.x < 0)
+	{
+		boneIDs.x = boneID;
+		boneWeights.x = weight;
+	}
+	else if (boneIDs.y < 0 && boneWeights.y < 0)
+	{
+		boneIDs.y = boneID;
+		boneWeights.y = weight;
+	}
+	else if (boneIDs.z < 0 && boneWeights.z < 0)
+	{
+		boneIDs.z = boneID;
+		boneWeights.z = weight;
+	}
+	else if (boneIDs.w < 0 && boneWeights.w < 0)
+	{
+		boneIDs.w = boneID;
+		boneWeights.w = weight;
+	}
+}
+
+void MeshLoader::ExtractBoneWeightForVertices(std::vector<DirectX::SimpleMath::Vector4>& vertices, std::map<std::string,BoneInfo>& boneMap, aiMesh* mesh, const aiScene* scene)
+{
+	static aiScene* prevScene;
+	static int boneCtr = 0;
+
+	if (prevScene != scene)
+	{
+		scene = prevScene;
+		boneCtr = 0;
+	}
+
+	for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+	{
+		int boneID = -1;
+		std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+		
+		if (boneMap.find(boneName) == boneMap.end())
+		{
+			BoneInfo newBoneInfo;
+			newBoneInfo.id = boneCtr;
+			newBoneInfo.offset = aiToGlm(mesh->mBones[boneIndex]->mOffsetMatrix);
+			boneMap[boneName] = newBoneInfo;
+			boneID = boneCtr;
+			boneCtr++;
+		}
+		else
+		{
+			boneID = boneMap[boneName].id;
+		}
+
+		auto weights = mesh->mBones[boneIndex]->mWeights;
+		int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+		for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+		{
+			int vertexId = weights[weightIndex].mVertexId;
+			float weight = weights[weightIndex].mWeight;
+			assert(vertexId <= vertices.size());
+			SetVertexBoneData(vertices,vertexId, boneID, weight);
+		}
+	}
+}
 
 std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
@@ -24,6 +257,9 @@ std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene
 		DirectX::XMFLOAT4 normals = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1);
 		DirectX::XMFLOAT4 tangents = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1);
 		DirectX::XMFLOAT4 bitangents= DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1);
+		DirectX::XMFLOAT4 bonesIDs = DirectX::XMFLOAT4(-1, -1, -1, -1);
+		DirectX::XMFLOAT4 boneWeights = DirectX::XMFLOAT4(-1, -1, -1, -1);
+
 		vertex.x = mesh->mVertices[i].x;
 		vertex.y = mesh->mVertices[i].y;
 		vertex.z = mesh->mVertices[i].z;
@@ -69,6 +305,8 @@ std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene
 		vertices.push_back(normals);
 		vertices.push_back(tangents);
 		vertices.push_back(bitangents);
+		vertices.push_back(bonesIDs);
+		vertices.push_back(boneWeights);
 
 	}
 
@@ -79,6 +317,10 @@ std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene
 		for (UINT j = 0; j < face.mNumIndices; j++)
 			indices.push_back(face.mIndices[j]);
 	}
+
+	std::map<std::string, BoneInfo> boneMap = {};
+
+	ExtractBoneWeightForVertices(vertices,boneMap, mesh, scene);
 	
 	
 	auto msh = std::make_shared<Mesh>(vertices, indices);
@@ -86,7 +328,8 @@ std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene
 	return  msh;
 }
 
-void MeshLoader::ProcessNode(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& meshes, aiNode* node, const aiScene* scene)
+void MeshLoader::ProcessNode(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& meshes,
+	std::map<std::string, BoneInfo>& m_BoneInfoMap, aiNode* node, const aiScene* scene)
 {
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
@@ -96,7 +339,7 @@ void MeshLoader::ProcessNode(const std::string& modelPath, std::vector<std::shar
 
 	for (UINT i = 0; i < node->mNumChildren; i++)
 	{
-		ProcessNode(modelPath,meshes, node->mChildren[i], scene);
+		ProcessNode(modelPath,meshes,m_BoneInfoMap, node->mChildren[i], scene);
 	}
 }
 
@@ -162,7 +405,7 @@ SyResult MeshLoader::LoadTexture(const std::string& texturePath,ID3D11SamplerSta
 	return SyResult();
 }
 
-void MeshLoader::LoadModel(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& meshes, std::shared_ptr<SA::SkeletalModel> skeleton)
+void MeshLoader::LoadModel(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& meshes, std::map<std::string, BoneInfo>& m_BoneInfoMap)
 {
 
 	Assimp::Importer importer;
@@ -170,19 +413,19 @@ void MeshLoader::LoadModel(const std::string& modelPath, std::vector<std::shared
 		aiProcess_SortByPType | aiProcess_LimitBoneWeights |
 		aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast);
 
-	
-	if (skeleton != nullptr)
-		AssimpConverter::Convert(pScene, *skeleton.get());
-
 	if (pScene == nullptr)
 		return;
 
-	ProcessNode(modelPath,meshes, pScene->mRootNode, pScene);
+
+
+	ProcessNode(modelPath,meshes,m_BoneInfoMap, pScene->mRootNode, pScene);
+	
 }
 
 std::shared_ptr<Mesh> MeshLoader::LoadSimpleMesh(const std::string& modelPath)
 {
 	std::vector<std::shared_ptr<Mesh>> meshes;
-	LoadModel(modelPath, meshes);
+	std::map<std::string, BoneInfo> empty;
+	LoadModel(modelPath, meshes,empty);
 	return meshes.at(0);
 }
