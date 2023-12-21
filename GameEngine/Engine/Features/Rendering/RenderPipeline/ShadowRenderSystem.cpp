@@ -58,13 +58,26 @@ SyResult ShadowRenderSystem::Run()
                 for (int i = 0; i < 4; i++)
                     dataShadow.viewProjs[i] = light.ViewMatrices[i] * light.OrthoMatrices[i];
 
+                
+
                 D3D11_MAPPED_SUBRESOURCE mappedResource;
                 HRESULT res = _hc->context->Map(_rc->ShadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
                 CopyMemory(mappedResource.pData, &dataShadow, sizeof(CB_ShadowBuffer));
                 _hc->context->Unmap(_rc->ShadowConstBuffer->buffer.Get(), 0);
+
+                res = _hc->context->Map(_rc->BonesConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                CopyMemory(mappedResource.pData, meshComp.model->animator->m_FinalBoneMatrices.data(), sizeof(CB_BonesBuffer));
+                _hc->context->Unmap(_rc->BonesConstBuffer->buffer.Get(), 0);
+
                 _hc->context->VSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
                 _hc->context->PSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
                 _hc->context->GSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
+
+                _hc->context->VSSetConstantBuffers(1, 1, _rc->BonesConstBuffer->buffer.GetAddressOf());
+                _hc->context->PSSetConstantBuffers(1, 1, _rc->BonesConstBuffer->buffer.GetAddressOf());
+                _hc->context->GSSetConstantBuffers(1, 1, _rc->BonesConstBuffer->buffer.GetAddressOf());
+
+               
 
                 for (auto& mesh : meshComp.model->meshes)
                 {

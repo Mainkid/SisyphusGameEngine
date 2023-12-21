@@ -1,3 +1,6 @@
+#define MAX_BONES 100
+#define MAX_BONES_INFLUENCE 4
+
 struct CascadeData
 {
     row_major float4x4 viewProj[4];
@@ -13,6 +16,11 @@ cbuffer mycBuffer : register(b0)
     row_major float4x4 worldViewInverseT;
     CascadeData cascData;
     
+};
+
+cbuffer SkeletalBuffer : register(b1)
+{
+    row_major float4x4 finalBonesMatrices[MAX_BONES];
 };
 
 struct GS_IN
@@ -31,6 +39,10 @@ struct VertexInputType
     float4 position : POSITION;
     float4 color : COLOR;
     float4 normal : NORMAL;
+    float4 tangents : TANGENT;
+    float4 bitangents : BITANGENT;
+    float4 boneIDs : BONE;
+    float4 boneWeights : BONEWEIGHTS;
 };
 
 struct PixelInputType
@@ -69,7 +81,29 @@ GS_IN
     input.position.w = 1.0f;
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.
-    output.pos = mul(input.position, world);
+    float4 totalPosition = float4(0, 0, 0, 0);
+    
+    for (int i = 0; i < MAX_BONES_INFLUENCE; i++)
+    {
+        if (input.boneIDs[i] < 0)
+            continue;
+        if (input.boneIDs[i] >= MAX_BONES)
+        {
+            totalPosition = input.position;
+            break;
+        }
+        
+  
+        float4 localPosition = mul(input.position, finalBonesMatrices[int(input.boneIDs[i])]);
+        totalPosition += localPosition * float(input.boneWeights[i]);
+    }
+    
+    if (input.boneIDs[0] < 0)
+    {
+        totalPosition = input.position;
+    }
+    
+    output.pos = mul(totalPosition, world);
     output.pos.w = 1.0f;
 	
     return output;
