@@ -7,6 +7,7 @@
 #include "../../Core/Tools/ImageLoader.h"
 #include "../../Scene/Prefab.h"
 #include "../../Scene/Scene.h"
+#include <tuple>
 
 ResourceService::ResourceService()
 {
@@ -164,7 +165,12 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 				filePath = FindFilePathByUUID(baseResourceDB[EAssetType::ASSET_MESH].uuid);
 			}
 			MeshLoader::LoadModel(filePath, model->meshes,model->m_BoneInfoMap);
-			model->animator->m_CurrentAnimation=MeshLoader::LoadAnimation(filePath, model->m_BoneInfoMap);
+			
+
+			auto [animationTmp, skeletonTmp] = MeshLoader::LoadAnimation(filePath, model->m_BoneInfoMap);
+
+			model->animator->m_CurrentAnimation = animationTmp;
+			model->skeleton = skeletonTmp;
 
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>( model);
 			return model;

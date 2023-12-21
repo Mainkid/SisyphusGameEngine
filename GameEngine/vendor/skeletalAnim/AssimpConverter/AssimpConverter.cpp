@@ -45,7 +45,7 @@ namespace AssimpConverter
 	static Quaternion aiToGlm(const aiQuaternion& v)
 	{
 		
-		return Quaternion(v.w, v.x, v.y, v.z);
+		return Quaternion(v.x, v.y, v.z, v.w);
 	}
 
 

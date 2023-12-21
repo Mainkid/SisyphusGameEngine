@@ -37,8 +37,8 @@ struct VS_IN
     float4 normals : NORMAL;
     float4 tangents : TANGENT;
     float4 bitangents : BITANGENT;
-    float4x1 boneIDs : BONE;
-    float4x1 boneWeights : BONEWEIGHTS;
+    float4 boneIDs : BONE;
+    float4 boneWeights : BONEWEIGHTS;
 };
 
 struct PS_IN
@@ -69,45 +69,49 @@ PS_IN VSMain(VS_IN input)
 	
     output.debugColor = float4(0, 0, 0, 1);
     float4 totalPosition = float4(0, 0, 0, 0);
+    float4 outputNormal = float4(0, 0, 0, 0);
+     
     for (int i = 0; i < MAX_BONES_INFLUENCE; i++)
-    {
-        if (input.boneIDs[i] < 0)
-            continue;
-        if (input.boneIDs[i] >= MAX_BONES)
         {
-            totalPosition = input.pos;
-            break;
-        }
+            if (input.boneIDs[i] < 0)
+                continue;
+            if (input.boneIDs[i] >= MAX_BONES)
+            {
+                totalPosition = input.pos;
+                break;
+            }
         
-        if (input.boneIDs[i] == 14)
-            output.debugColor = float4(input.boneWeights[i], 0, 0, 1);
+            if (input.boneIDs[i] == 13)
+                output.debugColor = float4(input.boneWeights[i], 0, 0, 1);
         
-        float4 localPosition = mul(input.pos, finalBonesMatrices[int(input.boneIDs[i])]);
-        totalPosition += localPosition * float(input.boneWeights[i]);
-        input.normals = mul(input.normals, finalBonesMatrices[int(input.boneIDs[i])]);
+            float4 localPosition = mul(input.pos, finalBonesMatrices[int(input.boneIDs[i])]);
+            totalPosition += localPosition * float(input.boneWeights[i]);
+            float3 localNormal = mul(input.normals.xyz, (float3x3) finalBonesMatrices[int(input.boneIDs[i])]);
+        
+            input.normals.xyz += localNormal * float(input.boneWeights[i]);
+
     }
     
-    
-    
     if (input.boneIDs[0] < 0)
+    {
         totalPosition = input.pos;
+        outputNormal = input.normals;
+    }
 
-    totalPosition.w = 1;
-    
-    output.normals.xyz = normalize(mul(input.normals.xyz, (float3x3) worldViewInverseT));
-    output.posH = mul(totalPosition, worldViewProj);
-    output.posW = mul(totalPosition, world);
-    output.posWV = mul(totalPosition, worldView);
-    output.col = input.col;
+        output.normals.xyz = normalize(mul(input.normals.xyz, (float3x3) worldViewInverseT));
+        output.posH = mul(totalPosition, worldViewProj);
+        output.posW = mul(totalPosition, world);
+        output.posWV = mul(totalPosition, worldView);
+        output.col = input.col;
     
     
-    float3 T = normalize(mul(float3(input.tangents.xyz), (float3x3) world));
-    float3 B = normalize(mul(float3(input.bitangents.xyz), (float3x3) world));
-    float3 N = normalize(mul(float3(input.normals.xyz), (float3x3) world));
-    output.TBN = float3x3(T.xyz, B.xyz,N.xyz);
+        float3 T = normalize(mul(float3(input.tangents.xyz), (float3x3) world));
+        float3 B = normalize(mul(float3(input.bitangents.xyz), (float3x3) world));
+        float3 N = normalize(mul(float3(input.normals.xyz), (float3x3) world));
+        output.TBN = float3x3(T.xyz, B.xyz, N.xyz);
 	
-    return output;
-}
+        return output;
+    }
 
 
 
@@ -122,7 +126,7 @@ GBuffer PSMain(PS_IN input) : SV_Target
     float roughness = roughnessTex.Sample(objSamplerState, input.col.xy).r * (roughnessVec.w < 0) + roughnessVec.xyz * (roughnessVec.w >= 0);
     float4 emissive = emissiveTex.Sample(objSamplerState, input.col.xy) * (emissiveVec.w < 0) + emissiveVec.xyzw * (emissiveVec.w >= 0);
     
-    pixelColor = input.debugColor;
+    //pixelColor = input.debugColor;
     
     float3 normal = normalMapTex.Sample(objSamplerState, input.col.xy);
     normal = normal* 2.0f - 1.0f;

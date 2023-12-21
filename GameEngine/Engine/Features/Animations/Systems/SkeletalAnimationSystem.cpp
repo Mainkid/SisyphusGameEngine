@@ -26,6 +26,17 @@ SyResult SkeletalAnimationSystem::Run()
         if (animator)
         {
             UpdateAnimation(animator);
+           /* if (mesh.model->skeleton)
+            {
+                mesh.model->skeleton->Update(ec->deltaTime);
+                auto& skeleton = mesh.model->skeleton->m_Skeleton;
+                for (int i = 0; i < skeleton.Bones.size(); i++)
+                {
+                    int index = mesh.model->m_BoneInfoMap[skeleton.Bones[i].Name].id;
+                    animator->m_FinalBoneMatrices[index] = skeleton.Bones[i].FinalTransformation;
+                }
+            }*/
+
         }
     }
 
@@ -47,7 +58,6 @@ void SkeletalAnimationSystem::CalculateBoneTransform(SkeletalAnimator* animator,
     if (Bone)
     {
         UpdateBone(Bone, animator->m_CurrentTime);
-        //!!!!!
         nodeTransform = Bone->m_LocalTransform;
     }
     else
@@ -57,7 +67,6 @@ void SkeletalAnimationSystem::CalculateBoneTransform(SkeletalAnimator* animator,
     //!!!!!!
     
     Matrix globalTransformation;
-
     globalTransformation = nodeTransform * parentTransform;
 
 
@@ -114,6 +123,9 @@ DirectX::SimpleMath::Matrix SkeletalAnimationSystem::InterpolatePosition(Bone* b
         return  Matrix::CreateTranslation(bone->m_Positions[0].position);
 
     int p0Index = GetPositionIndex(bone, animationTime);
+
+    //return Matrix::CreateTranslation(bone->m_Positions[p0Index].position);
+
     int p1Index = p0Index + 1;
     float scaleFactor = GetScaleFactor(bone,bone->m_Positions[p0Index].timeStamp,
         bone->m_Positions[p1Index].timeStamp, animationTime);
@@ -130,9 +142,12 @@ DirectX::SimpleMath::Matrix SkeletalAnimationSystem::InterpolateRotation(Bone* b
         rotation.Normalize();
         return Matrix::CreateFromQuaternion(rotation);
     }
-
+   
     int p0Index = GetRotationIndex(bone,animationTime);
     int p1Index = p0Index + 1;
+
+    //return Matrix::CreateFromQuaternion(bone->m_Rotations[p0Index].orientation);
+
     float scaleFactor = GetScaleFactor(bone,bone->m_Rotations[p0Index].timeStamp,
         bone->m_Rotations[p1Index].timeStamp, animationTime);
     Quaternion finalRotation = Quaternion::Slerp(bone->m_Rotations[p0Index].orientation,

@@ -11,6 +11,7 @@
 #include "../Animations/Bone.h"
 #include "../Animations/SkeletalAnimation.h"
 #include <SkeletalAnimation/SkeletalModel.h>
+#include <tuple>
 
 class MeshLoader
 {
@@ -19,7 +20,8 @@ public:
 	static Bone CreateBone(const std::string& name, int ID, const aiNodeAnim* channel);
 	static void ReadMissingBones(const aiAnimation* animation, SkeletalAnimation* skeletalAnim, std::map<std::string, BoneInfo>& boneMap, aiMesh* mesh);
 	static void ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src, std::map<std::string, BoneInfo>& boneMap);
-	static std::shared_ptr<SkeletalAnimation> LoadAnimation(const std::string& animationPath, std::map<std::string, BoneInfo>& boneMap);
+	static std::tuple<std::shared_ptr<SkeletalAnimation>, std::shared_ptr<SA::SkeletalModel>>
+		LoadAnimation(const std::string& animationPath, std::map<std::string, BoneInfo>& boneMap);
 
 	static DirectX::SimpleMath::Matrix aiToGlm(const aiMatrix4x4& v);
 

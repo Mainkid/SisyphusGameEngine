@@ -61,8 +61,7 @@ namespace SA
 	void SkeletalModel::Update(float a_Dt)
 	{
 		m_AnimationTime = fmodf(m_AnimationTime + a_Dt * m_Animation.TicksPerSecond, m_Animation.Duration);
-		//
-
+		
 		ReadNodeHierarchy(m_AnimationTime, m_Animation, m_Skeleton, m_Skeleton.Bones[0], Matrix::Identity);
 		TransformVertices(m_Skeleton);
 	}
@@ -92,16 +91,16 @@ namespace SA
 			Matrix TranslationM2 = Matrix::CreateTranslation(Translation);
 
 			// Combine the above transformations
-			NodeTransformation = TranslationM2 * RotationM2;// * ScalingM2;
+			NodeTransformation = RotationM2*TranslationM2;// * ScalingM2;
 		}
 
-		Matrix GlobalTransformation = ParentTransform * NodeTransformation;
+		Matrix GlobalTransformation = NodeTransformation*ParentTransform;
 
 		unsigned int BoneIndex = Skeleton_FindBoneIndex(a_Skeleton, NodeName);
 		if (BoneIndex != -1)
 		{
 			sBone* pBone = &a_Skeleton.Bones[BoneIndex];
-			pBone->FinalTransformation = m_GlobalInverseTransform * GlobalTransformation * pBone->OffsetMatrix;
+			pBone->FinalTransformation = pBone->OffsetMatrix* GlobalTransformation;
 		}
 
 		for (unsigned int i = 0; i < a_Bone.NumChildren; i++)

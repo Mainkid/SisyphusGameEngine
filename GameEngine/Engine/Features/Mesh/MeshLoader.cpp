@@ -109,16 +109,18 @@ void MeshLoader::ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src, std:
 	}
 }
 
-std::shared_ptr<SkeletalAnimation> MeshLoader::LoadAnimation(const std::string& animationPath, std::map<std::string,BoneInfo>& boneMap )
+std::tuple<std::shared_ptr<SkeletalAnimation>,std::shared_ptr<SA::SkeletalModel>> 
+MeshLoader::LoadAnimation(const std::string& animationPath, std::map<std::string,BoneInfo>& boneMap )
 {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
-	assert(scene && scene->mRootNode);
+	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate |
+		aiProcess_SortByPType | aiProcess_LimitBoneWeights |
+		aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast);
 
 	std::shared_ptr<SkeletalAnimation> skeletalAnim = std::make_shared<SkeletalAnimation>();
 
 	if (scene->mNumAnimations == 0)
-		return nullptr;
+		return std::make_tuple(nullptr,nullptr);
 
 	auto animation = scene->mAnimations[0];
 	skeletalAnim->m_Duration = animation->mDuration;
@@ -130,16 +132,17 @@ std::shared_ptr<SkeletalAnimation> MeshLoader::LoadAnimation(const std::string& 
 		ReadMissingBones(animation, skeletalAnim.get(), boneMap, mesh);
 	}
 	
-	SA::SkeletalModel mod;
-	AssimpConverter::Convert(scene, mod);
-	return skeletalAnim;
+	std::shared_ptr<SA::SkeletalModel> saModel = std::make_shared<SA::SkeletalModel>();
+	AssimpConverter::Convert(scene, *(saModel.get()));
+	return std::make_tuple(skeletalAnim,saModel);
 }
 
 Matrix MeshLoader::aiToGlm(const aiMatrix4x4& v)
 {
-	Matrix out;
-	assert(sizeof(out) == sizeof(v));
-	memcpy(&out, &v, sizeof(v));
+	Matrix out(v.a1, v.a2, v.a3, v.a4,
+		v.b1, v.b2, v.b3, v.b4,
+		v.c1, v.c2, v.c3, v.c4,
+		v.d1, v.d2, v.d3, v.d4);
 	return out.Transpose();
 }
 
@@ -149,13 +152,9 @@ Matrix MeshLoader::aiToGlm(const aiMatrix4x4& v)
 
 Vector3 MeshLoader::aiToGlm(const aiVector3D& v)
 {
-	Vector3 out;
-	assert(sizeof(out) == sizeof(v));
-	memcpy(&out, &v, sizeof(v));
+	Vector3 out(v.x, v.y, v.z);
 	return out;
 }
-
-
 
 
 
@@ -224,6 +223,9 @@ void MeshLoader::ExtractBoneWeightForVertices(std::vector<DirectX::SimpleMath::V
 
 		auto weights = mesh->mBones[boneIndex]->mWeights;
 		int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+		if (numWeights > 4)
+			std::cout << " ";
 
 		for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
 		{

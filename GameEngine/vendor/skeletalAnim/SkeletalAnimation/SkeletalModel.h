@@ -27,7 +27,6 @@ namespace SA
 
 		void                            Clear();
 
-	private:
 		std::vector<sAnimatedMesh>      m_Meshes;
 		sSkeleton                       m_Skeleton;
 		sAnimation                      m_Animation;
