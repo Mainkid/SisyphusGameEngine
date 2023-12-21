@@ -49,6 +49,7 @@ struct PS_IN
     float4 col : COLOR;
     float4 normals : NORMAL;
     float3x3 TBN : POSITION3;
+    float4 debugColor : COLOR2;
 };
 
 struct GBuffer
@@ -66,25 +67,33 @@ PS_IN VSMain(VS_IN input)
 {
     PS_IN output = (PS_IN) 0;
 	
+    output.debugColor = float4(0, 0, 0, 1);
     float4 totalPosition = float4(0, 0, 0, 0);
     for (int i = 0; i < MAX_BONES_INFLUENCE; i++)
     {
         if (input.boneIDs[i] < 0)
             continue;
-        //if (input.boneIDs[i] >= MAX_BONES)
-        //{
-        //    totalPosition = input.pos;
-        //    break;
-        //}
+        if (input.boneIDs[i] >= MAX_BONES)
+        {
+            totalPosition = input.pos;
+            break;
+        }
+        
+        if (input.boneIDs[i] == 14)
+            output.debugColor = float4(input.boneWeights[i], 0, 0, 1);
+        
         float4 localPosition = mul(input.pos, finalBonesMatrices[int(input.boneIDs[i])]);
         totalPosition += localPosition * float(input.boneWeights[i]);
         input.normals = mul(input.normals, finalBonesMatrices[int(input.boneIDs[i])]);
     }
     
+    
+    
     if (input.boneIDs[0] < 0)
         totalPosition = input.pos;
 
-        
+    totalPosition.w = 1;
+    
     output.normals.xyz = normalize(mul(input.normals.xyz, (float3x3) worldViewInverseT));
     output.posH = mul(totalPosition, worldViewProj);
     output.posW = mul(totalPosition, world);
@@ -112,6 +121,9 @@ GBuffer PSMain(PS_IN input) : SV_Target
     float3 metallicColor = metallicTex.Sample(objSamplerState, input.col.xy).xyz * (metallicVec.w < 0) + metallicVec.xyz * (metallicVec.w >= 0);
     float roughness = roughnessTex.Sample(objSamplerState, input.col.xy).r * (roughnessVec.w < 0) + roughnessVec.xyz * (roughnessVec.w >= 0);
     float4 emissive = emissiveTex.Sample(objSamplerState, input.col.xy) * (emissiveVec.w < 0) + emissiveVec.xyzw * (emissiveVec.w >= 0);
+    
+    pixelColor = input.debugColor;
+    
     float3 normal = normalMapTex.Sample(objSamplerState, input.col.xy);
     normal = normal* 2.0f - 1.0f;
     

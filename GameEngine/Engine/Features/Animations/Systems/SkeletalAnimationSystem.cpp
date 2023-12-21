@@ -25,7 +25,7 @@ SyResult SkeletalAnimationSystem::Run()
         SkeletalAnimator* animator = mesh.model->animator.get();
         if (animator)
         {
-            //UpdateAnimation(animator);
+            UpdateAnimation(animator);
         }
     }
 
@@ -50,8 +50,16 @@ void SkeletalAnimationSystem::CalculateBoneTransform(SkeletalAnimator* animator,
         //!!!!!
         nodeTransform = Bone->m_LocalTransform;
     }
+    else
+    {
+        std::cout << std::endl;
+    }
     //!!!!!!
-    Matrix globalTransformation = parentTransform * nodeTransform;
+    
+    Matrix globalTransformation;
+
+    globalTransformation = nodeTransform * parentTransform;
+
 
     auto boneInfoMap = animator->m_CurrentAnimation->m_BoneInfoMap;
     if (boneInfoMap.find(nodeName) != boneInfoMap.end())
@@ -59,7 +67,7 @@ void SkeletalAnimationSystem::CalculateBoneTransform(SkeletalAnimator* animator,
         int index = boneInfoMap[nodeName].id;
         Matrix offset = boneInfoMap[nodeName].offset;
         //!!!!!!
-        animator->m_FinalBoneMatrices[index] = globalTransformation* offset;
+        animator->m_FinalBoneMatrices[index] = offset * globalTransformation;
     }
 
     for (int i = 0; i < node->childrenCount; i++)
@@ -97,7 +105,7 @@ void SkeletalAnimationSystem::UpdateBone(Bone* bone, float animationTime)
     Matrix rotation = InterpolateRotation(bone, animationTime);
     Matrix scale = InterpolateScaling(bone, animationTime);
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    bone->m_LocalTransform = translation * rotation * scale;
+    bone->m_LocalTransform = scale*rotation*translation;
 }
 
 DirectX::SimpleMath::Matrix SkeletalAnimationSystem::InterpolatePosition(Bone* bone, float animationTime)

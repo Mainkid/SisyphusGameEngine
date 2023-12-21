@@ -27,11 +27,11 @@ public:
 
 	static DirectX::SimpleMath::Quaternion aiToGlm(const aiQuaternion& v);
 
-	static DirectX::SimpleMath::Matrix AssimpToMatrix(aiMatrix4x4& mat);
+	/*static DirectX::SimpleMath::Matrix AssimpToMatrix(aiMatrix4x4& mat);*/
 	static void SetVertexBoneData(std::vector<DirectX::SimpleMath::Vector4>& vertices, int vertexID, int boneID, float weight);
 	static void ExtractBoneWeightForVertices(std::vector<DirectX::SimpleMath::Vector4>& vertices, std::map<std::string, BoneInfo>& boneMap, aiMesh* mesh, const aiScene* scene);
 
-	static std::shared_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene);
+	static std::shared_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene, std::map<std::string, BoneInfo>& m_BoneInfoMap);
 	static void ProcessNode(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& mesh, std::map<std::string, BoneInfo>& m_BoneInfoMap,
 		aiNode* node, const aiScene* scene);
 	static SyResult LoadTexture(const std::string& meshPath, ID3D11SamplerState** samplerState,

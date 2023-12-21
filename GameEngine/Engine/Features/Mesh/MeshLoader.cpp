@@ -161,19 +161,9 @@ Vector3 MeshLoader::aiToGlm(const aiVector3D& v)
 
 Quaternion MeshLoader::aiToGlm(const aiQuaternion& v)
 {
-
 	return Quaternion(v.x, v.y, v.z,v.w);
 }
 
-DirectX::SimpleMath::Matrix MeshLoader::AssimpToMatrix(aiMatrix4x4& from)
-{
-	return Matrix(
-		(double)from.a1, (double)from.b1, (double)from.c1, (double)from.d1,
-		(double)from.a2, (double)from.b2, (double)from.c2, (double)from.d2,
-		(double)from.a3, (double)from.b3, (double)from.c3, (double)from.d3,
-		(double)from.a4, (double)from.b4, (double)from.c4, (double)from.d4
-	);
-}
 
 void MeshLoader::SetVertexBoneData(std::vector<Vector4>& vertices,int vertexID, int boneID, float weight)
 {
@@ -243,9 +233,10 @@ void MeshLoader::ExtractBoneWeightForVertices(std::vector<DirectX::SimpleMath::V
 			SetVertexBoneData(vertices,vertexId, boneID, weight);
 		}
 	}
+	std::cout << std::endl;
 }
 
-std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::map<std::string, BoneInfo>& m_BoneInfoMap)
 {
 	std::vector<DirectX::SimpleMath::Vector4> vertices;
 	std::vector<int> indices;
@@ -318,9 +309,9 @@ std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene
 			indices.push_back(face.mIndices[j]);
 	}
 
-	std::map<std::string, BoneInfo> boneMap = {};
+	//std::map<std::string, BoneInfo> boneMap = {};
 
-	ExtractBoneWeightForVertices(vertices,boneMap, mesh, scene);
+	ExtractBoneWeightForVertices(vertices,m_BoneInfoMap, mesh, scene);
 	
 	
 	auto msh = std::make_shared<Mesh>(vertices, indices);
@@ -334,7 +325,7 @@ void MeshLoader::ProcessNode(const std::string& modelPath, std::vector<std::shar
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(MeshLoader::ProcessMesh(mesh, scene));
+		meshes.push_back(MeshLoader::ProcessMesh(mesh, scene,m_BoneInfoMap));
 	}
 
 	for (UINT i = 0; i < node->mNumChildren; i++)
