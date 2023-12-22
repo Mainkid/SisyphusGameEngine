@@ -68,7 +68,7 @@ void EngineCore::StartUp()
 	ser.AddEcsCompMeta<EditorBillboardComponent>();
 	ser.AddEcsCompMeta<SkyboxComponent>();
 	ser.AddEcsCompMeta<ImageBasedLightingComponent>();
-	ser.AddEcsCompMeta<ParticleComponent>();
+	//ser.AddEcsCompMeta<ParticleComponent>();
 	//ser.AddEcsCompMeta<SharedParticlesData>();
 
 
