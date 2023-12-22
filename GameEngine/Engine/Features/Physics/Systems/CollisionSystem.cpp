@@ -87,7 +87,7 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRigidBo
                                            SyPrimitiveColliderComponent& cComponent)
 {
 	SyResult result;
-	auto& pxMaterial = *SyRigidBodyComponent::_physics->createMaterial(	cComponent.Material.staticFriction,
+	auto& pxMaterial = *GET_PHYSICS_CONTEXT->Physics->createMaterial(	cComponent.Material.staticFriction,
 																	cComponent.Material.dynamicFriction,
 																	cComponent.Material.restitution);
 	switch (cComponent.ColliderType)
@@ -147,7 +147,7 @@ SyResult SyCollisionSystem::InitComponentTm(const entt::entity& entity, SyRigidB
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "You can't create TrimeshCollider Component on entity (%d) unless it's marked with flag KINEMATIC. ", (int)entity);
 		return result;
 	}
-	auto& pxMaterial = *SyRigidBodyComponent::_physics->createMaterial(	cComponent.Material.staticFriction,
+	auto& pxMaterial = *GET_PHYSICS_CONTEXT->Physics->createMaterial(	cComponent.Material.staticFriction,
 																	cComponent.Material.dynamicFriction,
 																	cComponent.Material.restitution);
 	auto meshPtr = mComponent.model->meshes[0];
@@ -176,7 +176,7 @@ SyResult SyCollisionSystem::InitComponentTm(const entt::entity& entity, SyRigidB
  	}
 	PxMeshScale scale(tComponent.localScale, PxQuat(PxIdentity));
  	PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
- 	PxTriangleMesh* trimeshPtr = rbComponent._physics->createTriangleMesh(readBuffer);
+ 	PxTriangleMesh* trimeshPtr = GET_PHYSICS_CONTEXT->Physics->createTriangleMesh(readBuffer);
 	PxTriangleMeshGeometry trimeshGeometry = PxTriangleMeshGeometry(trimeshPtr, scale);
  	cComponent._shape = PxRigidActorExt::createExclusiveShape(*(rbComponent._rbActor),
  														trimeshGeometry,

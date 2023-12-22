@@ -12,8 +12,6 @@
 
 using namespace physx;
 
-PxPhysics* SyRigidBodyComponent::_physics;
-PxScene* SyRigidBodyComponent::_scene;
 
 SyResult SyRigidBodySystem::Init() 
 {
@@ -26,7 +24,7 @@ SyResult SyRigidBodySystem::Init()
 		exit(-1);
 	}
 	_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *_foundation, PxTolerancesScale(), true, nullptr);
-	SyRigidBodyComponent::_physics = _physics;
+	ServiceLocator::instance()->Get<SyPhysicsContext>()->Physics = _physics;
 	if (_physics == nullptr)
 	{
 		SY_LOG_PHYS(SY_LOGLEVEL_CRITICAL, "PxCreatePhysics returned nullptr. ");
@@ -39,7 +37,6 @@ SyResult SyRigidBodySystem::Init()
 	_scene = _physics->createScene(sceneDesc);
 	_scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
 	_scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
-	SyRigidBodyComponent::_scene = _scene;
 	return SyResult();
 }
 
@@ -59,7 +56,7 @@ SyResult SyRigidBodySystem::Run()
 		if (transformC == nullptr)
 		{
 			_ecs->emplace<TransformComponent>(entity);
-			CallEvent<SyOnAddComponentEvent>("AddTransform", SyEComponentType::TRANSFORM, entity);
+			CallEvent<SyOnAddComponentEvent>("AddTransform", ESyComponentType::Transform, entity);
 			SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
 				"Transform Component required for RigidBody Component is missing on entity (%s). The Transform Component has been added in the next frame.",
 				SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
@@ -70,7 +67,7 @@ SyResult SyRigidBodySystem::Run()
 			if (InitComponent(entity, rigidBodyC, *transformC).code == SY_RESCODE_ERROR)
 			{
 				_ecs->remove<SyRigidBodyComponent>(entity);
-				CallEvent<SyOnRemoveComponentEvent>("RemoveRigidBody", SyEComponentType::RIGID_BODY, entity);
+				CallEvent<SyOnRemoveComponentEvent>("RemoveRigidBody", ESyComponentType::RigidBody, entity);
 				SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
 					"Failed to initialize RigidBody Component on entity (%s). The component has been removed.",
 					SY_GET_ENTITY_NAME_CHAR(_ecs, entity));

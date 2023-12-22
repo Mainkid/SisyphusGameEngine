@@ -57,8 +57,9 @@ void EngineCore::StartUp()
 	ServiceLocator::instance()->Register<SyErrorLogger>();
 	ServiceLocator::instance()->Register<EngineContext>();
 	ServiceLocator::instance()->Register<ResourceService>();
+	ServiceLocator::instance()->Register<SyPhysicsContext>();
+	
 	_context = ServiceLocator::instance()->Get<EngineContext>();
-
 
 	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
 	ser.AddEcsCompMeta<GameObjectComp>();

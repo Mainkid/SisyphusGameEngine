@@ -1,6 +1,7 @@
 ﻿#include "JointSystem.h"
 #include <boost/functional/hash.hpp>
 
+#include "RBSystem.h"
 #include "../../../Components/TransformComponent.h"
 #include "../../../Contexts/EngineContext.h"
 #include "../Components/JointComponent.h"
@@ -40,7 +41,7 @@ SyResult SyJointSystem::Run()
                 if (InitFixedJointComponent(entity).code == SY_RESCODE_ERROR)
                 {
                     _ecs->remove<SyFixedJointComponent>(entity);
-                    CallEvent<SyOnRemoveComponentEvent>("RemoveJoint", SyEComponentType::FIXED_JOINT, entity);
+                    CallEvent<SyOnRemoveComponentEvent>("RemoveJoint", ESyComponentType::FixedJoint, entity);
                     SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
                         "Failed to initialize FixedJoint Component on entity (%s). The component has been removed.",
                         SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
@@ -66,7 +67,7 @@ SyResult SyJointSystem::Run()
             if (InitHingeJointComponent(entity).code == SY_RESCODE_ERROR)
             {
                 _ecs->remove<SyHingeJointComponent>(entity);
-                CallEvent<SyOnRemoveComponentEvent>("RemoveJoint", SyEComponentType::HINGE_JOINT, entity);
+                CallEvent<SyOnRemoveComponentEvent>("RemoveJoint", ESyComponentType::HingeJoint, entity);
                 SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
                     "Failed to initialize HingeJoint Component on entity (%s). The component has been removed.",
                     SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
@@ -92,7 +93,7 @@ SyResult SyJointSystem::ValidateJointComponent(const entt::entity& entity, const
     if (rigidBodyCPtr == nullptr)
     {
         _ecs->emplace<SyRigidBodyComponent>(entity);
-        CallEvent<SyOnAddComponentEvent>("AddRBody", SyEComponentType::RIGID_BODY, entity);
+        CallEvent<SyOnAddComponentEvent>("AddRBody", ESyComponentType::RigidBody, entity);
         SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
         "RigidBody Component required for %s Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
         jointCName.c_str(),
@@ -106,7 +107,7 @@ SyResult SyJointSystem::ValidateJointComponent(const entt::entity& entity, const
     if (otherEntity != entt::null && otherRigidBodyCPtr == nullptr)
     {
         _ecs->emplace<SyRigidBodyComponent>(otherEntity);
-        CallEvent<SyOnAddComponentEvent>("AddRBody", SyEComponentType::RIGID_BODY, otherEntity);
+        CallEvent<SyOnAddComponentEvent>("AddRBody", ESyComponentType::RigidBody, otherEntity);
         SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
                "RigidBody Component required for %s Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
                jointCName.c_str(),
@@ -160,11 +161,11 @@ SyResult SyJointSystem::InitFixedJointComponent(const entt::entity& entity)
     SyVector3 otherRotation = (otherTransformCPtr == nullptr) ? SyVector3::ZERO : otherTransformCPtr->_rotation;
     physx::PxTransform localFrame(otherPosition - position, SyVector3::EulerToPxQuat(otherRotation - rotation));
     physx::PxTransform otherLocalFrame(SyVector3::ZERO, SyVector3::EulerToPxQuat(SyVector3::ZERO));
-    fixedJointC._fixedJointPtr = physx::PxFixedJointCreate(*SyRigidBodyComponent::_physics,
-                                                        actor,
-                                                        localFrame,
-                                                        otherActor,
-                                                        otherLocalFrame);
+    fixedJointC._fixedJointPtr = physx::PxFixedJointCreate(*GET_PHYSICS_CONTEXT->Physics,
+                                                            actor,
+                                                            localFrame,
+                                                            otherActor,
+                                                            otherLocalFrame);
     if (fixedJointC._fixedJointPtr == nullptr)
     {
         result.code = SY_RESCODE_ERROR;
@@ -200,7 +201,7 @@ SyResult SyJointSystem::InitHingeJointComponent(const entt::entity& entity)
     SyVector3 otherRotation = (otherTransformCPtr == nullptr) ? SyVector3::ZERO : otherTransformCPtr->_rotation;
     physx::PxTransform localFrame(hingeJoinC.LocalPosition, SyVector3::EulerToPxQuat(hingeJoinC.LocalRotation));
     physx::PxTransform otherLocalFrame(position - otherPosition, SyVector3::EulerToPxQuat(rotation - otherRotation));
-    hingeJoinC._hingeJointPtr = physx::PxRevoluteJointCreate(   *SyRigidBodyComponent::_physics,
+    hingeJoinC._hingeJointPtr = physx::PxRevoluteJointCreate(   *GET_PHYSICS_CONTEXT->Physics,
                                                                 actor,
                                                                 localFrame,
                                                                 otherActor,

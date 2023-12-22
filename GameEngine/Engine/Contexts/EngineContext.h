@@ -48,8 +48,7 @@ struct EngineContext : public IService
 	bool isClosed = false;
 	std::unordered_map<entt::entity, entt::entity> serEnttToSceneEnttMap;
 	unsigned propertyFlags = 0;
-
-	TransformSystem* transformSystemPtr;
+	
 	//PlayMode states and var for it
 	enum class EPlayModeState
 	{

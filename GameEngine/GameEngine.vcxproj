@@ -656,7 +656,6 @@
     <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
     <ClCompile Include="Engine\Features\Particles\Systems\ParticlesSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
-    <ClCompile Include="Engine\Features\Physics\Systems\RBodySimulationSystem.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -673,13 +672,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Contexts\PhysicsContext.h" />
     <ClInclude Include="Engine\Core\Tools\Macro.h" />
     <ClInclude Include="Engine\Features\Common\EComponentTypes.h" />
     <ClInclude Include="Engine\Features\Common\Events\OnAddComponentEvent.h" />
     <ClInclude Include="Engine\Features\Common\Events\OnRemoveComponentEvent.h" />
     <ClInclude Include="Engine\Features\Events\Tags\SyEventTag.h" />
     <ClInclude Include="Engine\Features\Physics\Components\JointComponent.h" />
-    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateJoint.h" />
     <ClInclude Include="Engine\Features\Physics\Systems\JointSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.h" />
     <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
@@ -798,7 +797,6 @@
     <ClInclude Include="Engine\Features\Particles\Systems\ParticlesSystem.h" />
     <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.h" />
-    <ClInclude Include="Engine\Features\Physics\Systems\RBodySimulationSystem.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\entt.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />

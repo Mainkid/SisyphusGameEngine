@@ -4,6 +4,7 @@
 #include "../../../Core/EngineCore.h"
 #include "../../../Core/ECS/SystemBase.h"
 
+#define GET_PHYSICS_CONTEXT ServiceLocator::instance()->Get<SyPhysicsContext>()
 
 #pragma region forward declaration
 namespace physx

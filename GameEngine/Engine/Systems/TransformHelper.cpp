@@ -27,7 +27,7 @@ Matrix TransformHelper::ConstructInverseParentTransform(TransformComponent& tc)
 	return resultMat.Invert();
 }
 
-void TransformHelper::UpdateTransformMatrix(TransformComponent& tc, bool mustUpdateChildren)
+void TransformHelper::UpdateTransformMatrix(TransformComponent& tc)
 {
 	EngineContext* context = ServiceLocator::instance()->Get<EngineContext>();
 	tc.transformMatrix = Matrix::CreateScale(tc.localScale) * Matrix::CreateFromYawPitchRoll(tc.localRotation) * Matrix::CreateTranslation(tc.localPosition);
@@ -37,12 +37,11 @@ void TransformHelper::UpdateTransformMatrix(TransformComponent& tc, bool mustUpd
 		TransformComponent& curTc = context->ecs.get<TransformComponent>(curID);
 		tc.transformMatrix = tc.transformMatrix * curTc.transformMatrix;
 	}
-
-	if (mustUpdateChildren == true)
-		for (auto& child : tc.children)
-		{
-			UpdateTransformMatrix(context->ecs.get<TransformComponent>(child), true);
-		}
+	
+	for (auto& child : tc.children)
+	{
+		UpdateTransformMatrix(context->ecs.get<TransformComponent>(child));
+	}
 	Quaternion q;
 	Vector3 scaleNew = tc.scale;
 	Vector3 positionNew = tc._position;

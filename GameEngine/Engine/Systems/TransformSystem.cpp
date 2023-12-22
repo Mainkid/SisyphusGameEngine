@@ -10,7 +10,6 @@ SyResult TransformSystem::Init()
 {
 	SyResult result;
 	ec = ServiceLocator::instance()->Get<EngineContext>();
-	ec->transformSystemPtr = this;
 	return result;
 }
 
@@ -53,8 +52,7 @@ SyResult TransformSystem::Run()
 			GameObjectHelper::AddChild(_ecs, static_cast<entt::entity>(tc.parent), entity);
 		}
 	}
-
-	static bool mustUpdateChildrenIncremental = true;
+	
 	for (auto& entity :view)
 	{
 		TransformComponent& tc = view.get<TransformComponent>(entity);
@@ -68,11 +66,9 @@ SyResult TransformSystem::Run()
 		boost::hash_combine(lHash, tc.localPosition);
 		boost::hash_combine(lHash, tc.localRotation);
 		boost::hash_combine(lHash, tc.localScale);
-
-		tc._wasChangedFromEditor = false;
+		
 		if (tc.worldHash != wHash)
 		{
-			tc._wasChangedFromEditor = true;
 			tc.worldHash = wHash;
 			Matrix parentTransform = Matrix::Identity;
 			if (tc.parent != entt::null)
@@ -84,9 +80,8 @@ SyResult TransformSystem::Run()
 		}
 		if (tc.localHash != lHash )
 		{
-			tc._wasChangedFromEditor = true;
 			tc.localHash = lHash;
-			TransformHelper::UpdateTransformMatrix(tc, mustUpdateChildrenIncremental);
+			TransformHelper::UpdateTransformMatrix(tc);
 		}
 
 	}

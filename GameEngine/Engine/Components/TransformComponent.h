@@ -29,13 +29,7 @@ struct TransformComponent
 	size_t localHash = 0;
 	uint32_t parent = entt::null;
 	std::set<entt::entity> children = {};
-
-
-	bool _wasChangedFromEditor = false;
-
-	friend class TransformSystem;
-	friend class SyRigidBodySystem;
-
+	
 	SER_COMP(TransformComponent,
 		_position,
 		_rotation,

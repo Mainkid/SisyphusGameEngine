@@ -65,8 +65,8 @@ private:
 	bool _wasActorRecreatedThisFrame = false;
 	bool _mustSaveUserVelocity = false;
 
-	static physx::PxPhysics*	_physics;
-	static physx::PxScene*		_scene;
+	// static physx::PxPhysics*	_physics;
+	// static physx::PxScene*		_scene;
 
 	bool WasInit() const;
 	friend class SyCollisionSystem;

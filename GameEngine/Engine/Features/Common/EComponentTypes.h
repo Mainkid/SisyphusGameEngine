@@ -1,8 +1,8 @@
 ﻿#pragma once
-enum SyEComponentType
+enum ESyComponentType
 {
-    TRANSFORM,
-    RIGID_BODY,
-    FIXED_JOINT,
-    HINGE_JOINT 
+    Transform,
+    RigidBody,
+    FixedJoint,
+    HingeJoint 
 };
