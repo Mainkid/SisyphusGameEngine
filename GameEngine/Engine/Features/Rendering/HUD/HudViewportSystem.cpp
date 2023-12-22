@@ -242,15 +242,18 @@ void HudViewportSystem::InitSRV()
 
 void HudViewportSystem::HandleResize()
 {
+	static EngineContext::EPlayModeState prevPlayMode = EngineContext::EPlayModeState::PauseMode;
+
+
 	auto newWidgetSize = ImGui::GetWindowSize();
-	if (widgetSize.x != newWidgetSize.x || widgetSize.y != newWidgetSize.y)
+	if (widgetSize.x != newWidgetSize.x || widgetSize.y != newWidgetSize.y || ec->playModeState!=prevPlayMode)
 	{
-		//hud->ViewportResizedEvent.Broadcast(newWidgetSize.x * 1.0f / newWidgetSize.y);
 		widgetSize = newWidgetSize;
 
 		auto [cc,_] = CameraHelper::Find(_ecs,ec->playModeState);
 		cc.aspectRatio = widgetSize.x / widgetSize.y;
 	}
+	prevPlayMode = ec->playModeState;
 }
 
 void HudViewportSystem::DrawMainMenuBar()

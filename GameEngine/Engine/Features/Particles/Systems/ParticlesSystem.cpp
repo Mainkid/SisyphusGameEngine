@@ -27,12 +27,14 @@ SyResult ParticlesSystem::Run()
     for (auto& ent : viewParticlesSystem)
     {
         ParticleComponent& ps = viewParticlesSystem.get<ParticleComponent>(ent);
-        size_t hash = _hasher(ps.SharedParticlesDataUuid);
+        size_t hash = _hasher(ps.TextureUuid);
         if (hash != ps.Hash)
         {
             ps.Hash = hash;
-            ps.SharedParticlesDataResource = std::static_pointer_cast<SharedParticlesData>(_rs->LoadResource(ps.SharedParticlesDataUuid));
-            ps.ParticleTexture = std::static_pointer_cast<Texture>(_rs->LoadResource(ps.SharedParticlesDataResource->TextureUuid));
+            if (ps.TextureUuid==boost::uuids::nil_uuid())
+                ps.ParticleTexture = std::static_pointer_cast<Texture>(_rs->LoadResource(_rs->baseResourceDB[EAssetType::ASSET_TEXTURE].uuid));
+            else
+                ps.ParticleTexture = std::static_pointer_cast<Texture>(_rs->LoadResource(ps.TextureUuid));
             InitRenderResources(ps);
         }
     }
@@ -52,18 +54,18 @@ void ParticlesSystem::InitRenderResources(ParticleComponent& pc)
 
     Clear(pc);
 
-    int maxParticles = pc.SharedParticlesDataResource->MaxParticles;
+    int maxParticles = pc.MaxParticles;
 
     pc.ParticlesList.resize(maxParticles);
 
     for (int i=0;i<maxParticles;i++)
     {
-        pc.ParticlesList[i].size = Vector4(pc.SharedParticlesDataResource->StartSize.Fvalue,
-            pc.SharedParticlesDataResource->StartSize.Fvalue,
-            pc.SharedParticlesDataResource->StartSize.Fvalue,
+        pc.ParticlesList[i].size = Vector4(pc.StartSize.Fvalue,
+            pc.StartSize.Fvalue,
+            pc.StartSize.Fvalue,
             1);
-        pc.ParticlesList[i].color = Vector4(pc.SharedParticlesDataResource->StartColor.V4value);
-        pc.ParticlesList[i].lifeTime = Vector4(0, pc.SharedParticlesDataResource->StartLifeTime.Fvalue, 1, 1);
+        pc.ParticlesList[i].color = Vector4(pc.StartColor.V4value);
+        pc.ParticlesList[i].lifeTime = Vector4(0, pc.StartLifeTime.Fvalue, 1, 1);
 
     }
 
@@ -129,13 +131,13 @@ void ParticlesSystem::InitBuffers(ParticleComponent& pc)
 	pc.IndexBuffer->Initialize(pc.Indices);
     
 	pc.PoolBuffer = std::make_unique<Buffer>(_hc->device.Get());
-	pc.PoolBuffer->Initialize(pc.ParticlesList.data(), pc.SharedParticlesDataResource->MaxParticles, sizeof(Particle), true);
+	pc.PoolBuffer->Initialize(pc.ParticlesList.data(), pc.MaxParticles, sizeof(Particle), true);
     
 	pc.DeadListBuffer = std::make_unique<Buffer>(_hc->device.Get());
-	pc.DeadListBuffer->Initialize(pc.IndexList.data(), pc.SharedParticlesDataResource->MaxParticles, sizeof(int), true);
+	pc.DeadListBuffer->Initialize(pc.IndexList.data(), pc.MaxParticles, sizeof(int), true);
     
 	pc.SortListBuffer = std::make_unique<Buffer>(_hc->device.Get());
-	pc.SortListBuffer->Initialize(nullptr, pc.SharedParticlesDataResource->MaxParticles, sizeof(SortListParticle), true);
+	pc.SortListBuffer->Initialize(nullptr, pc.MaxParticles, sizeof(SortListParticle), true);
     
 	pc.ConstBuffer = std::make_unique<Buffer>(_hc->device.Get());
 	pc.ConstBuffer->Initialize(sizeof(CB_ParticleVisualisation));
@@ -147,10 +149,10 @@ void ParticlesSystem::InitBuffers(ParticleComponent& pc)
 	pc.SortGpuConstBuffer->Initialize(sizeof(CB));
     
 	pc.TmpGpuBuffer = std::make_unique<Buffer>(_hc->device.Get());
-	pc.TmpGpuBuffer->Initialize(nullptr, pc.SharedParticlesDataResource->MaxParticles, sizeof(SortListParticle), true);
+	pc.TmpGpuBuffer->Initialize(nullptr, pc.MaxParticles, sizeof(SortListParticle), true);
     
 	pc.IndirectDrawBuffer = std::make_unique<Buffer>(_hc->device.Get());
-	pc.IndirectDrawBuffer->InitializeIndirect(pc.SharedParticlesDataResource->MaxParticles);
+	pc.IndirectDrawBuffer->InitializeIndirect(pc.MaxParticles);
     
 	pc.CounterBuffer = std::make_unique<Buffer>(_hc->device.Get());
 	pc.CounterBuffer->InitializeCounterBuffer();
@@ -191,7 +193,7 @@ void ParticlesSystem::CreateSrvAndUav(ParticleComponent& pc)
     D3D11_SHADER_RESOURCE_VIEW_DESC srvbuffer_desc = {};
     srvbuffer_desc.Format = DXGI_FORMAT_UNKNOWN;
     srvbuffer_desc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-    srvbuffer_desc.Buffer.ElementWidth = pc.SharedParticlesDataResource->MaxParticles;
+    srvbuffer_desc.Buffer.ElementWidth = pc.MaxParticles;
     hr = _hc->device->CreateShaderResourceView(pc.SortListBuffer->buffer.Get(), &srvbuffer_desc, pc.SortBufferSrv.GetAddressOf());
     hr = _hc->device->CreateShaderResourceView(pc.PoolBuffer->buffer.Get(), &srvbuffer_desc, pc.PoolBufferSrv.GetAddressOf());
     hr = _hc->device->CreateShaderResourceView(pc.TmpGpuBuffer->buffer.Get(), &srvbuffer_desc, pc.TmpGpuBufferSrv.GetAddressOf());
@@ -206,7 +208,7 @@ void ParticlesSystem::CreateSrvAndUav(ParticleComponent& pc)
     D3D11_UNORDERED_ACCESS_VIEW_DESC uavbuffer_desc = {};
     uavbuffer_desc.Format = DXGI_FORMAT_UNKNOWN;
     uavbuffer_desc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-    uavbuffer_desc.Buffer.NumElements = pc.SharedParticlesDataResource->MaxParticles;
+    uavbuffer_desc.Buffer.NumElements = pc.MaxParticles;
     uavbuffer_desc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_COUNTER;
     hr = _hc->device->CreateUnorderedAccessView(pc.TmpGpuBuffer->buffer.Get(), &uavbuffer_desc, pc.TmpGpuBufferUav.GetAddressOf());
 
@@ -218,8 +220,8 @@ void ParticlesSystem::CreateSrvAndUav(ParticleComponent& pc)
     counterDesc.Buffer.Flags = 0;
     hr = _hc->device->CreateUnorderedAccessView(pc.CounterBuffer->buffer.Get(), &counterDesc, pc.CounterUav.GetAddressOf());
 
-    int numGroups = (pc.SharedParticlesDataResource->MaxParticles % 768 != 0) ?
-        ((pc.SharedParticlesDataResource->MaxParticles / 768) + 1) : (pc.SharedParticlesDataResource->MaxParticles / 768);
+    int numGroups = (pc.MaxParticles % 768 != 0) ?
+        ((pc.MaxParticles / 768) + 1) : (pc.MaxParticles / 768);
     double secondRoot = sqrt(numGroups);
     secondRoot = ceilf(secondRoot);
     pc.GroupSizeX = (int)secondRoot;
