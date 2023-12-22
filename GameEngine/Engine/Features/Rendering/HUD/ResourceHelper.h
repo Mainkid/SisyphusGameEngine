@@ -88,6 +88,17 @@ public:
 			{"AssetType", static_cast<int>(assetType)}
 		};
 
+		switch (assetType)
+		{
+		case EAssetType::ASSET_TEXTURE:
+			fileData["TextureType"] = 0;
+			fileData["sRGB"] = 0;
+			fileData["GenerateMipMaps"] = 0;
+			fileData["WrapMode"] = 0;
+			fileData["FilterMode"] = 0;
+			break;
+		}
+
 		file << fileData;
 		file.close();
 	}
@@ -104,6 +115,37 @@ public:
 
 		rs->LoadResourceLibrary(".\\Game\\Assets", true);
 		rs->LoadResourceLibrary(".\\Engine\\Assets\\Resources", false);
+	}
+
+	static std::filesystem::path PastFile(std::filesystem::path sourceFile, std::filesystem::path targetDirectory)
+	{
+		
+
+		int fileCtr = 0;
+		auto parentDir = targetDirectory.parent_path();
+		auto fileNameWoutExtension = targetDirectory.filename().stem();
+		std::filesystem::path copyPostfix = "_copy_";
+
+		std::string resultPath = parentDir.string();
+		resultPath += "\\";
+		resultPath += fileNameWoutExtension.string();
+		resultPath += copyPostfix.string();
+		resultPath += std::to_string(fileCtr);
+		resultPath += targetDirectory.filename().extension().string();
+
+		while (std::filesystem::exists(resultPath))
+		{
+			fileCtr++;
+			resultPath = parentDir.string();
+			resultPath += "\\";
+			resultPath += fileNameWoutExtension.string();
+			resultPath += copyPostfix.string();
+			resultPath += std::to_string(fileCtr);
+			resultPath += targetDirectory.filename().extension().string();
+		}
+
+		std::filesystem::copy_file(sourceFile, resultPath, std::filesystem::copy_options::overwrite_existing);
+		return resultPath;
 	}
 
 

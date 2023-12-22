@@ -1,6 +1,7 @@
 #pragma once
 #include "SimpleMath.h"
 #include "../Components/TransformComponent.h"
+#include "boost/container_hash/hash.hpp"
 
 class TransformHelper
 {
@@ -14,5 +15,9 @@ public:
 	static Vector3 GetRotationDegrees(TransformComponent& tc);
 	static void DegreesToRad(Vector3& vec);
 	static void RadToDegrees(Vector3& vec);
+	static void SetDefaultHash();
+
+	inline static size_t worldHashDefault;
+	inline static size_t localHashDefault;
 };
 

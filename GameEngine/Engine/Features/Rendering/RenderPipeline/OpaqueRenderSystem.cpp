@@ -23,7 +23,7 @@ SyResult OpaqueRenderSystem::Run()
     _hc->context->RSSetState(_rc->CullBackRasterizerState.Get());
 
     auto view =_ecs->view<TransformComponent, MeshComponent>();
-    auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
+    auto [camera, cameraTransform] = CameraHelper::Find(_ecs, _ec->playModeState);
    
     for (auto& entity : view)
     {

@@ -5,6 +5,8 @@
 #include "../../Components/SkyboxResource.h"
 #include "../../Events/SySceneLoadEvent.h"
 #include "../../Core/Tools/ImageLoader.h"
+#include "../../Scene/Prefab.h"
+#include "../../Scene/Scene.h"
 
 ResourceService::ResourceService()
 {
@@ -133,7 +135,6 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 		}
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_TEXTURE)
 		{
-			//TODO: ��������� sRGB;
 			auto texture = std::make_shared<Texture>();
 			std::string filePath = FindFilePathByUUID(uuid);
 			if (filePath == "")
@@ -142,8 +143,12 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 					boost::lexical_cast<std::string>(uuid).c_str());
 				filePath = FindFilePathByUUID(baseResourceDB[EAssetType::ASSET_TEXTURE].uuid);
 			}
+			SyResult hr = MeshLoader::LoadTexture(filePath, texture->textureSamplerState.GetAddressOf(), texture->textureSRV.GetAddressOf());
 
-			MeshLoader::LoadTexture(filePath, texture->textureSamplerState.GetAddressOf(), texture->textureSRV.GetAddressOf());
+			if (hr.code != SY_RESCODE_OK)
+			{
+				SY_LOG_REND(SY_LOGLEVEL_ERROR, hr.message.ToString());
+			}
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(texture);
 			return texture;
 		}
@@ -195,8 +200,14 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 				data[i].SysMemPitch = sizeof(float) * width * 4;
 				data[i].SysMemSlicePitch = 0;
 			}
+			
 			HRESULT result = _hc->device->CreateTexture2D(&textureDesc_, data, skyboxResource->cubemapTexture.GetAddressOf());
 			
+			for (int i=0; i<6 ;i++)
+			{
+				delete cubeMapArray[i];
+			}
+
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 			srvDesc.Format = textureDesc_.Format;
 			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
@@ -231,6 +242,38 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			return spd;
 
 		}
+		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_PREFAB)
+		{
+			
+			auto prefab = std::make_shared<Prefab>();
+			std::string filePath = FindFilePathByUUID(uuid);
+
+			std::ifstream file;
+			nlohmann::json fileData;
+			file.open(filePath);
+			file >> fileData;
+
+			prefab->Data = fileData.dump();
+
+			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(prefab);
+			return prefab;
+
+		}
+		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_SCENE)
+		{
+			auto scene = std::make_shared<Scene>();
+			std::string filePath = FindFilePathByUUID(uuid);
+
+			std::ifstream file;
+			nlohmann::json fileData;
+			file.open(filePath);
+			file >> fileData;
+
+			scene->Data = fileData.dump();
+
+			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(scene);
+			return scene;
+		}
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_NONE)
 		{
 			SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't load resource with %s uuid! Loading base asset...",
@@ -257,7 +300,6 @@ std::string ResourceService::FindFilePathByUUID(const boost::uuids::uuid& uuid, 
 	{
 		SY_LOG_CORE(SY_LOGLEVEL_WARNING, "Can't find file path with current UUID. Returning NONE");
 		return "";
-		//TODO: �������� ����� ������, ���� ���� ����������� � ID
 	}
 }
 
@@ -390,6 +432,14 @@ void ResourceService::SaveSceneToFile(std::filesystem::path filePath, entt::regi
 	file.close();
 }
 
+void ResourceService::SaveStringToFile(std::filesystem::path filePath, std::string data)
+{
+	std::ofstream file;
+	file.open(filePath);
+	file << data;
+	file.close();
+}
+
 void ResourceService::GenerateMetaFiles(std::filesystem::path currentDirectory)
 {
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Generating metafiles in %s folder",currentDirectory.string().c_str());
@@ -412,10 +462,29 @@ void ResourceService::GenerateMetaFiles(std::filesystem::path currentDirectory)
 
 				file.open(directoryEntry.path().string() + ".meta");
 
+				EAssetType assetType;
+
 				if (extensionToAssetTypeMap.count(extension) > 0)
+				{
 					fileData["AssetType"] = static_cast<int>(extensionToAssetTypeMap.at(extension));
+					assetType = extensionToAssetTypeMap.at(extension);
+				}
 				else
+				{
 					fileData["AssetType"] = static_cast<int>(EAssetType::ASSET_NONE);
+					assetType = EAssetType::ASSET_NONE;
+				}
+
+				switch (assetType)
+				{
+				case EAssetType::ASSET_TEXTURE:
+					fileData["TextureType"] = 0;
+					fileData["sRGB"] = false;
+					fileData["GenerateMipMaps"] = false;
+					fileData["WrapMode"] = 0;
+					fileData["FilterMode"] = 0;
+					break;
+				}
 
 				file << fileData;
 				file.close();

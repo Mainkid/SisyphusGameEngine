@@ -114,13 +114,16 @@ SyResult HudPropertiesSystem::Run()
                 DrawMaterialProperties();
                 break;
             case EAssetType::ASSET_MESH:
-
+                
                 break;
             case EAssetType::ASSET_SOUND:
 
                 break;
             case EAssetType::ASSET_TEXTURE:
-
+                DrawTextureProperties();
+                break;
+            case EAssetType::ASSET_CUBEMAP:
+                DrawTextureProperties();
                 break;
             }
 
@@ -351,7 +354,77 @@ void HudPropertiesSystem::DrawMaterialProperties()
 
         rs->LoadResource(rs->GetUUIDFromPath(filePath),true);
     }
+
     prevSelectedUUID = ec->hudData.selectedContent.uuid;
+}
+
+void HudPropertiesSystem::DrawTextureProperties()
+{
+    
+
+    std::vector<const char*> textureTypeStr = { "Texture 2D", "Cubemap" };
+    std::vector<const char*> wrapModeStr = { "Repeat","Clamp","Mirror" };
+    std::vector<const char*> filterModeStr = { "Bilinear","Trilinear","Point" };
+
+    std::string metafilePath = rs->FindFilePathByUUID(ec->hudData.selectedContent.uuid)+".meta";
+    
+    std::ifstream in_file;
+    in_file.open(metafilePath);
+    nlohmann::json data;
+    in_file >> data;
+
+    static bool sRGB = false;
+    static bool generateMipMaps = false;
+    static int textureType = 0;
+    static int wrapMode = 0;
+    static int filterMode = 0;
+
+    if (prevSelectedUUID != ec->hudData.selectedContent.uuid)
+    {
+        filterMode =static_cast<int>(data["FilterMode"]);
+        textureType = static_cast<int>(data["TextureType"]);
+        wrapMode = static_cast<int>(data["WrapMode"]);
+        sRGB = data["sRGB"];
+        generateMipMaps = data["GenerateMipMaps"];
+
+        prevSelectedUUID = ec->hudData.selectedContent.uuid;
+    }
+
+    ImGui::Checkbox("sRGB", &sRGB);
+    ImGui::Checkbox("generateMipMaps", &generateMipMaps);
+    ImGui::Combo("TextureType", &textureType, textureTypeStr.data(),textureTypeStr.size());
+    ImGui::Combo("FilterMode", &filterMode, filterModeStr.data(), filterModeStr.size());
+    ImGui::Combo("WrapMode", &wrapMode, wrapModeStr.data(), wrapModeStr.size());
+
+    ImGui::Button("APPLY");
+    if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+    {
+        data["sRGB"] = sRGB;
+        data["generateMipMaps"] = generateMipMaps;
+        data["TextureType"] = textureType;
+        data["FilterMode"] = filterMode;
+        data["WrapMode"] = wrapMode;
+
+        if (textureType == 1)
+        {
+            rs->resourceLibrary[ec->hudData.selectedContent.uuid].assetType = EAssetType::ASSET_CUBEMAP;
+            data["AssetType"] = static_cast<int>(EAssetType::ASSET_CUBEMAP);
+        }
+        else if (textureType == 0)
+        {
+            rs->resourceLibrary[ec->hudData.selectedContent.uuid].assetType = EAssetType::ASSET_TEXTURE;
+            data["AssetType"] = static_cast<int>(EAssetType::ASSET_TEXTURE);
+        }
+
+        std::ofstream out_file;
+        out_file.open(metafilePath);
+        out_file << data;
+        out_file.close();
+
+        
+
+        //rs->LoadResource(ec->hudData.selectedContent.uuid, true);
+    }
 }
 
 void HudPropertiesSystem::UpdateHudProperties(bool)

@@ -44,6 +44,15 @@ struct SyRigidBodyComponent
 	
 	~SyRigidBodyComponent();
 
+	SyRigidBodyComponent(const SyRigidBodyComponent& other)
+	{
+		this->RbType = other.RbType;
+		this->Mass = other.Mass;
+		this->Flags = other.Flags;
+		this->LinearVelocity = other.LinearVelocity;
+		this->AngularVelocity = other.AngularVelocity;
+	}
+
 	//public fields initialized in constructor and can be modified during runtime
 	SyERBodyType		RbType; //runtime modification is not supported, but will be added in future. The member has to be added to properties
 	float				Mass;

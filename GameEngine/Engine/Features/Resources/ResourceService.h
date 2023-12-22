@@ -60,6 +60,7 @@ public:
 	
 	void LoadSceneFromFile(std::filesystem::path file, entt::registry* ecs);
 	void SaveSceneToFile(std::filesystem::path file, entt::registry* ecs);
+	void SaveStringToFile(std::filesystem::path file, std::string data);
 
 private:
 	const std::string baseTexture = ".\\Engine\\Assets\\Resources\\Textures\\spotlight_1.png";
@@ -67,6 +68,7 @@ private:
 	const std::string baseMaterial = ".\\Engine\\Assets\\Resources\\Materials\\baseMaterial.mat";
 	const std::string baseModel = ".\\Engine\\Assets\\Resources\\Cube.fbx";
 	const std::string baseParticle = ".\\Engine\\Assets\\Resources\\ParticleSystem\\baseParticles.ps";
+	const std::string baseScene = ".\\Engine\\Assets\\Resources\\Scenes\\baseScene.scene";
 	
 	
 };

@@ -65,7 +65,7 @@ int main()
 #pragma endregion
 #pragma region Test Cube 1
     auto cube1 = GameObjectHelper::Create(ecs, "Cube1", { 0.0f, 5.0f, 8.0f });
-    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
+    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC, 100/*, SyERBodyFlags::DISABLE_GRAVITY*/);
     auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube1);
     SyPrimitiveColliderShapeDesc cubeColDesc;
     cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
@@ -93,14 +93,14 @@ int main()
     //     SPHERE,
     //     sphereColDesc,
     //     SyColliderMaterial());
-    ecs->emplace<SyHingeJointComponent>(cube1, SyVector3(1.0f, 1.0f, 0.0f),
-        SyVector3(0.0f, SyMathHelper::PI / 2, 0.0f));
+   /* ecs->emplace<SyHingeJointComponent>(cube1, SyVector3(1.0f, 1.0f, 0.0f),
+        SyVector3(0.0f, SyMathHelper::PI / 2, 0.0f));*/
     ecs->emplace<SyHingeJointComponent>(cube2, SyVector3(-1.0f, -1.0f, 0.0f),
         SyVector3(0.0f, SyMathHelper::PI / 2, 0.0f), cube1);
 
 #pragma endregion
     
-    
+    GameObjectHelper::CreateCamera(ecs);
     //---------- Serialization test ----------------
 
     // ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;

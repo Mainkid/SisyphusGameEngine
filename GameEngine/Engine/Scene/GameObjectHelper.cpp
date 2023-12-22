@@ -33,7 +33,8 @@ void GameObjectHelper::Destroy(entt::registry* ecs, entt::entity ent)
 	{
 		if (tf->children.size() > 0)
 		{
-			for (auto childEnt : tf->children)
+			std::set<entt::entity> tmpSet = tf->children;
+			for (auto childEnt : tmpSet)
 				Destroy(ecs, childEnt);
 		}
 		SetParent(ecs, ent, entt::null);
@@ -243,15 +244,28 @@ entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 	return ent;
 }
 
+entt::entity GameObjectHelper::CreateCamera(entt::registry* ecs)
+{
+	auto ent = Create(ecs, "Camera");
+	ecs->emplace<CameraComponent>(ent, ECameraType::PlayerCamera);
+	return ent;
+}
+
 entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs, boost::uuids::uuid uuid)
 {
-	auto ent = ecs->create();
-	ecs->emplace<GameObjectComp>(ent);
+	auto view=ecs->view<SkyboxComponent, ImageBasedLightingComponent>();
+	if (view.size_hint()>0)
+		GameObjectHelper::Destroy(ecs,(view.front()));
+
+	auto ent = GameObjectHelper::Create(ecs,"Skybox");
 	ecs->emplace<SkyboxComponent>(ent);
+	
 	ecs->emplace<ImageBasedLightingComponent>(ent);
 	
 	if (uuid == boost::uuids::nil_uuid())
 		uuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_CUBEMAP].uuid;
+	/*else
+		ServiceLocator::instance()->Get<ResourceService>()->LoadResource(uuid);*/
 	ecs->get<SkyboxComponent>(ent).uuid = uuid;
 
 	return ent;

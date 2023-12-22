@@ -33,7 +33,7 @@ SyResult ShadowMapGenerationSystem::Run()
 
     _hc->context->OMSetBlendState(_rc->LightBlendState.Get(), nullptr, 0xffffffff);
 
-    auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+    auto [camera, cameraTf] = CameraHelper::Find(_ecs,_ec->playModeState);
 
     auto view = _ecs->view<TransformComponent, LightComponent>();
     for (auto& entity : view)
