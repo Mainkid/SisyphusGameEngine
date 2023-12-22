@@ -93,8 +93,8 @@ int main()
     //     SPHERE,
     //     sphereColDesc,
     //     SyColliderMaterial());
-    ecs->emplace<SyHingeJointComponent>(cube1, SyVector3(1.0f, 1.0f, 0.0f),
-        SyVector3(0.0f, SyMathHelper::PI / 2, 0.0f));
+    // ecs->emplace<SyHingeJointComponent>(cube1, SyVector3(1.0f, 1.0f, 0.0f),
+    //     SyVector3(0.0f, SyMathHelper::PI / 2, 0.0f));
     ecs->emplace<SyHingeJointComponent>(cube2, SyVector3(-1.0f, -1.0f, 0.0f),
         SyVector3(0.0f, SyMathHelper::PI / 2, 0.0f), cube1);
 
