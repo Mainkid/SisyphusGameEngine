@@ -28,7 +28,7 @@ SyResult ParticleRenderSystem::Run()
     _hc->context->OMSetDepthStencilState(_rc->OffStencilState.Get(), 0);
     auto view = _ecs->view<TransformComponent, ParticleComponent>();
 
-    auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
+    auto [camera, cameraTransform] = CameraHelper::Find(_ecs,_ec->playModeState);
 
 
     for (auto& entt : view)

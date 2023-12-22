@@ -1,9 +1,22 @@
 #pragma once
 #include "SimpleMath.h"
 
+enum class ECameraType
+{
+	EditorCamera,
+	PlayerCamera
+};
+
+
 using namespace DirectX::SimpleMath;
 struct CameraComponent
 {
+
+	CameraComponent(ECameraType _camType = ECameraType::PlayerCamera)
+	{
+		cameraType = _camType;
+	}
+
 	//----User vars----
 	float nearPlane = 0.01f;
 	float farPlane = 100.0f;
@@ -30,6 +43,7 @@ struct CameraComponent
 	Vector4 right = RIGHT_VECTOR;
 
 	float mouseWheel = 0;
+	ECameraType cameraType;
 };
 
 namespace std

@@ -70,7 +70,7 @@ int main()
 
     ecs->get<SyRBodyComponent>(cube1).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
     
-
+    ecs->emplace<CameraComponent>(cube1, ECameraType::PlayerCamera);
     
     //---------- Serialization test ----------------
 
