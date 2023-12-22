@@ -29,7 +29,7 @@ SyResult SkyboxRenderSystem::Run()
     _hc->context->RSSetState(_rc->CullFrontRasterizerState.Get());
     CB_BaseEditorBuffer dataOpaque;
     
-    auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+    auto [camera, cameraTf] = CameraHelper::Find(_ecs,_ec->playModeState);
 
     dataOpaque.baseData.world = camera.view * camera.projection;
 

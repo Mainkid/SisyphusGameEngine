@@ -1,0 +1,648 @@
+{
+    "Entities" : [
+        {
+            "Entity" : 1,
+            "Comps" : [
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.SceneObjectComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.SceneObjectComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Name" : "Cube1",
+                            "IsActive" : true
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.TransformComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.TransformComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Position" : {
+                                "X" : 0,
+                                "Y" : 5,
+                                "Z" : 8
+                            },
+                            "Rotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Scale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            },
+                            "LocalPosition" : {
+                                "X" : 0,
+                                "Y" : 5,
+                                "Z" : 8
+                            },
+                            "LocalRotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalScale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.MeshComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.MeshComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Materials" : [
+                                "478d39b9-25a8-4a89-9ab4-c208e8de5715"
+                            ],
+                            "Model" : "068ac97a-9d70-41c4-a145-81e0fa7033b0"
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.ColliderComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.ColliderComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Type" : 0,
+                            "Extent" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            },
+                            "Radius" : 1,
+                            "HalfHeight" : 1
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.RigidComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.RigidComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Type" : 1,
+                            "Mass" : 1,
+                            "IsAutoMass" : false,
+                            "IsKinematic" : false,
+                            "IsGravityOn" : true,
+                            "LinearVelocity" : {
+                                "X" : 5,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "AngularVelocity" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "Entity" : 2,
+            "Comps" : [
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.SceneObjectComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.SceneObjectComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Name" : "Static Mesh",
+                            "IsActive" : true
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.TransformComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.TransformComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Position" : {
+                                "X" : 0,
+                                "Y" : -2.5,
+                                "Z" : 8
+                            },
+                            "Rotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Scale" : {
+                                "X" : 3,
+                                "Y" : 3,
+                                "Z" : 3
+                            },
+                            "LocalPosition" : {
+                                "X" : 0,
+                                "Y" : -2.5,
+                                "Z" : 8
+                            },
+                            "LocalRotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalScale" : {
+                                "X" : 3,
+                                "Y" : 3,
+                                "Z" : 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.MeshComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.MeshComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Materials" : [
+                                "478d39b9-25a8-4a89-9ab4-c208e8de5715",
+                                "478d39b9-25a8-4a89-9ab4-c208e8de5715",
+                                "478d39b9-25a8-4a89-9ab4-c208e8de5715"
+                            ],
+                            "Model" : "cffe2fbe-f322-4c2b-adf1-45550000c838"
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.RigidComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.RigidComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Type" : 1,
+                            "Mass" : 1,
+                            "IsAutoMass" : true,
+                            "IsKinematic" : true,
+                            "IsGravityOn" : true,
+                            "LinearVelocity" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "AngularVelocity" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "Entity" : 3,
+            "Comps" : [
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.SceneObjectComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.SceneObjectComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Name" : "Base",
+                            "IsActive" : true
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.TransformComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.TransformComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Position" : {
+                                "X" : 0,
+                                "Y" : -5,
+                                "Z" : 13
+                            },
+                            "Rotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Scale" : {
+                                "X" : 10,
+                                "Y" : 1,
+                                "Z" : 10
+                            },
+                            "LocalPosition" : {
+                                "X" : 0,
+                                "Y" : -5,
+                                "Z" : 13
+                            },
+                            "LocalRotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalScale" : {
+                                "X" : 10,
+                                "Y" : 1,
+                                "Z" : 10
+                            }
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.MeshComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.MeshComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Materials" : [
+                                "478d39b9-25a8-4a89-9ab4-c208e8de5715"
+                            ],
+                            "Model" : "068ac97a-9d70-41c4-a145-81e0fa7033b0"
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.ColliderComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.ColliderComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Type" : 0,
+                            "Extent" : {
+                                "X" : 10,
+                                "Y" : 1,
+                                "Z" : 10
+                            },
+                            "Radius" : 1,
+                            "HalfHeight" : 1
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.RigidComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.RigidComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Type" : 0,
+                            "Mass" : 1,
+                            "IsAutoMass" : false,
+                            "IsKinematic" : false,
+                            "IsGravityOn" : true,
+                            "LinearVelocity" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "AngularVelocity" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "Entity" : 4,
+            "Comps" : [
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.SceneObjectComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.SceneObjectComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Name" : "PointLight",
+                            "IsActive" : true
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.TransformComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.TransformComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Position" : {
+                                "X" : 3,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Rotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Scale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            },
+                            "LocalPosition" : {
+                                "X" : 3,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalRotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalScale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.LightComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.LightComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Type" : 2,
+                            "Behaviour" : 1,
+                            "Color" : {
+                                "R" : 1,
+                                "G" : 0,
+                                "B" : 0,
+                                "A" : 3
+                            },
+                            "PointLightRadius" : 3,
+                            "ShouldCastShadows" : false
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "Entity" : 5,
+            "Comps" : [
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.SceneObjectComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.SceneObjectComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Name" : "PointLight",
+                            "IsActive" : true
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.TransformComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.TransformComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Position" : {
+                                "X" : 3,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Rotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Scale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            },
+                            "LocalPosition" : {
+                                "X" : 3,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalRotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalScale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.LightComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.LightComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Type" : 2,
+                            "Behaviour" : 0,
+                            "Color" : {
+                                "R" : 1,
+                                "G" : 1,
+                                "B" : 0,
+                                "A" : 3
+                            },
+                            "PointLightRadius" : 3,
+                            "ShouldCastShadows" : false
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "Entity" : 6,
+            "Comps" : [
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.SceneObjectComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.SceneObjectComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Name" : "DirectionalLight",
+                            "IsActive" : true
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.TransformComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.TransformComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Position" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Rotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Scale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            },
+                            "LocalPosition" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalRotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalScale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.LightComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.LightComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Type" : 0,
+                            "Behaviour" : 0,
+                            "Color" : {
+                                "R" : 0.150000005960464,
+                                "G" : 0.150000005960464,
+                                "B" : 0.150000005960464,
+                                "A" : 0.150000005960464
+                            },
+                            "PointLightRadius" : 1,
+                            "ShouldCastShadows" : false
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "Entity" : 7,
+            "Comps" : [
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.SceneObjectComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.SceneObjectComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Name" : "DirectionalLight",
+                            "IsActive" : true
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.TransformComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.TransformComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Position" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Rotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Scale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            },
+                            "LocalPosition" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalRotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalScale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.LightComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.LightComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Type" : 1,
+                            "Behaviour" : 0,
+                            "Color" : {
+                                "R" : 1,
+                                "G" : 1,
+                                "B" : 1,
+                                "A" : 1
+                            },
+                            "PointLightRadius" : 1,
+                            "ShouldCastShadows" : false
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "Entity" : 8,
+            "Comps" : [
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.SceneObjectComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.SceneObjectComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Name" : "Skybox",
+                            "IsActive" : true
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.TransformComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.TransformComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Position" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Rotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Scale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            },
+                            "LocalPosition" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalRotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalScale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Core.Comps.SkyboxComp",
+                    "Comp" : {
+                        "type" : "SyEngine.Core.Comps.SkyboxComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Cubemap" : "51d3b2eb-8fbc-4421-8cb4-ee020d4fc4fa"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

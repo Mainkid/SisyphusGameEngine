@@ -6,6 +6,7 @@
 #include "../../../Core/ServiceLocator.h"
 #include "../../../Components/TransformComponent.h"
 #include "../../../Core/Tools/MathHelper.h"
+#include "../../../Scene/CameraHelper.h"
 
 SyResult LightSystem::Init()
 {
@@ -17,9 +18,8 @@ SyResult LightSystem::Init()
 
 SyResult LightSystem::Run()
 {
-    auto viewCamera = _ecs->view<TransformComponent, CameraComponent>();
-    auto [cameraTf, camera] = viewCamera.get(viewCamera.front());
 
+    auto [camera, cameraTf] = CameraHelper::Find(_ecs, _ec->playModeState);
     auto viewLights = _ecs->view<TransformComponent, LightComponent>();
     for (auto& ent : viewLights)
     {

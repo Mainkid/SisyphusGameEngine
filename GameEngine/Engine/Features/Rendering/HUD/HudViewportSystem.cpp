@@ -92,7 +92,7 @@ SyResult HudViewportSystem::Run()
 
 			if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_MESH)
 			{
-				auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
+				auto [camera, cameraTransform] = CameraHelper::Find(_ecs, ec->playModeState);
 				Vector3 pos = cameraTransform.localPosition + camera.forward * 5.0f;
 				auto go = GameObjectHelper::CreateMesh(_ecs, uuid,pos);
 			}
@@ -128,7 +128,7 @@ SyResult HudViewportSystem::Run()
 
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-	auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+	auto [camera, cameraTf] = CameraHelper::Find(_ecs,ec->playModeState);
 	camera.mouseWheel = io.MouseWheel;
 
 	//Gizmos
@@ -248,7 +248,7 @@ void HudViewportSystem::HandleResize()
 		//hud->ViewportResizedEvent.Broadcast(newWidgetSize.x * 1.0f / newWidgetSize.y);
 		widgetSize = newWidgetSize;
 
-		auto [cc,_] = CameraHelper::Find(_ecs);
+		auto [cc,_] = CameraHelper::Find(_ecs,ec->playModeState);
 		cc.aspectRatio = widgetSize.x / widgetSize.y;
 	}
 }
@@ -335,8 +335,7 @@ void HudViewportSystem::DrawMainMenuBar()
 		}
 		if (ImGui::BeginMenu("GameObject"))
 		{
-			auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
-
+			auto [camera, cameraTransform] = CameraHelper::Find(_ecs,ec->playModeState);
 
 			Vector3 pos = Vector3(cameraTransform._position.x, cameraTransform._position.y, cameraTransform._position.z) +
 				Vector3(camera.forward.x, camera.forward.y, camera.forward.z) * 3;
