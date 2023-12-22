@@ -21,9 +21,9 @@ struct CameraComponent
 	float nearPlane = 0.01f;
 	float farPlane = 100.0f;
 	float fovDegrees = 60.0f;
-	float cameraSpeed = 2.0f;
-
+	
 	//----Engine vars----
+	float cameraSpeed = 2.0f;
 	Matrix view = Matrix::Identity;
 	Matrix projection = Matrix::Identity;
 	float aspectRatio = 1280.0f / 720.0f;

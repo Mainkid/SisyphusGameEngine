@@ -69,8 +69,9 @@ int main()
         SyColliderMaterial());
 
     ecs->get<SyRBodyComponent>(cube1).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
+    //ecs->emplace<CameraComponent>(staticMesh, ECameraType::PlayerCamera);
     
-    ecs->emplace<CameraComponent>(cube1, ECameraType::PlayerCamera);
+    GameObjectHelper::CreateCamera(ecs);
     
     //---------- Serialization test ----------------
 

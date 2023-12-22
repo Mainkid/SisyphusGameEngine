@@ -43,7 +43,6 @@ SyResult EditorCameraSystem::Run()
 
 
 
-
 		if (cameraTc.worldHash != cameraComp.transformHash)
 		{
 			cameraComp.transformHash = cameraTc.worldHash;

@@ -244,6 +244,13 @@ entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 	return ent;
 }
 
+entt::entity GameObjectHelper::CreateCamera(entt::registry* ecs)
+{
+	auto ent = Create(ecs, "Camera");
+	ecs->emplace<CameraComponent>(ent, ECameraType::PlayerCamera);
+	return ent;
+}
+
 entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs, boost::uuids::uuid uuid)
 {
 	auto view=ecs->view<SkyboxComponent, ImageBasedLightingComponent>();
