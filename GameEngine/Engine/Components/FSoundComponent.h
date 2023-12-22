@@ -36,10 +36,10 @@ struct FSoundComponent
 
 	
 //----User vars----
-	bool Sound3D = false;
-	float Volume = 1.0f;
-	bool IsPlaying = false;
-	bool IsLooping = false;
+	bool SoundType3D = false;
+	float SoundVolume = 1.0f;
+	bool IsSoundPlaying = false;
+	bool LoopedSound = false;
 	// количество повторов 
 	// 0 - бесконевчно
 	std::string SoundPath = ""; // = "Engine/Assets/Audio/LookinAtIt.ogg";
@@ -47,7 +47,7 @@ struct FSoundComponent
 //----Engine vars----
 	bool IsON = false;
 	//bool HasStarted = false;
-	int ChanelID;
+	int ChanelID = -1;
 	
 	//SER_COMP(FSoundComponent, texturePath);
 };
