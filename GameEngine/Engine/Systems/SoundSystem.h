@@ -66,9 +66,9 @@ public:
 	//void StopAllChannels();
 	void SetChannel3dPosition(int nChannelId, const SyVector3& vPosition);
 	void SetChannelVolume(int nChannelId, float fVolumedB);
-	bool IsPlaying(int nChannelId) const;
+	//bool CheckIsPlaying(int nChannelId) const;
 	//bool IsEventPlaying(const std::string& strEventName) const;
-	float dbToVolume(float db);
+	float VolumeRounding(float& volume);
 	//float VolumeTodb(float volume);
 	FMOD_VECTOR VectorToFmod(const SyVector3& vPosition);
 

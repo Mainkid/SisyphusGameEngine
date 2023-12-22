@@ -51,6 +51,9 @@ SyResult SoundSystem::Init()
 
 SyResult SoundSystem::Run()
 {
+    // âêëþ÷èòü äåìî imgui è ïîñìîòðåòü êàê óêàçûâàòü ïóòü
+    // îäèí çâóê åñëè âêëþ÷èòü ó 2-óõ êîìïîíåíòîâ, òî òòîëüêî òàê ðàáîòàåò 
+    // â èíòåðôåéñå äî âîñïðîèçâåäåíèÿ ãðîìêîñòü ìîæíî âåðòåòü êàê õî÷åøü
     auto View = _ecs->view<FSoundComponent>();
     for (auto& Entity : View)
     {
@@ -58,68 +61,84 @@ SyResult SoundSystem::Run()
         std::string name = Scom.SoundPath;
           
        // on
-       if (Scom.IsPlaying)
-       {
-           // àdd transform comp
-           auto* transformC = _ecs->try_get<TransformComponent>(Entity);
-           if (transformC == nullptr)
-           {
-               _ecs->emplace<TransformComponent>(Entity);
-           }
+        if (Scom.IsSoundPlaying)
+        {
+            if (!Scom.IsON)
+            {
+                LoadSound(name, Scom.SoundType3D, Scom.LoopedSound);
+                // 3D
+                if (Scom.SoundType3D)
+                {
+                    auto* transformC = _ecs->try_get<TransformComponent>(Entity);
 
-           else if (transformC != nullptr)
-           {
-               if (!Scom.IsON)
-               {
-                   Scom.IsON = true;
-                   LoadSound(name, Scom.Sound3D, Scom.IsLooping);
-                   auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
-                   TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
-                   Scom.ChanelID = PlayFSound(name, tc._position, Scom.Volume);
+                    // àdd transform comp
+                    if (transformC == nullptr)
+                    {
+                        _ecs->emplace<TransformComponent>(Entity);
+                        continue;
+                    }
 
-                   Scom.Sound3D ?
-                       ((Scom.ChanelID = PlayFSound(name,
-                           tc._position - ñameraTransform._position,
-                           Scom.Volume)))
-                       : (Scom.ChanelID = PlayFSound(name));
-               }
+                    else //if (transformC != nullptr)
+                    {
+                        Scom.IsON = true;
+                        auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
+                        TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
 
-               SetChannelVolume(Scom.ChanelID, Scom.Volume);
+                        Scom.ChanelID = PlayFSound( name,
+                                                    Vector3::Transform(tc._position, ñameraTransform.transformMatrix.Invert()),
+                                                    VolumeRounding(Scom.SoundVolume));
+                        continue;
+                    }
+                }
 
-               if (Scom.Sound3D)
-               {
-                   auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
-                   TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
-                   SetChannel3dPosition(Scom.ChanelID, tc._position - ñameraTransform._position);
-               }
-           }    
-       }
+                // 2D
+                else //if (!Scom.SoundType3D)
+                {
+                    Scom.IsON = true;
+                   
+                    Scom.ChanelID = PlayFSound(name);
+                    /*FMOD::Channel* pChannel = nullptr;
+                    auto tFoundIt = Scom.SoundPath;
+                    sgpImplementation->_mpSystem->playSound(tFoundIt, nullptr, true, &pChannel);*/
+                    continue;
+                }
+            }
 
+            // Volume
+            else //if (Scom.IsON)
+            {
+                SetChannelVolume(Scom.ChanelID, VolumeRounding(Scom.SoundVolume));
+            }
+        }
+
+        
+    
        //off
-       if (!Scom.IsPlaying)
+       if (!Scom.IsSoundPlaying)
        {
            Scom.IsON = false;
            UnLoadSound(name);
        }  
 
        // auto off
-       if (Scom.IsON)
-       {
-           bool bIsPlaying = false;
-           sgpImplementation->_mChannels.find(Scom.ChanelID)->second->isPlaying(&bIsPlaying);
-          
-           if (!bIsPlaying)
-           {
-               Scom.IsON = false;
-               Scom.IsPlaying = false;
-               UnLoadSound(name);
-           }
-       } 
+       //if (Scom.IsON)
+       //{
+       //    bool bIsPlaying = false;
+       //    sgpImplementation->_mChannels.find(Scom.ChanelID)->second->isPlaying(&bIsPlaying);
+       //   
+       //    if (!bIsPlaying)
+       //    {
+       //        Scom.IsON = false;
+       //        Scom.IsSoundPlaying = false;
+       //        UnLoadSound(name);
+       //    }
+       //} 
     }
-    sgpImplementation->Update();
+    
+    //sgpImplementation->Update();
     return SyResult();
 }
-
+ 
 SyResult SoundSystem::Destroy()
 {
 // TODO S: I can do this (UnLoad all Sound( ok this)?
@@ -192,7 +211,7 @@ void SoundSystem::SetChannelVolume(int nChannelId, float fVolumedB)
     if (tFoundIt == sgpImplementation->_mChannels.end())
         return;
 
-    SoundSystem::ErrorCheck(tFoundIt->second->setVolume(dbToVolume(fVolumedB)));
+    SoundSystem::ErrorCheck(tFoundIt->second->setVolume(fVolumedB)); 
 }
 
 //void SoundSystem::LoadBank(const std::string& strBankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags) {
@@ -244,7 +263,7 @@ int SoundSystem::PlayFSound(const std::string& strSoundName, const SyVector3& vP
             FMOD_VECTOR position = VectorToFmod(vPosition);
             SoundSystem::ErrorCheck(pChannel->set3DAttributes(&position, nullptr));
         }
-        SoundSystem::ErrorCheck(pChannel->setVolume(dbToVolume(fVolumedB)));
+        SoundSystem::ErrorCheck(pChannel->setVolume(fVolumedB));
         SoundSystem::ErrorCheck(pChannel->setPaused(false));
         sgpImplementation->_mChannels[nChannelId] = pChannel;
     }
@@ -305,15 +324,22 @@ int SoundSystem::PlayFSound(const std::string& strSoundName, const SyVector3& vP
 //    SoundSystem::ErrorCheck(pParameter->setValue(fValue));
 //}
 
-float  SoundSystem::dbToVolume(float dB)
-{
-    return powf(10.0f, 0.05f * dB);
-}
-
-//float  SoundSystem::VolumeTodb(float volume)
+//float  SoundSystem::dbToVolume(float dB)
 //{
-//    return 20.0f * log10f(volume);
+//    return powf(10.0f, 0.05f * dB);
 //}
+
+float  SoundSystem::VolumeRounding(float& volume)
+{
+    if (volume <= 0.0f)
+        return volume = 0.0f;
+
+    else if (volume >= 1.0f)
+        return volume = 1.0f;
+
+    else 
+        return volume;
+}
 
 FMOD_VECTOR SoundSystem::VectorToFmod(const SyVector3& vPosition) {
     FMOD_VECTOR fVec;

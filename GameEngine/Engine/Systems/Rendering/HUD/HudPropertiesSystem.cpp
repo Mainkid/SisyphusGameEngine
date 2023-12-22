@@ -105,11 +105,12 @@ SyResult HudPropertiesSystem::Run()
         // TODO S: demo
         if (sc)
         {
+            
             //std::string SoundPath = "Engine/Assets/Audio/LookinAtIt.ogg";
-            ImGui::Checkbox("Sound3D", &sc->Sound3D);
-            ImGui::DragFloat("Sound Volume", &sc->Volume); 
-            ImGui::Checkbox("Is Looping", &sc->IsLooping);
-            ImGui::Checkbox("Is Playing", &sc->IsPlaying);
+            ImGui::Checkbox("Sound3D", &sc->SoundType3D);
+            ImGui::DragFloat("Sound Volume", &sc->SoundVolume);
+            ImGui::Checkbox("Is Looping", &sc->LoopedSound);
+            ImGui::Checkbox("Is Playing", &sc->IsSoundPlaying);
             
         }
 
