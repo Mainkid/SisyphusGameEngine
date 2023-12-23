@@ -1,6 +1,10 @@
 #include "SoundSystem.h"
 #include "../Components/TransformComponent.h"
+#include "../../Engine/Systems/EngineContext.h"
 //#include "../Components/CameraComponent.h"
+#include "../Core/ECS/Events/SyPlayModeEndedEvent.h"
+#include "../Core/ECS/Events/SyPlayModeStartedEvent.h"
+#include "../Core/ServiceLocator.h"
 #include "../Scene/CameraHelper.h"
 
 Implementation::Implementation()
@@ -9,7 +13,6 @@ Implementation::Implementation()
     _mpStudioSystem = NULL;
     SoundSystem::ErrorCheck(FMOD::Studio::System::create(&_mpStudioSystem));
     SoundSystem::ErrorCheck(_mpStudioSystem->initialize(32, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_PROFILE_ENABLE, NULL));
-
     _mpSystem = NULL;
     SoundSystem::ErrorCheck(_mpStudioSystem->getCoreSystem(&_mpSystem));
 }
@@ -45,6 +48,7 @@ Implementation* sgpImplementation = nullptr;
 SyResult SoundSystem::Init()
 {
     SY_EL->RegisterChannel("AUDI");
+    _ec = ServiceLocator::instance()->Get<EngineContext>();
     sgpImplementation = new Implementation;
     return SyResult();
 }
@@ -54,16 +58,72 @@ SyResult SoundSystem::Run()
     // включить демо imgui и посмотреть как указывать путь
     // один звук если включить у 2-ух компонентов, то ттолько так работает 
     // в интерфейсе до воспроизведения громкость можно вертеть как хочешь
+
+    
+
+    std::set<std::string> deletionSet;
+    std::set<std::string> activeSet;
+
+    auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyPlayModeEndedEvent);
+    if (eventView.begin() != eventView.end())
+    {
+        auto View = _ecs->view<FSoundComponent>();
+        for (auto& ent : View)
+        {
+            auto& scom = _ecs->get<FSoundComponent>(ent);
+            scom.State = ESoundState::Disabled;
+            UnLoadSound(scom.SoundPath);
+        }
+    }
+
+    auto pauseEventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyPauseModeEvent);
+    if (pauseEventView.begin() != pauseEventView.end())
+    {
+        auto View = _ecs->view<FSoundComponent>();
+        for (auto& ent : View)
+        {
+            auto& scom = _ecs->get<FSoundComponent>(ent);
+            TogglePauseChannel(scom.ChanelID, true);
+            scom.State = ESoundState::Paused;
+        }
+    }
+
+    auto playmodeEventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyPlayModeStartedEvent);
+    if (playmodeEventView.begin() != playmodeEventView.end())
+    {
+        auto View = _ecs->view<FSoundComponent>();
+        for (auto& ent : View)
+        {
+            auto& scom = _ecs->get<FSoundComponent>(ent);
+            if (scom.State == ESoundState::Paused)
+            {
+                TogglePauseChannel(scom.ChanelID, false);
+                scom.State = ESoundState::Playing;
+            }
+            else
+                scom.State = ESoundState::Disabled;
+        }
+    }
+
+
+    if (_ec->playModeState == EngineContext::EPlayModeState::EditorMode)
+        return SyResult();
+
+    
+
     auto View = _ecs->view<FSoundComponent>();
     for (auto& Entity : View)
     {
         auto& Scom = _ecs->get<FSoundComponent>(Entity);
         std::string name = Scom.SoundPath;
+
+
           
        // on
         if (Scom.IsSoundPlaying)
         {
-            if (!Scom.IsON)
+            activeSet.insert(Scom.SoundPath);
+            if (Scom.State == ESoundState::Disabled)
             {
                 LoadSound(name, Scom.SoundType3D, Scom.LoopedSound);
                 // 3D
@@ -80,7 +140,7 @@ SyResult SoundSystem::Run()
 
                     else //if (transformC != nullptr)
                     {
-                        Scom.IsON = true;
+                        Scom.State = ESoundState::Playing;
                         auto [сameraComponent, сameraTransform] = CameraHelper::Find(_ecs);
                         TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
 
@@ -94,7 +154,7 @@ SyResult SoundSystem::Run()
                 // 2D
                 else //if (!Scom.SoundType3D)
                 {
-                    Scom.IsON = true;
+                    Scom.State = ESoundState::Playing;
                    
                     Scom.ChanelID = PlayFSound(name);
                     /*FMOD::Channel* pChannel = nullptr;
@@ -108,7 +168,18 @@ SyResult SoundSystem::Run()
             else //if (Scom.IsON)
             {
                 SetChannelVolume(Scom.ChanelID, VolumeRounding(Scom.SoundVolume));
+                auto [сameraComponent, сameraTransform] = CameraHelper::Find(_ecs);
+                TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
+                SetChannel3dPosition(Scom.ChanelID, Vector3::Transform(tc._position, сameraTransform.transformMatrix.Invert()));
             }
+        }
+
+        if (!CheckIsPlaying(Scom.ChanelID))
+        {
+            Scom.State = ESoundState::Disabled;
+            Scom.IsSoundPlaying = false;
+            deletionSet.insert(Scom.SoundPath);
+            continue;
         }
 
         
@@ -116,23 +187,17 @@ SyResult SoundSystem::Run()
        //off
        if (!Scom.IsSoundPlaying)
        {
-           Scom.IsON = false;
-           UnLoadSound(name);
+           deletionSet.insert(Scom.SoundPath);
+           Scom.State = ESoundState::Disabled;
        }  
+    }
 
-       // auto off
-       //if (Scom.IsON)
-       //{
-       //    bool bIsPlaying = false;
-       //    sgpImplementation->_mChannels.find(Scom.ChanelID)->second->isPlaying(&bIsPlaying);
-       //   
-       //    if (!bIsPlaying)
-       //    {
-       //        Scom.IsON = false;
-       //        Scom.IsSoundPlaying = false;
-       //        UnLoadSound(name);
-       //    }
-       //} 
+    for (auto& soundPath : deletionSet)
+    {
+        if (!activeSet.contains(soundPath))
+        {
+            UnLoadSound(soundPath);
+        }
     }
     
     //sgpImplementation->Update();
@@ -175,7 +240,6 @@ void SoundSystem::LoadSound(const std::string& strSoundName, bool b3d, bool bLoo
     FMOD_MODE eMode = FMOD_DEFAULT;
     eMode |= b3d ? FMOD_3D : FMOD_2D;
     eMode |= bLooping ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
-    //eMode |= bStream ? FMOD_CREATESTREAM : FMOD_CREATECOMPRESSEDSAMPLE;
 
     FMOD::Sound* pSound = nullptr;
     SoundSystem::ErrorCheck(sgpImplementation->_mpSystem->createSound(strSoundName.c_str(), eMode, nullptr, &pSound));
@@ -212,6 +276,32 @@ void SoundSystem::SetChannelVolume(int nChannelId, float fVolumedB)
         return;
 
     SoundSystem::ErrorCheck(tFoundIt->second->setVolume(fVolumedB)); 
+}
+
+void SoundSystem::TogglePauseChannel(int nChannelId, bool isPaused)
+{
+    auto tFoundIt = sgpImplementation->_mChannels.find(nChannelId);
+    if (tFoundIt == sgpImplementation->_mChannels.end())
+        return;
+
+
+
+    auto channel = tFoundIt->second;
+    channel->setPaused(isPaused);
+    
+}
+
+bool SoundSystem::CheckIsPlaying(int nChannelId) const
+{
+    auto tFoundIt = sgpImplementation->_mChannels.find(nChannelId);
+    if (tFoundIt == sgpImplementation->_mChannels.end())
+        return false;
+
+    bool isPlaying = false;
+    auto channel = tFoundIt->second;
+    channel->isPlaying(&isPlaying);
+    
+    return isPlaying;
 }
 
 //void SoundSystem::LoadBank(const std::string& strBankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags) {
@@ -333,9 +423,6 @@ float  SoundSystem::VolumeRounding(float& volume)
 {
     if (volume <= 0.0f)
         return volume = 0.0f;
-
-    else if (volume >= 1.0f)
-        return volume = 1.0f;
 
     else 
         return volume;

@@ -117,7 +117,7 @@ int main()
 
     //sound
     GameObjectHelper::CreateSoundComponent(ecs, "Engine/Assets/Audio/Shuffle.ogg");
-    GameObjectHelper::CreateSoundComponent(ecs, "Engine/Assets/Audio/Shuffle.ogg");
+    GameObjectHelper::CreateSoundComponent(ecs, "Engine/Assets/Audio/music.mp3");
     GameObjectHelper::CreateSoundComponent(ecs, "Engine/Assets/Audio/LookinAtIt.ogg");
 
 

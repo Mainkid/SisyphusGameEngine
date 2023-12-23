@@ -66,7 +66,8 @@ public:
 	//void StopAllChannels();
 	void SetChannel3dPosition(int nChannelId, const SyVector3& vPosition);
 	void SetChannelVolume(int nChannelId, float fVolumedB);
-	//bool CheckIsPlaying(int nChannelId) const;
+	void TogglePauseChannel(int nChannelId,bool isPaused);
+	bool CheckIsPlaying(int nChannelId) const;
 	//bool IsEventPlaying(const std::string& strEventName) const;
 	float VolumeRounding(float& volume);
 	//float VolumeTodb(float volume);

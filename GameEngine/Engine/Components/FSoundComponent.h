@@ -14,6 +14,13 @@
     4) локальные переменные - localVar
   */
 
+enum class ESoundState
+{
+	Disabled,
+	Playing,
+	Paused
+};
+
 struct FSoundComponent
 {
 
@@ -45,7 +52,7 @@ struct FSoundComponent
 	std::string SoundPath = ""; // = "Engine/Assets/Audio/LookinAtIt.ogg";
 	
 //----Engine vars----
-	bool IsON = false;
+	ESoundState State= ESoundState::Disabled;
 	//bool HasStarted = false;
 	int ChanelID = -1;
 	

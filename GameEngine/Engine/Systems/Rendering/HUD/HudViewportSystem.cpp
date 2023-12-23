@@ -456,6 +456,7 @@ void HudViewportSystem::DrawPlayMode(ImVec2 cursorStartPostion)
 		ec->playModeState == EngineContext::EPlayModeState::PlayMode)
 	{
 		ec->playModeState = EngineContext::EPlayModeState::PauseMode;
+		CallEvent<SyPauseModeEvent>("SyPauseModeEvent");
 	}
 	offset += dtOffset;
 	ImGui::SameLine(offset);
