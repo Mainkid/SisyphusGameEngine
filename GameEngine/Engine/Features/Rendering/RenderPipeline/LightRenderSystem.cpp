@@ -39,7 +39,7 @@ SyResult LightRenderSystem::Run()
 
 
 
-    auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+    auto [camera, cameraTf] = CameraHelper::Find(_ecs, _ec->playModeState);
 
     auto view = _ecs->view<TransformComponent, LightComponent>();
     for (auto& entity : view)

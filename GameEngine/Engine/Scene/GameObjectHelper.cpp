@@ -240,7 +240,14 @@ entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 	//TODO: Translate to resource service!
 	auto ent = Create(ecs, "ParticleSystem");
 	ParticleComponent& pc = ecs->emplace<ParticleComponent>(ent);
-	pc.SharedParticlesDataUuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_PARTICLESYS].uuid;
+	//pc.SharedParticlesDataUuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_PARTICLESYS].uuid;
+	return ent;
+}
+
+entt::entity GameObjectHelper::CreateCamera(entt::registry* ecs)
+{
+	auto ent = Create(ecs, "Camera");
+	ecs->emplace<CameraComponent>(ent, ECameraType::PlayerCamera);
 	return ent;
 }
 

@@ -218,7 +218,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			return skyboxResource;
 
 		}
-		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_PARTICLESYS)
+		/*else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_PARTICLESYS)
 		{
 			std::shared_ptr<SharedParticlesData> spd = std::make_shared<SharedParticlesData>();
 			ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
@@ -241,7 +241,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(spd);
 			return spd;
 
-		}
+		}*/
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_PREFAB)
 		{
 			
