@@ -38,6 +38,9 @@ void ResourceService::LoadBaseAssets()
 	baseResourceDB[EAssetType::ASSET_PARTICLESYS].resource = LoadResource(GetUUIDFromPath(baseParticle));
 	resourceLibrary[GetUUIDFromPath(baseParticle)].resource = baseResourceDB[EAssetType::ASSET_PARTICLESYS].resource;
 
+	//FMod loads resource!
+	baseResourceDB[EAssetType::ASSET_SOUND].uuid = GetUUIDFromPath(baseSound);
+
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Base assets loaded successfuly!");
 }
 

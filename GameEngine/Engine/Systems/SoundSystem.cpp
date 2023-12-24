@@ -49,6 +49,7 @@ SyResult SoundSystem::Init()
 {
     SY_EL->RegisterChannel("AUDI");
     _ec = ServiceLocator::instance()->Get<EngineContext>();
+    _rs = ServiceLocator::instance()->Get<ResourceService>();
     sgpImplementation = new Implementation;
     return SyResult();
 }
@@ -61,8 +62,8 @@ SyResult SoundSystem::Run()
 
     
 
-    std::set<std::string> deletionSet;
-    std::set<std::string> activeSet;
+    std::set<boost::uuids::uuid> deletionSet;
+    std::set<boost::uuids::uuid> activeSet;
 
     auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyPlayModeEndedEvent);
     if (eventView.begin() != eventView.end())
@@ -72,7 +73,7 @@ SyResult SoundSystem::Run()
         {
             auto& scom = _ecs->get<FSoundComponent>(ent);
             scom.State = ESoundState::Disabled;
-            UnLoadSound(scom.SoundPath);
+            UnLoadSound(scom.SoundUuid);
         }
     }
 
@@ -109,23 +110,25 @@ SyResult SoundSystem::Run()
     if (_ec->playModeState == EngineContext::EPlayModeState::EditorMode)
         return SyResult();
 
-    
 
     auto View = _ecs->view<FSoundComponent>();
     for (auto& Entity : View)
     {
         auto& Scom = _ecs->get<FSoundComponent>(Entity);
-        std::string name = Scom.SoundPath;
+        //std::string name = Scom.SoundPath;
 
-
+        if (Scom.SoundUuid == boost::uuids::nil_uuid())
+        {
+            Scom.SoundUuid = _rs->baseResourceDB[EAssetType::ASSET_SOUND].uuid;
+        }
           
        // on
         if (Scom.IsSoundPlaying)
         {
-            activeSet.insert(Scom.SoundPath);
+            activeSet.insert(Scom.SoundUuid);
             if (Scom.State == ESoundState::Disabled)
             {
-                LoadSound(name, Scom.SoundType3D, Scom.LoopedSound);
+                LoadSound(Scom.SoundUuid, Scom.SoundType3D, Scom.LoopedSound);
                 // 3D
                 if (Scom.SoundType3D)
                 {
@@ -144,7 +147,7 @@ SyResult SoundSystem::Run()
                         auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs);
                         TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
 
-                        Scom.ChanelID = PlayFSound( name,
+                        Scom.ChanelID = PlayFSound( Scom.SoundUuid,
                                                     Vector3::Transform(tc._position, ñameraTransform.transformMatrix.Invert()),
                                                     VolumeRounding(Scom.SoundVolume));
                         continue;
@@ -156,7 +159,7 @@ SyResult SoundSystem::Run()
                 {
                     Scom.State = ESoundState::Playing;
                    
-                    Scom.ChanelID = PlayFSound(name);
+                    Scom.ChanelID = PlayFSound(Scom.SoundUuid);
                     /*FMOD::Channel* pChannel = nullptr;
                     auto tFoundIt = Scom.SoundPath;
                     sgpImplementation->_mpSystem->playSound(tFoundIt, nullptr, true, &pChannel);*/
@@ -178,7 +181,7 @@ SyResult SoundSystem::Run()
         {
             Scom.State = ESoundState::Disabled;
             Scom.IsSoundPlaying = false;
-            deletionSet.insert(Scom.SoundPath);
+            deletionSet.insert(Scom.SoundUuid);
             continue;
         }
 
@@ -187,7 +190,7 @@ SyResult SoundSystem::Run()
        //off
        if (!Scom.IsSoundPlaying)
        {
-           deletionSet.insert(Scom.SoundPath);
+           deletionSet.insert(Scom.SoundUuid);
            Scom.State = ESoundState::Disabled;
        }  
     }
@@ -212,8 +215,7 @@ SyResult SoundSystem::Destroy()
     for (auto& Entity : View)
     {
         auto& Scom = _ecs->get<FSoundComponent>(Entity);
-        std::string name = Scom.SoundPath;
-        UnLoadSound(name);
+        UnLoadSound(Scom.SoundUuid);
     }
  
     delete sgpImplementation;
@@ -231,8 +233,9 @@ int SoundSystem::ErrorCheck(FMOD_RESULT result)
     return 0;
 }
 
-void SoundSystem::LoadSound(const std::string& strSoundName, bool b3d, bool bLooping)//, bool bStream)
+void SoundSystem::LoadSound(const boost::uuids::uuid& uuid, bool b3d, bool bLooping)//, bool bStream)
 {
+    std::string strSoundName = _rs->FindFilePathByUUID(uuid);
     auto tFoundIt = sgpImplementation->_mSounds.find(strSoundName);
     if (tFoundIt != sgpImplementation->_mSounds.end())
         return;
@@ -249,8 +252,10 @@ void SoundSystem::LoadSound(const std::string& strSoundName, bool b3d, bool bLoo
 
 }
 
-void SoundSystem::UnLoadSound(const std::string& strSoundName)
+void SoundSystem::UnLoadSound(const boost::uuids::uuid& uuid)
 {
+
+    std::string strSoundName = _rs->FindFilePathByUUID(uuid);
     auto tFoundIt = sgpImplementation->_mSounds.find(strSoundName);
     if (tFoundIt == sgpImplementation->_mSounds.end())
         return;
@@ -330,13 +335,14 @@ bool SoundSystem::CheckIsPlaying(int nChannelId) const
 //    }
 //}
 
-int SoundSystem::PlayFSound(const std::string& strSoundName, const SyVector3& vPosition, float fVolumedB)
+int SoundSystem::PlayFSound(const boost::uuids::uuid& uuid, const SyVector3& vPosition, float fVolumedB)
 {
+    std::string strSoundName = _rs->FindFilePathByUUID(uuid);
     int nChannelId = sgpImplementation->_mnNextChannelId++;
     auto tFoundIt = sgpImplementation->_mSounds.find(strSoundName);
     if (tFoundIt == sgpImplementation->_mSounds.end())
     {
-        LoadSound(strSoundName);
+        LoadSound(uuid);
         tFoundIt = sgpImplementation->_mSounds.find(strSoundName);
         if (tFoundIt == sgpImplementation->_mSounds.end())
         {

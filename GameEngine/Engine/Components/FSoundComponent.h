@@ -26,17 +26,12 @@ struct FSoundComponent
 
 	FSoundComponent() 
 	{ 
-		//this->SoundType = ESoundType::Sound3D;
-		//this->Volume = 1.0f;
-		//this->IsPlay = 0;
-		//this->IsLooping = 0;
-		//this->SoundPath = "Engine/Assets/Audio/LookinAtIt.ogg";
-		//this->Transform = Vector3::Zero;
+		
 	};
 
-	FSoundComponent(std::string soundPath)
+	FSoundComponent(boost::uuids::uuid soundUuid)
 	{
-		this->SoundPath = soundPath;
+		this->SoundUuid = soundUuid;
 	};
  
 	~FSoundComponent() {}; 
@@ -47,9 +42,7 @@ struct FSoundComponent
 	float SoundVolume = 1.0f;
 	bool IsSoundPlaying = false;
 	bool LoopedSound = false;
-	// количество повторов 
-	// 0 - бесконевчно
-	std::string SoundPath = ""; // = "Engine/Assets/Audio/LookinAtIt.ogg";
+	boost::uuids::uuid SoundUuid = boost::uuids::nil_uuid(); // = "Engine/Assets/Audio/LookinAtIt.ogg";
 	
 //----Engine vars----
 	ESoundState State= ESoundState::Disabled;

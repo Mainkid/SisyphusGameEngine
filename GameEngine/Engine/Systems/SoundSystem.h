@@ -12,6 +12,7 @@
 #include <iostream>
 #include "../../Tools/Data/Vector.h"
 #include "../../Tools/ErrorLogger.h"
+#include "../Systems/ResourceService.h"
 #include "../Components/FSoundComponent.h"
 
 
@@ -54,10 +55,10 @@ public:
 
 	//void LoadBank(const std::string& strBankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags);
 	//void LoadEvent(const std::string& strEventName);
-	void LoadSound(const std::string& strSoundName, bool b3d = true, bool bLooping = false);// , bool bStream = false);
-	void UnLoadSound(const std::string& strSoundName);
+	void LoadSound(const boost::uuids::uuid& uuid, bool b3d = true, bool bLooping = false);// , bool bStream = false);
+	void UnLoadSound(const boost::uuids::uuid& uuid);
 	//void Set3dListenerAndOrientation(const SyVector3& vPos = SyVector3{ 0, 0, 0 }, float fVolumedB = 0.0f);
-	int PlayFSound(const std::string& strSoundName, const SyVector3& vPosition = SyVector3{ 0, 0, 0 }, float fVolumedB = 1.0f);
+	int PlayFSound(const boost::uuids::uuid& uuid, const SyVector3& vPosition = SyVector3{ 0, 0, 0 }, float fVolumedB = 1.0f);
 	//void PlayEvent(const std::string& strEventName);
 	//void StopChannel(int nChannelId);
 	//void StopEvent(const std::string& strEventName, bool bImmediate = false);
@@ -78,5 +79,6 @@ private:
 	HardwareContext* _hc = nullptr;
 	RenderContext* _rc = nullptr;
 	EngineContext* _ec = nullptr;
+	ResourceService* _rs = nullptr;
 };
 
