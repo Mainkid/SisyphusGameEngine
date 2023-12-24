@@ -203,8 +203,6 @@ SyResult SoundSystem::Run()
             UnLoadSound(soundPath);
         }
     }
-    
-    //sgpImplementation->Update();
     return SyResult();
 }
  
@@ -255,6 +253,8 @@ void SoundSystem::LoadSound(const boost::uuids::uuid& uuid, bool b3d, bool bLoop
 
 void SoundSystem::UnLoadSound(const boost::uuids::uuid& uuid)
 {
+    if (uuid == boost::uuids::nil_uuid())
+        return;
 
     std::string strSoundName = _rs->FindFilePathByUUID(uuid);
     auto tFoundIt = sgpImplementation->_mSounds.find(strSoundName);
