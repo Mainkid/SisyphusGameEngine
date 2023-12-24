@@ -9,12 +9,13 @@
 #include <vector>
 
 #include "ServiceLocator.h"
-#include "../Systems/Systems.h"
-#include "../Systems/EngineContext.h"
-#include "../Tools/ErrorLogger.h"
+#include "../Core/ECS/Systems.h"
+#include "../Contexts/EngineContext.h"
+#include "../Core/Tools/ErrorLogger.h"
 #include "ECS/SystemsGroup.h"
 
-#include "../Systems/ResourceService.h"
+
+#include "../Features/Resources/ResourceService.h"
 
 
 #pragma comment(lib, "d3d11.lib")

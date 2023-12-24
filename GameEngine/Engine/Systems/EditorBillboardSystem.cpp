@@ -1,8 +1,8 @@
 #include "EditorBillboardSystem.h"
 #include "../Core/ServiceLocator.h"
 #include "../Components/EditorBillboardComponent.h"
-#include "MeshLoader.h"
-#include "EngineContext.h"
+#include "../Features/Mesh/MeshLoader.h"
+#include "../Contexts/EngineContext.h"
 
 SyResult EditorBillboardSystem::Init()
 {
@@ -20,7 +20,11 @@ SyResult EditorBillboardSystem::Run()
 		if (ebc.hash != hsh)
 		{
 			ebc.hash = _hasher(ebc.texturePath);
-			MeshLoader::LoadTexture(ebc.texturePath, ebc.samplerState.GetAddressOf(), ebc.texture.GetAddressOf(),true);
+			SyResult hr = MeshLoader::LoadTexture(ebc.texturePath, ebc.samplerState.GetAddressOf(), ebc.texture.GetAddressOf(), true);
+			if (hr.code != SY_RESCODE_OK)
+			{
+				SY_LOG_REND(SY_LOGLEVEL_ERROR, hr.message.ToString());
+			}
 		}
 	}
 	return SyResult();

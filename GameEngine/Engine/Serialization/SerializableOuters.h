@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Serializable.h"
-#include "../Tools/Data/Vector.h"
+#include "../Core/Tools/Structures/Vector.h"
 #include "SimpleMath.h"
 #include <boost/uuid/uuid.hpp>
 

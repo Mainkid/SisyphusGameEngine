@@ -1,20 +1,20 @@
 ﻿#include "GameObjectHelper.h"
 
 #include "../../../vendor/entt/entt.hpp"
-
-#include "../../Components/MeshComponent.h"
-#include "../../Components/LightComponent.h"
-#include "../../Components/FSoundComponent.h"
+#include "../Features/Physics/Components/RBodyComponent.h"
+#include "../Features/Physics/Events/SyOnCreateRBodyEvent.h"
+#include "../Features/Physics/Events/SyOnCreateColliderEvent.h"
+#include "../Features/Mesh/Components/MeshComponent.h"
+#include "../Features/Lighting/Components/LightComponent.h"
 #include "../../Components/TransformComponent.h"
-#include "../../Components/ParticleComponent.h"
+#include "../Features/Particles/Components/ParticleComponent.h"
 #include "../../Components/EditorBillboardComponent.h"
-#include "../../Components/RBodyComponent.h"
 #include "../Systems/TransformHelper.h"
-#include "../../Tools/Data/Vector.h"
+#include "../Core/Tools/Structures/Vector.h"
 #include "../Components/ImageBasedLightingComponent.h"
 #include "../Components/SkyboxComponent.h"
-#include "../Systems/ResourceService.h"
-#include "../../Components/FSoundComponent.h"
+#include "../Features/Resources/ResourceService.h"
+#include "../Features/Sounds/Components/FSoundComponent.h"
 
 
 entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, SyVector3 pos = Vector3::Zero)
@@ -22,7 +22,7 @@ entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& na
 	auto ent = ecs->create();
 	ecs->emplace<GameObjectComp>(ent, name);
 	TransformComponent& tc=ecs->emplace<TransformComponent>(ent);
-	tc.localPosition = pos;
+	tc._position = pos;
 	return ent;
 }
 
@@ -34,7 +34,8 @@ void GameObjectHelper::Destroy(entt::registry* ecs, entt::entity ent)
 	{
 		if (tf->children.size() > 0)
 		{
-			for (auto childEnt : tf->children)
+			std::set<entt::entity> tmpSet = tf->children;
+			for (auto childEnt : tmpSet)
 				Destroy(ecs, childEnt);
 		}
 		SetParent(ecs, ent, entt::null);
@@ -122,7 +123,7 @@ SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::enti
 									rbType,
 									mass,
 									flags);
-	CallEvent<SyEventOnCreateRBody>(ecs, "OnCreateRBody", entity);
+	CallEvent<SyOnCreateRBodyEvent>(ecs, "OnCreateRBody", entity);
 	//ecs->emplace<SyRbCreateOnNextUpdateTag>(entity);
 	return result;
 }
@@ -150,7 +151,7 @@ SyResult GameObjectHelper::AddPrimitiveColliderComponent(entt::registry* ecs, en
 		return result;
 	}
 	ecs->emplace<SyPrimitiveColliderComponent>(entity, colliderType, colliderShapeDesc,  material);
-	CallEvent<SyEventOnCreateCollider>(ecs, "OnCreateCollider", entity);
+	CallEvent<SyOnCreateColliderEvent>(ecs, "OnCreateCollider", entity);
 	return result;
 }
 
@@ -184,7 +185,7 @@ SyResult GameObjectHelper::AddTrimeshColliderComponent(entt::registry* ecs, entt
 		return result;
 	}
 	ecs->emplace<SyTrimeshColliderComponent>(entity, material);
-	CallEvent<SyEventOnCreateCollider>(ecs, "OnCreateCollider", entity);
+	CallEvent<SyOnCreateColliderEvent>(ecs, "OnCreateCollider", entity);
 	return result;
 }
 
@@ -230,24 +231,42 @@ SyResult GameObjectHelper::AddCubeMeshComponent(entt::registry* ecs, entt::entit
 	return AddMeshComponent(ecs, entity, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\Cube.fbx"));
 }
 
+SyResult GameObjectHelper::AddSphereMeshComponent(entt::registry* ecs, entt::entity entity)
+{
+	return AddMeshComponent(ecs, entity, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\sphere.fbx"));
+}
+
 entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 {
 	//TODO: Translate to resource service!
 	auto ent = Create(ecs, "ParticleSystem");
 	ParticleComponent& pc = ecs->emplace<ParticleComponent>(ent);
-	pc.SharedParticlesDataUuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_PARTICLESYS].uuid;
+	//pc.SharedParticlesDataUuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_PARTICLESYS].uuid;
+	return ent;
+}
+
+entt::entity GameObjectHelper::CreateCamera(entt::registry* ecs)
+{
+	auto ent = Create(ecs, "Camera");
+	ecs->emplace<CameraComponent>(ent, ECameraType::PlayerCamera);
 	return ent;
 }
 
 entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs, boost::uuids::uuid uuid)
 {
-	auto ent = ecs->create();
-	ecs->emplace<GameObjectComp>(ent);
+	auto view=ecs->view<SkyboxComponent, ImageBasedLightingComponent>();
+	if (view.size_hint()>0)
+		GameObjectHelper::Destroy(ecs,(view.front()));
+
+	auto ent = GameObjectHelper::Create(ecs,"Skybox");
 	ecs->emplace<SkyboxComponent>(ent);
+	
 	ecs->emplace<ImageBasedLightingComponent>(ent);
 	
 	if (uuid == boost::uuids::nil_uuid())
 		uuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_CUBEMAP].uuid;
+	/*else
+		ServiceLocator::instance()->Get<ResourceService>()->LoadResource(uuid);*/
 	ecs->get<SkyboxComponent>(ent).uuid = uuid;
 
 	return ent;

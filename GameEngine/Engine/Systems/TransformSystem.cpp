@@ -1,15 +1,16 @@
 #include "TransformSystem.h"
-#include "EngineContext.h"
+#include "../Contexts/EngineContext.h"
 #include "../Core/ServiceLocator.h"
 #include "TransformHelper.h"
-#include "../Core/ECS/Events/SyHotReloadEvent.h"
+#include "../Events/SyHotReloadEvent.h"
 #include "../Scene/GameObjectHelper.h"
-#include "../Core/ECS/Events/SySceneLoadEvent.h"
+#include "../Events/SySceneLoadEvent.h"
 
 SyResult TransformSystem::Init()
 {
 	SyResult result;
 	ec = ServiceLocator::instance()->Get<EngineContext>();
+	TransformHelper::SetDefaultHash();
 	return result;
 }
 
@@ -22,18 +23,6 @@ SyResult TransformSystem::Run()
 
 	auto view2 = SY_GET_THIS_FRAME_EVENT_VIEW(SyHotReloadEvent);
 
-	if (view2.size_hint()>0)
-	{
-		std::cout << std::endl;
-	}
-
-	//NOT WORKING!!!
-	// 
-	//for (auto& entity : eventView)
-	//{
-	//	SySceneLoadEvent& testEvent = eventView.get<SySceneLoadEvent>(entity);	//получили само событие (объект) со всеми переданными в него данными
-	//	SY_LOG_EVSY(SY_LOGLEVEL_WARNING, testEvent.message.c_str());	//логика обработки ивента
-	//}
 
 
 	if (eventView.size_hint()>0)
@@ -56,12 +45,41 @@ SyResult TransformSystem::Run()
 	for (auto& entity :view)
 	{
 		TransformComponent& tc = view.get<TransformComponent>(entity);
-		uint32_t hsh = hasher(tc);
-		if (tc.hash != hsh)
+
+		size_t wHash = 0;
+		boost::hash_combine(wHash, tc._position);
+		boost::hash_combine(wHash, tc._rotation);
+		boost::hash_combine(wHash, tc.scale);
+
+		size_t lHash = 0;
+		boost::hash_combine(lHash, tc.localPosition);
+		boost::hash_combine(lHash, tc.localRotation);
+		boost::hash_combine(lHash, tc.localScale);
+		boost::hash_combine(lHash, tc.parent);
+
+		if (tc.localHash != lHash && lHash!=TransformHelper::localHashDefault)
 		{
- 			TransformHelper::UpdateTransformMatrix(tc);
-			tc.hash = hsh;
+			tc.localHash = lHash;
+			TransformHelper::UpdateTransformMatrix(tc);
+			std::cout << std::endl;
 		}
+		else if (tc.worldHash != wHash)
+		{
+			tc.worldHash = wHash;
+			Matrix parentTransform = Matrix::Identity;
+			if (tc.parent != entt::null)
+			{
+				TransformComponent& parentTc = _ecs->get<TransformComponent>((entt::entity)tc.parent);
+				parentTransform = parentTc.transformMatrix;
+			}
+			TransformHelper::UpdateWorldTransformMatrix(tc,parentTransform);
+		}
+		
+		
+
+		
+		
+
 	}
 	return result;
 }

@@ -1,7 +1,7 @@
 ﻿#include "Buffer.h"
 
 #include "../ServiceLocator.h"
-#include "../../Systems/HardwareContext.h"
+#include "../../Contexts/HardwareContext.h"
 
 Buffer::Buffer()
 {
@@ -40,10 +40,34 @@ void Buffer::Initialize(std::vector<DirectX::SimpleMath::Vector4> points,D3D11_U
     HRESULT res = hc->device->CreateBuffer(&indexBufDesc, &indexData, buffer.GetAddressOf());
 }
 
+void Buffer::Initialize(std::vector<SyVector3> points, D3D11_USAGE usage, UINT bindFlags, UINT cpuAccess,
+	UINT miscFlags, UINT stride, UINT memPitch, UINT memSlicePitch)
+{
+
+    D3D11_BUFFER_DESC indexBufDesc = {};
+    indexBufDesc.Usage = usage;
+    indexBufDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    indexBufDesc.CPUAccessFlags = cpuAccess;
+    indexBufDesc.MiscFlags = miscFlags;
+    indexBufDesc.StructureByteStride = stride;
+    indexBufDesc.ByteWidth = sizeof(SyVector3) * points.size();
+
+    D3D11_SUBRESOURCE_DATA indexData = {};
+
+    indexData.pSysMem = static_cast<void*>(points.data());
+    indexData.SysMemPitch = 0;
+    indexData.SysMemSlicePitch = 0;
+
+    size = sizeof(SyVector3) * points.size();
+    //this->stride=stride;
+    //this->offset=offset;
+    HRESULT res = hc->device->CreateBuffer(&indexBufDesc, &indexData, buffer.GetAddressOf());
+}
+
 
 void Buffer::Initialize(std::vector<int> points,D3D11_USAGE usage,
-   UINT bindFlags,UINT cpuAccess,
-   UINT miscFlags,UINT stride,UINT memPitch, UINT memSlicePitch)
+                        UINT bindFlags,UINT cpuAccess,
+                        UINT miscFlags,UINT stride,UINT memPitch, UINT memSlicePitch)
 {
     D3D11_BUFFER_DESC indexBufDesc = {};
     indexBufDesc.Usage = usage;
@@ -61,6 +85,29 @@ void Buffer::Initialize(std::vector<int> points,D3D11_USAGE usage,
 
     size= points.size();
    
+    HRESULT res = hc->device->CreateBuffer(&indexBufDesc, &indexData, buffer.GetAddressOf());
+}
+
+void Buffer::Initialize(std::vector<unsigned> points, D3D11_USAGE usage,
+    UINT bindFlags, UINT cpuAccess,
+    UINT miscFlags, UINT stride, UINT memPitch, UINT memSlicePitch)
+{
+    D3D11_BUFFER_DESC indexBufDesc = {};
+    indexBufDesc.Usage = usage;
+    indexBufDesc.BindFlags = bindFlags;
+    indexBufDesc.CPUAccessFlags = cpuAccess;
+    indexBufDesc.MiscFlags = miscFlags;
+    indexBufDesc.StructureByteStride = stride;
+    indexBufDesc.ByteWidth = sizeof(int) * points.size();
+
+    D3D11_SUBRESOURCE_DATA indexData = {};
+
+    indexData.pSysMem = static_cast<void*>(points.data());
+    indexData.SysMemPitch = 0;
+    indexData.SysMemSlicePitch = 0;
+
+    size = points.size();
+
     HRESULT res = hc->device->CreateBuffer(&indexBufDesc, &indexData, buffer.GetAddressOf());
 }
 

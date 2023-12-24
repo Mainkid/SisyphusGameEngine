@@ -117,7 +117,7 @@ float4 PS_Directional(PS_IN input) : SV_Target
     float roughnessColor = MetallicTex.Sample(textureSampler, input.col.xy).a;
     float4 emissiveColor = EmissiveTex.Sample(textureSampler, input.col.xy);
     normal = normalize(normal);
-  
+    metallicColor = metallicColor.xxx;
 
     float3 lightVec = -normalize(lightData.dir.xyz).xyz;
     float3 toEye = normalize(eyePos.xyz - worldPos.xyz);
@@ -191,7 +191,8 @@ float4 PS_Ambient(PS_IN input) : SV_Target
     float2 envBRDF = iblLookUpTexture.Sample(textureSampler, float2(max(dot(normal, -toEye), 0.0f), roughness));
     float3 specular = prefilteredColor * (kS * envBRDF.x + envBRDF.y);
 
-    resColor = (instanceID.x > 0) * ssaoParam * lightIntensity*
-    (diffuse + specular) + skyBoxColor * (instanceID.x < 0);
+    resColor = (instanceID.x > 0) * ssaoParam * lightIntensity *
+    (diffuse + specular);
+    //+ skyBoxColor * (instanceID.x < 0);
     return float4(resColor, 1.0f);
 }

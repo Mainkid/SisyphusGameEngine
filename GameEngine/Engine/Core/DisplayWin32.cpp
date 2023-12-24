@@ -29,7 +29,7 @@ LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT umessage, WPARAM wparam, LPA
 		//	isInitialized = true;
 		return 0;
 	case WM_ACTIVATEAPP:
-		std::cout << "Activated! " << wparam<< std::endl;
+		//std::cout << "Activated! " << wparam;
 		if (wparam)
 		{
 			ServiceLocator::instance()->Get<ResourceService>()->GenerateMetaFiles(".\\Game\\Assets");
@@ -107,12 +107,12 @@ HWND DisplayWin32::GetHWND()
 
 float DisplayWin32::GetHeight()
 {
-	return clientHeight;
+	return 720;
 }
 
 float DisplayWin32::GetWidth()
 {
-	return clientWidth;
+	return 1280;
 }
 
 void DisplayWin32::HandleResize(int width, int height)

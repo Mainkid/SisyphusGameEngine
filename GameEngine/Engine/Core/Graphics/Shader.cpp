@@ -1,5 +1,5 @@
 ﻿#include "Shader.h"
-#include "../../Systems/HardwareContext.h"
+#include "../../Contexts/HardwareContext.h"
 #include "../ServiceLocator.h"
 
 void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned int uniform_flags,

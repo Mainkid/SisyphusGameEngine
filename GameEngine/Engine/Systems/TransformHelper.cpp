@@ -1,8 +1,9 @@
 #include "TransformHelper.h"
 #include "../Core/EngineCore.h"
 #include "../Core/ServiceLocator.h"
-#include "../Systems/EngineContext.h"
-#include "../Tools/Data/Vector.h"
+#include "../Contexts/EngineContext.h"
+#include "../Core/Tools/Structures/Vector.h"
+
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -49,8 +50,39 @@ void TransformHelper::UpdateTransformMatrix(TransformComponent& tc)
 	tc._position = positionNew;
 	tc.scale = scaleNew;
 	tc._rotation = q.ToEuler();
+
+	size_t seed = 0;
+	boost::hash_combine(seed, tc._position);
+	boost::hash_combine(seed, tc._rotation);
+	boost::hash_combine(seed, tc.scale);
+
+	tc.worldHash = seed;
+
 }
 
+void TransformHelper::UpdateWorldTransformMatrix(TransformComponent& tc, Matrix parentTransform)
+{
+	size_t seed = 0;
+
+	//if (tc.parent==entt::null)
+	//{
+		Quaternion rotation;
+		tc.transformMatrix = Matrix::CreateScale(tc.scale) * Matrix::CreateFromYawPitchRoll(tc._rotation) * Matrix::CreateTranslation(tc._position);
+		tc.transformMatrix = tc.transformMatrix * parentTransform;
+		tc.transformMatrix.Decompose(tc.localScale, rotation, tc.localPosition);
+
+		tc.localPosition = tc._position;
+		tc.localRotation = rotation.ToEuler();
+		tc.localScale = tc.scale;
+
+		//boost::hash_combine(seed, tc.localPosition);
+		//boost::hash_combine(seed, tc.localRotation);
+		//boost::hash_combine(seed, tc.localScale);
+
+		//tc.localHash = seed;
+	//}
+
+}
 
 
 Vector3 TransformHelper::GetRotationDegrees(TransformComponent& tc)
@@ -74,6 +106,13 @@ void TransformHelper::UpdateRelativeToParent(const TransformComponent* parent, T
 		tc.localPosition = translation;
 		tc.localRotation = rotation.ToEuler();
 		tc.localScale = scale;
+
+		//size_t seed = 0;
+		//boost::hash_combine(seed, tc.localPosition);
+		//boost::hash_combine(seed, tc.localRotation);
+		//boost::hash_combine(seed, tc.localScale);
+
+		//tc.localHash = seed;
 		tc.transformMatrix = (Matrix::CreateScale(scale) * Matrix::CreateFromYawPitchRoll(tc.localRotation) * Matrix::CreateTranslation(translation));
 	}
 	else
@@ -87,6 +126,13 @@ void TransformHelper::UpdateRelativeToParent(const TransformComponent* parent, T
 		tc.localPosition = translation;
 		tc.localRotation = rotation.ToEuler();
 		tc.localScale = scale;
+
+		/*size_t seed = 0;
+		boost::hash_combine(seed, tc.localPosition);
+		boost::hash_combine(seed, tc.localRotation);
+		boost::hash_combine(seed, tc.localScale);
+
+		tc.localHash = seed;*/
 		tc.transformMatrix = (Matrix::CreateScale(scale) * Matrix::CreateFromYawPitchRoll(tc.localRotation) * Matrix::CreateTranslation(translation));
 	}
 
@@ -117,4 +163,17 @@ void TransformHelper::RadToDegrees(Vector3& vec)
 	vec.x *= 180.0f / M_PI;
 	vec.y *= 180.0f / M_PI;
 	vec.z *= 180.0f / M_PI;
+}
+
+void TransformHelper::SetDefaultHash()
+{
+	size_t seed = 0;
+	TransformComponent tc;
+	boost::hash_combine(seed, tc.localPosition);
+	boost::hash_combine(seed, tc.localRotation);
+	boost::hash_combine(seed, tc.localScale);
+	worldHashDefault = seed;
+	boost::hash_combine(seed, tc.parent);
+	localHashDefault = seed;
+
 }
