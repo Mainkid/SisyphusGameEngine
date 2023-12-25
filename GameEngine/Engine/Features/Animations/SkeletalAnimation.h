@@ -8,6 +8,8 @@
 #include <assimp/postprocess.h>
 #include "Bone.h"
 #include <memory>
+#include "../../Serialization/Serializer.hpp"
+#include "../../Serialization/Serializable.h"
 
 #include "../../../vendor/skeletalAnim/AssimpConverter/AssimpConverter.h"
 
@@ -17,6 +19,8 @@ struct AssimpNodeData
 	std::string name;
 	int childrenCount;
 	std::vector<AssimpNodeData> children;
+	
+	SER_DATA(AssimpNodeData, transformation, name, childrenCount, children);
 };
 
 class SkeletalAnimation
@@ -27,8 +31,9 @@ public:
 	int m_TicksPerSecond;
 	std::vector<Bone> m_Bones;
 	AssimpNodeData m_RootNode;
-	std::map<std::string, BoneInfo> m_BoneInfoMap;
+	std::unordered_map<std::string, BoneInfo> m_BoneInfoMap;
 
+	SER_DATA(SkeletalAnimation, m_Duration, m_TicksPerSecond, m_Bones, m_RootNode, m_BoneInfoMap);
 };
 
 class SkeletalAnimator

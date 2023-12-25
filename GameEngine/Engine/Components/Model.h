@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <map>
+#include <unordered_map>
 #include "../Features/Mesh/Mesh.h"
 #include "../Features/Animations/Bone.h"
 #include "../Features/Animations/SkeletalAnimation.h"
@@ -12,6 +13,6 @@ struct Model : public ResourceBase
 {
 	std::vector<std::shared_ptr<Mesh>> meshes = {};
 	std::shared_ptr<SA::SkeletalModel> skeleton;
-	std::map<std::string, BoneInfo> m_BoneInfoMap;
+	std::unordered_map<std::string, BoneInfo> m_BoneInfoMap;
 	std::shared_ptr<SkeletalAnimator> animator;
 };

@@ -52,5 +52,6 @@ private:
     
     void DrawMaterialProperties();
     void DrawTextureProperties();
+    void DrawMeshProperties();
     void UpdateHudProperties(bool);
 };

@@ -57,7 +57,7 @@ Bone MeshLoader::CreateBone(const std::string& name, int ID, const aiNodeAnim* c
 	return bone;
 }
 
-void MeshLoader::ReadMissingBones(const aiAnimation* animation, SkeletalAnimation* skeletalAnim, std::map<std::string, BoneInfo>& boneMap, aiMesh* mesh)
+void MeshLoader::ReadMissingBones(const aiAnimation* animation, SkeletalAnimation* skeletalAnim, std::unordered_map<std::string, BoneInfo>& boneMap, aiMesh* mesh)
 {
 	int size = animation->mNumChannels;
 
@@ -92,7 +92,7 @@ void MeshLoader::ReadMissingBones(const aiAnimation* animation, SkeletalAnimatio
 	skeletalAnim->m_BoneInfoMap = boneInfoMap;
 }
 
-void MeshLoader::ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src, std::map<std::string, BoneInfo>& boneMap)
+void MeshLoader::ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src, std::unordered_map<std::string, BoneInfo>& boneMap)
 {
 	assert(src);
 
@@ -109,8 +109,8 @@ void MeshLoader::ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src, std:
 	}
 }
 
-std::tuple<std::shared_ptr<SkeletalAnimation>,std::shared_ptr<SA::SkeletalModel>> 
-MeshLoader::LoadAnimation(const std::string& animationPath, std::map<std::string,BoneInfo>& boneMap )
+std::tuple<std::shared_ptr<SkeletalAnimation>, std::shared_ptr<SA::SkeletalModel>> 
+MeshLoader::LoadAnimation(const std::string& animationPath, std::unordered_map<std::string,BoneInfo>& boneMap )
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate |
@@ -122,14 +122,18 @@ MeshLoader::LoadAnimation(const std::string& animationPath, std::map<std::string
 	if (scene->mNumAnimations == 0)
 		return std::make_tuple(nullptr,nullptr);
 
-	auto animation = scene->mAnimations[0];
-	skeletalAnim->m_Duration = animation->mDuration;
-	skeletalAnim->m_TicksPerSecond = animation->mTicksPerSecond;
-	ReadHeirarchyData(skeletalAnim->m_RootNode, scene->mRootNode,boneMap);
-	for (UINT i = 0; i < scene->mNumMeshes; i++)
+
+	for (int iAnim = 0; iAnim < scene->mNumAnimations; iAnim++)
 	{
-		aiMesh* mesh = scene->mMeshes[i];
-		ReadMissingBones(animation, skeletalAnim.get(), boneMap, mesh);
+		auto animation = scene->mAnimations[0];
+		skeletalAnim->m_Duration = animation->mDuration;
+		skeletalAnim->m_TicksPerSecond = animation->mTicksPerSecond;
+		ReadHeirarchyData(skeletalAnim->m_RootNode, scene->mRootNode, boneMap);
+		for (UINT i = 0; i < scene->mNumMeshes; i++)
+		{
+			aiMesh* mesh = scene->mMeshes[i];
+			ReadMissingBones(animation, skeletalAnim.get(), boneMap, mesh);
+		}
 	}
 	
 	std::shared_ptr<SA::SkeletalModel> saModel = std::make_shared<SA::SkeletalModel>();
@@ -191,7 +195,7 @@ void MeshLoader::SetVertexBoneData(std::vector<Vector4>& vertices,int vertexID, 
 	}
 }
 
-void MeshLoader::ExtractBoneWeightForVertices(std::vector<DirectX::SimpleMath::Vector4>& vertices, std::map<std::string,BoneInfo>& boneMap, aiMesh* mesh, const aiScene* scene)
+void MeshLoader::ExtractBoneWeightForVertices(std::vector<DirectX::SimpleMath::Vector4>& vertices, std::unordered_map<std::string,BoneInfo>& boneMap, aiMesh* mesh, const aiScene* scene)
 {
 	static aiScene* prevScene;
 	static int boneCtr = 0;
@@ -238,7 +242,7 @@ void MeshLoader::ExtractBoneWeightForVertices(std::vector<DirectX::SimpleMath::V
 	std::cout << std::endl;
 }
 
-std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::map<std::string, BoneInfo>& m_BoneInfoMap)
+std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::unordered_map<std::string, BoneInfo>& m_BoneInfoMap)
 {
 	std::vector<DirectX::SimpleMath::Vector4> vertices;
 	std::vector<int> indices;
@@ -322,7 +326,7 @@ std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene
 }
 
 void MeshLoader::ProcessNode(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& meshes,
-	std::map<std::string, BoneInfo>& m_BoneInfoMap, aiNode* node, const aiScene* scene)
+	std::unordered_map<std::string, BoneInfo>& m_BoneInfoMap, aiNode* node, const aiScene* scene)
 {
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
@@ -398,7 +402,7 @@ SyResult MeshLoader::LoadTexture(const std::string& texturePath,ID3D11SamplerSta
 	return SyResult();
 }
 
-void MeshLoader::LoadModel(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& meshes, std::map<std::string, BoneInfo>& m_BoneInfoMap)
+void MeshLoader::LoadModel(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& meshes, std::unordered_map<std::string, BoneInfo>& m_BoneInfoMap)
 {
 
 	Assimp::Importer importer;
@@ -418,7 +422,7 @@ void MeshLoader::LoadModel(const std::string& modelPath, std::vector<std::shared
 std::shared_ptr<Mesh> MeshLoader::LoadSimpleMesh(const std::string& modelPath)
 {
 	std::vector<std::shared_ptr<Mesh>> meshes;
-	std::map<std::string, BoneInfo> empty;
+	std::unordered_map<std::string, BoneInfo> empty;
 	LoadModel(modelPath, meshes,empty);
 	return meshes.at(0);
 }

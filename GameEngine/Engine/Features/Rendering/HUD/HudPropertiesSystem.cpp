@@ -117,7 +117,7 @@ SyResult HudPropertiesSystem::Run()
                 DrawMaterialProperties();
                 break;
             case EAssetType::ASSET_MESH:
-                
+                DrawMeshProperties();
                 break;
             case EAssetType::ASSET_SOUND:
 
@@ -364,7 +364,6 @@ void HudPropertiesSystem::DrawMaterialProperties()
 void HudPropertiesSystem::DrawTextureProperties()
 {
     
-
     std::vector<const char*> textureTypeStr = { "Texture 2D", "Cubemap" };
     std::vector<const char*> wrapModeStr = { "Repeat","Clamp","Mirror" };
     std::vector<const char*> filterModeStr = { "Bilinear","Trilinear","Point" };
@@ -428,6 +427,15 @@ void HudPropertiesSystem::DrawTextureProperties()
 
         //rs->LoadResource(ec->hudData.selectedContent.uuid, true);
     }
+}
+
+void HudPropertiesSystem::DrawMeshProperties()
+{
+    if (ImGui::Button("Extract animations"))
+    {
+        std::cout << " ";
+    }
+    
 }
 
 void HudPropertiesSystem::UpdateHudProperties(bool)

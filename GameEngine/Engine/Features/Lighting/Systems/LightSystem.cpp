@@ -17,9 +17,9 @@ SyResult LightSystem::Init()
 
 SyResult LightSystem::Run()
 {
+
     auto viewCamera = _ecs->view<TransformComponent, CameraComponent>();
     auto [cameraTf, camera] = viewCamera.get(viewCamera.front());
-
     auto viewLights = _ecs->view<TransformComponent, LightComponent>();
     for (auto& ent : viewLights)
     {
