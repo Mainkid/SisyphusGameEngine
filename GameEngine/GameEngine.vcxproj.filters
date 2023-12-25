@@ -101,6 +101,7 @@
     <ClCompile Include="vendor\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_tables.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Engine\Features\Sounds\Systems\SoundSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -297,6 +298,16 @@
     <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
     <ClInclude Include="Engine\Scene\Prefab.h" />
     <ClInclude Include="Engine\Scene\Scene.h" />
+    <ClInclude Include="Engine\Features\Sounds\Components\FSoundComponent.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod.hpp" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_codec.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_common.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp_effects.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_errors.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_output.h" />
+    <ClInclude Include="Engine\Events\SySoundDeletedEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Downloads\skybox.jpg" />

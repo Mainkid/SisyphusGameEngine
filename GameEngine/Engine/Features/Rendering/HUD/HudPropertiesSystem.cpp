@@ -11,6 +11,8 @@
 #include "../../Core/ServiceLocator.h"
 #include "../../Lighting/Components/LightComponent.h"
 #include "../../Particles/Components/ParticleComponent.h"
+#include "../../Lighting/Components/LightComponent.h"
+#include "../../Sounds/Components/FSoundComponent.h"
 #include "../../../../vendor/ImGui/curve_v122.hpp"
 
 
@@ -51,6 +53,7 @@ SyResult HudPropertiesSystem::Run()
         TransformComponent* tc = _ecs->try_get<TransformComponent>(*ec->hudData.selectedEntityIDs.begin());
         LightComponent* lc = _ecs->try_get<LightComponent>(*ec->hudData.selectedEntityIDs.begin());
         ParticleComponent* pc = _ecs->try_get<ParticleComponent>(*ec->hudData.selectedEntityIDs.begin());
+        FSoundComponent* sc = _ecs->try_get<FSoundComponent>(*ec->hudData.selectedEntityIDs.begin());
 
 
         if (tc)
@@ -102,6 +105,18 @@ SyResult HudPropertiesSystem::Run()
             lc->Color.x = col3[0];
             lc->Color.y = col3[1];
             lc->Color.z = col3[2];
+        }
+
+        // TODO S: demo
+        if (sc)
+        {
+            
+            //std::string SoundPath = "Engine/Assets/Audio/LookinAtIt.ogg";
+            ImGui::Checkbox("Sound3D", &sc->SoundType3D);
+            ImGui::DragFloat("Sound Volume", &sc->SoundVolume);
+            ImGui::Checkbox("Is Looping", &sc->LoopedSound);
+            ImGui::Checkbox("Is Playing", &sc->IsSoundPlaying);
+            
         }
 
         if (pc)

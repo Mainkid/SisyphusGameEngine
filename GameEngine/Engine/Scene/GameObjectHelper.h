@@ -47,7 +47,7 @@ public:
 													const SyColliderMaterial& 			material = SyColliderMaterial());
 	
 	static entt::entity CreateLight(entt::registry* ecs, ELightType lightType, Vector3 pos = Vector3::Zero);
-
+	static entt::entity CreateSoundComponent(entt::registry* ecs);//, ESoundType type = ESoundType::Sound3D, float volume = 1.0f, bool isoplay = false, bool ispooping = false, std::string soundPath = "Engine/Assets/Audio/LookinAtIt.ogg", Vector3 pos = Vector3::Zero);
 	static entt::entity CreateMesh(entt::registry* ecs, boost::uuids::uuid uuid, Vector3 pos=Vector3::Zero);
 	static SyResult AddMeshComponent(entt::registry* ecs, entt::entity entity, boost::uuids::uuid uuid, unsigned flags = SyEMeshComponentFlags::MESH_RENDER);
 	static SyResult AddCubeMeshComponent(entt::registry* ecs, entt::entity entity);
@@ -152,5 +152,4 @@ SyResult GameObjectHelper::CallEvent(entt::registry* ecs, const std::string& nam
 	ecs->emplace<SyEventTag>(ent);
 	return SyResult();
 }
-
 

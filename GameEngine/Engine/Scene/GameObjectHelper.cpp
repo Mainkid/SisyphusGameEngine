@@ -14,6 +14,7 @@
 #include "../Components/ImageBasedLightingComponent.h"
 #include "../Components/SkyboxComponent.h"
 #include "../Features/Resources/ResourceService.h"
+#include "../Features/Sounds/Components/FSoundComponent.h"
 
 
 entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, SyVector3 pos = Vector3::Zero)
@@ -269,4 +270,14 @@ entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs, boost::uuids::u
 	ecs->get<SkyboxComponent>(ent).uuid = uuid;
 
 	return ent;
+}
+
+// TODO S: creating correctly? 
+// how to link Transform (FSoundComponent and EditorBillboardComponent) ?
+entt::entity GameObjectHelper::CreateSoundComponent(entt::registry* ecs)
+{ 
+	auto ent = Create(ecs, "SoundObject");
+	ecs->emplace<EditorBillboardComponent>(ent, "Engine/Assets/Sprites/Sound.png");
+	FSoundComponent& Sound = ecs->emplace<FSoundComponent>(ent, boost::uuids::nil_uuid());
+	return entt::entity();
 }
