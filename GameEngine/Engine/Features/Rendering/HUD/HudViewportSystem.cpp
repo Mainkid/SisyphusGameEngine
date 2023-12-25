@@ -394,6 +394,15 @@ void HudViewportSystem::DrawMainMenuBar()
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Audio"))
+			{
+				if (ImGui::MenuItem("Sound Component"))
+				{
+					GameObjectHelper::CreateSoundComponent(_ecs);
+				}
+				ImGui::EndMenu();
+			}
+
 			if (ImGui::MenuItem("Open", "Ctrl+O")) {}
 
 			ImGui::EndMenu();

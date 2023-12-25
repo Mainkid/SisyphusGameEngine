@@ -98,7 +98,7 @@ int main()
 
     //sound
     GameObjectHelper::CreateSoundComponent(ecs);
-
+    GameObjectHelper::CreateSoundComponent(ecs);
 
     EngineCore::instance()->Update();
     EngineCore::instance()->ShutDown();   

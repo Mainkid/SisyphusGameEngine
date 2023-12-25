@@ -102,10 +102,6 @@
     <ClCompile Include="vendor\ImGui\imgui_tables.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Engine\Features\Sounds\Systems\SoundSystem.cpp" />
-    <ClCompile Include="Engine\Tools\Data\Vector.cpp" />
-    <ClCompile Include="Engine\Tools\ErrorLogger.cpp" />
-    <ClCompile Include="Engine\Tools\ImageLoader.cpp" />
-    <ClCompile Include="Engine\Components\Particle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -311,6 +307,7 @@
     <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp_effects.h" />
     <ClInclude Include="vendor\FMod\api\core\inc\fmod_errors.h" />
     <ClInclude Include="vendor\FMod\api\core\inc\fmod_output.h" />
+    <ClInclude Include="Engine\Events\SySoundDeletedEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Downloads\skybox.jpg" />

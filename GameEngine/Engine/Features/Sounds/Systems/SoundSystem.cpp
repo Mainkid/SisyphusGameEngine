@@ -63,8 +63,9 @@ SyResult SoundSystem::Run()
 
     
 
-    std::set<boost::uuids::uuid> deletionSet;
-    std::set<boost::uuids::uuid> activeSet;
+    deletionSet.clear();
+    activeSet.clear();
+    tmpComponentsMap.clear();
 
     auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyPlayModeEndedEvent);
     if (eventView.begin() != eventView.end())
@@ -116,6 +117,7 @@ SyResult SoundSystem::Run()
     for (auto& Entity : View)
     {
         auto& Scom = _ecs->get<FSoundComponent>(Entity);
+        tmpComponentsMap[Scom.ComponentUuid]=Scom.ChanelID;
         //std::string name = Scom.SoundPath;
 
         if (Scom.SoundUuid == boost::uuids::nil_uuid())
@@ -185,8 +187,6 @@ SyResult SoundSystem::Run()
             deletionSet.insert(Scom.SoundUuid);
             continue;
         }
-
-        
     
        //off
        if (!Scom.IsSoundPlaying)
@@ -196,6 +196,12 @@ SyResult SoundSystem::Run()
        }  
     }
 
+    for (auto& compUuid : soundComponentsMap)
+    {
+        if (!tmpComponentsMap.contains(compUuid.first))
+            ToggleStopChannel(compUuid.second);
+    }
+
     for (auto& soundPath : deletionSet)
     {
         if (!activeSet.contains(soundPath))
@@ -203,6 +209,11 @@ SyResult SoundSystem::Run()
             UnLoadSound(soundPath);
         }
     }
+
+
+
+    soundComponentsMap = tmpComponentsMap;
+
     return SyResult();
 }
  
@@ -291,10 +302,18 @@ void SoundSystem::TogglePauseChannel(int nChannelId, bool isPaused)
         return;
 
 
-
     auto channel = tFoundIt->second;
     channel->setPaused(isPaused);
     
+}
+
+void SoundSystem::ToggleStopChannel(int nChannelId)
+{
+    auto tFoundIt = sgpImplementation->_mChannels.find(nChannelId);
+    if (tFoundIt == sgpImplementation->_mChannels.end())
+        return;
+
+    tFoundIt->second->stop();
 }
 
 bool SoundSystem::CheckIsPlaying(int nChannelId) const
@@ -306,6 +325,7 @@ bool SoundSystem::CheckIsPlaying(int nChannelId) const
     bool isPlaying = false;
     auto channel = tFoundIt->second;
     channel->isPlaying(&isPlaying);
+
     
     return isPlaying;
 }

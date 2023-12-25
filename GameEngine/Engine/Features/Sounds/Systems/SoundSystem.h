@@ -7,6 +7,8 @@
 #include "fmod.hpp"
 #include <string>
 #include <map>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include <math.h>
 #include <iostream>
@@ -14,6 +16,8 @@
 #include "../../../Core/Tools/ErrorLogger.h"
 #include "../../Resources/ResourceService.h"
 #include "../Components/FSoundComponent.h"
+#include <boost/uuid/uuid.hpp>
+#include <boost/functional/hash.hpp>
 
 
 
@@ -38,8 +42,6 @@ struct Implementation {
 	//typedef std::map<std::string, FMOD::Studio::EventInstance*> EventMap;
 	//typedef std::map<std::string, FMOD::Studio::Bank*> BankMap;
 
-	//BankMap _mBanks;
-	//EventMap _mEvents;
 	SoundMap _mSounds;
 	ChannelMap _mChannels;
 };
@@ -68,6 +70,7 @@ public:
 	void SetChannel3dPosition(int nChannelId, const SyVector3& vPosition);
 	void SetChannelVolume(int nChannelId, float fVolumedB);
 	void TogglePauseChannel(int nChannelId,bool isPaused);
+	void ToggleStopChannel(int nChannelId);
 	bool CheckIsPlaying(int nChannelId) const;
 	//bool IsEventPlaying(const std::string& strEventName) const;
 	float VolumeRounding(float& volume);
@@ -80,5 +83,13 @@ private:
 	RenderContext* _rc = nullptr;
 	EngineContext* _ec = nullptr;
 	ResourceService* _rs = nullptr;
+
+	std::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>> deletionSet;
+	std::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>> activeSet;
+
+	std::unordered_map<boost::uuids::uuid, int, boost::hash<boost::uuids::uuid>> soundComponentsMap;
+	std::unordered_map<boost::uuids::uuid, int, boost::hash<boost::uuids::uuid>> tmpComponentsMap;
+
+	
 };
 

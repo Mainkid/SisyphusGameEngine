@@ -6,6 +6,8 @@
 #include <memory>
 #include <vector>
 #include "../../../Serialization/Serializable.h"
+#include "../../../Core/ECS/SystemBase.h"
+#include <boost/uuid/uuid_generators.hpp>
 
   /*  
     1) приватные поля - _privateMember
@@ -34,7 +36,9 @@ struct FSoundComponent
 		this->SoundUuid = soundUuid;
 	};
  
-	~FSoundComponent() {}; 
+	~FSoundComponent() {
+		
+	}; 
 
 	
 //----User vars----
@@ -43,6 +47,7 @@ struct FSoundComponent
 	bool IsSoundPlaying = false;
 	bool LoopedSound = false;
 	boost::uuids::uuid SoundUuid = boost::uuids::nil_uuid(); // = "Engine/Assets/Audio/LookinAtIt.ogg";
+	boost::uuids::uuid ComponentUuid = boost::uuids::random_generator()();
 	
 //----Engine vars----
 	ESoundState State= ESoundState::Disabled;
