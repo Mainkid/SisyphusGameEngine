@@ -7,6 +7,7 @@
 #include "../../Core/Tools/ImageLoader.h"
 #include "../../Scene/Prefab.h"
 #include "../../Scene/Scene.h"
+#include "../Animations/SkeletalAnimation.h"
 #include <tuple>
 
 ResourceService::ResourceService()
@@ -445,6 +446,16 @@ void ResourceService::SaveStringToFile(std::filesystem::path filePath, std::stri
 	std::ofstream file;
 	file.open(filePath);
 	file << data;
+	file.close();
+}
+
+void ResourceService::SaveAnimationToFile(std::filesystem::path filePath, SkeletalAnimation* animation)
+{
+	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+	auto json = ser.Serialize<SkeletalAnimation>(*animation);
+	std::ofstream file;
+	file.open(filePath, std::ios::trunc);
+	file << std::setw(1) << json;
 	file.close();
 }
 

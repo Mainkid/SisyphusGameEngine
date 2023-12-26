@@ -22,10 +22,10 @@ SyResult SkeletalAnimationSystem::Run()
     {
         MeshComponent& mesh = view.get<MeshComponent>(entity);
 
-        SkeletalAnimator* animator = mesh.model->animator.get();
+        auto animator = mesh.model->animator;
         if (animator)
         {
-            UpdateAnimation(animator);
+            UpdateAnimation(animator.get());
            /* if (mesh.model->skeleton)
             {
                 mesh.model->skeleton->Update(ec->deltaTime);

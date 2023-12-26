@@ -10,6 +10,8 @@
 #include "../../../vendor/skeletalAnim/AssimpConverter/AssimpConverter.h"
 #include "../../../vendor/skeletalAnim/SkeletalAnimation/SkeletalModel.h"
 #include "../Animations/SkeletalAnimation.h"
+#include "../../Core/ServiceLocator.h"
+#include "../../Features/Resources/ResourceService.h"
 
 #define MAX_BONE_WEIGHTS 4
 
@@ -122,7 +124,7 @@ MeshLoader::LoadAnimation(const std::string& animationPath, std::unordered_map<s
 	if (scene->mNumAnimations == 0)
 		return std::make_tuple(nullptr,nullptr);
 
-
+	auto rs = ServiceLocator::instance()->Get<ResourceService>();
 	for (int iAnim = 0; iAnim < scene->mNumAnimations; iAnim++)
 	{
 		auto animation = scene->mAnimations[0];
@@ -134,6 +136,8 @@ MeshLoader::LoadAnimation(const std::string& animationPath, std::unordered_map<s
 			aiMesh* mesh = scene->mMeshes[i];
 			ReadMissingBones(animation, skeletalAnim.get(), boneMap, mesh);
 		}
+
+		rs->SaveAnimationToFile("Game/Assets/animfile", skeletalAnim.get());
 	}
 	
 	std::shared_ptr<SA::SkeletalModel> saModel = std::make_shared<SA::SkeletalModel>();
