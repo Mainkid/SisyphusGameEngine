@@ -685,9 +685,11 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="Engine\Components\Components.h" />
+    <ClInclude Include="Engine\Events\SyAnimatorComponentAdded.h" />
     <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
     <ClInclude Include="Engine\Features\Animations\AnimationDataTypes.h" />
     <ClInclude Include="Engine\Features\Animations\Bone.h" />
+    <ClInclude Include="Engine\Features\Animations\Components\AnimatorComponent.h" />
     <ClInclude Include="Engine\Features\Animations\SkeletalAnimation.h" />
     <ClInclude Include="Engine\Features\Events\Tags\SyEventTag.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.h" />

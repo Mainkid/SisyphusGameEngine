@@ -12,7 +12,5 @@
 struct Model : public ResourceBase
 {
 	std::vector<std::shared_ptr<Mesh>> meshes = {};
-	std::shared_ptr<SA::SkeletalModel> skeleton;
 	std::unordered_map<std::string, BoneInfo> m_BoneInfoMap;
-	std::shared_ptr<SkeletalAnimator> animator;
 };

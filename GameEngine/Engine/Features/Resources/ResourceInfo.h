@@ -16,6 +16,7 @@ enum class EAssetType
 	ASSET_PARTICLESYS,
 	ASSET_SCENE,
 	ASSET_PREFAB,
+	ASSET_ANIMATION,
 
 	ASSET_TYPE_AMOUNT
 };
@@ -62,5 +63,6 @@ const std::unordered_map<std::string, EAssetType> extensionToAssetTypeMap =
 	{".jpg",EAssetType::ASSET_TEXTURE},
 	{".ps",EAssetType::ASSET_PARTICLESYS},
 	{".scene", EAssetType::ASSET_SCENE},
-	{".prefab", EAssetType::ASSET_PREFAB}
+	{".prefab", EAssetType::ASSET_PREFAB},
+	{".anim", EAssetType::ASSET_ANIMATION}
 };

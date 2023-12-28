@@ -70,7 +70,9 @@ int main()
 
     ecs->get<SyRBodyComponent>(cube1).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
     
-
+    auto running = GameObjectHelper::Create(ecs, "Running", Vector3(0, 0, 0));
+    GameObjectHelper::AddMeshComponent(ecs, running, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath("Game\\Assets\\Anims\\Runner.dae"));
+    GameObjectHelper::AddAnimatorComponent(ecs, running);
     
     //---------- Serialization test ----------------
 

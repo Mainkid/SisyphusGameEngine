@@ -5,39 +5,49 @@
 #include "../../../Contexts/EngineContext.h"
 #include "../../../Contexts/RenderContext.h"
 #include "../../Mesh/Components/MeshComponent.h"
+#include "../../Animations/Components/AnimatorComponent.h"
+#include "../../../Events/SyAnimatorComponentAdded.h"
+#include "../../Mesh/MeshLoader.h"
+#include "../../Mesh/Components/MeshComponent.h"
 
 SyResult SkeletalAnimationSystem::Init()
 {
     hc = ServiceLocator::instance()->Get<HardwareContext>();
     ec = ServiceLocator::instance()->Get<EngineContext>();
     rc = ServiceLocator::instance()->Get<RenderContext>();
-    
+    rs = ServiceLocator::instance()->Get<ResourceService>();
+
     return SyResult();
 }
 
 SyResult SkeletalAnimationSystem::Run()
 {
-    auto view = _ecs->view<MeshComponent>();
+
+    auto viewEvents = _ecs->view<SyAnimatorComponentAdded>();
+
+    //Loading bone map
+    for (auto& eventID : viewEvents)
+    {
+        auto& eventComp = viewEvents.get<SyAnimatorComponentAdded>(eventID);
+        MeshComponent& meshComp = _ecs->get<MeshComponent>(eventComp.id);
+        MeshLoader::LoadAnimation(rs->FindFilePathByUUID(meshComp.modelUUID), meshComp.model->m_BoneInfoMap);
+        
+    }
+
+
+    auto view = _ecs->view<AnimatorComponent>();
     for (auto& entity : view)
     {
-        MeshComponent& mesh = view.get<MeshComponent>(entity);
+        AnimatorComponent& animator = view.get<AnimatorComponent>(entity);
 
-        auto animator = mesh.model->animator;
-        if (animator)
+        uint32_t _hash = hasher(animator.animationUUID);
+        if (_hash != animator.hash)
         {
-            UpdateAnimation(animator.get());
-           /* if (mesh.model->skeleton)
-            {
-                mesh.model->skeleton->Update(ec->deltaTime);
-                auto& skeleton = mesh.model->skeleton->m_Skeleton;
-                for (int i = 0; i < skeleton.Bones.size(); i++)
-                {
-                    int index = mesh.model->m_BoneInfoMap[skeleton.Bones[i].Name].id;
-                    animator->m_FinalBoneMatrices[index] = skeleton.Bones[i].FinalTransformation;
-                }
-            }*/
-
+            animator.hash = _hash;
+            animator.m_CurrentAnimation = rs->LoadAnimationFromFile(rs->FindFilePathByUUID(rs->GetUUIDFromPath("Game\\Assets\\Anims\\Runner.dae_0.anim")));
         }
+
+        UpdateAnimation(animator);
     }
 
     return SyResult();
@@ -48,16 +58,16 @@ SyResult SkeletalAnimationSystem::Destroy()
     return SyResult();
 }
 
-void SkeletalAnimationSystem::CalculateBoneTransform(SkeletalAnimator* animator, const AssimpNodeData* node, DirectX::SimpleMath::Matrix parentTransform)
+void SkeletalAnimationSystem::CalculateBoneTransform(AnimatorComponent& animator, const AssimpNodeData* node, DirectX::SimpleMath::Matrix parentTransform)
 {
     std::string nodeName = node->name;
     Matrix nodeTransform = node->transformation;
 
-    Bone* Bone = FindBone(nodeName,animator->m_CurrentAnimation.get());
+    Bone* Bone = FindBone(nodeName,animator.m_CurrentAnimation.get());
 
     if (Bone)
     {
-        UpdateBone(Bone, animator->m_CurrentTime);
+        UpdateBone(Bone, animator.m_CurrentTime);
         nodeTransform = Bone->m_LocalTransform;
     }
     else
@@ -70,13 +80,13 @@ void SkeletalAnimationSystem::CalculateBoneTransform(SkeletalAnimator* animator,
     globalTransformation = nodeTransform * parentTransform;
 
 
-    auto boneInfoMap = animator->m_CurrentAnimation->m_BoneInfoMap;
+    auto boneInfoMap = animator.m_CurrentAnimation->m_BoneInfoMap;
     if (boneInfoMap.find(nodeName) != boneInfoMap.end())
     {
         int index = boneInfoMap[nodeName].id;
         Matrix offset = boneInfoMap[nodeName].offset;
         //!!!!!!
-        animator->m_FinalBoneMatrices[index] = offset * globalTransformation;
+        animator.m_FinalBoneMatrices[index] = offset * globalTransformation;
     }
 
     for (int i = 0; i < node->childrenCount; i++)
@@ -84,14 +94,14 @@ void SkeletalAnimationSystem::CalculateBoneTransform(SkeletalAnimator* animator,
 
 }
 
-void SkeletalAnimationSystem::UpdateAnimation(SkeletalAnimator* animator)
+void SkeletalAnimationSystem::UpdateAnimation(AnimatorComponent& animator)
 {
-    animator->m_DeltaTime = ec->deltaTime;
-    if (animator->m_CurrentAnimation)
+    animator.m_DeltaTime = ec->deltaTime;
+    if (animator.m_CurrentAnimation)
     {
-        animator->m_CurrentTime += animator->m_CurrentAnimation->m_TicksPerSecond * ec->deltaTime;
-        animator->m_CurrentTime = fmod(animator->m_CurrentTime, animator->m_CurrentAnimation->m_Duration);
-        CalculateBoneTransform(animator,&animator->m_CurrentAnimation->m_RootNode, Matrix::Identity);
+        animator.m_CurrentTime += animator.m_CurrentAnimation->m_TicksPerSecond * ec->deltaTime;
+        animator.m_CurrentTime = fmod(animator.m_CurrentTime, animator.m_CurrentAnimation->m_Duration);
+        CalculateBoneTransform(animator,&animator.m_CurrentAnimation->m_RootNode, Matrix::Identity);
     }
 }
 

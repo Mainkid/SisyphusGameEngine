@@ -433,7 +433,9 @@ void HudPropertiesSystem::DrawMeshProperties()
 {
     if (ImGui::Button("Extract animations"))
     {
-        std::cout << " ";
+        std::string fileName = rs->FindFilePathByUUID(ec->hudData.selectedContent.uuid);
+        std::unordered_map<std::string, BoneInfo> tmp;
+        MeshLoader::LoadAnimation(fileName, tmp, true);
     }
     
 }

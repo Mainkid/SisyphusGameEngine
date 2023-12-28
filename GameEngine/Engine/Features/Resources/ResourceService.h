@@ -64,6 +64,7 @@ public:
 	void SaveSceneToFile(std::filesystem::path file, entt::registry* ecs);
 	void SaveStringToFile(std::filesystem::path file, std::string data);
 	void SaveAnimationToFile(std::filesystem::path file, SkeletalAnimation* animation);
+	std::shared_ptr<SkeletalAnimation> LoadAnimationFromFile(std::filesystem::path file);
 
 private:
 	const std::string baseTexture = ".\\Engine\\Assets\\Resources\\Textures\\spotlight_1.png";

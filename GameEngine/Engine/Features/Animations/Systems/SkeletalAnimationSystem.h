@@ -4,10 +4,15 @@
 #include <memory>
 #include <SimpleMath.h>
 #include "../SkeletalAnimation.h"
+#include "../../Resources/ResourceService.h"
+#include <boost/functional/hash.hpp>
+#include <boost/uuid/uuid.hpp>
 
+class AnimatorComponent;
 struct EngineContext;
 struct HardwareContext;
 struct RenderContext;
+struct ResourceService;
 
 class SkeletalAnimationSystem: public SystemBase
 {
@@ -19,9 +24,12 @@ private:
 	HardwareContext* hc;
 	EngineContext* ec;
 	RenderContext* rc;
+	ResourceService* rs;
 
-	void CalculateBoneTransform(SkeletalAnimator* animator, const AssimpNodeData* node, DirectX::SimpleMath::Matrix parentTransform);
-	void UpdateAnimation(SkeletalAnimator* animator);
+	boost::hash<boost::uuids::uuid> hasher;
+
+	void CalculateBoneTransform(AnimatorComponent& animator, const AssimpNodeData* node, DirectX::SimpleMath::Matrix parentTransform);
+	void UpdateAnimation(AnimatorComponent& animator);
 	Bone* FindBone(const std::string& name, SkeletalAnimation* animation);
 	void UpdateBone(Bone* bone, float animationTime);
 

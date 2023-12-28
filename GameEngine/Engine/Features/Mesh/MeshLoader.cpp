@@ -112,7 +112,7 @@ void MeshLoader::ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src, std:
 }
 
 std::tuple<std::shared_ptr<SkeletalAnimation>, std::shared_ptr<SA::SkeletalModel>> 
-MeshLoader::LoadAnimation(const std::string& animationPath, std::unordered_map<std::string,BoneInfo>& boneMap )
+MeshLoader::LoadAnimation(const std::string& animationPath, std::unordered_map<std::string,BoneInfo>& boneMap, bool extractAnimsToFile )
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate |
@@ -137,12 +137,13 @@ MeshLoader::LoadAnimation(const std::string& animationPath, std::unordered_map<s
 			ReadMissingBones(animation, skeletalAnim.get(), boneMap, mesh);
 		}
 
-		rs->SaveAnimationToFile("Game/Assets/animfile", skeletalAnim.get());
+		if (extractAnimsToFile)
+		{
+			std::string newAnimPath = animationPath + "_" + std::to_string(iAnim) + ".anim";
+			rs->SaveAnimationToFile(newAnimPath, skeletalAnim.get());
+		}
 	}
-	
-	std::shared_ptr<SA::SkeletalModel> saModel = std::make_shared<SA::SkeletalModel>();
-	AssimpConverter::Convert(scene, *(saModel.get()));
-	return std::make_tuple(skeletalAnim,saModel);
+	return std::make_tuple(skeletalAnim,nullptr);
 }
 
 Matrix MeshLoader::aiToGlm(const aiMatrix4x4& v)

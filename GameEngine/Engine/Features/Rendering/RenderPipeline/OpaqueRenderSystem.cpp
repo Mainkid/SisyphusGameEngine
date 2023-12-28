@@ -7,6 +7,7 @@
 #include "../../Core/Graphics/ConstantBuffer.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Mesh/Components/MeshComponent.h"
+#include "../../Animations/Components/AnimatorComponent.h"
 
 
 SyResult OpaqueRenderSystem::Init()
@@ -70,10 +71,13 @@ SyResult OpaqueRenderSystem::Run()
             CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_BaseEditorBuffer));
             _hc->context->Unmap(_rc->OpaqueConstBuffer->buffer.Get(), 0);
 
-            res = _hc->context->Map(_rc->BonesConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-            CopyMemory(mappedResource.pData, meshComp.model->animator->m_FinalBoneMatrices.data(), sizeof(CB_BonesBuffer));
-            _hc->context->Unmap(_rc->BonesConstBuffer->buffer.Get(), 0);
-
+            auto animComp = _ecs->try_get<AnimatorComponent>(entity);
+            if (animComp)
+            {
+                res = _hc->context->Map(_rc->BonesConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                CopyMemory(mappedResource.pData, animComp->m_FinalBoneMatrices.data(), sizeof(CB_BonesBuffer));
+                _hc->context->Unmap(_rc->BonesConstBuffer->buffer.Get(), 0);
+            }
 
             _hc->context->VSSetConstantBuffers(0, 1, _rc->OpaqueConstBuffer->buffer.GetAddressOf());
             _hc->context->VSSetConstantBuffers(1, 1, _rc->BonesConstBuffer->buffer.GetAddressOf());

@@ -14,6 +14,8 @@
 #include "../Components/ImageBasedLightingComponent.h"
 #include "../Components/SkyboxComponent.h"
 #include "../Features/Resources/ResourceService.h"
+#include "../Features/Animations/Components/AnimatorComponent.h"
+#include "../Events/SyAnimatorComponentAdded.h"
 
 
 entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, SyVector3 pos = Vector3::Zero)
@@ -233,6 +235,24 @@ SyResult GameObjectHelper::AddCubeMeshComponent(entt::registry* ecs, entt::entit
 SyResult GameObjectHelper::AddSphereMeshComponent(entt::registry* ecs, entt::entity entity)
 {
 	return AddMeshComponent(ecs, entity, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\sphere.fbx"));
+}
+
+SyResult GameObjectHelper::AddAnimatorComponent(entt::registry* ecs, entt::entity entity)
+{
+	SyResult result;
+	auto meshComp = ecs->try_get<MeshComponent>(entity);
+	if (meshComp == nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("Could not find Mesh Component on entity (%d). Hence, you can't attach an animator component to it. ", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Could not find Mesh Component on entity (%d). Hence, you can't attach an animator component to it. ", (int)entity);
+		return result;
+	}
+
+	ecs->emplace<AnimatorComponent>(entity);
+	CallEvent<SyAnimatorComponentAdded>(ecs, "SyAnimatorComponentAdded", entity);
+
+	return SyResult();
 }
 
 entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)

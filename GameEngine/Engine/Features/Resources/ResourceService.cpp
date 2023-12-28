@@ -8,6 +8,7 @@
 #include "../../Scene/Prefab.h"
 #include "../../Scene/Scene.h"
 #include "../Animations/SkeletalAnimation.h"
+#include "../Animations/Components/AnimatorComponent.h"
 #include <tuple>
 
 ResourceService::ResourceService()
@@ -157,7 +158,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_MESH)
 		{
 			auto model = std::make_shared<Model>();
-			model->animator = std::make_shared<SkeletalAnimator>();
+			//model->animator = std::make_shared<AnimatorComponent>();
 			std::string filePath = FindFilePathByUUID(uuid);
 			if (filePath == "")
 			{
@@ -169,9 +170,6 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			
 
 			auto [animationTmp, skeletonTmp] = MeshLoader::LoadAnimation(filePath, model->m_BoneInfoMap);
-
-			model->animator->m_CurrentAnimation = animationTmp;
-			model->skeleton = skeletonTmp;
 
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>( model);
 			return model;
@@ -457,6 +455,23 @@ void ResourceService::SaveAnimationToFile(std::filesystem::path filePath, Skelet
 	file.open(filePath, std::ios::trunc);
 	file << std::setw(1) << json;
 	file.close();
+
+
+	GenerateMetaFiles(filePath.parent_path());
+	updateContentBrowser.Broadcast(true);
+}
+
+std::shared_ptr<SkeletalAnimation> ResourceService::LoadAnimationFromFile(std::filesystem::path filePath)
+{
+	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+	std::ifstream file;
+	nlohmann::json json;
+	file.open(filePath);
+	file >> json;
+	file.close();
+	SkeletalAnimation anim;
+	ser.Deserialize<SkeletalAnimation>(json, anim);
+	return std::make_shared<SkeletalAnimation>(anim);
 }
 
 void ResourceService::GenerateMetaFiles(std::filesystem::path currentDirectory)

@@ -9,6 +9,7 @@
 #include "../../Mesh/Components/MeshComponent.h"
 #include "DirectXMath.h"
 #include "../../../Scene/CameraHelper.h"
+#include "../../Animations/Components/AnimatorComponent.h"
 
 SyResult ShadowRenderSystem::Init()
 {
@@ -65,9 +66,14 @@ SyResult ShadowRenderSystem::Run()
                 CopyMemory(mappedResource.pData, &dataShadow, sizeof(CB_ShadowBuffer));
                 _hc->context->Unmap(_rc->ShadowConstBuffer->buffer.Get(), 0);
 
-                res = _hc->context->Map(_rc->BonesConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-                CopyMemory(mappedResource.pData, meshComp.model->animator->m_FinalBoneMatrices.data(), sizeof(CB_BonesBuffer));
-                _hc->context->Unmap(_rc->BonesConstBuffer->buffer.Get(), 0);
+
+                auto animComp = _ecs->try_get<AnimatorComponent>(ent);
+                if (animComp)
+                {
+                    res = _hc->context->Map(_rc->BonesConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                    CopyMemory(mappedResource.pData, animComp->m_FinalBoneMatrices.data(), sizeof(CB_BonesBuffer));
+                    _hc->context->Unmap(_rc->BonesConstBuffer->buffer.Get(), 0);
+                }
 
                 _hc->context->VSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
                 _hc->context->PSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());

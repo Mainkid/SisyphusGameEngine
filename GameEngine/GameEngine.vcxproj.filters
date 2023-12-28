@@ -328,6 +328,8 @@
     <ClInclude Include="Engine\Features\Animations\Bone.h" />
     <ClInclude Include="Engine\Features\Animations\Systems\SkeletalAnimationSystem.h" />
     <ClInclude Include="Engine\Features\Animations\SkeletalAnimation.h" />
+    <ClInclude Include="Engine\Features\Animations\Components\AnimatorComponent.h" />
+    <ClInclude Include="Engine\Events\SyAnimatorComponentAdded.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Downloads\skybox.jpg" />

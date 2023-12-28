@@ -22,7 +22,7 @@ public:
 	static void ReadMissingBones(const aiAnimation* animation, SkeletalAnimation* skeletalAnim, std::unordered_map<std::string, BoneInfo>& boneMap, aiMesh* mesh);
 	static void ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src, std::unordered_map<std::string, BoneInfo>& boneMap);
 	static std::tuple<std::shared_ptr<SkeletalAnimation>, std::shared_ptr<SA::SkeletalModel>>
-		LoadAnimation(const std::string& animationPath, std::unordered_map<std::string, BoneInfo>& boneMap);
+		LoadAnimation(const std::string& animationPath, std::unordered_map<std::string, BoneInfo>& boneMap, bool extractAnimsToFile=false);
 
 	static DirectX::SimpleMath::Matrix aiToGlm(const aiMatrix4x4& v);
 
