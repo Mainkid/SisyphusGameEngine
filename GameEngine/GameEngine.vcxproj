@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\entt;$(SolutionDir)GameEngine\vendor\skeletalAnim;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\entt;$(SolutionDir)GameEngine\vendor\skeletalAnim;$(SolutionDir)GameEngine\vendor\FMod\api\core\inc;$(SolutionDir)GameEngine\vendor\FMod\api\studio\inc;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
   </PropertyGroup>
@@ -121,7 +121,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;GFSDK_SSAO_D3D11.win64.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;GFSDK_SSAO_D3D11.win64.lib;mono-2.0-sgen.lib;fmod_vc.lib;fmodL_vc.lib;fmodstudio_vc.lib;fmodstudioL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>
@@ -622,6 +622,7 @@
     <ClCompile Include="Engine\Core\Tools\ErrorLogger.cpp" />
     <ClCompile Include="Engine\Core\Tools\ImageLoader.cpp" />
     <ClCompile Include="Engine\Features\Particles\Particle.cpp" />
+    <ClCompile Include="Engine\Features\Sounds\Systems\SoundSystem.cpp" />
     <ClCompile Include="Engine\Systems\TransformSystem.cpp" />
     <ClCompile Include="Engine\Systems\TransformHelper.cpp" />
     <ClCompile Include="Engine\Features\Mesh\Systems\MeshSystem.cpp" />
@@ -684,6 +685,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Events\SySoundDeletedEvent.h" />
+    <ClInclude Include="Engine\Features\Sounds\Components\FSoundComponent.h" />
     <ClInclude Include="Engine\Components\Components.h" />
     <ClInclude Include="Engine\Events\SyAnimatorComponentAdded.h" />
     <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
@@ -863,6 +866,14 @@
     <ClInclude Include="vendor\entt\resource\fwd.hpp" />
     <ClInclude Include="vendor\entt\resource\loader.hpp" />
     <ClInclude Include="vendor\entt\resource\resource.hpp" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod.hpp" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_codec.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_common.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp_effects.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_errors.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_output.h" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
     <ClInclude Include="vendor\ImGuizmo\ImCurveEdit.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGradient.h" />

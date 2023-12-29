@@ -37,6 +37,7 @@
 #include "../../Features/Rendering/RenderPipeline/ParticleRenderSystem.h"
 #include "../../Features/Rendering/RenderPipeline/EditorColliderRenderSystem.h"
 #include "../../Features/Animations/Systems/SkeletalAnimationSystem.h"
+#include "../../Features/Sounds/Systems/SoundSystem.h"
 
 #include "../Mono/Systems/MonoSyncSystem.h"
 

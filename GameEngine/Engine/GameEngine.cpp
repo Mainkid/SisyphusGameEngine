@@ -12,6 +12,7 @@
 #include "SimpleMath.h"
 #include "Serialization/Serializable.h"
 
+
 #define SY_PI 3.14f
 #define SY_PI2 SY_PI / 2
 
@@ -69,10 +70,13 @@ int main()
         SyColliderMaterial());
 
     ecs->get<SyRBodyComponent>(cube1).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
+    //ecs->emplace<CameraComponent>(staticMesh, ECameraType::PlayerCamera);
     
     auto running = GameObjectHelper::Create(ecs, "Running", Vector3(0, 0, 0));
     GameObjectHelper::AddMeshComponent(ecs, running, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath("Game\\Assets\\Anims\\Runner.dae"));
     GameObjectHelper::AddAnimatorComponent(ecs, running);
+    
+    GameObjectHelper::CreateCamera(ecs);
     
     //---------- Serialization test ----------------
 
@@ -96,10 +100,10 @@ int main()
     // ser.Deserialize(json, *ecs);
     //---------------------------------------------
 
+    //sound
+    GameObjectHelper::CreateSoundComponent(ecs);
+    GameObjectHelper::CreateSoundComponent(ecs);
 
     EngineCore::instance()->Update();
-    EngineCore::instance()->ShutDown();
-    
-
-    
+    EngineCore::instance()->ShutDown();   
 }

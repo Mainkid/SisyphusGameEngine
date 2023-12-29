@@ -43,6 +43,9 @@ void ResourceService::LoadBaseAssets()
 	baseResourceDB[EAssetType::ASSET_PARTICLESYS].resource = LoadResource(GetUUIDFromPath(baseParticle));
 	resourceLibrary[GetUUIDFromPath(baseParticle)].resource = baseResourceDB[EAssetType::ASSET_PARTICLESYS].resource;
 
+	//FMod loads resource!
+	baseResourceDB[EAssetType::ASSET_SOUND].uuid = GetUUIDFromPath(baseSound);
+
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Base assets loaded successfuly!");
 }
 
@@ -225,7 +228,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			return skyboxResource;
 
 		}
-		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_PARTICLESYS)
+		/*else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_PARTICLESYS)
 		{
 			std::shared_ptr<SharedParticlesData> spd = std::make_shared<SharedParticlesData>();
 			ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
@@ -248,7 +251,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(spd);
 			return spd;
 
-		}
+		}*/
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_PREFAB)
 		{
 			

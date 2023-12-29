@@ -92,7 +92,7 @@ SyResult HudViewportSystem::Run()
 
 			if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_MESH)
 			{
-				auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
+				auto [camera, cameraTransform] = CameraHelper::Find(_ecs, ec->playModeState);
 				Vector3 pos = cameraTransform.localPosition + camera.forward * 5.0f;
 				auto go = GameObjectHelper::CreateMesh(_ecs, uuid,pos);
 			}
@@ -128,7 +128,7 @@ SyResult HudViewportSystem::Run()
 
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-	auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+	auto [camera, cameraTf] = CameraHelper::Find(_ecs,ec->playModeState);
 	camera.mouseWheel = io.MouseWheel;
 
 	//Gizmos
@@ -242,15 +242,18 @@ void HudViewportSystem::InitSRV()
 
 void HudViewportSystem::HandleResize()
 {
+	static EngineContext::EPlayModeState prevPlayMode = EngineContext::EPlayModeState::PauseMode;
+
+
 	auto newWidgetSize = ImGui::GetWindowSize();
-	if (widgetSize.x != newWidgetSize.x || widgetSize.y != newWidgetSize.y)
+	if (widgetSize.x != newWidgetSize.x || widgetSize.y != newWidgetSize.y || ec->playModeState!=prevPlayMode)
 	{
-		//hud->ViewportResizedEvent.Broadcast(newWidgetSize.x * 1.0f / newWidgetSize.y);
 		widgetSize = newWidgetSize;
 
-		auto [cc,_] = CameraHelper::Find(_ecs);
+		auto [cc,_] = CameraHelper::Find(_ecs,ec->playModeState);
 		cc.aspectRatio = widgetSize.x / widgetSize.y;
 	}
+	prevPlayMode = ec->playModeState;
 }
 
 void HudViewportSystem::DrawMainMenuBar()
@@ -335,8 +338,7 @@ void HudViewportSystem::DrawMainMenuBar()
 		}
 		if (ImGui::BeginMenu("GameObject"))
 		{
-			auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
-
+			auto [camera, cameraTransform] = CameraHelper::Find(_ecs,ec->playModeState);
 
 			Vector3 pos = Vector3(cameraTransform._position.x, cameraTransform._position.y, cameraTransform._position.z) +
 				Vector3(camera.forward.x, camera.forward.y, camera.forward.z) * 3;
@@ -388,6 +390,15 @@ void HudViewportSystem::DrawMainMenuBar()
 				if (ImGui::MenuItem("Particle System"))
 				{
 					GameObjectHelper::CreateParticleSystem(_ecs);
+				}
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Audio"))
+			{
+				if (ImGui::MenuItem("Sound Component"))
+				{
+					GameObjectHelper::CreateSoundComponent(_ecs);
 				}
 				ImGui::EndMenu();
 			}
@@ -476,6 +487,7 @@ void HudViewportSystem::DrawPlayMode(ImVec2 cursorStartPostion)
 		ec->playModeState == EngineContext::EPlayModeState::PlayMode)
 	{
 		ec->playModeState = EngineContext::EPlayModeState::PauseMode;
+		CallEvent<SyPauseModeEvent>("SyPauseModeEvent");
 	}
 	offset += dtOffset;
 	ImGui::SameLine(offset);

@@ -25,7 +25,7 @@ SyResult HbaoRenderSystem::Init()
 
 SyResult HbaoRenderSystem::Run()
 {
-	auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+	auto [camera, cameraTf] = CameraHelper::Find(_ecs,_ec->playModeState);
 
 	_rc->Input.DepthData.DepthTextureType = GFSDK_SSAO_HARDWARE_DEPTHS;
 	_rc->Input.DepthData.pFullResDepthTextureSRV = _hc->depthStencilSrv.Get();

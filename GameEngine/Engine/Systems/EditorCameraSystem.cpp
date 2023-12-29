@@ -19,57 +19,71 @@ SyResult EditorCameraSystem::Init()
 	auto& tc = _ecs->emplace<TransformComponent>(id);
 	tc.localPosition = Vector3(-3, 3, -3);
 	tc._position = Vector3(-3, 3, -3);
-	CameraComponent& cc = _ecs->emplace<CameraComponent>(id);
+	CameraComponent& cc = _ecs->emplace<CameraComponent>(id,ECameraType::EditorCamera);
 	SetLookAtPos(Vector3(0,0,0), tc);
 	return SyResult();
 }
 
 SyResult EditorCameraSystem::Run()
 {
-	auto [cameraComp, cameraTc] = CameraHelper::Find(_ecs);
-	auto eventView = _ecs->view<SyEditorCameraMoveToTarget>();
-	for (auto& entEvent : eventView)
+	if (_ec->playModeState == EngineContext::EPlayModeState::EditorMode)
 	{
-		auto& ent = _ecs->get<SyEditorCameraMoveToTarget>(entEvent);
-		auto& tc=_ecs->get<TransformComponent>(ent.targetEntity);
-		
-		targetPosition = Vector4(tc._position.x,tc._position.y,tc._position.z,1);
-		startPosition = Vector4(cameraTc.localPosition.x, cameraTc.localPosition.y, cameraTc.localPosition.z,1);
-		
-		_isFlying = true;
-	}
-
-	auto view = _ecs->view<TransformComponent, CameraComponent>();
-	for (auto& entity : view)
-	{
-		TransformComponent& tc = view.get<TransformComponent>(entity);
-		CameraComponent& cc = view.get<CameraComponent>(entity);
-
-		if (tc.worldHash != cc.transformHash)
+		auto [cameraComp, cameraTc] = CameraHelper::Find(_ecs, _ec->playModeState);
+		auto eventView = _ecs->view<SyEditorCameraMoveToTarget>();
+		for (auto& entEvent : eventView)
 		{
-			cc.transformHash = tc.worldHash;
-			UpdateViewMatrix(cc, tc);
+			auto& ent = _ecs->get<SyEditorCameraMoveToTarget>(entEvent);
+			auto& tc = _ecs->get<TransformComponent>(ent.targetEntity);
+
+			targetPosition = Vector4(tc._position.x, tc._position.y, tc._position.z, 1);
+			startPosition = Vector4(cameraTc.localPosition.x, cameraTc.localPosition.y, cameraTc.localPosition.z, 1);
+
+			_isFlying = true;
 		}
-		uint32_t hash = _hasher(cc);
-		if (hash != cc.hash)
-		{
-			cc.hash = hash;
-			UpdateProjectionMatrix(cc);
-		}
-		ProcessInput(cc, tc);
-	}
-	
 
-	if (_isFlying )
-	{
-		_flyingTime += _ec->deltaTime;
-		
-		
-		cameraTc.localPosition=Vector3(Vector4::Lerp(startPosition, targetPosition-cameraComp.forward*_cameraArm, _flyingTime/_flyingTimeMax));
-		if (_flyingTime>_flyingTimeMax)
+
+
+		if (cameraTc.worldHash != cameraComp.transformHash)
 		{
-			_isFlying = false;
-			_flyingTime = 0;
+			cameraComp.transformHash = cameraTc.worldHash;
+			UpdateViewMatrix(cameraComp, cameraTc);
+		}
+		uint32_t hash = _hasher(cameraComp);
+		if (hash != cameraComp.hash)
+		{
+			cameraComp.hash = hash;
+			UpdateProjectionMatrix(cameraComp);
+		}
+		ProcessInput(cameraComp, cameraTc);
+
+
+		if (_isFlying)
+		{
+			_flyingTime += _ec->deltaTime;
+
+
+			cameraTc.localPosition = Vector3(Vector4::Lerp(startPosition, targetPosition - cameraComp.forward * _cameraArm, _flyingTime / _flyingTimeMax));
+			if (_flyingTime > _flyingTimeMax)
+			{
+				_isFlying = false;
+				_flyingTime = 0;
+			}
+		}
+	}
+	else
+	{
+		auto [cameraComp, cameraTc] = CameraHelper::Find(_ecs, _ec->playModeState);
+
+		if (cameraTc.worldHash != cameraComp.transformHash)
+		{
+			cameraComp.transformHash = cameraTc.worldHash;
+			UpdateViewMatrix(cameraComp, cameraTc);
+		}
+		uint32_t hash = _hasher(cameraComp);
+		if (hash != cameraComp.hash)
+		{
+			cameraComp.hash = hash;
+			UpdateProjectionMatrix(cameraComp);
 		}
 	}
 

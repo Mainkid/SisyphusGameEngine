@@ -72,6 +72,7 @@ private:
 	const std::string baseMaterial = ".\\Engine\\Assets\\Resources\\Materials\\baseMaterial.mat";
 	const std::string baseModel = ".\\Engine\\Assets\\Resources\\Cube.fbx";
 	const std::string baseParticle = ".\\Engine\\Assets\\Resources\\ParticleSystem\\baseParticles.ps";
+	const std::string baseSound = ".\\Engine\\Assets\\Resources\\Audio\\Sisyphus.mp3";
 	const std::string baseScene = ".\\Engine\\Assets\\Resources\\Scenes\\baseScene.scene";
 	
 	

@@ -114,6 +114,7 @@
     <ClCompile Include="vendor\skeletalAnim\SkeletalAnimation\SkeletalModel.cpp" />
     <ClCompile Include="vendor\skeletalAnim\SkeletalAnimation\SkeletalModelSerializer.cpp" />
     <ClCompile Include="Engine\Features\Animations\Systems\SkeletalAnimationSystem.cpp" />
+    <ClCompile Include="Engine\Features\Sounds\Systems\SoundSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -310,6 +311,16 @@
     <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
     <ClInclude Include="Engine\Scene\Prefab.h" />
     <ClInclude Include="Engine\Scene\Scene.h" />
+    <ClInclude Include="Engine\Features\Sounds\Components\FSoundComponent.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod.hpp" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_codec.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_common.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp_effects.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_errors.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_output.h" />
+    <ClInclude Include="Engine\Events\SySoundDeletedEvent.h" />
     <ClInclude Include="vendor\StateMachine\imgui_node_graph_test.h" />
     <ClInclude Include="vendor\StateMachine\State.h" />
     <ClInclude Include="vendor\StateMachine\state_machine_graph.h" />

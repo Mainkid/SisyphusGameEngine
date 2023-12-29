@@ -16,6 +16,7 @@
 #include "../Features/Resources/ResourceService.h"
 #include "../Features/Animations/Components/AnimatorComponent.h"
 #include "../Events/SyAnimatorComponentAdded.h"
+#include "../Features/Sounds/Components/FSoundComponent.h"
 
 
 entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, SyVector3 pos = Vector3::Zero)
@@ -260,7 +261,14 @@ entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 	//TODO: Translate to resource service!
 	auto ent = Create(ecs, "ParticleSystem");
 	ParticleComponent& pc = ecs->emplace<ParticleComponent>(ent);
-	pc.SharedParticlesDataUuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_PARTICLESYS].uuid;
+	//pc.SharedParticlesDataUuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_PARTICLESYS].uuid;
+	return ent;
+}
+
+entt::entity GameObjectHelper::CreateCamera(entt::registry* ecs)
+{
+	auto ent = Create(ecs, "Camera");
+	ecs->emplace<CameraComponent>(ent, ECameraType::PlayerCamera);
 	return ent;
 }
 
@@ -282,4 +290,14 @@ entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs, boost::uuids::u
 	ecs->get<SkyboxComponent>(ent).uuid = uuid;
 
 	return ent;
+}
+
+// TODO S: creating correctly? 
+// how to link Transform (FSoundComponent and EditorBillboardComponent) ?
+entt::entity GameObjectHelper::CreateSoundComponent(entt::registry* ecs)
+{ 
+	auto ent = Create(ecs, "SoundObject");
+	ecs->emplace<EditorBillboardComponent>(ent, "Engine/Assets/Sprites/Sound.png");
+	FSoundComponent& Sound = ecs->emplace<FSoundComponent>(ent, boost::uuids::nil_uuid());
+	return entt::entity();
 }
