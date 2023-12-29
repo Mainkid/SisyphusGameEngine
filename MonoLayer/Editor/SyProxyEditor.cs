@@ -142,11 +142,15 @@ public class SyProxyEditor
 			{ typeof(int), new EditorDrawerInt(this) },
 			{ typeof(float), new EditorDrawerFloat(this) },
 			{ typeof(bool), new EditorDrawerBool(this) },
+			{ typeof(SyVector2), new EditorDrawerVector2(this) },
 			{ typeof(SyVector3), new EditorDrawerVector3(this) },
+			{ typeof(SyVector4), new EditorDrawerVector4(this) },
 			{ typeof(SyColor), new EditorDrawerColor(this) },
+			{ typeof(SyCurve), new EditorDrawerCurve(this) },
 
 			{ typeof(TransformComp), new EditorDrawerCompTransform(this, _ecs) },
-			{ typeof(LightComp), new EditorDrawerCompLight(this, _ecs) }
+			{ typeof(LightComp), new EditorDrawerCompLight(this, _ecs) },
+			{ typeof(ParticlesComp), new EditorDrawerCompParticles(this, _ecs) }
 		};
 
 		var compInterfaceType = typeof(SyEcs.IComp);
@@ -189,8 +193,20 @@ public class SyProxyEditor
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern bool GeDrawBoolField(string name, bool val);
     
+	//[MethodImpl(MethodImplOptions.InternalCall)]
+	//internal static extern SyVector2 GeDrawVector2Field(string name, SyVector2 val);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern SyVector2 GeDrawVector2Field(float x, float y);
+	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern SyVector3 GeDrawVector3Field(string name, SyVector3 val);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern SyVector4 GeDrawVector4Field(string name, SyVector4 val);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern SyCurve GeDrawCurveField(string name, SyCurve curve);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern SyColor GeDrawColorField(string name, SyColor val);
@@ -209,6 +225,9 @@ public class SyProxyEditor
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern bool GeDrawArrayAddButton();
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawFoldout(string name);
 
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern int GeDrawAddCompMenu(string[] compsNames);

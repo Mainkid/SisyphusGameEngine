@@ -181,5 +181,22 @@ internal class SyProxyEcs
 
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	public static extern void GeUpdateParticlesComp(uint engineEnt, ParticlesComp proxy);
+
+	private void EgUpdateParticlesComp(uint engineEnt, ParticlesComp proxy)
+	{
+		try
+		{
+			Sync.ReceiveParticlesFromEngine(engineEnt, proxy);
+		}
+		catch (Exception e)
+		{
+			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
+		}
+	}
+
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
 }
 }

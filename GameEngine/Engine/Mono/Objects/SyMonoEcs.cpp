@@ -69,6 +69,12 @@ void SyMonoEcs::GeUpdateSkyboxComp(uint32_t rawEnt, ProxySkyboxComp proxy)
 		_instance->_cbReceiver->OnUpdateSkyboxComp(rawEnt, proxy);
 }
 
+void SyMonoEcs::GeUpdateParticlesComp(uint32_t rawEnt, ProxyParticlesComp proxy)
+{
+	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
+		_instance->_cbReceiver->OnUpdateParticlesComp(rawEnt, proxy);
+}
+
 
 void SyMonoEcs::SetCallbackReceiver(ISyMonoEcsCallbacks* receiver)
 {
@@ -92,6 +98,7 @@ SyResult SyMonoEcs::OnAfterCreate()
 	SY_RESULT_CHECK(EgUpdateColliderComp.Bind(this));
 	SY_RESULT_CHECK(EgUpdateRigidComp.Bind(this));
 	SY_RESULT_CHECK(EgUpdateSkyboxComp.Bind(this));
+	SY_RESULT_CHECK(EgUpdateParticlesComp.Bind(this));
 
 	BindCallback(GE_CREATE_ENTITY, &GeCreateEntity);
 	BindCallback(GE_DESTROY_ENTITY, &GeDestroyEntity);
@@ -106,6 +113,7 @@ SyResult SyMonoEcs::OnAfterCreate()
 	BindCallback(GE_UPDATE_COLLIDER_COMP, &GeUpdateColliderComp);
 	BindCallback(GE_UPDATE_RIGID_COMP, &GeUpdateRigidComp);
 	BindCallback(GE_UPDATE_SKYBOX_COMP, &GeUpdateSkyboxComp);
+	BindCallback(GE_UPDATE_PARTICLES_COMP, &GeUpdateParticlesComp);
 
 	return {};
 }
@@ -122,6 +130,8 @@ SyResult SyMonoEcs::OnBeforeDestroy()
 	EgUpdateLightComp.UnBind();
 	EgUpdateColliderComp.UnBind();
 	EgUpdateRigidComp.UnBind();
+	EgUpdateSkyboxComp.UnBind();
+	EgUpdateParticlesComp.UnBind();
 
 	return {};
 }

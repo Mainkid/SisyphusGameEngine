@@ -41,8 +41,12 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Core\Comps\ColliderComp.cs" />
+        <Compile Include="Core\Comps\ParticlesComp.cs" />
         <Compile Include="Core\Comps\SceneObjectComp.cs" />
         <Compile Include="Core\Comps\SkyboxComp.cs" />
+        <Compile Include="Core\Datas\SyCurve.cs" />
+        <Compile Include="Core\Datas\SyVector2.cs" />
+        <Compile Include="Core\Datas\SyVector4Pair.cs" />
         <Compile Include="Core\EEngineCompId.cs" />
         <Compile Include="Core\Helpers\CollectionsExt.cs" />
         <Compile Include="Core\Helpers\TypesExt.cs" />
@@ -77,6 +81,8 @@
         <Compile Include="Core\SyEcsSync.cs" />
         <Compile Include="Core\SyEcsSystemBase.cs" />
         <Compile Include="Core\SyProxyEcs.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerCompParticles.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerCurve.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerList.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerBase.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerBool.cs" />
@@ -89,7 +95,10 @@
         <Compile Include="Editor\Drawers\EditorDrawerInt.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerCompTransform.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerResRef.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerVector2.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerVector3.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerVector4.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerVector4Pair.cs" />
         <Compile Include="Editor\SyProxyEditor.cs" />
         <Compile Include="Game\SyGameConfigBase.cs" />
         <Compile Include="Game\SyProxyGame.cs" />

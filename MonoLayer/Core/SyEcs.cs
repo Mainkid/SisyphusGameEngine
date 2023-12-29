@@ -145,6 +145,8 @@ public class SyEcs
                 break;
             case EEngineCompId.Skybox:
                 break;
+            case EEngineCompId.ParticlesComp:
+                break;
             case null:
                 break;
             default:
@@ -200,6 +202,8 @@ public class SyEcs
             AddComp<RigidComp>(ent);
         else if (compType == typeof(SkyboxComp))
             AddComp<SkyboxComp>(ent);
+        else if (compType == typeof(ParticlesComp))
+            AddComp<ParticlesComp>(ent);
         else
             World.GetPoolByType(compType).AddRaw(ent, Activator.CreateInstance(compType));
     }
@@ -220,6 +224,8 @@ public class SyEcs
             RemoveComp<RigidComp>(ent);
         else if (compType == typeof(SkyboxComp))
             RemoveComp<SkyboxComp>(ent);
+        else if (compType == typeof(ParticlesComp))
+            RemoveComp<ParticlesComp>(ent);
         else
             World.GetPoolByType(compType).Del(ent);
     }

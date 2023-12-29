@@ -40,7 +40,7 @@ public class EditorDrawerComp<T> : EditorDrawerBase<T>, IEditorDrawerComp where 
 		}
 	}
 	
-	public override bool DrawRaw(string name, ref object rawVal)
+	public sealed override bool DrawRaw(string name, ref object rawVal)
 	{
 		if (_fallbackDrawer == null)
 			_fallbackDrawer = new EditorDrawerReflect<T>(Editor);

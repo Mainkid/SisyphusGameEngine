@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Leopotam.EcsLite;
 using SyEngine.Core.Comps;
 using SyEngine.Core.Datas;
@@ -19,6 +20,7 @@ internal class SyEcsSync
     private readonly EcsPool<ColliderComp>    _collidersPool;
     private readonly EcsPool<RigidComp>       _rigidsPool;
     private readonly EcsPool<SkyboxComp>      _skyboxesPool;
+    private readonly EcsPool<ParticlesComp>   _particlesPool;
 
     private readonly EcsFilter _sceneObjectsFilter;
     private readonly EcsFilter _transformsFilter;
@@ -27,6 +29,7 @@ internal class SyEcsSync
     private readonly EcsFilter _colliderFilter;
     private readonly EcsFilter _rigidsFilter;
     private readonly EcsFilter _skyboxesFilter;
+    private readonly EcsFilter _particlesFilter;
 
     public SyEcsSync(SyEcs ecs)
     {
@@ -39,6 +42,7 @@ internal class SyEcsSync
         _collidersPool    = ecs.World.GetPool<ColliderComp>();
         _rigidsPool       = ecs.World.GetPool<RigidComp>();
         _skyboxesPool     = ecs.World.GetPool<SkyboxComp>();
+        _particlesPool    = ecs.World.GetPool<ParticlesComp>();
 
         _sceneObjectsFilter = ecs.World.Filter<SceneObjectComp>().End();
         _transformsFilter   = ecs.World.Filter<TransformComp>().End();
@@ -47,6 +51,7 @@ internal class SyEcsSync
         _colliderFilter     = ecs.World.Filter<ColliderComp>().End();
         _rigidsFilter       = ecs.World.Filter<RigidComp>().End();
         _skyboxesFilter     = ecs.World.Filter<SkyboxComp>().End();
+        _particlesFilter    = ecs.World.Filter<ParticlesComp>().End();
     }
 
     //-----------------------------------------------------------
@@ -65,6 +70,7 @@ internal class SyEcsSync
         //Console.WriteLine("[TEST] send rigids");
         SendRigidsToEngine();
         SendSkyboxesToEngine();
+        //SendParticlesToEngine();
     }
 
     //-----------------------------------------------------------
@@ -393,5 +399,44 @@ internal class SyEcsSync
         
         Console.WriteLine($"[TEST] g{gameEnt} skybox received from engine");
     }
+
+    //-----------------------------------------------------------
+    //-----------------------------------------------------------
+    private void SendParticlesToEngine()
+    {
+        foreach (int ent in _particlesFilter)
+        {
+            ref var particles = ref _particlesPool.Get(ent);
+            if (!particles.IsDirty)
+                continue;
+            particles.IsDirty = false;
+
+            SyProxyEcs.GeUpdateParticlesComp(_ecs.ToEngineEnt(ent), particles);
+            
+            Console.WriteLine($"[TEST] g{ent} particles sent to engine");
+        }
+    }
+
+    public void ReceiveParticlesFromEngine(uint engineEnt, ParticlesComp proxy)
+    {
+        Console.WriteLine($"[TEST] e{engineEnt} start receive particles");
+        
+        int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
+        if (!_particlesPool.Has(gameEnt))
+            _particlesPool.Add(gameEnt);
+        
+        Console.WriteLine($"1");
+
+        _particlesPool.Get(gameEnt) = proxy;
+        
+        Console.WriteLine($"2");
+
+        proxy.IsDirty = false;
+        
+        Console.WriteLine($"[TEST] g{gameEnt} particles received from engine");
+    }
+
+    //-----------------------------------------------------------
+    //-----------------------------------------------------------
 }
 }

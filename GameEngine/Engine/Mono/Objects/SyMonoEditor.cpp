@@ -1,5 +1,6 @@
 #include "SyMonoEditor.h"
 
+#include "ImCurve.h"
 #include "imgui.h"
 #include "../../Core/Tools/MathHelper.h"
 #include "../../Core/ServiceLocator.h"
@@ -64,6 +65,20 @@ bool SyMonoEditor::GeDrawBoolField(MonoString* rawName, bool val)
 	return val;
 }
 
+//ProxyVector2 SyMonoEditor::GeDrawVector2Field(MonoString* rawName, ProxyVector2 val)
+//{
+//	SyMonoStr name {rawName};
+//	float rawVal[2] {val.X, val.Y};
+//	ImGui::DragFloat2(name, rawVal);
+//	return {rawVal[0], rawVal[1]};
+//}
+ProxyVector2 SyMonoEditor::GeDrawVector2Field(float x, float y)
+{
+	float rawVal[2] {x, y};
+	ImGui::DragFloat2("test", rawVal);
+	return ProxyVector2(x, y);
+}
+
 ProxyVector3 SyMonoEditor::GeDrawVector3Field(MonoString* rawName, ProxyVector3 val)
 {
 	SyMonoStr name{ rawName };
@@ -71,6 +86,49 @@ ProxyVector3 SyMonoEditor::GeDrawVector3Field(MonoString* rawName, ProxyVector3 
 	ImGui::DragFloat3(name, rawVal);
 	return { rawVal[0], rawVal[1], rawVal[2] };
 }
+
+ProxyVector4 SyMonoEditor::GeDrawVector4Field(MonoString* rawName, ProxyVector4 val)
+{
+	SyMonoStr name {rawName};
+	float rawVal[4] {val.X, val.Y, val.Z, val.W};
+	ImGui::DragFloat4(name, rawVal);
+	return {rawVal[0], rawVal[1],rawVal[2],rawVal[3]};
+}
+
+
+ProxyCurve SyMonoEditor::GeDrawCurveField(MonoString* rawName, ProxyCurve curve)
+{
+	SyMonoStr name{ rawName };
+
+	ImGui::Begin(name);
+	ImGui::Text(name);
+	ImGui::SameLine();
+
+	bool isUsing = curve.IsUsing.X;
+	ImGui::Checkbox("Is Using", &isUsing);
+	float isUsingRaw = isUsing;
+	curve.IsUsing = ProxyVector4{ isUsingRaw, isUsingRaw, isUsingRaw, isUsingRaw };
+
+	if (!isUsing)
+		return curve;
+
+	bool isReversed = curve.IsReversed;
+	ImGui::Checkbox("Is Reversed", &isReversed);
+
+	curve.IsReversed = isReversed;
+	curve.IsUsing.W = isReversed;
+
+	float bezier[5] = { curve.P1.X, curve.P1.Y, curve.P2.X, curve.P2.Y, 0 };
+	ImCurve::Bezier("Curve", bezier);
+
+	curve.P1.X = bezier[0];
+	curve.P1.Y = bezier[1];
+	curve.P2.X = bezier[2];
+	curve.P2.Y = bezier[3];
+
+	return curve;
+}
+
 
 ProxyVector4 SyMonoEditor::GeDrawColorField(MonoString* rawName, ProxyVector4 val)
 {
@@ -168,6 +226,7 @@ MonoString* SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType
 	return rawSelectedUuid;
 }
 
+
 bool SyMonoEditor::GeDrawArrayHead(MonoString* rawName)
 {
 	SyMonoStr name{ rawName };
@@ -194,6 +253,12 @@ int SyMonoEditor::GeDrawArrayItemButtons(int idx)
 bool SyMonoEditor::GeDrawArrayAddButton()
 {
 	return ImGui::Button("+");
+}
+
+bool SyMonoEditor::GeDrawFoldout(MonoString* rawName)
+{
+	SyMonoStr name{ rawName };
+	return ImGui::CollapsingHeader(name);
 }
 
 int SyMonoEditor::GeDrawAddCompMenu(MonoArray* rawComponents)
@@ -233,13 +298,17 @@ SyResult SyMonoEditor::OnAfterCreate()
 	BindCallback(GE_DRAW_INT_FIELD, &GeDrawIntField);
 	BindCallback(GE_DRAW_FLOAT_FIELD, &GeDrawFloatField);
 	BindCallback(GE_DRAW_BOOL_FIELD, &GeDrawBoolField);
+	BindCallback(GE_DRAW_VECTOR2_FIELD, &GeDrawVector2Field);
 	BindCallback(GE_DRAW_VECTOR3_FIELD, &GeDrawVector3Field);
+	BindCallback(GE_DRAW_VECTOR4_FIELD, &GeDrawVector4Field);
+	BindCallback(GE_DRAW_CURVE_FIELD, &GeDrawCurveField);
 	BindCallback(GE_DRAW_COLOR_FIELD, &GeDrawColorField);
 	BindCallback(GE_DRAW_ENUM_FIELD, &GeDrawEnumField);
 	BindCallback(GE_DRAW_RES_FIELD, &GeDrawResField);
 	BindCallback(GE_DRAW_ARRAY_HEAD, &GeDrawArrayHead);
 	BindCallback(GE_DRAW_ARRAY_ITEM_BUTTONS, &GeDrawArrayItemButtons);
 	BindCallback(GE_DRAW_ARRAY_ADD_BUTTON, &GeDrawArrayAddButton);
+	BindCallback(GE_DRAW_FOLDOUT, &GeDrawFoldout);
 	BindCallback(GE_DRAW_ADD_COMP_MENU, &GeDrawAddCompMenu);
 
 	_resService = ServiceLocator::instance()->Get<ResourceService>();

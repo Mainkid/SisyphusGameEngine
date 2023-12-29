@@ -154,6 +154,10 @@ struct ParticleComponent
 	std::vector<int> IndexList;
 	size_t Hash;
 
+
+	bool IsMonoDirty = true; //used only by mono sync systems
+	
+
 	//SER_COMP(ParticleComponent, SharedParticlesDataUuid)
 
 };

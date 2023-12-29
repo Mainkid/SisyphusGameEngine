@@ -72,6 +72,8 @@ int main()
     //ecs->emplace<CameraComponent>(staticMesh, ECameraType::PlayerCamera);
     
     GameObjectHelper::CreateCamera(ecs);
+
+    GameObjectHelper::CreateParticleSystem(ecs);
     
     //---------- Serialization test ----------------
 

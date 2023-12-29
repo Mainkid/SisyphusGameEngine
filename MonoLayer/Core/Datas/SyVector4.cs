@@ -1,8 +1,9 @@
-﻿using SyEngine.Core.Helpers;
+﻿using System;
+using SyEngine.Core.Helpers;
 
 namespace SyEngine.Core.Datas
 {
-public struct SyVector4
+public struct SyVector4 : IEquatable<SyVector4>
 {
 	public float X;
 	public float Y;
@@ -19,5 +20,15 @@ public struct SyVector4
 
 	public override int GetHashCode()
 		=> HashHelper.Combine(X, Y, Z, W);
+
+	public bool Equals(SyVector4 other)
+	{
+		return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z) && W.Equals(other.W);
+	}
+
+	public override bool Equals(object obj)
+	{
+		return obj is SyVector4 other && Equals(other);
+	}
 }
 }

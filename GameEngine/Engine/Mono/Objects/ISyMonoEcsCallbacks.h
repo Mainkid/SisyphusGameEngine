@@ -22,5 +22,6 @@ namespace mono
 		virtual void OnUpdateColliderComp(uint32_t rawEnt, const ProxyColliderComp& proxy) = 0;
 		virtual void OnUpdateRigidComp(uint32_t rawEnt, const ProxyRigidComp& proxy) = 0;
 		virtual void OnUpdateSkyboxComp(uint32_t rawEnt, const ProxySkyboxComp& proxy) = 0;
+		virtual void OnUpdateParticlesComp(uint32_t rawEnt, const ProxyParticlesComp& proxy) = 0;
 	};
 }

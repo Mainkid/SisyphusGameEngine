@@ -140,6 +140,11 @@ void MonoSyncGeSystem::OnAddComp(uint32_t rawEnt, mono::EProxyCompId id)
 		_ecs->emplace<SkyboxComponent>(ent).uuid = resService->baseResourceDB[EAssetType::ASSET_CUBEMAP].uuid;
 		_ecs->emplace<ImageBasedLightingComponent>(ent);
 	}
+	else if (id == mono::EProxyCompId::Particles)
+	{
+		auto& particles = _ecs->emplace<ParticleComponent>(ent);
+		particles.IsMonoDirty = true;
+	}
 	else
 	{
 		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "not implemented");
@@ -179,6 +184,10 @@ void MonoSyncGeSystem::OnRemoveComp(uint32_t rawEnt, mono::EProxyCompId id)
 	{
 		_ecs->remove<SkyboxComponent>(ent);
 		_ecs->remove<ImageBasedLightingComponent>(ent);
+	}
+	else if (id == mono::EProxyCompId::Particles)
+	{
+		_ecs->remove<ParticleComponent>(ent);
 	}
 	else
 	{
@@ -368,4 +377,37 @@ void MonoSyncGeSystem::OnUpdateSkyboxComp(uint32_t rawEnt, const mono::ProxySkyb
 		skybox->MonoHash = 0;
 	else
 		skybox->MonoHash = mono::SyMonoHashHelper::Hash(*skybox);
+}
+
+void MonoSyncGeSystem::OnUpdateParticlesComp(uint32_t rawEnt, const mono::ProxyParticlesComp& proxy)
+{
+	auto ent = static_cast<entt::entity>(rawEnt);
+	auto particles = _ecs->try_get<ParticleComponent>(ent);
+	if (particles == nullptr)
+	{
+		std::cout << "[mono] e" << rawEnt << "does not have particles" << std::endl;
+		return;
+	}
+
+	//particles->Duration = proxy.Duration;
+	//particles->IsLooping = proxy.IsLooping;
+	//particles->StartDelayTime = proxy.StartDelayTime;
+	//particles->StartLifeTime = proxy.StartLifeTime;
+	//particles->StartSpeed = proxy.StartSpeed;
+	//particles->StartSize = proxy.StartSize;
+	//particles->StartColor = proxy.StartColor;
+	//particles->StartRotation = proxy.StartRotation;
+	//particles->SizeOverLifetime = proxy.SizeOverLifetime;
+	//particles->SpeedOverLifetime = proxy.SpeedOverLifetime;
+	//particles->RotationOverLifetime = proxy.RotationOverLifetime;
+	//particles->MaxParticles = proxy.MaxParticles;
+	//particles->IsLit = proxy.IsLit;
+	//particles->AmbientAmount = proxy.AmbientAmount;
+	//particles->RateOverTime = proxy.RateOverTime;
+	//
+	//particles->ParticleEmitShape = proxy.ParticleEmitShape;
+	//particles->Angle = proxy.Angle;
+	//particles->Radius = proxy.Radius;
+	
+	particles->IsMonoDirty = false;
 }

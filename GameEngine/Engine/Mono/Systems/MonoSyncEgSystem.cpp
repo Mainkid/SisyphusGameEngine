@@ -31,6 +31,7 @@ SyResult MonoSyncEgSystem::Run()
 	SendColliders();
 	SendRigids();
 	SendSkyboxes();
+	SendParticles();
 
 	return {};
 }
@@ -236,5 +237,44 @@ void MonoSyncEgSystem::SendSkyboxes()
 		}
 
 		_monoEcs->EgUpdateSkyboxComp.Invoke(static_cast<uint32_t>(ent), proxy);
+	}
+}
+
+void MonoSyncEgSystem::SendParticles()
+{
+	MonoDomain* monoDomain = mono_object_get_domain(_monoEcs->GetInstance());
+
+	mono::ProxyParticlesComp proxy;
+	
+	auto view = _ecs->view<GameObjectComp, ParticleComponent>();
+	for (auto ent : view)
+	{
+		auto& particles = view.get<ParticleComponent>(ent);
+		if (!particles.IsMonoDirty)
+			continue;
+		particles.IsMonoDirty = false;
+		
+		proxy.Duration = particles.Duration;
+		proxy.IsLooping = particles.IsLooping;
+		proxy.StartDelayTime = particles.StartDelayTime;
+		//proxy.StartLifeTime = particles.StartLifeTime;
+		//proxy.StartSpeed = particles.StartSpeed;
+		//proxy.StartSize = particles.StartSize;
+		//proxy.StartColor = particles.StartColor;
+		//proxy.StartRotation = particles.StartRotation;
+		//proxy.SizeOverLifetime = particles.SizeOverLifetime;
+		//proxy.SpeedOverLifetime = particles.SpeedOverLifetime;
+		//proxy.RotationOverLifetime = particles.RotationOverLifetime;
+		//proxy.MaxParticles = particles.MaxParticles;
+		//proxy.IsLit = particles.IsLit;
+		//proxy.AmbientAmount = particles.AmbientAmount;
+		//proxy.RateOverTime = particles.RateOverTime;
+		//
+		//proxy.ParticleEmitShape = particles.ParticleEmitShape;
+		//proxy.Angle = particles.Angle;
+		//proxy.Radius = particles.Radius;
+		//proxy.IsDirty = false;
+
+		_monoEcs->EgUpdateParticlesComp.Invoke(static_cast<uint32_t>(ent), proxy);
 	}
 }

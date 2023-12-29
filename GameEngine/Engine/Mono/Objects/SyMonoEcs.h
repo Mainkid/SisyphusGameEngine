@@ -3,6 +3,8 @@
 #include "../SyMonoMethod.h"
 #include "../SyMonoProxyDatas.h"
 
+struct ParticleComponent;
+
 namespace mono
 {
 	class ISyMonoEcsCallbacks;
@@ -27,6 +29,7 @@ namespace mono
 		inline static const std::string GE_UPDATE_COLLIDER_COMP = "GeUpdateColliderComp";
 		inline static const std::string GE_UPDATE_RIGID_COMP = "GeUpdateRigidComp";
 		inline static const std::string GE_UPDATE_SKYBOX_COMP = "GeUpdateSkyboxComp";
+		inline static const std::string GE_UPDATE_PARTICLES_COMP = "GeUpdateParticlesComp";
 
 	private:
 		inline static SyMonoEcs* _instance = nullptr;
@@ -44,6 +47,7 @@ namespace mono
 		static void GeUpdateColliderComp(uint32_t rawEnt, ProxyColliderComp proxy);
 		static void GeUpdateRigidComp(uint32_t rawEnt, ProxyRigidComp proxy);
 		static void GeUpdateSkyboxComp(uint32_t rawEnt, ProxySkyboxComp proxy);
+		static void GeUpdateParticlesComp(uint32_t rawEnt, ProxyParticlesComp proxy);
 
 	public:
 		SyMonoMethod<> EgSyncEngineWithGame{ "EgSyncEngineWithGame" };
@@ -57,6 +61,7 @@ namespace mono
 		SyMonoMethod<uint32_t, ProxyColliderComp> EgUpdateColliderComp{ "EgUpdateColliderComp" };
 		SyMonoMethod<uint32_t, ProxyRigidComp> EgUpdateRigidComp{ "EgUpdateRigidComp" };
 		SyMonoMethod<uint32_t, ProxySkyboxComp> EgUpdateSkyboxComp{ "EgUpdateSkyboxComp" };
+		SyMonoMethod<uint32_t, ProxyParticlesComp> EgUpdateParticlesComp { "EgUpdateParticlesComp" };
 
 		void SetCallbackReceiver(ISyMonoEcsCallbacks* receiver);
 	private:
