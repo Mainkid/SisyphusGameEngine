@@ -17,10 +17,28 @@ public:
 			m_FinalBoneMatrices.push_back(DirectX::SimpleMath::Matrix::Identity);
 	}
 
-	uint32_t hash = 0;
+	enum EAnimState
+	{
+		Playing,
+		Paused,
+		Disabled
+	};
+
+	/*
+	 *	User vars
+	 */
+
 	boost::uuids::uuid animationUUID = boost::uuids::nil_uuid();
+	bool IsLooping = true;
+
+	/*
+	 *	Engine vars
+	 */
+
+	uint32_t hash = 0;
 	std::vector<DirectX::SimpleMath::Matrix> m_FinalBoneMatrices;
 	std::shared_ptr<SkeletalAnimation> m_CurrentAnimation;
 	float m_CurrentTime;
 	float m_DeltaTime;
+	EAnimState state = EAnimState::Playing;
 };

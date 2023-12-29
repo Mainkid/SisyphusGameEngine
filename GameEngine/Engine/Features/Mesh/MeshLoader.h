@@ -47,5 +47,6 @@ public:
 		std::vector<DirectX::SimpleMath::Vector4>& tangent,
 		std::vector<DirectX::SimpleMath::Vector4>& bitangent);
 
+	
 };
 

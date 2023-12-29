@@ -9,6 +9,9 @@
 #include "../../../Events/SyAnimatorComponentAdded.h"
 #include "../../Mesh/MeshLoader.h"
 #include "../../Mesh/Components/MeshComponent.h"
+#include "../../../Events/SyPlayModeEndedEvent.h"
+#include "../../../Events/SyPlayModeStartedEvent.h"
+
 
 SyResult SkeletalAnimationSystem::Init()
 {
@@ -22,6 +25,40 @@ SyResult SkeletalAnimationSystem::Init()
 
 SyResult SkeletalAnimationSystem::Run()
 {
+    auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyPlayModeEndedEvent);
+    if (eventView.begin() != eventView.end())
+    {
+        auto View = _ecs->view<AnimatorComponent>();
+        for (auto& ent : View)
+        {
+            auto& animator = _ecs->get<AnimatorComponent>(ent);
+            animator.state = AnimatorComponent::EAnimState::Disabled;
+        }
+    }
+
+    auto pauseEventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyPauseModeEvent);
+    if (pauseEventView.begin() != pauseEventView.end())
+    {
+        auto View = _ecs->view<AnimatorComponent>();
+        for (auto& ent : View)
+        {
+            auto& animator = _ecs->get<AnimatorComponent>(ent);
+            animator.state = AnimatorComponent::EAnimState::Paused;
+        }
+    }
+
+    auto playmodeEventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyPlayModeStartedEvent);
+    if (playmodeEventView.begin() != playmodeEventView.end())
+    {
+        auto View = _ecs->view<AnimatorComponent>();
+        for (auto& ent : View)
+        {
+            auto& animator = _ecs->get<AnimatorComponent>(ent);
+            animator.state = AnimatorComponent::EAnimState::Playing;
+        }
+    }
+
+
 
     auto viewEvents = _ecs->view<SyAnimatorComponentAdded>();
 
@@ -31,23 +68,31 @@ SyResult SkeletalAnimationSystem::Run()
         auto& eventComp = viewEvents.get<SyAnimatorComponentAdded>(eventID);
         MeshComponent& meshComp = _ecs->get<MeshComponent>(eventComp.id);
         MeshLoader::LoadAnimation(rs->FindFilePathByUUID(meshComp.modelUUID), meshComp.model->m_BoneInfoMap);
-        
+        std::cout << " ";
     }
 
 
-    auto view = _ecs->view<AnimatorComponent>();
+    auto view = _ecs->view<MeshComponent,AnimatorComponent>();
     for (auto& entity : view)
     {
         AnimatorComponent& animator = view.get<AnimatorComponent>(entity);
+        MeshComponent& meshComp = view.get<MeshComponent>(entity);
 
         uint32_t _hash = hasher(animator.animationUUID);
         if (_hash != animator.hash)
         {
             animator.hash = _hash;
-            animator.m_CurrentAnimation = rs->LoadAnimationFromFile(rs->FindFilePathByUUID(rs->GetUUIDFromPath("Game\\Assets\\Anims\\Runner.dae_0.anim")));
+            if (animator.animationUUID != boost::uuids::uuid())
+            {
+                animator.m_CurrentAnimation = rs->LoadAnimationFromFile(rs->FindFilePathByUUID(animator.animationUUID));
+                animator.m_CurrentAnimation->m_BoneInfoMap = meshComp.model->m_BoneInfoMap;
+                animator.m_CurrentTime = 0.0f;
+                animator.m_DeltaTime = 0.0f;
+            }
         }
-
-        UpdateAnimation(animator);
+        
+        if (animator.state == AnimatorComponent::Playing)
+            UpdateAnimation(animator);
     }
 
     return SyResult();
@@ -100,6 +145,9 @@ void SkeletalAnimationSystem::UpdateAnimation(AnimatorComponent& animator)
     if (animator.m_CurrentAnimation)
     {
         animator.m_CurrentTime += animator.m_CurrentAnimation->m_TicksPerSecond * ec->deltaTime;
+        if (!animator.IsLooping && animator.m_CurrentTime > animator.m_CurrentAnimation->m_Duration)
+            return;
+
         animator.m_CurrentTime = fmod(animator.m_CurrentTime, animator.m_CurrentAnimation->m_Duration);
         CalculateBoneTransform(animator,&animator.m_CurrentAnimation->m_RootNode, Matrix::Identity);
     }

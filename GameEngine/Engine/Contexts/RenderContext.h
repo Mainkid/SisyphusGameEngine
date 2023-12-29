@@ -167,4 +167,10 @@ struct RenderContext : public IService
 	GFSDK_SSAO_Context_D3D11* pAOContext;
 
 	RenderHelperData RhData;
+
+	/*
+	 *  Animations
+	 */
+
+	std::vector<DirectX::SimpleMath::Matrix> AnimationDefaultMatrices= std::vector<DirectX::SimpleMath::Matrix>(100, DirectX::SimpleMath::Matrix::Identity);
 };

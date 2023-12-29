@@ -458,6 +458,8 @@ void ResourceService::SaveAnimationToFile(std::filesystem::path filePath, Skelet
 
 
 	GenerateMetaFiles(filePath.parent_path());
+	LoadResourceLibrary(".\\Game\\Assets", true);
+	LoadResourceLibrary(".\\Engine\\Assets\\Resources", false, true);
 	updateContentBrowser.Broadcast(true);
 }
 

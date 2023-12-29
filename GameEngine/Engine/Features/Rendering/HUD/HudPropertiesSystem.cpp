@@ -10,6 +10,7 @@
 #include "../../../Systems/TransformHelper.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../Lighting/Components/LightComponent.h"
+#include "../../Animations/Components/AnimatorComponent.h"
 #include "../../../../vendor/ImGui/curve_v122.hpp"
 #include "../../../../vendor/StateMachine/imgui_node_graph_test.h"
 #include "../../../../vendor/StateMachine/StateMachineLayer.h"
@@ -51,6 +52,8 @@ SyResult HudPropertiesSystem::Run()
     {
         TransformComponent* tc = _ecs->try_get<TransformComponent>(*ec->hudData.selectedEntityIDs.begin());
         LightComponent* lc = _ecs->try_get<LightComponent>(*ec->hudData.selectedEntityIDs.begin());
+        AnimatorComponent* ac = _ecs->try_get<AnimatorComponent>(*ec->hudData.selectedEntityIDs.begin());
+
 
         if (tc)
         {
@@ -101,6 +104,26 @@ SyResult HudPropertiesSystem::Run()
             lc->Color.x = col3[0];
             lc->Color.y = col3[1];
             lc->Color.z = col3[2];
+        }
+
+        if (ac)
+        {
+            ImGui::Text("Animator");
+            std::vector<boost::uuids::uuid> items = rs->GetAllResourcesOfType(EAssetType::ASSET_ANIMATION);
+            std::vector<std::string> filePathsStr = rs->GetAllResourcesFilePaths(EAssetType::ASSET_ANIMATION);
+            std::vector<const char*> filePaths;
+
+            static int selectedItem = 0;
+
+            for (int i = 0; i < filePathsStr.size(); i++) {
+                if (filePathsStr[i] != "")
+                    filePaths.push_back(filePathsStr[i].c_str());
+            }
+
+            ImGui::Combo("Filepaths", &selectedItem, filePaths.data(), filePaths.size());
+            ac->animationUUID = items[selectedItem];
+
+            ImGui::Checkbox("Is Looping", &ac->IsLooping);
         }
 
         auto rawEnt = static_cast<uint32_t>(*ec->hudData.selectedEntityIDs.begin());

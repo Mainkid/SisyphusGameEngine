@@ -74,6 +74,12 @@ SyResult ShadowRenderSystem::Run()
                     CopyMemory(mappedResource.pData, animComp->m_FinalBoneMatrices.data(), sizeof(CB_BonesBuffer));
                     _hc->context->Unmap(_rc->BonesConstBuffer->buffer.Get(), 0);
                 }
+                else
+                {
+                    res = _hc->context->Map(_rc->BonesConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                    CopyMemory(mappedResource.pData, _rc->AnimationDefaultMatrices.data(), sizeof(CB_BonesBuffer));
+                    _hc->context->Unmap(_rc->BonesConstBuffer->buffer.Get(), 0);
+                }
 
                 _hc->context->VSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
                 _hc->context->PSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
