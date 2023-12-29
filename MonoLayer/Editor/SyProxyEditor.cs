@@ -185,37 +185,34 @@ public class SyProxyEditor
 	internal static extern void GeDrawText(string name);
 
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern int GeDrawIntField(string name, int val);
+	internal static extern bool GeDrawIntField(string name, ref int val);
 
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern float GeDrawFloatField(string name, float val);
+	internal static extern bool GeDrawFloatField(string name, ref float val);
 
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern bool GeDrawBoolField(string name, bool val);
+	internal static extern bool GeDrawBoolField(string name, ref bool val);
     
-	//[MethodImpl(MethodImplOptions.InternalCall)]
-	//internal static extern SyVector2 GeDrawVector2Field(string name, SyVector2 val);
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawVector2Field(string name, ref SyVector2 val);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern SyVector2 GeDrawVector2Field(float x, float y);
+	internal static extern bool GeDrawVector3Field(string name, ref SyVector3 val);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern SyVector3 GeDrawVector3Field(string name, SyVector3 val);
+	internal static extern bool GeDrawVector4Field(string name, ref SyVector4 val);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern SyVector4 GeDrawVector4Field(string name, SyVector4 val);
+	internal static extern bool GeDrawCurveField(string name, ref SyCurve curve);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern SyCurve GeDrawCurveField(string name, SyCurve curve);
+	internal static extern bool GeDrawColorField(string name, ref SyColor val);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern SyColor GeDrawColorField(string name, SyColor val);
+	internal static extern bool GeDrawEnumField(string name, string[] items, ref int selected);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern int GeDrawEnumField(string name, string[] items, int selected);
-	
-	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern string GeDrawResField(string name, EResourceType resType, string uuid);
+	internal static extern bool GeDrawResField(string name, EResourceType resType, ref string uuid);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern bool GeDrawArrayHead(string name);

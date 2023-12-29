@@ -17,7 +17,8 @@ public class EditorDrawerResRef<TResRef, TRes> : EditorDrawerBase<TResRef>
 		var resType = ResHelper.GetResType<TRes>();
 
 		string prevUuid = val?.Uuid;
-		string newUuid  = SyProxyEditor.GeDrawResField(name, resType, prevUuid);
+		string newUuid  = prevUuid;
+		SyProxyEditor.GeDrawResField(name, resType, ref newUuid);
 
 		if (prevUuid != newUuid)
 		{
@@ -28,19 +29,6 @@ public class EditorDrawerResRef<TResRef, TRes> : EditorDrawerBase<TResRef>
 			return true;
 		}
 		return false;
-	}
-
-	public override bool DrawRaw(string name, ref object rawVal)
-	{
-		var  val       = (TResRef)rawVal;
-		bool isChanged = Draw(name, ref val);
-		rawVal = val;
-		return isChanged;
-	}
-    
-	protected override TResRef DrawImpl(string name, TResRef val)
-	{
-		throw new NotImplementedException(GetType().Name);
 	}
 }
 }

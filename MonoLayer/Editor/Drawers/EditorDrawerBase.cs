@@ -16,30 +16,16 @@ public abstract class EditorDrawerBase<T> : IEditorDrawer
 	{
 		Editor = editor;
 	}
-	
-	public virtual bool Draw(string name, ref T val)
-	{
-		var prevVal = val;
-		var newVal  = DrawImpl(name, val);
-		if (EqualityComparer<T>.Default.Equals(prevVal, newVal))
-			return false;
-		val = newVal;
-		return true;
-	}
+
+	public abstract bool Draw(string name, ref T val);
 
 	public virtual bool DrawRaw(string name, ref object rawVal)
 	{
-		var prevVal = (T)rawVal;
-		var newVal  = DrawImpl(name, prevVal);
-		if (EqualityComparer<T>.Default.Equals(prevVal, newVal))
-			return false;
-		rawVal = newVal;
-		return true;
-	}
-
-	protected virtual T DrawImpl(string name, T val)
-	{
-		throw new NotImplementedException(GetType().Name);
+		var  val       = (T)rawVal;
+		bool isChanged = Draw(name, ref val);
+		if (isChanged)
+			rawVal = val;
+		return isChanged;
 	}
 }
 }

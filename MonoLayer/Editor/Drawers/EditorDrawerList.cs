@@ -55,18 +55,5 @@ public class EditorDrawerList<TList, TItem> : EditorDrawerBase<TList>
 		}
 		return isChanged;
 	}
-
-	public override bool DrawRaw(string name, ref object rawVal)
-	{
-		var val = (TList)rawVal;
-		bool isChanged = Draw(name, ref val);
-		rawVal = val;
-		return isChanged;
-	}
-
-	protected override TList DrawImpl(string name, TList val)
-	{
-		throw new NotImplementedException(GetType().Name);
-	}
 }
 }

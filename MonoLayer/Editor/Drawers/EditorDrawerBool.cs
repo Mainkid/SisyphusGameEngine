@@ -4,8 +4,8 @@ public class EditorDrawerBool : EditorDrawerBase<bool>
 {
 	public EditorDrawerBool(SyProxyEditor editor) : base(editor) { }
 	
-	protected override bool DrawImpl(string name, bool val)
-		=> SyProxyEditor.GeDrawBoolField(name, val);
+	public override bool Draw(string name, ref bool val)
+		=> SyProxyEditor.GeDrawBoolField(name, ref val);
 
 }
 }

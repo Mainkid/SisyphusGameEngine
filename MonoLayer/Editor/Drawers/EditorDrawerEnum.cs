@@ -14,7 +14,7 @@ public class EditorDrawerEnum<T> : EditorDrawerBase<T> where T: Enum
 		_values = (T[])Enum.GetValues(typeof(T));
 	}
 
-	protected override T DrawImpl(string name, T val)
+	public override bool Draw(string name, ref T val)
 	{
 		var selected = 0;
 		for (var i = 0; i < _values.Length; i++)
@@ -23,9 +23,9 @@ public class EditorDrawerEnum<T> : EditorDrawerBase<T> where T: Enum
 				selected = i;
 				break;
 			}
-
-		selected = SyProxyEditor.GeDrawEnumField(name, _names, selected);
-		return _values[selected];
+		bool isChanged = SyProxyEditor.GeDrawEnumField(name, _names, ref selected);
+		val = _values[selected];
+		return isChanged;
 	}
 }
 }

@@ -4,7 +4,7 @@ public class EditorDrawerFloat : EditorDrawerBase<float>
 {
 	public EditorDrawerFloat(SyProxyEditor editor) : base(editor) { }
 	
-	protected override float DrawImpl(string name, float val)
-		=> SyProxyEditor.GeDrawFloatField(name, val);
+	public override bool Draw(string name, ref float val)
+		=> SyProxyEditor.GeDrawFloatField(name, ref val);
 }
 }

@@ -6,7 +6,7 @@ public class EditorDrawerColor : EditorDrawerBase<SyColor>
 {
 	public EditorDrawerColor(SyProxyEditor editor) : base(editor) { }
 	
-	protected override SyColor DrawImpl(string name, SyColor val)
-		=> SyProxyEditor.GeDrawColorField(name, val);
+	public override bool Draw(string name, ref SyColor val)
+		=> SyProxyEditor.GeDrawColorField(name, ref val);
 }
 }

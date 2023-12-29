@@ -44,110 +44,119 @@ void SyMonoEditor::GeDrawText(MonoString* rawName)
 	}
 }
 
-int SyMonoEditor::GeDrawIntField(MonoString* rawName, int val)
+bool SyMonoEditor::GeDrawIntField(MonoString* rawName, int* val)
 {
 	SyMonoStr name{ rawName };
-	ImGui::DragInt(name, &val);
-	return val;
+	return ImGui::DragInt(name, val);
 }
 
-float SyMonoEditor::GeDrawFloatField(MonoString* rawName, float val)
+bool SyMonoEditor::GeDrawFloatField(MonoString* rawName, float* val)
 {
 	SyMonoStr name{ rawName };
-	ImGui::DragFloat(name, &val, 0.1f);
-	return val;
+	return ImGui::DragFloat(name, val, 0.1f);
 }
 
-bool SyMonoEditor::GeDrawBoolField(MonoString* rawName, bool val)
+bool SyMonoEditor::GeDrawBoolField(MonoString* rawName, bool* val)
 {
 	SyMonoStr name{ rawName };
-	ImGui::Checkbox(name, &val);
-	return val;
+	return ImGui::Checkbox(name, val);
 }
 
-//ProxyVector2 SyMonoEditor::GeDrawVector2Field(MonoString* rawName, ProxyVector2 val)
-//{
-//	SyMonoStr name {rawName};
-//	float rawVal[2] {val.X, val.Y};
-//	ImGui::DragFloat2(name, rawVal);
-//	return {rawVal[0], rawVal[1]};
-//}
-ProxyVector2 SyMonoEditor::GeDrawVector2Field(float x, float y)
-{
-	float rawVal[2] {x, y};
-	ImGui::DragFloat2("test", rawVal);
-	return ProxyVector2(x, y);
-}
-
-ProxyVector3 SyMonoEditor::GeDrawVector3Field(MonoString* rawName, ProxyVector3 val)
-{
-	SyMonoStr name{ rawName };
-	float rawVal[3]{ val.X, val.Y, val.Z };
-	ImGui::DragFloat3(name, rawVal);
-	return { rawVal[0], rawVal[1], rawVal[2] };
-}
-
-ProxyVector4 SyMonoEditor::GeDrawVector4Field(MonoString* rawName, ProxyVector4 val)
+bool SyMonoEditor::GeDrawVector2Field(MonoString* rawName, ProxyVector2* val)
 {
 	SyMonoStr name {rawName};
-	float rawVal[4] {val.X, val.Y, val.Z, val.W};
-	ImGui::DragFloat4(name, rawVal);
-	return {rawVal[0], rawVal[1],rawVal[2],rawVal[3]};
+	float rawVal[2] {val->X, val->Y};
+	bool isChanged = ImGui::DragFloat2(name, rawVal);
+	val->X = rawVal[0];
+	val->Y = rawVal[1];
+	return isChanged;
+}
+
+bool SyMonoEditor::GeDrawVector3Field(MonoString* rawName, ProxyVector3* val)
+{
+	SyMonoStr name{ rawName };
+	float rawVal[3]{ val->X, val->Y, val->Z };
+	bool isChanged = ImGui::DragFloat3(name, rawVal);
+	val->X = rawVal[0];
+	val->Y = rawVal[1];
+	val->Z = rawVal[2];
+	return isChanged;
+}
+
+bool SyMonoEditor::GeDrawVector4Field(MonoString* rawName, ProxyVector4* val)
+{
+	SyMonoStr name {rawName};
+	float rawVal[4] {val->X, val->Y, val->Z, val->W};
+	bool isChanged = ImGui::DragFloat4(name, rawVal);
+	val->X = rawVal[0];
+	val->Y = rawVal[1];
+	val->Z = rawVal[2];
+	val->W = rawVal[3];
+	return isChanged;
 }
 
 
-ProxyCurve SyMonoEditor::GeDrawCurveField(MonoString* rawName, ProxyCurve curve)
+bool SyMonoEditor::GeDrawCurveField(MonoString* rawName, ProxyCurve* curve)
 {
 	SyMonoStr name{ rawName };
+
+	bool isChanged = false;
 
 	ImGui::Begin(name);
 	ImGui::Text(name);
 	ImGui::SameLine();
 
-	bool isUsing = curve.IsUsing.X;
-	ImGui::Checkbox("Is Using", &isUsing);
+	bool isUsing = curve->IsUsing.X;
+	isChanged |= ImGui::Checkbox("Is Using", &isUsing);
 	float isUsingRaw = isUsing;
-	curve.IsUsing = ProxyVector4{ isUsingRaw, isUsingRaw, isUsingRaw, isUsingRaw };
+	curve->IsUsing = ProxyVector4{ isUsingRaw, isUsingRaw, isUsingRaw, isUsingRaw };
 
 	if (!isUsing)
-		return curve;
+		return isChanged;
 
-	bool isReversed = curve.IsReversed;
-	ImGui::Checkbox("Is Reversed", &isReversed);
+	bool isReversed = curve->IsReversed;
+	isChanged |= ImGui::Checkbox("Is Reversed", &isReversed);
 
-	curve.IsReversed = isReversed;
-	curve.IsUsing.W = isReversed;
+	curve->IsReversed = isReversed;
+	curve->IsUsing.W = isReversed;
 
-	float bezier[5] = { curve.P1.X, curve.P1.Y, curve.P2.X, curve.P2.Y, 0 };
-	ImCurve::Bezier("Curve", bezier);
+	float bezier[5] = { curve->P1.X, curve->P1.Y, curve->P2.X, curve->P2.Y, 0 };
+	isChanged |= ImCurve::Bezier("Curve", bezier);
 
-	curve.P1.X = bezier[0];
-	curve.P1.Y = bezier[1];
-	curve.P2.X = bezier[2];
-	curve.P2.Y = bezier[3];
+	curve->P1.X = bezier[0];
+	curve->P1.Y = bezier[1];
+	curve->P2.X = bezier[2];
+	curve->P2.Y = bezier[3];
 
-	return curve;
+	return isChanged;
 }
 
 
-ProxyVector4 SyMonoEditor::GeDrawColorField(MonoString* rawName, ProxyVector4 val)
+bool SyMonoEditor::GeDrawColorField(MonoString* rawName, ProxyVector4* val)
 {
 	SyMonoStr name{ rawName };
-	float rawVal[4]{ val.X, val.Y, val.Z, val.W };
-	ImGui::ColorEdit4(name, rawVal);
-	return { rawVal[0], rawVal[1], rawVal[2], rawVal[3] };
+	float rawVal[4]{ val->X, val->Y, val->Z, val->W };
+	bool isChanged = ImGui::ColorEdit4(name, rawVal);
+	val->X = rawVal[0];
+	val->Y = rawVal[1];
+	val->Z = rawVal[2];
+	val->W = rawVal[3];
+	return isChanged;
 }
 
-int SyMonoEditor::GeDrawEnumField(MonoString* rawName, MonoArray* rawItems, int selected)
+bool SyMonoEditor::GeDrawEnumField(MonoString* rawName, MonoArray* rawItems, int* selected)
 {
 	int count = mono_array_length(rawItems);
 	if (count == 0)
-		return 0;
-	SyMathHelper::Clamp(selected, 0, count - 1);
+		return false;
+
+	int prevSelected = *selected;
+
+	SyMathHelper::Clamp(*selected, 0, count - 1);
 
 	SyMonoStr name{ rawName };
 
-	MonoString* rawSelectedItem = mono_array_get(rawItems, MonoString*, selected);
+	MonoString* rawSelectedItem = mono_array_get(rawItems, MonoString*, *selected);
 	SyMonoStr selectedItem{ rawSelectedItem };
 
 	if (ImGui::BeginCombo(name, selectedItem))
@@ -155,23 +164,23 @@ int SyMonoEditor::GeDrawEnumField(MonoString* rawName, MonoArray* rawItems, int 
 		for (int i = 0; i < count; i++)
 		{
 			MonoString* rawItem = mono_array_get(rawItems, MonoString*, i);
-			SyMonoStr item { rawName };
+			SyMonoStr item { rawItem };
 
-			bool isSelected = i == selected;
+			bool isSelected = i == *selected;
 			if (ImGui::Selectable(item, isSelected))
-				selected = i;
+				*selected = i;
 			if (isSelected)
 				ImGui::SetItemDefaultFocus();
 		}
 		ImGui::EndCombo();
 	}
-	return selected;
+	return prevSelected != *selected;
 }
 
-MonoString* SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType rawResType, MonoString* rawSelectedUuid)
+bool SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType rawResType, MonoString** rawSelectedUuid)
 {
 	if (_instance == nullptr || _instance->_resService == nullptr)
-		return rawSelectedUuid;
+		return false;
 	auto resService = _instance->_resService;
 
 	auto resType = EAssetType::ASSET_NONE;
@@ -184,11 +193,11 @@ MonoString* SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType
 	if (resType == EAssetType::ASSET_NONE)
 	{
 		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "failed to convert resource type");
-		return rawSelectedUuid;
+		return false;
 	}
 
 	SyMonoStr name{ rawName };
-	SyMonoStr strSelectedUuid{ rawSelectedUuid };
+	SyMonoStr strSelectedUuid{ *rawSelectedUuid };
 
 	boost::uuids::uuid selectedUuid = strSelectedUuid.ToUuid();
 
@@ -221,9 +230,9 @@ MonoString* SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType
 	{
 		auto newStrSelectedUuid = boost::lexical_cast<std::string>(selectedUuid);
 		auto monoDomain = mono_object_get_domain(_instance->GetInstance());
-		rawSelectedUuid = mono_string_new(monoDomain, newStrSelectedUuid.c_str());
+		*rawSelectedUuid = mono_string_new(monoDomain, newStrSelectedUuid.c_str());
 	}
-	return rawSelectedUuid;
+	return isSelectedUuidChanged;
 }
 
 

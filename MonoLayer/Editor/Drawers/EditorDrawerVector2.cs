@@ -7,11 +7,7 @@ public class EditorDrawerVector2 : EditorDrawerBase<SyVector2>
 {
 	public EditorDrawerVector2(SyProxyEditor editor) : base(editor) { }
 
-	protected override SyVector2 DrawImpl(string name, SyVector2 val)
-	{
-		//return SyProxyEditor.GeDrawVector2Field(str, val);
-		var vect = SyProxyEditor.GeDrawVector2Field(1, 2);
-		return new SyVector2(1, 1);
-	}
+	public override bool Draw(string name, ref SyVector2 val)
+		=> SyProxyEditor.GeDrawVector2Field(name, ref val);
 }
 }

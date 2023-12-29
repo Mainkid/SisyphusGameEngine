@@ -39,13 +39,6 @@ public class EditorDrawerComp<T> : EditorDrawerBase<T>, IEditorDrawerComp where 
 			_pool.Get(ent) = comp;	
 		}
 	}
-	
-	public sealed override bool DrawRaw(string name, ref object rawVal)
-	{
-		if (_fallbackDrawer == null)
-			_fallbackDrawer = new EditorDrawerReflect<T>(Editor);
-		return _fallbackDrawer.DrawRaw(name, ref rawVal);
-	}
 
 	public override bool Draw(string name, ref T val)
 	{
@@ -53,6 +46,5 @@ public class EditorDrawerComp<T> : EditorDrawerBase<T>, IEditorDrawerComp where 
 			_fallbackDrawer = new EditorDrawerReflect<T>(Editor);
 		return _fallbackDrawer.Draw(name, ref val);
 	}
-
 }
 }
