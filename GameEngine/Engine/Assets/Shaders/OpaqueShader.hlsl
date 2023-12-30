@@ -88,17 +88,19 @@ PS_IN VSMain(VS_IN input)
             totalPosition += localPosition * float(input.boneWeights[i]);
             float3 localNormal = mul(input.normals.xyz, (float3x3) finalBonesMatrices[int(input.boneIDs[i])]);
         
-            input.normals.xyz += localNormal * float(input.boneWeights[i]);
+            outputNormal.xyz += localNormal.xyz * float(input.boneWeights[i]);
 
-    }
+        }
     
     if (input.boneIDs[0] < 0)
     {
         totalPosition = input.pos;
         outputNormal = input.normals;
     }
+    //outputNormal.xyz = normalize(outputNormal.xyz)
+    //outputNormal.w = input.normals.w;
 
-        output.normals.xyz = normalize(mul(input.normals.xyz, (float3x3) worldViewInverseT));
+        output.normals.xyz = normalize(mul(outputNormal.xyz, (float3x3) worldViewInverseT));
         output.posH = mul(totalPosition, worldViewProj);
         output.posW = mul(totalPosition, world);
         output.posWV = mul(totalPosition, worldView);
@@ -107,7 +109,7 @@ PS_IN VSMain(VS_IN input)
     
         float3 T = normalize(mul(float3(input.tangents.xyz), (float3x3) world));
         float3 B = normalize(mul(float3(input.bitangents.xyz), (float3x3) world));
-        float3 N = normalize(mul(float3(input.normals.xyz), (float3x3) world));
+        float3 N = normalize(mul(float3(outputNormal.xyz), (float3x3) world));
         output.TBN = float3x3(T.xyz, B.xyz, N.xyz);
 	
         return output;

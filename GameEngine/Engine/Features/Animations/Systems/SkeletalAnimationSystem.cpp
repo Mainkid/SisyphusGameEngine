@@ -193,6 +193,10 @@ DirectX::SimpleMath::Matrix SkeletalAnimationSystem::InterpolatePosition(Bone* b
     //return Matrix::CreateTranslation(bone->m_Positions[p0Index].position);
 
     int p1Index = p0Index + 1;
+    if (p1Index == bone->m_NumPositions)
+        return Matrix::CreateTranslation(bone->m_Positions[p0Index].position);
+
+    p1Index = std::clamp(p1Index, 0, bone->m_NumPositions - 1);
     float scaleFactor = GetScaleFactor(bone,bone->m_Positions[p0Index].timeStamp,
         bone->m_Positions[p1Index].timeStamp, animationTime);
     Vector3 finalPosition = Vector3::Lerp(bone->m_Positions[p0Index].position,
@@ -211,6 +215,8 @@ DirectX::SimpleMath::Matrix SkeletalAnimationSystem::InterpolateRotation(Bone* b
    
     int p0Index = GetRotationIndex(bone,animationTime);
     int p1Index = p0Index + 1;
+    if (p1Index == bone->m_NumRotations)
+        return Matrix::CreateFromQuaternion(bone->m_Rotations[p0Index].orientation);
 
     //return Matrix::CreateFromQuaternion(bone->m_Rotations[p0Index].orientation);
 
@@ -229,6 +235,9 @@ DirectX::SimpleMath::Matrix SkeletalAnimationSystem::InterpolateScaling(Bone* bo
 
     int p0Index = GetScaleIndex(bone,animationTime);
     int p1Index = p0Index + 1;
+    if (p1Index == bone->m_NumScalings)
+        return Matrix::CreateScale(bone->m_Scales[p0Index].scale);
+
     float scaleFactor = GetScaleFactor(bone,bone->m_Scales[p0Index].timeStamp,
         bone->m_Scales[p1Index].timeStamp, animationTime);
     Vector3 finalScale = Vector3::Lerp(bone->m_Scales[p0Index].scale,bone-> m_Scales[p1Index].scale
@@ -243,6 +252,9 @@ int SkeletalAnimationSystem::GetPositionIndex(Bone* bone, float animationTime)
         if (animationTime < bone->m_Positions[index + 1].timeStamp)
             return index;
     }
+
+    return bone->m_NumPositions - 1;
+
     assert(0);
 }
 
@@ -253,6 +265,8 @@ int SkeletalAnimationSystem::GetRotationIndex(Bone* bone, float animationTime)
         if (animationTime < bone->m_Rotations[index + 1].timeStamp)
             return index;
     }
+    return bone->m_NumRotations - 1;
+
     assert(0);
 }
 
@@ -263,6 +277,8 @@ int SkeletalAnimationSystem::GetScaleIndex(Bone* bone, float animationTime)
         if (animationTime < bone->m_Scales[index + 1].timeStamp)
             return index;
     }
+    return bone->m_NumScalings - 1;
+
     assert(0);
 }
 
