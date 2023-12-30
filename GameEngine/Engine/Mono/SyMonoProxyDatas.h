@@ -48,7 +48,8 @@ enum class EProxyResourceType
 {
 	Model,
 	Material,
-	Cubemap
+	Cubemap,
+	Texture
 };
 
 struct ProxyVector2
@@ -226,28 +227,58 @@ struct ProxyParticlesComp
 			};
 		}
 	};
+
+	struct BurstData
+	{
+		float Time;                                    
+		float TimeSinceLastBurst;
+		InputData Count;                       
+		bool IsLooping;
+		float Probability;
+
+		BurstData() {}
+		BurstData(const ParticleBurst& data) :
+			Time(data.Time), TimeSinceLastBurst(data.TimeSinceLastBurst),
+			Count(data.Count), IsLooping(data.IsLooping), Probability(data.Probability){}
+
+		operator ParticleBurst() const
+		{
+			return
+			{
+				Time,
+				TimeSinceLastBurst,
+				Count,
+				IsLooping,
+				Probability
+			};
+		}
+	};
 	
 	float Duration;                                  
 	bool IsLooping;                                
 	InputData StartDelayTime;              
-	//InputData StartLifeTime;             
-	//InputData StartSpeed;                 
-	//InputData StartSize;                     
-	//InputData StartColor;                  
-	//InputData StartRotation;				  
-	//InputData SizeOverLifetime;				
-	//InputData SpeedOverLifetime;					
-	//InputData RotationOverLifetime;		  
-	//uint32_t MaxParticles;
-	//bool IsLit;
-	//float AmbientAmount;
-	//
-	//InputData RateOverTime;    
-	//
-	//EParticleEmitShape ParticleEmitShape;
-	//float Angle;
-	//float Radius;
-	//
+	InputData StartLifeTime;             
+	InputData StartSpeed;                 
+	InputData StartSize;                     
+	InputData StartColor;                  
+	InputData StartRotation;				  
+	InputData SizeOverLifetime;				
+	InputData SpeedOverLifetime;					
+	InputData RotationOverLifetime;		  
+	uint32_t MaxParticles;
+	bool IsLit;
+	float AmbientAmount;
+	
+	InputData RateOverTime;
+	BurstData* Bursts;
+	int BurstsCount;
+	
+	EParticleEmitShape ParticleEmitShape;
+	float Angle;
+	float Radius;
+
+	MonoString* TextureUuid;
+
 	bool IsDirty;
 };
 }

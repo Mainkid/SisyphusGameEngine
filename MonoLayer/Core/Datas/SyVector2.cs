@@ -15,6 +15,9 @@ public struct SyVector2 : IEquatable<SyVector2>
 		X = x;
 		Y = y;
 	}
+
+
+	public SyVector2 FloorToInt() => new SyVector2((int)X, (int)Y);
 	
 
 	public override int GetHashCode()

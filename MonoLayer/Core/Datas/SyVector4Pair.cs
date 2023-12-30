@@ -9,6 +9,14 @@ public struct SyVector4Pair : IEquatable<SyVector4Pair>
 	public SyVector4 B;
 
 
+	public SyVector4Pair(SyVector4 a, SyVector4 b)
+	{
+		A = a;
+		B = b;
+	}
+
+	public SyVector4Pair FloorToInt() => new SyVector4Pair(A.FloorToInt(), B.FloorToInt());
+	
 	public override int GetHashCode()
 		=> HashHelper.Combine(A, B);
 

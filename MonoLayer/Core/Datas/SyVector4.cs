@@ -18,6 +18,9 @@ public struct SyVector4 : IEquatable<SyVector4>
 		W = w;
 	}
 
+
+	public SyVector4 FloorToInt() => new SyVector4((int)X, (int)Y, (int)Z, (int)W);
+	
 	public override int GetHashCode()
 		=> HashHelper.Combine(X, Y, Z, W);
 

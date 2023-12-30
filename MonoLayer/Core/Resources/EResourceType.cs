@@ -4,6 +4,7 @@ public enum EResourceType
 {
 	Model,
 	Material,
-	Cubemap
+	Cubemap,
+	Texture,
 }
 }

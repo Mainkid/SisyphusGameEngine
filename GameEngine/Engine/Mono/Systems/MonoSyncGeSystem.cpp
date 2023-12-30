@@ -389,25 +389,34 @@ void MonoSyncGeSystem::OnUpdateParticlesComp(uint32_t rawEnt, const mono::ProxyP
 		return;
 	}
 
-	//particles->Duration = proxy.Duration;
-	//particles->IsLooping = proxy.IsLooping;
-	//particles->StartDelayTime = proxy.StartDelayTime;
-	//particles->StartLifeTime = proxy.StartLifeTime;
-	//particles->StartSpeed = proxy.StartSpeed;
-	//particles->StartSize = proxy.StartSize;
-	//particles->StartColor = proxy.StartColor;
-	//particles->StartRotation = proxy.StartRotation;
-	//particles->SizeOverLifetime = proxy.SizeOverLifetime;
-	//particles->SpeedOverLifetime = proxy.SpeedOverLifetime;
-	//particles->RotationOverLifetime = proxy.RotationOverLifetime;
-	//particles->MaxParticles = proxy.MaxParticles;
-	//particles->IsLit = proxy.IsLit;
-	//particles->AmbientAmount = proxy.AmbientAmount;
-	//particles->RateOverTime = proxy.RateOverTime;
-	//
-	//particles->ParticleEmitShape = proxy.ParticleEmitShape;
-	//particles->Angle = proxy.Angle;
-	//particles->Radius = proxy.Radius;
+	particles->Duration = proxy.Duration;
+	particles->IsLooping = proxy.IsLooping;
+	particles->StartDelayTime = proxy.StartDelayTime;
+	particles->StartLifeTime = proxy.StartLifeTime;
+	particles->StartSpeed = proxy.StartSpeed;
+	particles->StartSize = proxy.StartSize;
+	particles->StartColor = proxy.StartColor;
+	particles->StartRotation = proxy.StartRotation;
+	particles->SizeOverLifetime = proxy.SizeOverLifetime;
+	particles->SpeedOverLifetime = proxy.SpeedOverLifetime;
+	particles->RotationOverLifetime = proxy.RotationOverLifetime;
+	particles->MaxParticles = proxy.MaxParticles;
+	particles->IsLit = proxy.IsLit;
+	particles->AmbientAmount = proxy.AmbientAmount;
+
+	particles->RateOverTime = proxy.RateOverTime;
+
+	particles->ParticleBursts.clear();
+	for (int i = 0; i < proxy.BurstsCount; i++)
+		particles->ParticleBursts.push_back(proxy.Bursts[i]);
+	
+	particles->ParticleEmitShape = proxy.ParticleEmitShape;
+	particles->Angle = proxy.Angle;
+	particles->Radius = proxy.Radius;
+
+	mono::SyMonoStr rawTextureUuid{ proxy.TextureUuid };
+	particles->TextureUuid = rawTextureUuid.ToUuid();
+
 	
 	particles->IsMonoDirty = false;
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Leopotam.EcsLite;
 using SyEngine.Core.Comps;
 using SyEngine.Core.Datas;
@@ -70,7 +71,7 @@ internal class SyEcsSync
         //Console.WriteLine("[TEST] send rigids");
         SendRigidsToEngine();
         SendSkyboxesToEngine();
-        //SendParticlesToEngine();
+        SendParticlesToEngine();
     }
 
     //-----------------------------------------------------------
@@ -404,6 +405,8 @@ internal class SyEcsSync
     //-----------------------------------------------------------
     private void SendParticlesToEngine()
     {
+        var proxy = new ProxyParticlesComp();
+        
         foreach (int ent in _particlesFilter)
         {
             ref var particles = ref _particlesPool.Get(ent);
@@ -411,27 +414,100 @@ internal class SyEcsSync
                 continue;
             particles.IsDirty = false;
 
-            SyProxyEcs.GeUpdateParticlesComp(_ecs.ToEngineEnt(ent), particles);
+            proxy.Duration             = particles.Duration;
+            proxy.IsLooping            = particles.IsLooping;
+            proxy.StartDelayTime       = particles.StartDelayTime;
+            proxy.StartLifeTime        = particles.StartLifeTime;
+            proxy.StartSpeed           = particles.StartSpeed;
+            proxy.StartSize            = particles.StartSize;
+            proxy.StartColor           = particles.StartColor;
+            proxy.StartRotation        = particles.StartRotation;
+            proxy.SizeOverLifetime     = particles.SizeOverLifetime;
+            proxy.SpeedOverLifetime    = particles.SpeedOverLifetime;
+            proxy.RotationOverLifetime = particles.RotationOverLifetime;
+            proxy.MaxParticles         = particles.MaxParticles < 0 ? 0 : (uint)particles.MaxParticles;
+            proxy.IsLit                = particles.IsLit;
+            proxy.AmbientAmount        = particles.AmbientAmount;
+
+            proxy.RateOverTime = particles.RateOverTime;
+
+            if (particles.Bursts == null)
+            {
+                proxy.BurstsCount = 0;
+                proxy.Bursts      = IntPtr.Zero;
+            }
+            else
+            {
+                proxy.BurstsCount = particles.Bursts.Count;
+                int burstSize = Marshal.SizeOf<ParticlesComp.BurstData>();
+                proxy.Bursts = Marshal.AllocHGlobal(burstSize * proxy.BurstsCount);
+                var ptr = proxy.Bursts;
+                for (var i = 0; i < proxy.BurstsCount; i++)
+                {
+                    Marshal.StructureToPtr(particles.Bursts[i], ptr, true);
+                    ptr += burstSize;
+                }
+            }
+
+            proxy.EmitShape = particles.EmitShape;
+            proxy.Angle     = particles.Angle;
+            proxy.Radius    = particles.Radius;
+
+            proxy.TextureUuid = particles.Texture?.Uuid;
+            
+            SyProxyEcs.GeUpdateParticlesComp(_ecs.ToEngineEnt(ent), proxy);
+            
+            if (proxy.Bursts != IntPtr.Zero)
+                Marshal.FreeHGlobal(proxy.Bursts);
             
             Console.WriteLine($"[TEST] g{ent} particles sent to engine");
         }
     }
 
-    public void ReceiveParticlesFromEngine(uint engineEnt, ParticlesComp proxy)
+    public void ReceiveParticlesFromEngine(uint engineEnt, ProxyParticlesComp proxy)
     {
-        Console.WriteLine($"[TEST] e{engineEnt} start receive particles");
-        
         int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
         if (!_particlesPool.Has(gameEnt))
             _particlesPool.Add(gameEnt);
-        
-        Console.WriteLine($"1");
 
-        _particlesPool.Get(gameEnt) = proxy;
+        ref var particles = ref _particlesPool.Get(gameEnt);
         
-        Console.WriteLine($"2");
+        particles.Duration             = proxy.Duration;
+        particles.IsLooping            = proxy.IsLooping;
+        particles.StartDelayTime       = proxy.StartDelayTime;
+        particles.StartLifeTime        = proxy.StartLifeTime;
+        particles.StartSpeed           = proxy.StartSpeed;
+        particles.StartSize            = proxy.StartSize;
+        particles.StartColor           = proxy.StartColor;
+        particles.StartRotation        = proxy.StartRotation;
+        particles.SizeOverLifetime     = proxy.SizeOverLifetime;
+        particles.SpeedOverLifetime    = proxy.SpeedOverLifetime;
+        particles.RotationOverLifetime = proxy.RotationOverLifetime;
+        particles.MaxParticles         = (int)proxy.MaxParticles;
+        particles.IsLit                = proxy.IsLit;
+        particles.AmbientAmount        = proxy.AmbientAmount;
 
-        proxy.IsDirty = false;
+        particles.RateOverTime = proxy.RateOverTime;
+        
+        if (particles.Bursts == null)
+            particles.Bursts = new List<ParticlesComp.BurstData>();
+        else
+            particles.Bursts.Clear();
+        int burstSize = Marshal.SizeOf<ParticlesComp.BurstData>();
+        for (var i = 0; i < proxy.BurstsCount; i++)
+        {
+            var ptr = proxy.Bursts + i * burstSize;
+            particles.Bursts.Add(Marshal.PtrToStructure<ParticlesComp.BurstData>(ptr));
+        }
+
+        particles.EmitShape = proxy.EmitShape;
+        particles.Angle     = proxy.Angle;
+        particles.Radius    = proxy.Radius;
+
+        if (particles.Texture?.Uuid != proxy.TextureUuid)
+            particles.Texture = proxy.TextureUuid == null ? null : new ResRef<ResTexture>(proxy.TextureUuid);
+
+        particles.IsDirty = false;
         
         Console.WriteLine($"[TEST] g{gameEnt} particles received from engine");
     }

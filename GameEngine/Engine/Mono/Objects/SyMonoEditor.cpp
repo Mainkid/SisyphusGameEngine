@@ -102,7 +102,8 @@ bool SyMonoEditor::GeDrawCurveField(MonoString* rawName, ProxyCurve* curve)
 
 	bool isChanged = false;
 
-	ImGui::Begin(name);
+	ImGui::PushID(name);
+
 	ImGui::Text(name);
 	ImGui::SameLine();
 
@@ -111,23 +112,24 @@ bool SyMonoEditor::GeDrawCurveField(MonoString* rawName, ProxyCurve* curve)
 	float isUsingRaw = isUsing;
 	curve->IsUsing = ProxyVector4{ isUsingRaw, isUsingRaw, isUsingRaw, isUsingRaw };
 
-	if (!isUsing)
-		return isChanged;
+	if (isUsing)
+	{
+		bool isReversed = curve->IsReversed;
+		isChanged |= ImGui::Checkbox("Is Reversed", &isReversed);
 
-	bool isReversed = curve->IsReversed;
-	isChanged |= ImGui::Checkbox("Is Reversed", &isReversed);
+		curve->IsReversed = isReversed;
+		curve->IsUsing.W = isReversed;
 
-	curve->IsReversed = isReversed;
-	curve->IsUsing.W = isReversed;
+		float bezier[5] = { curve->P1.X, curve->P1.Y, curve->P2.X, curve->P2.Y, 0 };
+		isChanged |= ImCurve::Bezier("Curve", bezier);
 
-	float bezier[5] = { curve->P1.X, curve->P1.Y, curve->P2.X, curve->P2.Y, 0 };
-	isChanged |= ImCurve::Bezier("Curve", bezier);
+		curve->P1.X = bezier[0];
+		curve->P1.Y = bezier[1];
+		curve->P2.X = bezier[2];
+		curve->P2.Y = bezier[3];
+	}
 
-	curve->P1.X = bezier[0];
-	curve->P1.Y = bezier[1];
-	curve->P2.X = bezier[2];
-	curve->P2.Y = bezier[3];
-
+	ImGui::PopID();
 	return isChanged;
 }
 
@@ -190,7 +192,9 @@ bool SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType rawRes
 		resType = EAssetType::ASSET_MATERIAL;
 	else if (rawResType == EProxyResourceType::Cubemap)
 		resType = EAssetType::ASSET_CUBEMAP;
-	if (resType == EAssetType::ASSET_NONE)
+	else if (rawResType == EProxyResourceType::Texture)
+		resType = EAssetType::ASSET_TEXTURE;
+	else
 	{
 		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "failed to convert resource type");
 		return false;

@@ -150,7 +150,8 @@ public class SyProxyEditor
 
 			{ typeof(TransformComp), new EditorDrawerCompTransform(this, _ecs) },
 			{ typeof(LightComp), new EditorDrawerCompLight(this, _ecs) },
-			{ typeof(ParticlesComp), new EditorDrawerCompParticles(this, _ecs) }
+			{ typeof(ParticlesComp), new EditorDrawerCompParticles(this, _ecs) },
+			{ typeof(ParticlesComp.BurstData), new EditorDrawerParticlesBurst(this) }
 		};
 
 		var compInterfaceType = typeof(SyEcs.IComp);

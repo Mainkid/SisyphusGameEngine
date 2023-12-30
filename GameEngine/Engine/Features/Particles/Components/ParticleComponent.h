@@ -112,10 +112,10 @@ struct ParticleComponent
 	float Angle;
 	float Radius;
 
+	boost::uuids::uuid TextureUuid;
 	
 
 	//----Engine vars----
-	boost::uuids::uuid TextureUuid;
 	std::shared_ptr<Texture> ParticleTexture;
 	std::vector<Particle> ParticlesList;
 	uint32_t GroupSizeX;
@@ -152,7 +152,7 @@ struct ParticleComponent
 
 	std::vector<int> Indices;
 	std::vector<int> IndexList;
-	size_t Hash;
+	size_t Hash = 0;
 
 
 	bool IsMonoDirty = true; //used only by mono sync systems

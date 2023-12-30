@@ -182,9 +182,9 @@ internal class SyProxyEcs
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	public static extern void GeUpdateParticlesComp(uint engineEnt, ParticlesComp proxy);
+	public static extern void GeUpdateParticlesComp(uint engineEnt, ProxyParticlesComp proxy);
 
-	private void EgUpdateParticlesComp(uint engineEnt, ParticlesComp proxy)
+	private void EgUpdateParticlesComp(uint engineEnt, ProxyParticlesComp proxy)
 	{
 		try
 		{

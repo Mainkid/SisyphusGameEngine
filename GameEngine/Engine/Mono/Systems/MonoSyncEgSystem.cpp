@@ -257,24 +257,44 @@ void MonoSyncEgSystem::SendParticles()
 		proxy.Duration = particles.Duration;
 		proxy.IsLooping = particles.IsLooping;
 		proxy.StartDelayTime = particles.StartDelayTime;
-		//proxy.StartLifeTime = particles.StartLifeTime;
-		//proxy.StartSpeed = particles.StartSpeed;
-		//proxy.StartSize = particles.StartSize;
-		//proxy.StartColor = particles.StartColor;
-		//proxy.StartRotation = particles.StartRotation;
-		//proxy.SizeOverLifetime = particles.SizeOverLifetime;
-		//proxy.SpeedOverLifetime = particles.SpeedOverLifetime;
-		//proxy.RotationOverLifetime = particles.RotationOverLifetime;
-		//proxy.MaxParticles = particles.MaxParticles;
-		//proxy.IsLit = particles.IsLit;
-		//proxy.AmbientAmount = particles.AmbientAmount;
-		//proxy.RateOverTime = particles.RateOverTime;
-		//
-		//proxy.ParticleEmitShape = particles.ParticleEmitShape;
-		//proxy.Angle = particles.Angle;
-		//proxy.Radius = particles.Radius;
-		//proxy.IsDirty = false;
+		proxy.StartLifeTime = particles.StartLifeTime;
+		proxy.StartSpeed = particles.StartSpeed;
+		proxy.StartSize = particles.StartSize;
+		proxy.StartColor = particles.StartColor;
+		proxy.StartRotation = particles.StartRotation;
+		proxy.SizeOverLifetime = particles.SizeOverLifetime;
+		proxy.SpeedOverLifetime = particles.SpeedOverLifetime;
+		proxy.RotationOverLifetime = particles.RotationOverLifetime;
+		proxy.MaxParticles = particles.MaxParticles;
+		proxy.IsLit = particles.IsLit;
+		proxy.AmbientAmount = particles.AmbientAmount;
+		
+		proxy.RateOverTime = particles.RateOverTime;
+
+		if (particles.ParticleBursts.size() == 0)
+		{
+			proxy.BurstsCount = 0;
+			proxy.Bursts = nullptr;
+		}
+		else
+		{
+			proxy.BurstsCount = (int)particles.ParticleBursts.size();
+			proxy.Bursts = new mono::ProxyParticlesComp::BurstData[proxy.BurstsCount];
+			for (int i = 0; i < proxy.BurstsCount; i++)
+				proxy.Bursts[i] = particles.ParticleBursts[i];
+		}
+		
+		proxy.ParticleEmitShape = particles.ParticleEmitShape;
+		proxy.Angle = particles.Angle;
+		proxy.Radius = particles.Radius;
+
+		auto rawTextureUuid = boost::lexical_cast<std::string>(particles.TextureUuid);
+		proxy.TextureUuid = mono_string_new(monoDomain, rawTextureUuid.data());
+
+		proxy.IsDirty = false;
 
 		_monoEcs->EgUpdateParticlesComp.Invoke(static_cast<uint32_t>(ent), proxy);
+
+		delete[] proxy.Bursts;
 	}
 }
