@@ -11,6 +11,8 @@
 #include "../../Core/ServiceLocator.h"
 #include "../../Lighting/Components/LightComponent.h"
 #include "../../Particles/Components/ParticleComponent.h"
+#include "../../Lighting/Components/LightComponent.h"
+#include "../../Sounds/Components/FSoundComponent.h"
 #include "../../../../vendor/ImGui/curve_v122.hpp"
 #include "../../../Mono/SyMono.h"
 #include "../../../Mono/Objects/SyMonoEditor.h"
@@ -68,6 +70,7 @@ SyResult HudPropertiesSystem::Run()
         TransformComponent* tc = _ecs->try_get<TransformComponent>(*ec->hudData.selectedEntityIDs.begin());
         LightComponent* lc = _ecs->try_get<LightComponent>(*ec->hudData.selectedEntityIDs.begin());
         ParticleComponent* pc = _ecs->try_get<ParticleComponent>(*ec->hudData.selectedEntityIDs.begin());
+        FSoundComponent* sc = _ecs->try_get<FSoundComponent>(*ec->hudData.selectedEntityIDs.begin());
 
 
         if (tc)

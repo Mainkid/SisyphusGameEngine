@@ -403,6 +403,15 @@ void HudViewportSystem::DrawMainMenuBar()
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Audio"))
+			{
+				if (ImGui::MenuItem("Sound Component"))
+				{
+					GameObjectHelper::CreateSoundComponent(_ecs);
+				}
+				ImGui::EndMenu();
+			}
+
 			if (ImGui::MenuItem("Open", "Ctrl+O")) {}
 
 			ImGui::EndMenu();
@@ -487,6 +496,7 @@ void HudViewportSystem::DrawPlayMode(ImVec2 cursorStartPostion)
 		ec->playModeState == EngineContext::EPlayModeState::PlayMode)
 	{
 		ec->playModeState = EngineContext::EPlayModeState::PauseMode;
+		CallEvent<SyPauseModeEvent>("SyPauseModeEvent");
 	}
 	offset += dtOffset;
 	ImGui::SameLine(offset);

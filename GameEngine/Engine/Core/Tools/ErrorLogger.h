@@ -21,6 +21,7 @@ else																					\
 
 #define SY_LOG_ERLG(logLevel, ...)	SY_LOG("ERLG",	logLevel, __VA_ARGS__)
 #define SY_LOG_PHYS(logLevel, ...)	SY_LOG("PHYS",	logLevel, __VA_ARGS__)
+#define SY_LOG_AUDI(logLevel, ...)	SY_LOG("AUDI",	logLevel, __VA_ARGS__)
 #define SY_LOG_CORE(logLevel, ...)	SY_LOG("CORE",	logLevel, __VA_ARGS__)
 #define SY_LOG_REND(logLevel, ...)	SY_LOG("REND",	logLevel, __VA_ARGS__)
 #define SY_LOG_HUD(logLevel, ...)	SY_LOG("HUD ",	logLevel, __VA_ARGS__)

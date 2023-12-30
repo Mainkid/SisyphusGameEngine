@@ -12,6 +12,7 @@
 #include "SimpleMath.h"
 #include "Serialization/Serializable.h"
 
+
 #define SY_PI 3.14f
 #define SY_PI2 SY_PI / 2
 
@@ -97,10 +98,10 @@ int main()
     // ser.Deserialize(json, *ecs);
     //---------------------------------------------
 
+    //sound
+    GameObjectHelper::CreateSoundComponent(ecs);
+    GameObjectHelper::CreateSoundComponent(ecs);
 
     EngineCore::instance()->Update();
-    EngineCore::instance()->ShutDown();
-    
-
-    
+    EngineCore::instance()->ShutDown();   
 }
