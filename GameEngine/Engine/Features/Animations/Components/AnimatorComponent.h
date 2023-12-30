@@ -40,5 +40,5 @@ public:
 	std::shared_ptr<SkeletalAnimation> m_CurrentAnimation;
 	float m_CurrentTime;
 	float m_DeltaTime;
-	EAnimState state = EAnimState::Playing;
+	EAnimState state = EAnimState::Disabled;
 };

@@ -32,6 +32,9 @@ SyResult SkeletalAnimationSystem::Run()
         for (auto& ent : View)
         {
             auto& animator = _ecs->get<AnimatorComponent>(ent);
+            animator.m_CurrentTime = 0.0f;
+            animator.m_DeltaTime = 0.0f;
+            CalculateBoneTransform(animator, &animator.m_CurrentAnimation->m_RootNode, Matrix::Identity);
             animator.state = AnimatorComponent::EAnimState::Disabled;
         }
     }
@@ -68,6 +71,7 @@ SyResult SkeletalAnimationSystem::Run()
         auto& eventComp = viewEvents.get<SyAnimatorComponentAdded>(eventID);
         MeshComponent& meshComp = _ecs->get<MeshComponent>(eventComp.id);
         MeshLoader::LoadAnimation(rs->FindFilePathByUUID(meshComp.modelUUID), meshComp.model->m_BoneInfoMap);
+        
         std::cout << " ";
     }
 
@@ -88,6 +92,10 @@ SyResult SkeletalAnimationSystem::Run()
                 animator.m_CurrentAnimation->m_BoneInfoMap = meshComp.model->m_BoneInfoMap;
                 animator.m_CurrentTime = 0.0f;
                 animator.m_DeltaTime = 0.0f;
+                AnimatorComponent::EAnimState prevAnimState = animator.state;
+                CalculateBoneTransform(animator, &animator.m_CurrentAnimation->m_RootNode, Matrix::Identity);
+                animator.state = prevAnimState;
+                
             }
         }
         

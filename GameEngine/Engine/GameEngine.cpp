@@ -73,7 +73,7 @@ int main()
     //ecs->emplace<CameraComponent>(staticMesh, ECameraType::PlayerCamera);
     
     auto running = GameObjectHelper::Create(ecs, "Running", Vector3(0, 0, 0));
-    GameObjectHelper::AddMeshComponent(ecs, running, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath("Game\\Assets\\Anims\\Runner.dae"));
+    GameObjectHelper::AddMeshComponent(ecs, running, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath("Game\\Assets\\Anims\\Heart.dae"));
     GameObjectHelper::AddAnimatorComponent(ecs, running);
     
     GameObjectHelper::CreateCamera(ecs);
