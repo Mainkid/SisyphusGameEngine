@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 
-#include "../SyMonoObj.h"
-#include "../SyMonoMethod.h"
+#include "../Api/SyMonoObj.h"
+#include "../Api/SyMonoMethod.h"
 
 namespace mono
 {

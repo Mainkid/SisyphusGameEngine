@@ -17,7 +17,8 @@ public struct RigidComp : SyEcs.IComp
 
 
 	internal int? Hash;
-
+	
+	
 	public override int GetHashCode()
 		=> HashHelper.Combine(
 			Type,

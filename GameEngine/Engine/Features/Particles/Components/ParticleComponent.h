@@ -156,6 +156,7 @@ struct ParticleComponent
 
 
 	bool IsMonoDirty = true; //used only by mono sync systems
+	size_t MonoHash = 0; //used only by mono sync systems
 	
 
 	//SER_COMP(ParticleComponent, SharedParticlesDataUuid)

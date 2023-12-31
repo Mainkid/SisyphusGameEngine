@@ -6,5 +6,6 @@ public enum EResourceType
 	Material,
 	Cubemap,
 	Texture,
+	Sound,
 }
 }

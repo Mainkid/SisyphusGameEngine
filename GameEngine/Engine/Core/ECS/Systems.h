@@ -39,6 +39,6 @@
 #include "../../Features/Sounds/Systems/SoundSystem.h"
 
 #include "../Mono/Systems/MonoSyncEgSystem.h"
-#include "../Mono/Systems/MonoSyncGeSystem.h"
+#include "../Mono/Systems/MonoGameLoopSystem.h"
 
 #include "../../Features/Events/Systems/PrepareEventsSystem.h"

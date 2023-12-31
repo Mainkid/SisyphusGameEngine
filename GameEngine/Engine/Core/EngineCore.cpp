@@ -139,7 +139,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<HudPostRenderSystem>();
 
 	_systems.Add<MonoHotReloadSystem>();
-	_systems.Add<MonoSyncGeSystem>();
+	_systems.Add<MonoGameLoopSystem>();
 
 	_systems.Add<SyPrepareEventsSystem>();
 

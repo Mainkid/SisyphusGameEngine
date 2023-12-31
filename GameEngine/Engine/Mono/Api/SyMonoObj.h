@@ -4,7 +4,7 @@
 
 #include "mono/jit/jit.h"
 
-#include "../Core/Tools/ErrorLogger.h"
+#include "../../Core/Tools/ErrorLogger.h"
 
 namespace mono
 {
@@ -23,9 +23,10 @@ namespace mono
 		MonoClass* GetClass() const;
 		MonoObject* GetInstance() const;
 
-	protected:
+
 		void BindCallback(const std::string& name, const void* cb);
 
+	protected:
 		virtual const std::string& GetMonoClassName() = 0;
 		virtual const std::string& GetNamespace() = 0;
 		virtual bool IsUserClass() = 0;

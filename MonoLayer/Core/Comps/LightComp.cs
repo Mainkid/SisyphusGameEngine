@@ -1,4 +1,5 @@
-﻿using SyEngine.Core.Datas;
+﻿using Leopotam.EcsLite;
+using SyEngine.Core.Datas;
 using SyEngine.Core.Helpers;
 
 namespace SyEngine.Core.Comps
@@ -12,10 +13,13 @@ public struct LightComp : SyEcs.IComp
 	public bool       ShouldCastShadows;
 
 	internal int? Hash;
+    
+
 
 	public override int GetHashCode()
 		=> HashHelper.Combine(Type, Behaviour, Color, PointLightRadius, ShouldCastShadows);
-
+	
+	
 	public enum EType
 	{
 		Ambient,

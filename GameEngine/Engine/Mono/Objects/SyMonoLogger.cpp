@@ -1,6 +1,6 @@
 #include "SyMonoLogger.h"
 
-#include "../SyMonoStr.h"
+#include "../Api/SyMonoStr.h"
 
 using namespace mono;
 

@@ -198,5 +198,19 @@ internal class SyProxyEcs
 
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	public static extern void GeUpdateSoundComp(uint engineEnt, ProxySoundComp proxy);
+
+	private void EgUpdateSoundComp(uint engineEnt, ProxySoundComp proxy)
+	{
+		try
+		{
+			Sync.ReceiveSoundFromEngine(engineEnt, proxy);
+		}
+		catch (Exception e)
+		{
+			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
+		}
+	}
 }
 }

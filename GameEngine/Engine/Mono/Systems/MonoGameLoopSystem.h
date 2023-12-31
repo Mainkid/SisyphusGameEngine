@@ -1,12 +1,16 @@
 #pragma once
+
 #include "../../Core/ECS/SystemBase.h"
+
+struct EngineContext;
 
 namespace mono
 {
 	class SyMonoEcs;
+	class SyMonoGame;
 }
 
-class MonoSyncEgSystem : public SystemBase
+class MonoGameLoopSystem : public SystemBase
 {
 public:
 	SyResult Init() override;
@@ -15,4 +19,8 @@ public:
 
 private:
 	mono::SyMonoEcs* _monoEcs = nullptr;
+	mono::SyMonoGame* _monoGame = nullptr;
+
+	std::chrono::time_point<std::chrono::steady_clock> _testTimeOnPrevFrame;
+	float _testTotalTime = 0;
 };

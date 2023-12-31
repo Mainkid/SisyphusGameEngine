@@ -13,7 +13,8 @@ public enum EEngineCompId
 	Collider,
 	Rigid,
 	Skybox,
-	ParticlesComp,
+	Particles,
+	Sound,
 }
 
 public static class EngineCompIdHelper
@@ -27,7 +28,8 @@ public static class EngineCompIdHelper
 		{typeof(ColliderComp), EEngineCompId.Collider},
 		{typeof(RigidComp), EEngineCompId.Rigid},
 		{typeof(SkyboxComp), EEngineCompId.Skybox},
-		{typeof(ParticlesComp), EEngineCompId.ParticlesComp},
+		{typeof(ParticlesComp), EEngineCompId.Particles},
+		{typeof(SoundComp), EEngineCompId.Sound}
 	};
 
 	public static EEngineCompId? GetFromCompType(Type compType)

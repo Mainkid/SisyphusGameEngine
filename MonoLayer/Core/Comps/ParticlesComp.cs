@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Leopotam.EcsLite;
 using SyEngine.Core.Datas;
 using SyEngine.Core.Helpers;
 using SyEngine.Core.Resources;
@@ -18,10 +19,11 @@ public struct ParticlesComp : SyEcs.IComp
 	public InputData SizeOverLifetime;
 	public InputData SpeedOverLifetime;
 	public InputData RotationOverLifetime;
-	public int       MaxParticles;
-	public bool      IsLit;
-	public float     AmbientAmount;
 
+	public bool  IsLit;
+	public float AmbientAmount;
+	
+	public int             MaxParticles;
 	public InputData       RateOverTime;
 	public List<BurstData> Bursts;
 
@@ -32,7 +34,7 @@ public struct ParticlesComp : SyEcs.IComp
 	public ResRef<ResTexture> Texture;
 
 	public bool IsDirty;
-
+    
 
 	public struct InputData
 	{

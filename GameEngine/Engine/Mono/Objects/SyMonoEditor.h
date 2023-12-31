@@ -1,7 +1,7 @@
 #pragma once
-#include "../SyMonoMethod.h"
-#include "../SyMonoObj.h"
-#include "../SyMonoProxyDatas.h"
+#include "../Api/SyMonoMethod.h"
+#include "../Api/SyMonoObj.h"
+#include "../Ecs/SyMonoProxyDatas.h"
 
 class ResourceService;
 

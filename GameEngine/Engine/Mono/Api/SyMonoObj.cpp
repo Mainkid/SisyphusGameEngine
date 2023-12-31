@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "SyMonoRuntime.h"
+#include "../SyMonoRuntime.h"
 
 
 using namespace mono;

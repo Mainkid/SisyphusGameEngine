@@ -22,6 +22,7 @@ internal class SyEcsSync
     private readonly EcsPool<RigidComp>       _rigidsPool;
     private readonly EcsPool<SkyboxComp>      _skyboxesPool;
     private readonly EcsPool<ParticlesComp>   _particlesPool;
+    private readonly EcsPool<SoundComp>       _soundsPool;
 
     private readonly EcsFilter _sceneObjectsFilter;
     private readonly EcsFilter _transformsFilter;
@@ -31,6 +32,7 @@ internal class SyEcsSync
     private readonly EcsFilter _rigidsFilter;
     private readonly EcsFilter _skyboxesFilter;
     private readonly EcsFilter _particlesFilter;
+    private readonly EcsFilter _soundsFilter;
 
     public SyEcsSync(SyEcs ecs)
     {
@@ -44,6 +46,7 @@ internal class SyEcsSync
         _rigidsPool       = ecs.World.GetPool<RigidComp>();
         _skyboxesPool     = ecs.World.GetPool<SkyboxComp>();
         _particlesPool    = ecs.World.GetPool<ParticlesComp>();
+        _soundsPool       = ecs.World.GetPool<SoundComp>();
 
         _sceneObjectsFilter = ecs.World.Filter<SceneObjectComp>().End();
         _transformsFilter   = ecs.World.Filter<TransformComp>().End();
@@ -53,6 +56,7 @@ internal class SyEcsSync
         _rigidsFilter       = ecs.World.Filter<RigidComp>().End();
         _skyboxesFilter     = ecs.World.Filter<SkyboxComp>().End();
         _particlesFilter    = ecs.World.Filter<ParticlesComp>().End();
+        _soundsFilter       = ecs.World.Filter<SoundComp>().End();
     }
 
     //-----------------------------------------------------------
@@ -72,6 +76,7 @@ internal class SyEcsSync
         SendRigidsToEngine();
         SendSkyboxesToEngine();
         SendParticlesToEngine();
+        SendSoundsToEngine();
     }
 
     //-----------------------------------------------------------
@@ -514,5 +519,47 @@ internal class SyEcsSync
 
     //-----------------------------------------------------------
     //-----------------------------------------------------------
+    private void SendSoundsToEngine()
+    {
+        foreach (int ent in _soundsFilter)
+        {
+            ref var sound = ref _soundsPool.Get(ent);
+            int     hash   = sound.GetHashCode();
+            if (hash == sound.Hash)
+                continue;
+            sound.Hash = hash;
+
+            var proxy = new ProxySoundComp
+            {
+                IsPlaying = sound.IsPlaying,
+                IsLooping = sound.IsLooping,
+                Is3d      = sound.Is3d,
+                Volume    = sound.Volume,
+                SoundUuid = sound.Sound?.Uuid
+            };
+            
+            SyProxyEcs.GeUpdateSoundComp(_ecs.ToEngineEnt(ent), proxy);
+            
+            Console.WriteLine($"[TEST] g{ent} skybox sent to engine");
+        }
+    }
+
+    public void ReceiveSoundFromEngine(uint engineEnt, ProxySoundComp proxy)
+    {
+        int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
+        if (!_soundsPool.Has(gameEnt))
+            _soundsPool.Add(gameEnt);
+
+        ref var sound = ref _soundsPool.Get(gameEnt);
+        sound.IsPlaying = proxy.IsPlaying;
+        sound.IsLooping = proxy.IsLooping;
+        sound.Is3d      = proxy.Is3d;
+        sound.Volume    = proxy.Volume;
+        sound.Sound     = proxy.SoundUuid == null ? null : new ResRef<ResSound>(proxy.SoundUuid);
+
+        sound.Hash = sound.GetHashCode();
+        
+        Console.WriteLine($"[TEST] g{gameEnt} skybox received from engine");
+    }
 }
 }

@@ -19,9 +19,9 @@
     <ClCompile Include="Engine\Features\Physics\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorGridRenderSystem.cpp" />
     <ClCompile Include="Engine\Mono\SyMono.cpp" />
-    <ClCompile Include="Engine\Mono\SyMonoProxyDatas.h" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoProxyDatas.h" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoGame.cpp" />
-    <ClCompile Include="Engine\Mono\SyMonoObj.cpp" />
+    <ClCompile Include="Engine\Mono\Api\SyMonoObj.cpp" />
     <ClCompile Include="Engine\Mono\SyMonoRuntime.cpp" />
     <ClCompile Include="Engine\Scene\CameraHelper.cpp" />
     <ClCompile Include="Engine\Scene\GameObjectHelper.cpp" />
@@ -118,7 +118,7 @@
     <ClCompile Include="Engine\Mono\SyMonoObj.cpp" />
     <ClCompile Include="Engine\Mono\SyMonoRuntime.cpp" />
     <ClCompile Include="Engine\Mono\SyMonoProxyDatas.h" />
-    <ClCompile Include="Engine\Mono\Systems\MonoSyncGeSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Systems\MonoGameLoopSystem.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoLogger.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoEcs.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoGameConfig.cpp" />
@@ -134,11 +134,18 @@
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
     <ClCompile Include="Engine\Mono\Systems\MonoSyncEgSystem.cpp" />
-    <ClCompile Include="Engine\Mono\Helpers\SyMonoHashHelper.h" />
-    <ClCompile Include="Engine\Mono\Helpers\SyMonoHashHelper.cpp" />
-    <ClCompile Include="Engine\Mono\SyMonoStr.cpp" />
+    <ClCompile Include="Engine\Mono\Api\SyMonoStr.cpp" />
     <ClCompile Include="Engine\Mono\Systems\MonoHotReloadSystem.cpp" />
     <ClCompile Include="Engine\Features\Sounds\Systems\SoundSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncTransform.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncSceneObject.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncMesh.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncLight.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncCollider.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncRigid.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncSkybox.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncParticles.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncSound.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -162,8 +169,8 @@
     <ClInclude Include="Engine\Components\Model.h" />
     <ClInclude Include="Engine\Mono\SyMono.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoGame.h" />
-    <ClInclude Include="Engine\Mono\SyMonoMethod.h" />
-    <ClInclude Include="Engine\Mono\SyMonoObj.h" />
+    <ClInclude Include="Engine\Mono\Api\SyMonoMethod.h" />
+    <ClInclude Include="Engine\Mono\Api\SyMonoObj.h" />
     <ClInclude Include="Engine\Mono\SyMonoRuntime.h" />
     <ClInclude Include="Engine\Scene\CameraHelper.h" />
     <ClInclude Include="Engine\Components\SkyboxComponent.h" />
@@ -356,12 +363,11 @@
     <ClInclude Include="Engine\Core\Tools\Structures\RingBuffer.h" />
     <ClInclude Include="Engine\Features\Events\Systems\PrepareEventsSystem.h" />
     <ClInclude Include="Engine\Core\Tools\MathHelper.h" />
-    <ClInclude Include="Engine\Mono\Objects\ISyMonoEcsCallbacks.h" />
     <ClInclude Include="Engine\Mono\SyMono.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoGame.h" />
     <ClInclude Include="Engine\Mono\SyMonoObj.h" />
     <ClInclude Include="Engine\Mono\SyMonoRuntime.h" />
-    <ClInclude Include="Engine\Mono\Systems\MonoSyncGeSystem.h" />
+    <ClInclude Include="Engine\Mono\Systems\MonoGameLoopSystem.h" />
     <ClInclude Include="Engine\Mono\SyMonoMethod.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoLogger.h" />
@@ -392,7 +398,7 @@
     <ClInclude Include="Engine\Core\Tools\Structures\Geometry.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.h" />
     <ClInclude Include="Engine\Features\Events\Tags\SyEventTag.h" />
-    <ClInclude Include="Engine\Mono\SyMonoStr.h" />
+    <ClInclude Include="Engine\Mono\Api\SyMonoStr.h" />
     <ClInclude Include="Engine\Mono\Systems\MonoHotReloadSystem.h" />
     <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
     <ClInclude Include="Engine\Scene\Prefab.h" />
@@ -407,6 +413,17 @@
     <ClInclude Include="vendor\FMod\api\core\inc\fmod_errors.h" />
     <ClInclude Include="vendor\FMod\api\core\inc\fmod_output.h" />
     <ClInclude Include="Engine\Events\SySoundDeletedEvent.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncTransform.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncBase.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncSceneObject.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncMesh.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncLight.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncCollider.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncRigid.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncSkybox.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncParticles.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncSound.h" />
+    <ClInclude Include="Engine\Mono\Ecs\ISyMonoEcsSync.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Downloads\skybox.jpg" />

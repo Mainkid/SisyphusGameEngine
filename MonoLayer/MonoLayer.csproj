@@ -44,6 +44,7 @@
         <Compile Include="Core\Comps\ParticlesComp.cs" />
         <Compile Include="Core\Comps\SceneObjectComp.cs" />
         <Compile Include="Core\Comps\SkyboxComp.cs" />
+        <Compile Include="Core\Comps\SoundComp.cs" />
         <Compile Include="Core\Datas\SyCurve.cs" />
         <Compile Include="Core\Datas\SyVector2.cs" />
         <Compile Include="Core\Datas\SyVector4Pair.cs" />
@@ -56,9 +57,11 @@
         <Compile Include="Core\ProxyComps\ProxyRigidComp.cs" />
         <Compile Include="Core\ProxyComps\ProxySceneObjectComp.cs" />
         <Compile Include="Core\ProxyComps\ProxySkyboxComp.cs" />
+        <Compile Include="Core\ProxyComps\ProxySoundComp.cs" />
         <Compile Include="Core\Resources\EResourceType.cs" />
         <Compile Include="Core\Resources\ResHelper.cs" />
         <Compile Include="Core\Resources\ResCubemap.cs" />
+        <Compile Include="Core\Resources\ResSound.cs" />
         <Compile Include="Core\Resources\ResTexture.cs" />
         <Compile Include="Core\Resources\SyResManager.cs" />
         <Compile Include="Core\Resources\ResMaterial.cs" />

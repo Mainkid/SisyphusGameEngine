@@ -22,8 +22,8 @@ public class SyEcs
         _singletonEntity = World.NewEntity();
         World.GetPool<SingletonsTag>().Add(_singletonEntity);
 
-        _sceneObjectsPool      = World.GetPool<SceneObjectComp>();
-        _transformsPool = World.GetPool<TransformComp>();
+        _sceneObjectsPool = World.GetPool<SceneObjectComp>();
+        _transformsPool   = World.GetPool<TransformComp>();
     }
 
     //-----------------------------------------------------------
@@ -112,48 +112,7 @@ public class SyEcs
             SyLog.Debug(ELogTag.Ecs, $"add {engineCompId} to g{ent}");
             SyProxyEcs.GeAddEngineComp(engineEnt, engineCompId.Value);
         }
-
-        ref var comp = ref World.GetPool<T>().Add(ent);
-        
-        switch (engineCompId)
-        {
-            case EEngineCompId.SceneObject: //impossible
-                break;
-            case EEngineCompId.Transform: //impossible
-                break;
-            case EEngineCompId.Mesh:
-                break;
-            case EEngineCompId.Light:
-                ref var light = ref World.GetPool<LightComp>().Get(ent);
-                light.Type              = LightComp.EType.PointLight;
-                light.Behaviour         = LightComp.EBehaviour.Movable;
-                light.Color             = SyColor.White;
-                light.PointLightRadius  = 1;
-                light.ShouldCastShadows = false;
-                break;
-            case EEngineCompId.Collider:
-                ref var collider = ref World.GetPool<ColliderComp>().Get(ent);
-                collider.Type   = ColliderComp.EType.Box;
-                collider.Extent = SyVector3.One;
-                break;
-            case EEngineCompId.Rigid:
-                ref var rigid = ref World.GetPool<RigidComp>().Get(ent);
-                rigid.Type = RigidComp.EType.Dynamic;
-                rigid.Mass = 1f;
-                //comp.IsAutoMass  = true;
-                rigid.IsGravityOn = true;
-                break;
-            case EEngineCompId.Skybox:
-                break;
-            case EEngineCompId.ParticlesComp:
-                break;
-            case null:
-                break;
-            default:
-                throw new Exception($"{engineCompId} is not implemented");
-        }
-
-        return ref comp;
+        return ref World.GetPool<T>().Add(ent);
     }
 
     public void RemoveComp<T>(int ent) where T : struct, IComp
@@ -204,6 +163,8 @@ public class SyEcs
             AddComp<SkyboxComp>(ent);
         else if (compType == typeof(ParticlesComp))
             AddComp<ParticlesComp>(ent);
+        else if (compType == typeof(SoundComp))
+            AddComp<SoundComp>(ent);
         else
             World.GetPoolByType(compType).AddRaw(ent, Activator.CreateInstance(compType));
     }
@@ -226,6 +187,8 @@ public class SyEcs
             RemoveComp<SkyboxComp>(ent);
         else if (compType == typeof(ParticlesComp))
             RemoveComp<ParticlesComp>(ent);
+        else if (compType == typeof(SoundComp))
+            RemoveComp<SoundComp>(ent);
         else
             World.GetPoolByType(compType).Del(ent);
     }

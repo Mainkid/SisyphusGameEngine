@@ -8,7 +8,7 @@ SyResult MonoHotReloadSystem::Init()
 {
 	_mono = ServiceLocator::instance()->Get<mono::SyMono>();
 
-	//_mono->HotReload();
+	_mono->GetEcs()->BindEcs(_ecs);
 
 	return {};
 }

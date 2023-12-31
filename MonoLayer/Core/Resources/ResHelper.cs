@@ -15,6 +15,8 @@ public static class ResHelper
 			return EResourceType.Cubemap;
 		if (type == typeof(ResTexture))
 			return EResourceType.Texture;
+		if (type == typeof(ResSound))
+			return EResourceType.Sound;
 
 		throw new Exception($"unknown res type {type.FullName}");
 	}

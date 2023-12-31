@@ -5,7 +5,7 @@
 #include "../../Core/Tools/MathHelper.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../Features/Resources/ResourceService.h"
-#include "../SyMonoStr.h"
+#include "../Api/SyMonoStr.h"
 
 using namespace mono;
 
@@ -194,6 +194,8 @@ bool SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType rawRes
 		resType = EAssetType::ASSET_CUBEMAP;
 	else if (rawResType == EProxyResourceType::Texture)
 		resType = EAssetType::ASSET_TEXTURE;
+	else if (rawResType == EProxyResourceType::Sound)
+		resType = EAssetType::ASSET_SOUND;
 	else
 	{
 		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "failed to convert resource type");

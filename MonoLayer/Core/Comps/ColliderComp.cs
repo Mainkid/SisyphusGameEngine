@@ -1,4 +1,5 @@
-﻿using SyEngine.Core.Datas;
+﻿using Leopotam.EcsLite;
+using SyEngine.Core.Datas;
 using SyEngine.Core.Helpers;
 
 namespace SyEngine.Core.Comps
@@ -15,7 +16,7 @@ public struct ColliderComp : SyEcs.IComp
 
 	public override int GetHashCode()
 		=> HashHelper.Combine(Type, Extent, Radius, HalfHeight);
-
+	
 
 	public enum EType
 	{

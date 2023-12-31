@@ -1,87 +1,92 @@
 #include "SyMonoEcs.h"
-#include "ISyMonoEcsCallbacks.h"
+#include "../../Components/GameObjectComp.h"
+#include "../../Components/TransformComponent.h"
+#include "../../Scene/GameObjectHelper.h"
+#include "../Ecs/SyMonoEcsSyncCollider.h"
+#include "../Ecs/SyMonoEcsSyncLight.h"
+#include "../Ecs/SyMonoEcsSyncMesh.h"
+#include "../Ecs/SyMonoEcsSyncParticles.h"
+#include "../Ecs/SyMonoEcsSyncRigid.h"
+#include "../Ecs/SyMonoEcsSyncSceneObject.h"
+#include "../Ecs/SyMonoEcsSyncSkybox.h"
+#include "../Ecs/SyMonoEcsSyncSound.h"
+#include "../Ecs/SyMonoEcsSyncTransform.h"
 
 using namespace mono;
 
-void SyMonoEcs::GeCreateEntity()
+uint32_t SyMonoEcs::GeCreateEntity()
 {
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnCreateEntity();
+	if (_instance == nullptr)
+		return 0;
+	auto ecs = _instance->_ecs;
+	if (ecs == nullptr)
+		return 0;
+
+	auto ent = ecs->create();
+	ecs->emplace<GameObjectComp>(ent).Name = "C# entity";
+	ecs->emplace<TransformComponent>(ent);
+
+	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "engine entity e%d created", static_cast<int>(ent));
+	std::cout << "[mono] engine entity " << static_cast<uint32_t>(ent) << " created" << std::endl;
+
+	return static_cast<uint32_t>(ent);
 }
 
 void SyMonoEcs::GeDestroyEntity(uint32_t rawEnt)
 {
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnDestroyEntity(rawEnt);
+	if (_instance == nullptr || _instance->_ecs == nullptr)
+		return;
+
+	_instance->DestroyEntity(static_cast<entt::entity>(rawEnt), false);
 }
 
 void SyMonoEcs::GeAddComp(uint32_t rawEnt, EProxyCompId id)
 {
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnAddComp(rawEnt, id);
+	if (_instance == nullptr || _instance->_ecs == nullptr)
+		return;
+
+	_instance->GetSync(id)->AddComp(static_cast<entt::entity>(rawEnt));
 }
 void SyMonoEcs::GeRemoveComp(uint32_t rawEnt, EProxyCompId id)
 {
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnRemoveComp(rawEnt, id);
+	if (_instance == nullptr || _instance->_ecs == nullptr)
+		return;
+
+	_instance->GetSync(id)->RemoveComp(static_cast<entt::entity>(rawEnt));
 }
 
-void SyMonoEcs::GeUpdateSceneObjectComp(uint32_t rawEnt, ProxySceneObjectComp proxy)
+
+void SyMonoEcs::BindEcs(entt::registry* ecs)
 {
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnUpdateSceneObjectComp(rawEnt, proxy);
+	_ecs = ecs;
 }
 
-
-void SyMonoEcs::GeUpdateTransformComp(uint32_t rawEnt, ProxyTransformComp proxy)
+ISyMonoEcsSync* SyMonoEcs::GetSync(EProxyCompId id)
 {
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnUpdateTransformComp(rawEnt, proxy);
+	return _compIdToSync[id];
 }
 
-void SyMonoEcs::GeUpdateMeshComp(uint32_t rawEnt, ProxyMeshComp proxy)
+void SyMonoEcs::DestroyEntity(entt::entity ent, bool isRecursionStep)
 {
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnUpdateMeshComp(rawEnt, proxy);
+	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "engine entity e%d destroy", static_cast<int>(ent));
+
+	auto tf = _ecs->try_get<TransformComponent>(ent);
+	if (tf != nullptr)
+	{
+		if (tf->children.size() > 0)
+		{
+			for (auto childEnt : tf->children)
+			{
+				SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "continue entity destroy cascade, e%d destroy", static_cast<int>(childEnt));
+				DestroyEntity(childEnt, true);
+				_egDestroyEntity.Invoke(static_cast<uint32_t>(childEnt));
+			}
+		}
+		if (!isRecursionStep)
+			GameObjectHelper::SetParent(_ecs, ent, entt::null);
+	}
+	_ecs->destroy(ent);
 }
-
-void SyMonoEcs::GeUpdateLightComp(uint32_t rawEnt, ProxyLightComp proxy)
-{
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnUpdateLightComp(rawEnt, proxy);
-}
-
-void SyMonoEcs::GeUpdateColliderComp(uint32_t rawEnt, ProxyColliderComp proxy)
-{
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnUpdateColliderComp(rawEnt, proxy);
-}
-
-void SyMonoEcs::GeUpdateRigidComp(uint32_t rawEnt, ProxyRigidComp proxy)
-{
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnUpdateRigidComp(rawEnt, proxy);
-}
-
-void SyMonoEcs::GeUpdateSkyboxComp(uint32_t rawEnt, ProxySkyboxComp proxy)
-{
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnUpdateSkyboxComp(rawEnt, proxy);
-}
-
-void SyMonoEcs::GeUpdateParticlesComp(uint32_t rawEnt, ProxyParticlesComp proxy)
-{
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnUpdateParticlesComp(rawEnt, proxy);
-}
-
-
-void SyMonoEcs::SetCallbackReceiver(ISyMonoEcsCallbacks* receiver)
-{
-	_cbReceiver = receiver;
-}
-
-
 
 SyResult SyMonoEcs::OnAfterCreate()
 {
@@ -90,15 +95,7 @@ SyResult SyMonoEcs::OnAfterCreate()
 	_instance = this;
 
 	SY_RESULT_CHECK(EgSyncEngineWithGame.Bind(this));
-	SY_RESULT_CHECK(EgDestroyEntity.Bind(this));
-	SY_RESULT_CHECK(EgUpdateSceneObjectComp.Bind(this));
-	SY_RESULT_CHECK(EgUpdateTransformComp.Bind(this));
-	SY_RESULT_CHECK(EgUpdateMeshComp.Bind(this));
-	SY_RESULT_CHECK(EgUpdateLightComp.Bind(this));
-	SY_RESULT_CHECK(EgUpdateColliderComp.Bind(this));
-	SY_RESULT_CHECK(EgUpdateRigidComp.Bind(this));
-	SY_RESULT_CHECK(EgUpdateSkyboxComp.Bind(this));
-	SY_RESULT_CHECK(EgUpdateParticlesComp.Bind(this));
+	SY_RESULT_CHECK(_egDestroyEntity.Bind(this));
 
 	BindCallback(GE_CREATE_ENTITY, &GeCreateEntity);
 	BindCallback(GE_DESTROY_ENTITY, &GeDestroyEntity);
@@ -106,14 +103,15 @@ SyResult SyMonoEcs::OnAfterCreate()
 	BindCallback(GE_ADD_COMP, &GeAddComp);
 	BindCallback(GE_REMOVE_COMP, &GeRemoveComp);
 
-	BindCallback(GE_UPDATE_SCENE_OBJECT_COMP, &GeUpdateSceneObjectComp);
-	BindCallback(GE_UPDATE_TRANSFORM_COMP, &GeUpdateTransformComp);
-	BindCallback(GE_UPDATE_MESH_COMP, &GeUpdateMeshComp);
-	BindCallback(GE_UPDATE_LIGHT_COMP, &GeUpdateLightComp);
-	BindCallback(GE_UPDATE_COLLIDER_COMP, &GeUpdateColliderComp);
-	BindCallback(GE_UPDATE_RIGID_COMP, &GeUpdateRigidComp);
-	BindCallback(GE_UPDATE_SKYBOX_COMP, &GeUpdateSkyboxComp);
-	BindCallback(GE_UPDATE_PARTICLES_COMP, &GeUpdateParticlesComp);
+	AddSync<SyMonoEcsSyncSceneObject>();
+	AddSync<SyMonoEcsSyncTransform>();
+	AddSync<SyMonoEcsSyncMesh>();
+	AddSync<SyMonoEcsSyncLight>();
+	AddSync<SyMonoEcsSyncCollider>();
+	AddSync<SyMonoEcsSyncRigid>();
+	AddSync<SyMonoEcsSyncSkybox>();
+	AddSync<SyMonoEcsSyncParticles>();
+	AddSync<SyMonoEcsSyncSound>();
 
 	return {};
 }
@@ -123,15 +121,12 @@ SyResult SyMonoEcs::OnBeforeDestroy()
 	_instance = nullptr;
 
 	EgSyncEngineWithGame.UnBind();
-	EgDestroyEntity.UnBind();
-	EgUpdateSceneObjectComp.UnBind();
-	EgUpdateTransformComp.UnBind();
-	EgUpdateMeshComp.UnBind();
-	EgUpdateLightComp.UnBind();
-	EgUpdateColliderComp.UnBind();
-	EgUpdateRigidComp.UnBind();
-	EgUpdateSkyboxComp.UnBind();
-	EgUpdateParticlesComp.UnBind();
+	_egDestroyEntity.UnBind();
+
+	for (auto pair : _syncTypeToSync)
+		delete pair.second;
+	_syncTypeToSync.clear();
+	_compIdToSync.clear();
 
 	return {};
 }
