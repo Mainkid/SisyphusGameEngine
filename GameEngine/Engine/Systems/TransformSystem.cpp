@@ -31,7 +31,7 @@ SyResult TransformSystem::Run()
 		boost::hash_combine(lHash, tc.localPosition);
 		boost::hash_combine(lHash, tc.localRotation);
 		boost::hash_combine(lHash, tc.localScale);
-
+		
 		if (tc.worldHash != wHash)
 		{
 			tc.worldHash = wHash;

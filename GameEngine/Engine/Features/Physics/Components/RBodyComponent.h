@@ -1,6 +1,6 @@
 #pragma once
 #include <PxMaterial.h>
-
+#include <boost/functional/hash.hpp>
 #include "../../../Core/Tools/Structures/Vector.h"
 #include "../../../Core/Tools/ErrorLogger.h"
 #include "../../../Core/Tools/FlagBitmask.h"
@@ -36,15 +36,15 @@ enum SyERBodyFlags
 };
 DEFINE_BITWISE_OPERATORS(SyERBodyFlags);
 
-struct SyRBodyComponent
+struct SyRigidBodyComponent
 {
-	SyRBodyComponent(	const SyERBodyType&	rbType = SyERBodyType::STATIC,
+	SyRigidBodyComponent(	const SyERBodyType&	rbType = SyERBodyType::DYNAMIC,
 						float 				mass = 1.0f,
 						unsigned			flags = 0);
 	
-	~SyRBodyComponent();
+	~SyRigidBodyComponent();
 
-	SyRBodyComponent(const SyRBodyComponent& other)
+	SyRigidBodyComponent(const SyRigidBodyComponent& other)
 	{
 		this->RbType = other.RbType;
 		this->Mass = other.Mass;
@@ -69,15 +69,22 @@ struct SyRBodyComponent
 private:
 	//members that are used by developers only
 	
-	
-	//private fields initialized in SyPhysicsSystem::Init
-	
 	physx::PxRigidActor*	_rbActor = nullptr;
 
-	static physx::PxPhysics*	_physics;
-	static physx::PxScene*		_scene;
-	
+	std::size_t _hash = 0;
+	bool _wasTransformChangedFromOutside = false;
+	SyERBodyType _prevFrameRbodyType = STATIC;
+	bool _wasActorRecreatedThisFrame = false;
+	bool _mustSaveUserVelocity = false;
+
+	// static physx::PxPhysics*	_physics;
+	// static physx::PxScene*		_scene;
+
+	bool WasInit() const;
 	friend class SyCollisionSystem;
 	friend class SyCollisionPreSystem;
-	friend class SyRBodySystem;	
+	friend class SyRigidBodySystem;
+	friend class SyJointSystem;
 };
+
+std::size_t hash_value(const SyRigidBodyComponent& rigidBodyC);

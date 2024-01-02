@@ -7,6 +7,7 @@
 #include "../../Features/Mesh/Systems/MeshSystem.h"
 #include "../../Features/Physics/Systems/RBSystem.h"
 #include "../../Features/Physics/Systems/CollisionSystem.h"
+#include "../../Features/Physics/Systems/JointSystem.h"
 #include "../../Systems/HardwareInitSystem.h"
 #include "../../Systems/MaterialUpdateSystem.h"
 #include "../../Features/Resources/Systems/ResourceSystem.h"

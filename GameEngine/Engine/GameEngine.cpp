@@ -10,6 +10,7 @@
 #include "Scene/GameObjectHelper.h"
 
 #include "SimpleMath.h"
+#include "Features/Physics/Components/JointComponent.h"
 #include "Serialization/Serializable.h"
 
 
@@ -40,6 +41,8 @@ int main()
     ecs->get<TransformComponent>(lightPoint2)._position = Vector3(3, 0, 0);
     ecs->get<LightComponent>(lightPoint2).LightBehavior = LightBehavior::Movable;
 
+
+#pragma region Test Base
     auto base = GameObjectHelper::Create(ecs, "Base", { 0.0f, -5.0f, 13.0f });
     ecs->get<TransformComponent>(base).scale = {10.0f, 1.0f, 10.0f};
     auto result1 = GameObjectHelper::AddRigidBodyComponent(ecs, base, STATIC);
@@ -50,17 +53,19 @@ int main()
                                                             BOX,
                                                             baseColDesc,
                                                             SyColliderMaterial());
+#pragma endregion 
 
-    
-    auto meshUuid = ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Game\\Assets\\fbx\\barrel.fbx");
-    auto staticMesh = GameObjectHelper::Create(ecs, "Static Mesh", {0.0f, -2.5f, 8.0f});
-    ecs->get<TransformComponent>(staticMesh).scale = { 3.0f, 3.0f, 3.0f };
-    auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid, SyEMeshComponentFlags::MESH_COLLIDER | SyEMeshComponentFlags::MESH_RENDER);
-    auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
-    auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
-
+#pragma region Test Mesh
+    // auto meshUuid = ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Game\\Assets\\fbx\\barrel.fbx");
+    // auto staticMesh = GameObjectHelper::Create(ecs, "Static Mesh", {0.0f, -2.5f, 8.0f});
+    // ecs->get<TransformComponent>(staticMesh).scale = { 3.0f, 3.0f, 3.0f };
+    // auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid, SyEMeshComponentFlags::MESH_COLLIDER | SyEMeshComponentFlags::MESH_RENDER);
+    // auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
+    // auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
+#pragma endregion
+#pragma region Test Cube 1
     auto cube1 = GameObjectHelper::Create(ecs, "Cube1", { 0.0f, 5.0f, 8.0f });
-    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC);
+    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
     auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube1);
     SyPrimitiveColliderShapeDesc cubeColDesc;
     cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
@@ -69,12 +74,31 @@ int main()
         cubeColDesc,
         SyColliderMaterial());
 
-    ecs->get<SyRBodyComponent>(cube1).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
-    //ecs->emplace<CameraComponent>(staticMesh, ECameraType::PlayerCamera);
+    auto cube2 = GameObjectHelper::Create(ecs, "Cube1", { 1.0f, 0.0f, 8.0f });
+    auto result13 = GameObjectHelper::AddRigidBodyComponent(ecs, cube2, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
+    auto result14 = GameObjectHelper::AddCubeMeshComponent(ecs, cube2);
+    auto result15 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube2,
+        BOX,
+        cubeColDesc,
+        SyColliderMaterial());
     
-    GameObjectHelper::CreateCamera(ecs);
+#pragma endregion
+#pragma region Test Sphere 1
+    // auto sphere1 = GameObjectHelper::Create(ecs, "Sphere", { 1.0f, 0.0f, 8.0f });
+    // auto result10 = GameObjectHelper::AddRigidBodyComponent(ecs, sphere1, DYNAMIC, 2/*, SyERBodyFlags::DISABLE_GRAVITY*/);
+    // auto result11 = GameObjectHelper::AddSphereMeshComponent(ecs, sphere1);
+    // SyPrimitiveColliderShapeDesc sphereColDesc; 
+    // sphereColDesc.Radius = 1;
+    // auto result12 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, sphere1,
+    //     SPHERE,
+    //     sphereColDesc,
+    //     SyColliderMaterial());
+    // ecs->emplace<SyHingeJointComponent>(cube1, SyVector3(1.0f, 1.0f, 0.0f),
+    //     SyVector3(0.0f, SyMathHelper::PI / 2, 0.0f));
+    ecs->emplace<SyFixedJointComponent>(cube2, cube1);
 
-    GameObjectHelper::CreateParticleSystem(ecs);
+#pragma endregion
+    
     
     //---------- Serialization test ----------------
 

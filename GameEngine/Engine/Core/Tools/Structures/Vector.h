@@ -150,8 +150,9 @@ public:
 		return qq;
 	}
 
-	friend bool operator==(const SyVector3& left, const SyVector3& right);
-
+	friend bool operator== (const SyVector3& left, const SyVector3& right);
+	friend SyVector3 operator+ (const SyVector3& left, const SyVector3& right);
+	friend SyVector3 operator- (const SyVector3& left, const SyVector3& right);
 	static const SyVector3 ZERO;
 	static const SyVector3 ONE;
 };
@@ -159,6 +160,19 @@ public:
 inline bool operator==(const SyVector3& left, const SyVector3& right)
 {
 	return (left.x == right.x) && (left.y == right.y) && (left.z == right.z);
+}
+
+inline SyVector3 operator+ (const SyVector3& left, const SyVector3& right)
+{
+	SyVector3 result = left;
+	result += right;
+	return result;
+}
+inline SyVector3 operator- (const SyVector3& left, const SyVector3& right)
+{
+	SyVector3 result = left;
+	result -= right;
+	return result;
 }
 
 inline std::size_t hash_value(SyVector3 const& vec)

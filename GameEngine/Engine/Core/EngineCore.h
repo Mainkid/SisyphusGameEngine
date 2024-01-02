@@ -11,6 +11,7 @@
 #include "ServiceLocator.h"
 #include "../Core/ECS/Systems.h"
 #include "../Contexts/EngineContext.h"
+#include "../Contexts/PhysicsContext.h"
 #include "../Core/Tools/ErrorLogger.h"
 #include "ECS/SystemsGroup.h"
 
@@ -39,7 +40,8 @@ public:
     std::vector<std::unique_ptr<SystemBase>> systems;
     EngineContext* ec;
     SyErrorLogger* el;
-
+    SyPhysicsContext* pc;
+    
     static EngineCore* instance()
     {
         static EngineCore inst;
