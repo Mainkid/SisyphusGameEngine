@@ -23,7 +23,7 @@ SyResult ShadowRenderSystem::Run()
 {
 
     
-    auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+    auto [camera, cameraTf] = CameraHelper::Find(_ecs, _ec->playModeState);
 
     auto viewLights = _ecs->view<LightComponent, TransformComponent>();
     for (auto& lightEnt : viewLights)

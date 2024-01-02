@@ -121,7 +121,7 @@ std::vector<void*> ImageLoader::LoadSkyboxFromFile(const char* filename, int* ou
 		*out_width = skybox_dim;
 		*out_height = skybox_dim;
 		std::string out = "out.png";
-
+		stbi_image_free(image_data);
 		return skyboxEdges;
 	}
 }

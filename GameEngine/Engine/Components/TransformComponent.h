@@ -29,7 +29,8 @@ struct TransformComponent
 	size_t localHash = 0;
 	uint32_t parent = entt::null;
 	std::set<entt::entity> children = {};
-	
+
+
 	SER_COMP(TransformComponent,
 		_position,
 		_rotation,
@@ -90,11 +91,11 @@ namespace std
 			result_type const h6(std::hash<SyVector3>()(a.localRotation));
 			result_type const h7(std::hash<SyVector3>()(a.localScale));
 			return h1 * 37 + (h1 * 37 + h2) * 37 +
-				((h1 * 37 + h2) * 37 + h3) * 37+
-				(((h1 * 37 + h2) * 37 + h3) * 37+h4)*37+
-				((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 +h5)*37+
-				(((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37+h6)*37+
-				((((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37 + h6) * 37+h7);
+				((h1 * 37 + h2) * 37 + h3) * 37 +
+				(((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 +
+				((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37 +
+				(((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37 + h6) * 37 +
+				((((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37 + h6) * 37 + h7);
 		}
 	};
 }

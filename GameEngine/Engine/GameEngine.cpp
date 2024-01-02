@@ -13,6 +13,7 @@
 #include "Features/Physics/Components/JointComponent.h"
 #include "Serialization/Serializable.h"
 
+
 #define SY_PI 3.14f
 #define SY_PI2 SY_PI / 2
 
@@ -23,7 +24,6 @@ int main()
     
     entt::registry* ecs = &ServiceLocator::instance()->Get<EngineContext>()->ecs;
     EngineContext* ec = EngineCore::instance()->ec;
-
     auto lightDir = GameObjectHelper::CreateLight(ecs, ELightType::Directional);
 
     auto light = GameObjectHelper::CreateLight(ecs, ELightType::Ambient);
@@ -95,8 +95,7 @@ int main()
     //     SyColliderMaterial());
     // ecs->emplace<SyHingeJointComponent>(cube1, SyVector3(1.0f, 1.0f, 0.0f),
     //     SyVector3(0.0f, SyMathHelper::PI / 2, 0.0f));
-    ecs->emplace<SyHingeJointComponent>(cube2, SyVector3(-1.0f, -1.0f, 0.0f),
-        SyVector3(0.0f, SyMathHelper::PI / 2, 0.0f), cube1);
+    ecs->emplace<SyFixedJointComponent>(cube2, cube1);
 
 #pragma endregion
     
@@ -123,10 +122,10 @@ int main()
     // ser.Deserialize(json, *ecs);
     //---------------------------------------------
 
+    //sound
+    GameObjectHelper::CreateSoundComponent(ecs);
+    GameObjectHelper::CreateSoundComponent(ecs);
 
     EngineCore::instance()->Update();
-    EngineCore::instance()->ShutDown();
-    
-
-    
+    EngineCore::instance()->ShutDown();   
 }

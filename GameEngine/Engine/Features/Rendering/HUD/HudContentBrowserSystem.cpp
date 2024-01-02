@@ -38,7 +38,10 @@ SyResult HudContentBrowserSystem::Run()
         return SyResult();
     }
     
-    
+    //if (ImGui::IsKeyPressed(ImGuiKey_T))
+    //{
+    //    rs->SaveStringToFile("./Game/Assets/hello.scene", "YOPTA");
+    //}
 
 
     ImGui::Begin("Content Browser");
@@ -71,7 +74,25 @@ SyResult HudContentBrowserSystem::Run()
     auto widgetStartPos = ImVec2(startCursorPos.x, startCursorPos.y);
     widgetStartPos.y += ImGui::GetScrollY();
 
+    if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_C))
+    {
+        ec->hudData.copyBufferAssets.clear();
+        ec->hudData.copyBufferAssets = ec->hudData.selectedAssets;
+    }
 
+    if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_V))
+    {
+        for (auto& uuid : ec->hudData.copyBufferAssets)
+        {
+            std::filesystem::path sourceFile = rs->FindFilePathByUUID(uuid);
+            auto targetDirectory = curDirectory.string()+ "\\" + sourceFile.filename().string();
+
+            auto file=ResourceHelper::PastFile(sourceFile, targetDirectory);
+        	ResourceHelper::CreateMetaFile_(file, rs->resourceLibrary[uuid].assetType);
+        }
+        rs->LoadResourceLibrary(curDirectory);
+        InitializePathFileViews(curDirectory);
+    }
     
 
     int columnCount = std::max((int)(panelWidth / cellSize), 1);
@@ -152,23 +173,31 @@ SyResult HudContentBrowserSystem::Run()
                             if (directoryEntry.is_directory())
                             {
                                 curDirectory /= path.filename();
+                                ec->hudData.selectedAssets.clear();
                                 selectedFiles.clear();
                             }
                         }
                         else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
                         {
                             if (!io.KeyCtrl)
+                            {
                                 selectedFiles.clear();
+                                ec->hudData.selectedAssets.clear();
+                            }
                             if (selectedFiles.count(directoryEntry) == 0)
                             {
                                 auto uuid = rs->GetUUIDFromPath(directoryEntry);
                                 ec->hudData.selectedContent = { uuid, rs->resourceLibrary[uuid].assetType };
                                 ec->hudData.selectedEntityIDs.clear();
+                                ec->hudData.selectedAssets.insert(uuid);
                                 selectedFiles.insert(directoryEntry);
 
                             }
                             else
+                            {
                                 selectedFiles.erase(directoryEntry);
+                                ec->hudData.selectedAssets.erase(rs->GetUUIDFromPath(directoryEntry));
+                            }
 
 
                         }
@@ -176,6 +205,7 @@ SyResult HudContentBrowserSystem::Run()
                         {
 
                             selectedFiles.insert(directoryEntry);
+                            ec->hudData.selectedAssets.insert(rs->GetUUIDFromPath(directoryEntry));
                             ImGui::OpenPopup("ContentPopUp");
                             ProcessPopUp();
                         }
@@ -219,6 +249,7 @@ SyResult HudContentBrowserSystem::Run()
     if (!itemWasHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !wasOverPopup)
     {
         selectedFiles.clear();
+        ec->hudData.selectedAssets.clear();
     }
 
     auto end = ImGui::GetContentRegionMax().y;
@@ -228,7 +259,10 @@ SyResult HudContentBrowserSystem::Run()
     bool isWidgetHovered = io.MousePos.x > widgetStartPos.x && io.MousePos.x < widgetEndPos.x&& io.MousePos.y>widgetStartPos.y-gap && io.MousePos.y < widgetEndPos.y;
 
     //Popups!
-
+    for (auto& item : ec->hudData.selectedAssets)
+    {
+        std::cout << item << std::endl;
+    }
   
 
     if (io.MouseClicked[1] && isWidgetHovered )
@@ -255,6 +289,11 @@ void HudContentBrowserSystem::InitImagesSRV()
 
 void HudContentBrowserSystem::ProcessPopUp()
 {
+    if (ImGui::IsKeyDown(ImGuiKey_F2))
+    {
+        if (selectedFiles.size()>0)
+			renamingFileName = *selectedFiles.begin();
+    }
 
 
     int selected_Popup = -1;
@@ -263,12 +302,13 @@ void HudContentBrowserSystem::ProcessPopUp()
         None,
         MainPopup,
         CreatePopup
-
     };
     ESelectedCategory selectedCategory = None;
-    const char* mainPopupsNames[] = { "Delete","Rename","Show in explorer"};
-    const char* createPopupNames[] = { "Folder","Material" };
+    const char* mainPopupsNames[] = { "Copy","Paste","Delete","Rename","Show in explorer"};
+    const char* createPopupNames[] = { "Folder","Material","Skybox"};
     std::vector<std::function<bool(std::set<std::filesystem::path>)>> mainPredicates = {
+        [](const std::set<std::filesystem::path>& set) {return set.size() > 0; },
+        [](const std::set<std::filesystem::path>& set) {return true; },
         [](const std::set<std::filesystem::path>& set) {return set.size()>0; },
         [](const std::set<std::filesystem::path>& set) {return set.size() == 1; },
         [](const std::set<std::filesystem::path>& set) {return true; }
@@ -313,13 +353,31 @@ void HudContentBrowserSystem::ProcessPopUp()
                     ResourceHelper::FillFileWithBaseData(createdFile, EAssetType::ASSET_MATERIAL);
                     rs->resourceLibrary[rs->GetUUIDFromPath(createdFile)] = { EAssetType::ASSET_MATERIAL,createdFile.string() };
                     break;
+
             }
             InitializePathFileViews(curDirectory);
             break;
         case MainPopup:
             switch (selected_Popup)
             {
-                case 0:
+				case 0:
+                    ec->hudData.copyBufferAssets.clear();
+                    ec->hudData.copyBufferAssets = ec->hudData.selectedAssets;
+                    break;
+				case 1:
+                    for (auto& uuid : ec->hudData.copyBufferAssets)
+                    {
+                        std::filesystem::path sourceFile = rs->FindFilePathByUUID(uuid);
+                        auto targetDirectory = curDirectory.string() + "\\" + sourceFile.filename().string();
+
+                        auto file = ResourceHelper::PastFile(sourceFile, targetDirectory);
+                        ResourceHelper::CreateMetaFile_(file, rs->resourceLibrary[uuid].assetType);
+                    }
+                    rs->LoadResourceLibrary(curDirectory);
+                    InitializePathFileViews(curDirectory);
+                    break;
+
+                case 2:
                     for (auto& selectedFile : selectedFiles)
                     {
                         
@@ -328,10 +386,10 @@ void HudContentBrowserSystem::ProcessPopUp()
                     }
                     rs->updateContentBrowser.Broadcast(true);
                     break;
-                case 1:
+                case 3:
                     renamingFileName = *selectedFiles.begin();
                     break;
-                case 2:
+                case 4:
                     std::string resPath = curDirectory.string();
                     std::replace(resPath.begin(), resPath.end(),'/','\\');
                     std::string command = "explorer /select," + resPath ;

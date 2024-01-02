@@ -40,6 +40,15 @@ struct SyPrimitiveColliderComponent
     SyPrimitiveColliderComponent(   SyEPrimitiveColliderType colliderType                   = SyEPrimitiveColliderType::BOX,
                                     const SyPrimitiveColliderShapeDesc& colliderShapeDesc   = SyPrimitiveColliderShapeDesc(),
                                     const SyColliderMaterial& material                      = SyColliderMaterial());
+
+    SyPrimitiveColliderComponent(const SyPrimitiveColliderComponent& other)
+    {
+        this->ColliderType = other.ColliderType;
+        this->Extent = other.Extent;
+        this->Radius = other.Radius;
+        this->HalfHeight = other.HalfHeight;
+        this->Material = other.Material;
+    }
     
     //members initialized in constructor
     
@@ -63,7 +72,12 @@ struct SyTrimeshColliderComponent
 {
     SyTrimeshColliderComponent(  const SyColliderMaterial& material = SyColliderMaterial());
     //members initialized in constructor
-    
+
+    SyTrimeshColliderComponent(const SyTrimeshColliderComponent& other)
+    {
+        this->Material = other.Material;
+    }
+
     SyColliderMaterial      Material; //runtime modification is not supported, but will be added in future. The member has to be added to properties
 
     //members initialized in CollisionSystem::InitComponentTm

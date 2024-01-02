@@ -1,7 +1,12 @@
 #include "MeshLoader.h"
 #include "../../Core/ServiceLocator.h"
 #include "../../Contexts/HardwareContext.h"
+#include <fstream>
 #include <filesystem>
+#include "json.hpp"
+
+#include "../../Core/Tools/ErrorLogger.h"
+#include "..\Resources\ResourceInfo.h"
 
 std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
@@ -91,39 +96,66 @@ void MeshLoader::ProcessNode(const std::string& modelPath, std::vector<std::shar
 	}
 }
 
-void MeshLoader::LoadTexture(const std::string& texturePath,ID3D11SamplerState** samplerState,
+SyResult MeshLoader::LoadTexture(const std::string& texturePath,ID3D11SamplerState** samplerState,
 	 ID3D11ShaderResourceView** texture,bool isSRGB)
 {
 	HardwareContext* hc = ServiceLocator::instance()->Get<HardwareContext>();
 	
 	if (texturePath == "")
-		return;
+		return SyResult();
+
+	std::ifstream in_file;
+	std::string textureMetaPath = texturePath + ".meta";
+	in_file.open(textureMetaPath);
+	nlohmann::json metaData;
+	in_file >> metaData;
+
+	
 
 	if (samplerState != nullptr)
 	{
+
 		D3D11_SAMPLER_DESC sampDesc;
+		D3D11_TEXTURE_ADDRESS_MODE textureMode = D3D11_TEXTURE_ADDRESS_WRAP;
 		ZeroMemory(&sampDesc, sizeof(sampDesc));
-		sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+		if (static_cast<EFilterMode>(metaData["FilterMode"]) == EFilterMode::FILTER_BILINEAR)
+			sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		else if (static_cast<EFilterMode>(metaData["FilterMode"]) == EFilterMode::FILTER_POINT)
+			sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		else if (static_cast<EFilterMode>(metaData["FilterMode"]) == EFilterMode::FILTER_ANISOTROPIC)
+			sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+
+		if (static_cast<EWrapMode>(metaData["WrapMode"]) == EWrapMode::WRAP_CLAMP)
+			textureMode = D3D11_TEXTURE_ADDRESS_CLAMP;
+		else if (static_cast<EWrapMode>(metaData["WrapMode"]) == EWrapMode::WRAP_MIRROR)
+			textureMode = D3D11_TEXTURE_ADDRESS_MIRROR;
+		else
+			textureMode = D3D11_TEXTURE_ADDRESS_WRAP;
+
+		sampDesc.AddressU = textureMode;
+		sampDesc.AddressV = textureMode;
+		sampDesc.AddressW = textureMode;
 		sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 		sampDesc.MinLOD = 0;
 		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 		HRESULT hr = hc->device->CreateSamplerState(&sampDesc, samplerState); //Create sampler state
 		if (FAILED(hr))
 		{
-			std::cout << "Texture Loading Failed!" << std::endl;
+			return SyResult(SY_RESCODE_ERROR, "Texture Loading Failed!");
+
 		}
 	}
 
 	std::wstring stemp = std::wstring(texturePath.begin(), texturePath.end());
 	LPCWSTR sw = stemp.c_str();
-	if (!isSRGB)
+	if (!metaData["sRGB"])
 		HRESULT hr = DirectX::CreateWICTextureFromFile(hc->device.Get(), sw, nullptr, texture);
 	else
 		HRESULT hr = DirectX::CreateWICTextureFromFileEx(hc->device.Get(), sw, 20000000, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, DirectX::WIC_LOADER_FORCE_SRGB, nullptr, texture);
 	int q = 0;
+
+	return SyResult();
 }
 
 void MeshLoader::LoadModel(const std::string& modelPath, std::vector<std::shared_ptr<Mesh>>& meshes)

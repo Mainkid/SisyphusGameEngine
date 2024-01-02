@@ -6,6 +6,7 @@
 #include "../../../Core/ServiceLocator.h"
 #include "../../../Components/TransformComponent.h"
 #include "../../../Core/Tools/MathHelper.h"
+#include "../../../Scene/CameraHelper.h"
 
 SyResult LightSystem::Init()
 {
@@ -17,9 +18,8 @@ SyResult LightSystem::Init()
 
 SyResult LightSystem::Run()
 {
-    auto viewCamera = _ecs->view<TransformComponent, CameraComponent>();
-    auto [cameraTf, camera] = viewCamera.get(viewCamera.front());
 
+    auto [camera, cameraTf] = CameraHelper::Find(_ecs, _ec->playModeState);
     auto viewLights = _ecs->view<TransformComponent, LightComponent>();
     for (auto& ent : viewLights)
     {
@@ -28,14 +28,15 @@ SyResult LightSystem::Run()
         if (lc.LightType != ELightType::Ambient)
         {
             GenerateViewMatrix(Vector3(camera.forward), lc, Vector3(cameraTf.localPosition));
-            //GenerateOrthoFromFrustum(lc, Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
-            //    _ec->scene->camera->view,
-            //    _ec->scene->camera->projection);
-            GenerateOrthosFromFrustum(lc,
-                Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
-                camera.view,
-                camera.projection,
-                camera.farPlane);
+
+            if (lc.LightType == ELightType::Directional)
+            {
+                GenerateOrthosFromFrustum(lc,
+                    Vector3::Transform(Vector3::UnitX, Matrix::CreateFromYawPitchRoll(tc.localRotation)),
+                    camera.view,
+                    camera.projection,
+                    camera.farPlane);
+            }
         }
 
         if (!lc.Aabb)
@@ -83,6 +84,11 @@ std::vector<Vector4> LightSystem::GetFrustumCorners(const Matrix& view, const Ma
 
 std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, Vector3 direction, const Matrix& view, const Matrix proj, float farZ)
 {
+    if ((direction - Vector3(0, 1, 0)).Length() < 0.001f || (direction - Vector3(0, -1, 0)).Length() < 0.001f)
+    {
+        direction += Vector3(0, 0, 0.01f);
+        direction.Normalize();
+    }
     using namespace DirectX::SimpleMath;
     std::vector<Vector4> frustumCorners = GetFrustumCorners(view, proj);
     std::vector<float> planesProportions = {0, 0.05,0.1,0.35,1 };
@@ -114,7 +120,7 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
 
 
         center /= newCorners.size();
-
+       
         Matrix viewMatrix2 = DirectX::XMMatrixLookAtLH(center, center - direction, Vector3::Up);
 
         float minX = 10000000.0f;
@@ -140,7 +146,7 @@ std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, V
         minZ = (minZ < 0) ? minZ * zMult : minZ / zMult;
         maxZ = (maxZ < 0) ? maxZ / zMult : maxZ * zMult;
 
-
+        
         lc.OrthoMatrices.push_back(Matrix::CreateOrthographicOffCenter(minX, maxX, minY, maxY, minZ, maxZ));
         lc.ViewMatrices.push_back(viewMatrix2);
         lc.Distances.push_back(Vector4(farZ * planesProportions[i],

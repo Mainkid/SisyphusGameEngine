@@ -1,19 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <FxCompile Include="Engine\Assets\Shaders\EditorColliderShader.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\EnvironmentPrefilter.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\GaussianBlur.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\IblLookUpTexture.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\IrradianceMapGenerator.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\OpaqueShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\PointLightShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\ShadowShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\SpotLightShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\StencilPassShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\TextureShader.hlsl" />
-    <FxCompile Include="Engine\Assets\Shaders\GaussianBlur.hlsl" />
-    <FxCompile Include="Engine\Assets\Shaders\IrradianceMapGenerator.hlsl" />
-    <FxCompile Include="Engine\Assets\Shaders\EnvironmentPrefilter.hlsl" />
-    <FxCompile Include="Engine\Assets\Shaders\IblLookUpTexture.hlsl" />
-    <FxCompile Include="Engine\Assets\Shaders\EditorColliderShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
+    <ClCompile Include="Engine\Features\Physics\Components\ColliderComponent.cpp" />
+    <ClCompile Include="Engine\Features\Physics\Systems\CollisionSystem.cpp" />
+    <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorGridRenderSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Components\MonoSyncComp.h" />
+    <ClCompile Include="Engine\Mono\SyMono.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoProxyDatas.h" />
+    <ClCompile Include="Engine\Mono\Objects\SyMonoGame.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoObj.cpp" />
+    <ClCompile Include="Engine\Mono\SyMonoRuntime.cpp" />
+    <ClCompile Include="Engine\Scene\CameraHelper.cpp" />
+    <ClCompile Include="Engine\Scene\GameObjectHelper.cpp" />
+    <ClCompile Include="Engine\Serialization\SerializableOuters.h" />
+    <ClCompile Include="Engine\Serialization\SerializableTraits.h" />
     <ClCompile Include="Engine\Systems\EditorBillboardSystem.cpp" />
     <ClCompile Include="Engine\Systems\EditorCameraSystem.cpp" />
     <ClCompile Include="Engine\Core\DisplayWin32.cpp" />
@@ -24,6 +38,7 @@
     <ClCompile Include="Engine\GameEngine.cpp" />
     <ClCompile Include="Engine\Features\Mesh\Mesh.cpp" />
     <ClCompile Include="Engine\Obsolete\RenderPipeline.cpp" />
+    <ClCompile Include="Engine\Features\Events\Systems\PrepareEventsSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\HUD\HudContentBrowserSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\HUD\HudHierarchySystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\HUD\HudPostRenderSystem.cpp" />
@@ -31,10 +46,12 @@
     <ClCompile Include="Engine\Features\Rendering\HUD\HudPropertiesSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\HUD\HudViewportSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorBillboardRenderSystem.cpp" />
+    <ClCompile Include="Engine\Features\Rendering\RenderPipeline\HbaoRenderSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\LightRenderSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\OpaqueRenderSystem.cpp" />
     <ClCompile Include="Engine\Core\Rendering\RenderTarget.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\ShadowRenderSystem.cpp" />
+    <ClCompile Include="Engine\Core\Tools\Structures\Vector.cpp" />
     <ClCompile Include="Engine\Core\Tools\ErrorLogger.cpp" />
     <ClCompile Include="Engine\Core\Tools\ImageLoader.cpp" />
     <ClCompile Include="Engine\Features\Particles\Particle.cpp" />
@@ -50,9 +67,27 @@
     <ClCompile Include="Engine\Features\Rendering\RenderInitSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\PostViewportRenderSystem.cpp" />
     <ClCompile Include="Engine\Systems\HardwareInitSystem.cpp" />
+    <ClCompile Include="Engine\Features\Physics\Systems\RBSystem.cpp" />
     <ClCompile Include="Engine\Features\Physics\Components\RBodyComponent.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\ShadowMapGenerationSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\SkyboxRenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\MaterialUpdateSystem.cpp" />
+    <ClCompile Include="Engine\Features\Rendering\RenderPipeline\ToneMappingRenderSystem.cpp" />
+    <ClCompile Include="Engine\Features\Resources\Systems\ResourceSystem.cpp" />
+    <ClCompile Include="Engine\Features\Rendering\HUD\ResourceHelper.cpp" />
+    <ClCompile Include="Engine\Features\Resources\ResourceService.cpp" />
+    <ClCompile Include="Engine\Core\ECS\SystemsGroup.cpp" />
+    <ClCompile Include="Engine\Features\Rendering\HUD\HudConsoleSystem.cpp" />
+    <ClCompile Include="Engine\Features\ErrorLogging\Systems\ErrorLoggingSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Systems\MonoSyncSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Objects\SyMonoLogger.cpp" />
+    <ClCompile Include="Engine\Mono\Objects\SyMonoEcs.cpp" />
+    <ClCompile Include="Engine\Mono\Objects\SyMonoGameConfig.cpp" />
+    <ClCompile Include="Engine\Mono\Objects\SyMonoEditor.cpp" />
+    <ClCompile Include="Engine\Features\Rendering\ImageBasedLightingSystem.cpp" />
+    <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
+    <ClCompile Include="Engine\Features\Particles\Systems\ParticlesSystem.cpp" />
+    <ClCompile Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -66,47 +101,41 @@
     <ClCompile Include="vendor\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_tables.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="Engine\Serialization\SerializableTraits.h" />
-    <ClCompile Include="Engine\Scene\GameObjectHelper.cpp" />
-    <ClCompile Include="Engine\Core\ECS\SystemsGroup.cpp" />
-    <ClCompile Include="Engine\Scene\CameraHelper.cpp" />
-    <ClCompile Include="Engine\Serialization\SerializableOuters.h" />
-    <ClCompile Include="Engine\Features\Rendering\RenderPipeline\ToneMappingRenderSystem.cpp" />
-    <ClCompile Include="Engine\Systems\MaterialUpdateSystem.cpp" />
-    <ClCompile Include="Engine\Features\Resources\Systems\ResourceSystem.cpp" />
-    <ClCompile Include="Engine\Features\Rendering\HUD\ResourceHelper.cpp" />
-    <ClCompile Include="Engine\Features\Resources\ResourceService.cpp" />
-    <ClCompile Include="Engine\Features\Rendering\HUD\HudConsoleSystem.cpp" />
-    <ClCompile Include="Engine\Features\ErrorLogging\Systems\ErrorLoggingSystem.cpp" />
-    <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorGridRenderSystem.cpp" />
-    <ClCompile Include="Engine\Features\Events\Systems\PrepareEventsSystem.cpp" />
-    <ClCompile Include="Engine\Mono\SyMono.cpp" />
-    <ClCompile Include="Engine\Mono\Objects\SyMonoGame.cpp" />
-    <ClCompile Include="Engine\Mono\SyMonoObj.cpp" />
-    <ClCompile Include="Engine\Mono\SyMonoRuntime.cpp" />
-    <ClCompile Include="Engine\Mono\SyMonoProxyDatas.h" />
-    <ClCompile Include="Engine\Mono\Systems\MonoSyncSystem.cpp" />
-    <ClCompile Include="Engine\Mono\Components\MonoSyncComp.h" />
-    <ClCompile Include="Engine\Mono\Objects\SyMonoLogger.cpp" />
-    <ClCompile Include="Engine\Mono\Objects\SyMonoEcs.cpp" />
-    <ClCompile Include="Engine\Mono\Objects\SyMonoGameConfig.cpp" />
-    <ClCompile Include="Engine\Mono\Objects\SyMonoEditor.cpp" />
-    <ClCompile Include="Engine\Features\Rendering\RenderPipeline\HbaoRenderSystem.cpp" />
-    <ClCompile Include="Engine\Features\Rendering\ImageBasedLightingSystem.cpp" />
-    <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
-    <ClCompile Include="Engine\Features\Physics\Components\ColliderComponent.cpp" />
-    <ClCompile Include="Engine\Features\Physics\Systems\CollisionSystem.cpp" />
-    <ClCompile Include="Engine\Features\Physics\Systems\RBSystem.cpp" />
-    <ClCompile Include="Engine\Core\Tools\Structures\Vector.cpp" />
-    <ClCompile Include="Engine\Features\Particles\Systems\ParticlesSystem.cpp" />
-    <ClCompile Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
-    <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
-    <ClCompile Include="Engine\Features\Physics\Systems\JointSystem.cpp" />
-    <ClCompile Include="Engine\Features\Physics\Systems\RBodySimulationSystem.cpp" />
+    <ClCompile Include="Engine\Features\Sounds\Systems\SoundSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Components\Components.h" />
+    <ClInclude Include="Engine\Features\Events\Tags\SyEventTag.h" />
+    <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.h" />
+    <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
+    <ClInclude Include="Engine\Components\SkyboxResource.h" />
+    <ClInclude Include="Engine\Features\Physics\Components\ColliderComponent.h" />
+    <ClInclude Include="Engine\Core\ResourcePath.h" />
+    <ClInclude Include="Engine\Events\SyHotReloadEvent.h" />
+    <ClInclude Include="Engine\Events\SyImageBasedLightingUpdateEvent.h" />
+    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateColliderEvent.h" />
+    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateRBodyEvent.h" />
+    <ClInclude Include="Engine\Events\SyPlayModeEndedEvent.h" />
+    <ClInclude Include="Engine\Events\SyPlayModeStartedEvent.h" />
+    <ClInclude Include="Engine\Events\SySceneLoadEvent.h" />
+    <ClInclude Include="Engine\Features\Physics\Systems\CollisionSystem.h" />
+    <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorGridRenderSystem.h" />
+    <ClInclude Include="Engine\Components\Material.h" />
+    <ClInclude Include="Engine\Components\Model.h" />
+    <ClInclude Include="Engine\Mono\ISyMonoGameCallbackReceiver.h" />
+    <ClInclude Include="Engine\Mono\SyMono.h" />
+    <ClInclude Include="Engine\Mono\Objects\SyMonoGame.h" />
+    <ClInclude Include="Engine\Mono\SyMonoMethod.h" />
+    <ClInclude Include="Engine\Mono\SyMonoObj.h" />
+    <ClInclude Include="Engine\Mono\SyMonoRuntime.h" />
+    <ClInclude Include="Engine\Scene\CameraHelper.h" />
     <ClInclude Include="Engine\Components\SkyboxComponent.h" />
+    <ClInclude Include="Engine\Scene\GameObjectHelper.h" />
+    <ClInclude Include="Engine\Serialization\Serializable.h" />
+    <ClInclude Include="Engine\Serialization\SerializableMacros.h" />
+    <ClInclude Include="Engine\Serialization\Serializer.hpp" />
+    <ClInclude Include="Engine\Components\Texture.h" />
     <ClInclude Include="Engine\Contexts\EngineContext.h" />
     <ClInclude Include="Engine\Core\IService.h" />
     <ClInclude Include="Engine\Systems\EditorBillboardSystem.h" />
@@ -128,6 +157,7 @@
     <ClInclude Include="Engine\Core\Rendering\Lights\LightData.h" />
     <ClInclude Include="Engine\Core\Rendering\Lights\ELightType.h" />
     <ClInclude Include="Engine\Obsolete\RenderPipeline.h" />
+    <ClInclude Include="Engine\Features\Events\Systems\PrepareEventsSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\HUD\ContentBrowserTypes.h" />
     <ClInclude Include="Engine\Features\Rendering\HUD\HudContentBrowserSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\HUD\HudHierarchySystem.h" />
@@ -136,13 +166,19 @@
     <ClInclude Include="Engine\Features\Rendering\HUD\HudPropertiesSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\HUD\HudViewportSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorBillboardRenderSystem.h" />
+    <ClInclude Include="Engine\Features\Rendering\RenderPipeline\HbaoRenderSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\LightRenderSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\OpaqueRenderSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\ShadowRenderSystem.h" />
+    <ClInclude Include="Engine\Features\Resources\ResourceInfo.h" />
     <ClInclude Include="Engine\Core\ECS\Systems.h" />
     <ClInclude Include="Engine\Core\ECS\SystemsEnum.h" />
     <ClInclude Include="Engine\Features\Lighting\Components\LightComponent.h" />
     <ClInclude Include="Engine\Core\Rendering\RenderTarget.h" />
+    <ClInclude Include="Engine\Core\Tools\ComplexString.h" />
+    <ClInclude Include="Engine\Core\Tools\Structures\Geometry.h" />
+    <ClInclude Include="Engine\Core\Tools\FlagBitmask.h" />
+    <ClInclude Include="Engine\Core\Tools\Structures\RingBuffer.h" />
     <ClInclude Include="Engine\Core\Tools\ErrorLogger.h" />
     <ClInclude Include="Engine\Core\Tools\ImageLoader.h" />
     <ClInclude Include="Engine\Features\Particles\Components\ParticleComponent.h" />
@@ -163,19 +199,91 @@
     <ClInclude Include="Engine\Features\Rendering\RenderHelper.h" />
     <ClInclude Include="Engine\Systems\HardwareInitSystem.h" />
     <ClInclude Include="Engine\Contexts\HardwareContext.h" />
+    <ClInclude Include="Engine\Features\Physics\Systems\RBSystem.h" />
     <ClInclude Include="Engine\Features\Physics\Components\RBodyComponent.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\ShadowMapGenerationSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\SkyboxRenderSystem.h" />
     <ClInclude Include="Engine\Core\Tools\Structures\Vector.h" />
+    <ClInclude Include="Engine\Core\Tools\MathHelper.h" />
+    <ClInclude Include="Engine\Systems\MaterialUpdateSystem.h" />
+    <ClInclude Include="Engine\Features\Rendering\ImageBasedLightingSystem.h" />
+    <ClInclude Include="Matrix4x4.h" />
+    <ClInclude Include="Engine\Features\Rendering\RenderPipeline\ToneMappingRenderSystem.h" />
+    <ClInclude Include="Engine\Features\Resources\Systems\ResourceSystem.h" />
+    <ClInclude Include="Engine\Features\Rendering\HUD\ResourceHelper.h" />
+    <ClInclude Include="Engine\Features\Resources\ResourceService.h" />
+    <ClInclude Include="Engine\Features\Resources\ResourceBase.h" />
+    <ClInclude Include="Engine\Core\ECS\SystemsGroup.h" />
+    <ClInclude Include="Engine\Features\Rendering\HUD\HudConsoleSystem.h" />
+    <ClInclude Include="Engine\Features\ErrorLogging\Systems\ErrorLoggingSystem.h" />
+    <ClInclude Include="Engine\Mono\Systems\MonoSyncSystem.h" />
+    <ClInclude Include="Engine\Mono\Objects\SyMonoLogger.h" />
+    <ClInclude Include="Engine\Mono\Objects\SyMonoEcs.h" />
+    <ClInclude Include="Engine\Mono\Objects\SyMonoGameConfig.h" />
+    <ClInclude Include="Engine\Mono\Objects\SyMonoEditor.h" />
+    <ClInclude Include="Engine\Features\Particles\Systems\ParticlesSystem.h" />
+    <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
+    <ClInclude Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.h" />
     <ClInclude Include="vendor\Delegates.h" />
+    <ClInclude Include="vendor\entt\core\algorithm.hpp" />
+    <ClInclude Include="vendor\entt\core\any.hpp" />
+    <ClInclude Include="vendor\entt\core\attribute.h" />
+    <ClInclude Include="vendor\entt\core\compressed_pair.hpp" />
+    <ClInclude Include="vendor\entt\core\enum.hpp" />
+    <ClInclude Include="vendor\entt\core\family.hpp" />
+    <ClInclude Include="vendor\entt\core\fwd.hpp" />
+    <ClInclude Include="vendor\entt\core\hashed_string.hpp" />
+    <ClInclude Include="vendor\entt\core\ident.hpp" />
+    <ClInclude Include="vendor\entt\core\iterator.hpp" />
+    <ClInclude Include="vendor\entt\core\memory.hpp" />
+    <ClInclude Include="vendor\entt\core\monostate.hpp" />
+    <ClInclude Include="vendor\entt\core\tuple.hpp" />
+    <ClInclude Include="vendor\entt\core\type_info.hpp" />
+    <ClInclude Include="vendor\entt\core\type_traits.hpp" />
+    <ClInclude Include="vendor\entt\core\utility.hpp" />
+    <ClInclude Include="vendor\entt\entity\component.hpp" />
+    <ClInclude Include="vendor\entt\entity\entity.hpp" />
+    <ClInclude Include="vendor\entt\entity\fwd.hpp" />
+    <ClInclude Include="vendor\entt\entity\group.hpp" />
+    <ClInclude Include="vendor\entt\entity\handle.hpp" />
+    <ClInclude Include="vendor\entt\entity\helper.hpp" />
+    <ClInclude Include="vendor\entt\entity\mixin.hpp" />
+    <ClInclude Include="vendor\entt\entity\observer.hpp" />
+    <ClInclude Include="vendor\entt\entity\organizer.hpp" />
+    <ClInclude Include="vendor\entt\entity\registry.hpp" />
+    <ClInclude Include="vendor\entt\entity\runtime_view.hpp" />
+    <ClInclude Include="vendor\entt\entity\snapshot.hpp" />
+    <ClInclude Include="vendor\entt\entity\sparse_set.hpp" />
+    <ClInclude Include="vendor\entt\entity\storage.hpp" />
+    <ClInclude Include="vendor\entt\entity\view.hpp" />
     <ClInclude Include="vendor\entt\entt.hpp" />
+    <ClInclude Include="vendor\entt\meta\adl_pointer.hpp" />
+    <ClInclude Include="vendor\entt\meta\container.hpp" />
+    <ClInclude Include="vendor\entt\meta\context.hpp" />
+    <ClInclude Include="vendor\entt\meta\factory.hpp" />
+    <ClInclude Include="vendor\entt\meta\fwd.hpp" />
+    <ClInclude Include="vendor\entt\meta\meta.hpp" />
+    <ClInclude Include="vendor\entt\meta\node.hpp" />
+    <ClInclude Include="vendor\entt\meta\pointer.hpp" />
+    <ClInclude Include="vendor\entt\meta\policy.hpp" />
+    <ClInclude Include="vendor\entt\meta\range.hpp" />
+    <ClInclude Include="vendor\entt\meta\resolve.hpp" />
+    <ClInclude Include="vendor\entt\meta\template.hpp" />
+    <ClInclude Include="vendor\entt\meta\type_traits.hpp" />
+    <ClInclude Include="vendor\entt\meta\utility.hpp" />
+    <ClInclude Include="vendor\entt\resource\cache.hpp" />
+    <ClInclude Include="vendor\entt\resource\fwd.hpp" />
+    <ClInclude Include="vendor\entt\resource\loader.hpp" />
+    <ClInclude Include="vendor\entt\resource\resource.hpp" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
     <ClInclude Include="vendor\ImGuizmo\ImCurveEdit.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGradient.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="vendor\ImGuizmo\ImSequencer.h" />
     <ClInclude Include="vendor\ImGuizmo\ImZoomSlider.h" />
+    <ClInclude Include="vendor\ImGui\curve_v122.hpp" />
     <ClInclude Include="vendor\ImGui\imconfig.h" />
+    <ClInclude Include="vendor\ImGui\ImCurve.h" />
     <ClInclude Include="vendor\ImGui\imgui.h" />
     <ClInclude Include="vendor\ImGui\imgui_impl_dx11.h" />
     <ClInclude Include="vendor\ImGui\imgui_impl_win32.h" />
@@ -184,6 +292,7 @@
     <ClInclude Include="vendor\ImGui\imstb_textedit.h" />
     <ClInclude Include="vendor\ImGui\imstb_truetype.h" />
     <ClInclude Include="vendor\DirectXTK\Inc\SimpleMath.h" />
+    <ClInclude Include="vendor\nlohmann_json\json.hpp" />
     <ClInclude Include="vendor\stb_image.h" />
     <ClInclude Include="vendor\WICTextureLoader.h" />
     <ClInclude Include="Engine\Components\Material.h" />
@@ -257,46 +366,26 @@
     <ClInclude Include="Engine\Features\Physics\Systems\RBodySimulationSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Downloads\skybox.jpg" />
+    <Image Include="Engine\Assets\SkyBox\skybox.jpg" />
     <Image Include="Engine\Assets\SkyBox\skybox_1.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_2.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_3.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_4.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_5.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_6.png" />
-    <Image Include="..\..\..\..\Downloads\skybox.jpg" />
-    <Image Include="Engine\Assets\SkyBox\skybox.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Engine\Assets\Shaders\PBRHelpers.hlsli" />
+    <None Include="Engine\Assets\Shaders\ToneMapping.hlsl" />
+    <None Include="cpp.hint" />
     <None Include="Engine\Assets\Shaders\LightShader.hlsl" />
+    <None Include="Engine\Assets\Shaders\EditorGridShader.hlsl" />
+    <None Include="Engine\Assets\Shaders\PBR_Functions.hlsli" />
     <None Include="Engine\Assets\Shaders\ShadowMapGenerator.hlsl" />
-    <None Include="Engine\Assets\Shaders\Skybox.hlsl" />
     <None Include="Engine\Assets\Shaders\ShadowPointlightShader.hlsl" />
     <None Include="Engine\Assets\Shaders\ShadowPointLightGenerator.hlsl" />
-    <None Include="Engine\Assets\Shaders\PBR_Functions.hlsli" />
-    <None Include="Engine\Assets\Shaders\ToneMapping.hlsl" />
-    <None Include="Engine\Assets\Shaders\EditorGridShader.hlsl" />
-    <None Include="cpp.hint" />
-    <None Include="Engine\Assets\Shaders\PBRHelpers.hlsli" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Engine\Assets\SkyBox\skybox_1.png">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
-    <Image Include="Engine\Assets\SkyBox\skybox_2.png">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
-    <Image Include="Engine\Assets\SkyBox\skybox_3.png">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
-    <Image Include="Engine\Assets\SkyBox\skybox_4.png">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
-    <Image Include="Engine\Assets\SkyBox\skybox_5.png">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
-    <Image Include="Engine\Assets\SkyBox\skybox_6.png">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
+    <None Include="Engine\Assets\Shaders\Skybox.hlsl" />
     <None Include="Engine\Assets\Shaders\SpriteBillboardShader.hlsl" />
     <None Include="vendor\DirectXTK\Inc\SimpleMath.inl" />
   </ItemGroup>

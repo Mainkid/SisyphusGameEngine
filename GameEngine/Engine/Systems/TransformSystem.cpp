@@ -1,4 +1,4 @@
-#include "TransformSystem.h"
+п»ї#include "TransformSystem.h"
 #include "../Contexts/EngineContext.h"
 #include "../Core/ServiceLocator.h"
 #include "TransformHelper.h"
@@ -31,12 +31,12 @@ SyResult TransformSystem::Run()
 	// 
 	//for (auto& entity : eventView)
 	//{
-	//	SySceneLoadEvent& testEvent = eventView.get<SySceneLoadEvent>(entity);	//получили само событие (объект) со всеми переданными в него данными
-	//	SY_LOG_EVSY(SY_LOGLEVEL_WARNING, testEvent.message.c_str());	//логика обработки ивента
+	//	SySceneLoadEvent& testEvent = eventView.get<SySceneLoadEvent>(entity);	//ГЇГ®Г«ГіГ·ГЁГ«ГЁ Г±Г Г¬Г® Г±Г®ГЎГ»ГІГЁГҐ (Г®ГЎГєГҐГЄГІ) Г±Г® ГўГ±ГҐГ¬ГЁ ГЇГҐГ°ГҐГ¤Г Г­Г­Г»Г¬ГЁ Гў Г­ГҐГЈГ® Г¤Г Г­Г­Г»Г¬ГЁ
+	//	SY_LOG_EVSY(SY_LOGLEVEL_WARNING, testEvent.message.c_str());	//Г«Г®ГЈГЁГЄГ  Г®ГЎГ°Г ГЎГ®ГІГЄГЁ ГЁГўГҐГ­ГІГ 
 	//}
 
 
-	if (eventView.size_hint()>0)
+	if (eventView.size_hint() > 0)
 	{
 		ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
 		for (auto& entity : view)
@@ -52,8 +52,8 @@ SyResult TransformSystem::Run()
 			GameObjectHelper::AddChild(_ecs, static_cast<entt::entity>(tc.parent), entity);
 		}
 	}
-	
-	for (auto& entity :view)
+
+	for (auto& entity : view)
 	{
 		TransformComponent& tc = view.get<TransformComponent>(entity);
 
@@ -76,9 +76,9 @@ SyResult TransformSystem::Run()
 				TransformComponent& parentTc = _ecs->get<TransformComponent>((entt::entity)tc.parent);
 				parentTransform = parentTc.transformMatrix;
 			}
-			TransformHelper::UpdateWorldTransformMatrix(tc,parentTransform);
+			TransformHelper::UpdateWorldTransformMatrix(tc, parentTransform);
 		}
-		if (tc.localHash != lHash )
+		if (tc.localHash != lHash)
 		{
 			tc.localHash = lHash;
 			TransformHelper::UpdateTransformMatrix(tc);

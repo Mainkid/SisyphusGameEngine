@@ -66,39 +66,49 @@ RWStructuredBuffer<Particle> pool : register(u1);
 AppendStructuredBuffer<uint> deadList : register(u2);
 RWStructuredBuffer<ParticleListItem> sortList : register(u3);
 //AppendStructuredBuffer<uint> sortListI : register(u4);
-
-float3 SolveCubic(float4 Coefficient)
+float cbrt(in float x)
 {
-    // Normalize the polynomial
-    Coefficient.xyz /= Coefficient.w;
-    // Divide middle coefficients by three
-    Coefficient.yz /= 3.0f;
-    // Compute the Hessian and the discrimant
-    float3 Delta = float3(
-        mad(-Coefficient.z, Coefficient.z, Coefficient.y),
-        mad(-Coefficient.y, Coefficient.z, Coefficient.x),
-        dot(float2(Coefficient.z, -Coefficient.y), Coefficient.xy)
-    );
-    float Discriminant = dot(float2(4.0f * Delta.x, -Delta.y), Delta.zy);
-    // Compute coefficients of the depressed cubic 
-    // (third is zero, fourth is one)
-    float2 Depressed = float2(
-        mad(-2.0f * Coefficient.z, Delta.x, Delta.y),
-        Delta.x
-    );
-    // Take the cubic root of a normalized complex number
-    float Theta = atan2(sqrt(Discriminant), -Depressed.x) / 3.0f;
-    float2 CubicRoot;
-    sincos(Theta, CubicRoot.y, CubicRoot.x);
-    // Compute the three roots, scale appropriately and 
-    // revert the depression transform
-    float3 Root = float3(
-        CubicRoot.x,
-        dot(float2(-0.5f, -0.5f * sqrt(3.0f)), CubicRoot),
-        dot(float2(-0.5f, 0.5f * sqrt(3.0f)), CubicRoot)
-    );
-    Root = mad(2.0f * sqrt(-Depressed.y), Root, -Coefficient.z);
-    return Root;
+    return sign(x) * pow(abs(x), 1.0 / 3.0);
+}
+
+float3 SolveCubic(in float a, in float b, in float c, in float d, out float3 roots)
+{
+    float u = b / (3.0 * a);
+
+    // Depress to x^3 + px + q by substituting x-b/3a
+    // This can be found by substituting x+u and solving for u so that the x^2
+    // term gets eliminated (then of course dividing by the leading coefficient)
+    float p = (c - b * u) / a;
+    float q = (d - (c - 2.0 * b * b / (9.0 * a)) * u) / a;
+
+    // Everything blows up when p=0 so give this case special treatment
+    if (abs(p) < 1e-9)
+    {
+        roots.x = cbrt(-q) - u;
+        return 1;
+    }
+
+    // In the case of one root, this construction does not work
+    float h = 0.25 * q * q + p * p * p / 27.0;
+    if (h > 0.0)
+    { // Check depressed cubic discriminant
+        h = sqrt(h);
+        float o = -0.5 * q;
+        roots.x = cbrt(o - h) + cbrt(o + h) - u; // Cardano's formula (see https://en.wikipedia.org/wiki/Cubic_equation)
+        return 1;
+    }
+
+    // Solve by mapping an inverse smoothstep between the critical points
+    // I found a whole lot simplified right out so now it probably looks rather obfuscated
+    float m = sqrt(-p / 3.0);
+    roots.x = -2.0 * m * sin(asin(1.5 * q / (p * m)) / 3.0);
+
+    // Factor out the root to solve for the rest as a quadratic
+    h = sqrt(-3.0 * roots.x * roots.x - 4.0 * p);
+    roots.yz = 0.5 * float2(h - roots.x, -h - roots.x);
+    roots -= u; // Undo the change in variable
+
+    return 3;
 }
 
 float GetValueFromSpline(ParticleInputDataCurve inputData,float xT)
@@ -106,7 +116,8 @@ float GetValueFromSpline(ParticleInputDataCurve inputData,float xT)
     float t = 0;
     float2 P1 = inputData.P1;
     float2 P2 = inputData.P2;
-    float3 roots = SolveCubic(float4(xT, 3 * P1.x, 3 * P2.x - 6 * P1.x, 1 - 3 * P2.x + 3 * P1.x));
+    float3 roots;
+    SolveCubic(1 - 3 * P2.x + 3 * P1.x, 3 * P2.x - 6 * P1.x, 3 * P1.x, xT, roots);
         
     if (roots.x >= 0 && roots.x <= 1)
          t = roots.x;
@@ -133,14 +144,18 @@ void UpdateParticle(int index)
     {
         float xT = -pool[index].lifetime.x / pool[index].lifetime.y;
         float y = GetValueFromSpline(particleData.SizeOverLifetime, xT);
+        if (particleData.SizeOverLifetime.IsUsing.w)
+            y = 1 - y;
 
-        pool[index].sizeAndRot.x = pool[index].state.y * y; 
+            pool[index].sizeAndRot.x = pool[index].state.y * y;
     }
     
     if (particleData.SpeedOverLifetime.IsUsing.x == true)
     {
         float xT = -pool[index].lifetime.x / pool[index].lifetime.y;
-        float y = GetValueFromSpline(particleData.SpeedOverLifetime, xT);                      
+        float y = GetValueFromSpline(particleData.SpeedOverLifetime, xT);   
+        if (particleData.SpeedOverLifetime.IsUsing.w)
+            y = 1 - y;
         pool[index].velocity.w = pool[index].state.z * y;
     }
 

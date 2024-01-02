@@ -3,6 +3,7 @@
 #include "../Core/ServiceLocator.h"
 #include "../Contexts/EngineContext.h"
 #include "../Core/Tools/Structures/Vector.h"
+
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -162,4 +163,17 @@ void TransformHelper::RadToDegrees(Vector3& vec)
 	vec.x *= 180.0f / M_PI;
 	vec.y *= 180.0f / M_PI;
 	vec.z *= 180.0f / M_PI;
+}
+
+void TransformHelper::SetDefaultHash()
+{
+	size_t seed = 0;
+	TransformComponent tc;
+	boost::hash_combine(seed, tc.localPosition);
+	boost::hash_combine(seed, tc.localRotation);
+	boost::hash_combine(seed, tc.localScale);
+	worldHashDefault = seed;
+	boost::hash_combine(seed, tc.parent);
+	localHashDefault = seed;
+
 }

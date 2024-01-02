@@ -149,6 +149,14 @@ void HardwareInitSystem::CreateDeviceAndSwapChain()
 void HardwareInitSystem::InitializeDirectX()
 {
 
+	HWND hd = GetDesktopWindow();
+	HMONITOR monitor = MonitorFromWindow(hd, MONITOR_DEFAULTTONEAREST);
+	MONITORINFO info;
+	info.cbSize = sizeof(MONITORINFO);
+	GetMonitorInfo(monitor, &info);
+	int monitor_width = info.rcMonitor.right - info.rcMonitor.left;
+	int monitor_height = info.rcMonitor.bottom - info.rcMonitor.top;
+
 	D3D11_VIEWPORT viewport = {};
 	viewport.Width = static_cast<float>(1280);
 	viewport.Height = static_cast<float>(720);
@@ -163,5 +171,13 @@ void HardwareInitSystem::InitializeDirectX()
 
 void HardwareInitSystem::CreateOSWindow(LPCWSTR appName, HINSTANCE hInstance, const int& width, const int& height)
 {
-	hc->window = std::make_unique<DisplayWin32>(appName, hInstance, width, height);
+	HWND hd = GetDesktopWindow();
+	HMONITOR monitor = MonitorFromWindow(hd, MONITOR_DEFAULTTONEAREST);
+	MONITORINFO info;
+	info.cbSize = sizeof(MONITORINFO);
+	GetMonitorInfo(monitor, &info);
+	int monitor_width = info.rcMonitor.right - info.rcMonitor.left;
+	int monitor_height = info.rcMonitor.bottom - info.rcMonitor.top;
+
+	hc->window = std::make_unique<DisplayWin32>(appName, hInstance, monitor_width, monitor_height);
 }

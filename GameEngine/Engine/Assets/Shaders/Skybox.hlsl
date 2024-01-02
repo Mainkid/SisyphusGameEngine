@@ -22,7 +22,7 @@ PosOut VS(PosIn vIn)
     PosOut vOut;
          // Set z = w make z / w = 1 (the sky box is kept far plane)
     float4 posH = mul(float4(vIn.PosL, 0.0f), viewProj);
-    vOut.PosH = posH.xyww;
+    vOut.PosH = float4(posH.xy, posH.w * 0.9999f, posH.w);
     vOut.PosL = vIn.PosL;
     return vOut;
 }
@@ -30,5 +30,5 @@ PosOut VS(PosIn vIn)
 
 float4 PS(PosOut pIn) : SV_Target
 {
-    return g_TexCube.Sample(g_Sam, pIn.PosL);
+    return float4(g_TexCube.Sample(g_Sam, pIn.PosL).xyz, 1.0f);
 }

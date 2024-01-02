@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\FMod\api\core\inc;$(SolutionDir)GameEngine\vendor\FMod\api\studio\inc;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
   </PropertyGroup>
@@ -121,7 +121,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;GFSDK_SSAO_D3D11.win64.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;GFSDK_SSAO_D3D11.win64.lib;mono-2.0-sgen.lib;fmod_vc.lib;fmodL_vc.lib;fmodstudio_vc.lib;fmodstudioL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>
@@ -623,6 +623,7 @@
     <ClCompile Include="Engine\Core\Tools\ErrorLogger.cpp" />
     <ClCompile Include="Engine\Core\Tools\ImageLoader.cpp" />
     <ClCompile Include="Engine\Features\Particles\Particle.cpp" />
+    <ClCompile Include="Engine\Features\Sounds\Systems\SoundSystem.cpp" />
     <ClCompile Include="Engine\Systems\TransformSystem.cpp" />
     <ClCompile Include="Engine\Systems\TransformHelper.cpp" />
     <ClCompile Include="Engine\Features\Mesh\Systems\MeshSystem.cpp" />
@@ -672,6 +673,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Events\SySoundDeletedEvent.h" />
+    <ClInclude Include="Engine\Features\Sounds\Components\FSoundComponent.h" />
+    <ClInclude Include="Engine\Components\Components.h" />
+    <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
     <ClInclude Include="Engine\Contexts\PhysicsContext.h" />
     <ClInclude Include="Engine\Core\Tools\Macro.h" />
     <ClInclude Include="Engine\Features\Common\EComponentTypes.h" />
@@ -705,6 +710,8 @@
     <ClInclude Include="Engine\Scene\CameraHelper.h" />
     <ClInclude Include="Engine\Components\SkyboxComponent.h" />
     <ClInclude Include="Engine\Scene\GameObjectHelper.h" />
+    <ClInclude Include="Engine\Scene\Prefab.h" />
+    <ClInclude Include="Engine\Scene\Scene.h" />
     <ClInclude Include="Engine\Serialization\Serializable.h" />
     <ClInclude Include="Engine\Serialization\SerializableMacros.h" />
     <ClInclude Include="Engine\Serialization\Serializer.hpp" />
@@ -798,7 +805,64 @@
     <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.h" />
     <ClInclude Include="vendor\Delegates.h" />
+    <ClInclude Include="vendor\entt\core\algorithm.hpp" />
+    <ClInclude Include="vendor\entt\core\any.hpp" />
+    <ClInclude Include="vendor\entt\core\attribute.h" />
+    <ClInclude Include="vendor\entt\core\compressed_pair.hpp" />
+    <ClInclude Include="vendor\entt\core\enum.hpp" />
+    <ClInclude Include="vendor\entt\core\family.hpp" />
+    <ClInclude Include="vendor\entt\core\fwd.hpp" />
+    <ClInclude Include="vendor\entt\core\hashed_string.hpp" />
+    <ClInclude Include="vendor\entt\core\ident.hpp" />
+    <ClInclude Include="vendor\entt\core\iterator.hpp" />
+    <ClInclude Include="vendor\entt\core\memory.hpp" />
+    <ClInclude Include="vendor\entt\core\monostate.hpp" />
+    <ClInclude Include="vendor\entt\core\tuple.hpp" />
+    <ClInclude Include="vendor\entt\core\type_info.hpp" />
+    <ClInclude Include="vendor\entt\core\type_traits.hpp" />
+    <ClInclude Include="vendor\entt\core\utility.hpp" />
+    <ClInclude Include="vendor\entt\entity\component.hpp" />
+    <ClInclude Include="vendor\entt\entity\entity.hpp" />
+    <ClInclude Include="vendor\entt\entity\fwd.hpp" />
+    <ClInclude Include="vendor\entt\entity\group.hpp" />
+    <ClInclude Include="vendor\entt\entity\handle.hpp" />
+    <ClInclude Include="vendor\entt\entity\helper.hpp" />
+    <ClInclude Include="vendor\entt\entity\mixin.hpp" />
+    <ClInclude Include="vendor\entt\entity\observer.hpp" />
+    <ClInclude Include="vendor\entt\entity\organizer.hpp" />
+    <ClInclude Include="vendor\entt\entity\registry.hpp" />
+    <ClInclude Include="vendor\entt\entity\runtime_view.hpp" />
+    <ClInclude Include="vendor\entt\entity\snapshot.hpp" />
+    <ClInclude Include="vendor\entt\entity\sparse_set.hpp" />
+    <ClInclude Include="vendor\entt\entity\storage.hpp" />
+    <ClInclude Include="vendor\entt\entity\view.hpp" />
     <ClInclude Include="vendor\entt\entt.hpp" />
+    <ClInclude Include="vendor\entt\meta\adl_pointer.hpp" />
+    <ClInclude Include="vendor\entt\meta\container.hpp" />
+    <ClInclude Include="vendor\entt\meta\context.hpp" />
+    <ClInclude Include="vendor\entt\meta\factory.hpp" />
+    <ClInclude Include="vendor\entt\meta\fwd.hpp" />
+    <ClInclude Include="vendor\entt\meta\meta.hpp" />
+    <ClInclude Include="vendor\entt\meta\node.hpp" />
+    <ClInclude Include="vendor\entt\meta\pointer.hpp" />
+    <ClInclude Include="vendor\entt\meta\policy.hpp" />
+    <ClInclude Include="vendor\entt\meta\range.hpp" />
+    <ClInclude Include="vendor\entt\meta\resolve.hpp" />
+    <ClInclude Include="vendor\entt\meta\template.hpp" />
+    <ClInclude Include="vendor\entt\meta\type_traits.hpp" />
+    <ClInclude Include="vendor\entt\meta\utility.hpp" />
+    <ClInclude Include="vendor\entt\resource\cache.hpp" />
+    <ClInclude Include="vendor\entt\resource\fwd.hpp" />
+    <ClInclude Include="vendor\entt\resource\loader.hpp" />
+    <ClInclude Include="vendor\entt\resource\resource.hpp" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod.hpp" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_codec.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_common.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp_effects.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_errors.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_output.h" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
     <ClInclude Include="vendor\ImGuizmo\ImCurveEdit.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGradient.h" />
