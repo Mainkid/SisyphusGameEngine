@@ -6,7 +6,7 @@
 struct EngineContext;
 
 using namespace DirectX::SimpleMath;
-class TransformSystem: public SystemBase
+class TransformSystem : public SystemBase
 {
 public:
 	SyResult Init() override;
@@ -16,4 +16,3 @@ public:
 private:
 	EngineContext* ec;
 };
-

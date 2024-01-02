@@ -14,19 +14,6 @@ struct TransformComponent
 		this->_rotation = _rot;
 		this->scale = _scale;
 	}
-	TransformComponent(const TransformComponent& tc)
-	{
-		//this->_position = tc._position;
-		//this->_rotation = tc._rotation;
-		//this->scale = tc.scale;
-		this->localPosition = tc.localPosition;
-		this->localRotation = tc.localRotation;
-		this->localScale = tc.localScale;
-		this->worldHash = 0;
-		this->localHash = 0;
-		this->parent = tc.parent;
-	}
-
 	~TransformComponent()
 	{
 	}
@@ -43,8 +30,8 @@ struct TransformComponent
 	uint32_t parent = entt::null;
 	std::set<entt::entity> children = {};
 
-	size_t MonoHash = 0; // read/write only by mono sync system
 
+	size_t MonoHash = 0; // read/write only by mono sync system
 
 
 	SER_COMP(TransformComponent,
@@ -56,3 +43,62 @@ struct TransformComponent
 		localScale,
 		parent)
 };
+
+namespace std
+{
+	template<> struct hash<SyVector3>
+	{
+		using argument_type = SyVector3;
+		using result_type = std::size_t;
+		result_type operator()(argument_type const& a) const
+		{
+			result_type const h1(std::hash<float>()(a.x));
+			result_type const h2(std::hash<float>()(a.y));
+			result_type const h3(std::hash<float>()(a.z));
+			return h1 * 37 + (h1 * 37 + h2) * 37 +
+				((h1 * 37 + h2) * 37 + h3) * 37;
+		}
+	};
+}
+
+namespace std
+{
+	template<> struct hash<Vector3>
+	{
+		using argument_type = Vector3;
+		using result_type = std::size_t;
+		result_type operator()(argument_type const& a) const
+		{
+			result_type const h1(std::hash<float>()(a.x));
+			result_type const h2(std::hash<float>()(a.y));
+			result_type const h3(std::hash<float>()(a.z));
+			return h1 * 37 + (h1 * 37 + h2) * 37 +
+				((h1 * 37 + h2) * 37 + h3) * 37;
+		}
+	};
+}
+
+namespace std
+{
+	template<> struct hash<TransformComponent>
+	{
+		using argument_type = TransformComponent;
+		using result_type = std::size_t;
+		result_type operator()(argument_type const& a) const
+		{
+			result_type const h1(std::hash<SyVector3>()(a._position));
+			result_type const h2(std::hash<SyVector3>()(a.scale));
+			result_type const h3(std::hash<SyVector3>()(a._rotation));
+			result_type const h4(std::hash<uint32_t>()(a.parent));
+			result_type const h5(std::hash<SyVector3>()(a.localPosition));
+			result_type const h6(std::hash<SyVector3>()(a.localRotation));
+			result_type const h7(std::hash<SyVector3>()(a.localScale));
+			return h1 * 37 + (h1 * 37 + h2) * 37 +
+				((h1 * 37 + h2) * 37 + h3) * 37 +
+				(((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 +
+				((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37 +
+				(((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37 + h6) * 37 +
+				((((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37 + h6) * 37 + h7);
+		}
+	};
+}

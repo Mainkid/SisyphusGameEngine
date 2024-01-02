@@ -1,4 +1,4 @@
-#include "TransformSystem.h"
+﻿#include "TransformSystem.h"
 #include "../Contexts/EngineContext.h"
 #include "../Core/ServiceLocator.h"
 #include "TransformHelper.h"
@@ -10,7 +10,6 @@ SyResult TransformSystem::Init()
 {
 	SyResult result;
 	ec = ServiceLocator::instance()->Get<EngineContext>();
-	TransformHelper::SetDefaultHash();
 	return result;
 }
 
@@ -32,15 +31,8 @@ SyResult TransformSystem::Run()
 		boost::hash_combine(lHash, tc.localPosition);
 		boost::hash_combine(lHash, tc.localRotation);
 		boost::hash_combine(lHash, tc.localScale);
-		boost::hash_combine(lHash, tc.parent);
 
-		if (tc.localHash != lHash && lHash!=TransformHelper::localHashDefault)
-		{
-			tc.localHash = lHash;
-			TransformHelper::UpdateTransformMatrix(tc);
-			//std::cout << std::endl;
-		}
-		else if (tc.worldHash != wHash)
+		if (tc.worldHash != wHash)
 		{
 			tc.worldHash = wHash;
 			Matrix parentTransform = Matrix::Identity;
@@ -49,7 +41,12 @@ SyResult TransformSystem::Run()
 				TransformComponent& parentTc = _ecs->get<TransformComponent>((entt::entity)tc.parent);
 				parentTransform = parentTc.transformMatrix;
 			}
-			TransformHelper::UpdateWorldTransformMatrix(tc,parentTransform);
+			TransformHelper::UpdateWorldTransformMatrix(tc, parentTransform);
+		}
+		if (tc.localHash != lHash)
+		{
+			tc.localHash = lHash;
+			TransformHelper::UpdateTransformMatrix(tc);
 		}
 	}
 	return result;
