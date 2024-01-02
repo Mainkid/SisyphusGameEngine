@@ -183,7 +183,9 @@ SyResult SoundSystem::Run()
                 SetChannelVolume(Scom.ChanelID, VolumeRounding(Scom.SoundVolume));
                 auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs,_ec->playModeState);
                 TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
-                SetChannel3dPosition(Scom.ChanelID, Vector3::Transform(tc._position, ñameraTransform.transformMatrix.Invert()));
+
+                if (Scom.SoundType3D)
+                    SetChannel3dPosition(Scom.ChanelID, Vector3::Transform(tc._position, ñameraTransform.transformMatrix.Invert()));
             }
         }
 
