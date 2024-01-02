@@ -14,19 +14,6 @@ struct TransformComponent
 		this->_rotation = _rot;
 		this->scale = _scale;
 	}
-	TransformComponent(const TransformComponent& tc)
-	{
-		//this->_position = tc._position;
-		//this->_rotation = tc._rotation;
-		//this->scale = tc.scale;
-		this->localPosition = tc.localPosition;
-		this->localRotation = tc.localRotation;
-		this->localScale = tc.localScale;
-		this->worldHash = 0;
-		this->localHash = 0;
-		this->parent = tc.parent;
-	}
-
 	~TransformComponent()
 	{
 	}
@@ -42,8 +29,6 @@ struct TransformComponent
 	size_t localHash = 0;
 	uint32_t parent = entt::null;
 	std::set<entt::entity> children = {};
-
-
 
 	SER_COMP(TransformComponent,
 		_position,
@@ -105,11 +90,11 @@ namespace std
 			result_type const h6(std::hash<SyVector3>()(a.localRotation));
 			result_type const h7(std::hash<SyVector3>()(a.localScale));
 			return h1 * 37 + (h1 * 37 + h2) * 37 +
-				((h1 * 37 + h2) * 37 + h3) * 37+
-				(((h1 * 37 + h2) * 37 + h3) * 37+h4)*37+
-				((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 +h5)*37+
-				(((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37+h6)*37+
-				((((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37 + h6) * 37+h7);
+				((h1 * 37 + h2) * 37 + h3) * 37 +
+				(((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 +
+				((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37 +
+				(((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37 + h6) * 37 +
+				((((((h1 * 37 + h2) * 37 + h3) * 37 + h4) * 37 + h5) * 37 + h6) * 37 + h7);
 		}
 	};
 }
