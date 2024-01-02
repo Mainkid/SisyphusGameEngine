@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Serializable.h"
+#include "SerializableMacros.h"
 #include "../Core/Tools/Structures/Vector.h"
 #include "SimpleMath.h"
 #include <boost/uuid/uuid.hpp>
