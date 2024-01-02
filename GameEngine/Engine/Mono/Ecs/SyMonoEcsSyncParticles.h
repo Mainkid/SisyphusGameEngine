@@ -5,33 +5,51 @@ namespace mono
 {
 	struct ProxyParticlesComp
 	{
-		struct InputData
+		struct InputFloat
 		{
-			float F;
-			ProxyVector2 RandomBetweenConstsF;
-			ProxyCurve Curve;
-			ProxyVector4 V4;
-			ProxyVector4Pair RandomBetweenConstsV;
-			EInputType InputType;
+			bool IsRange;
+			float Value;
+			float From;
+			float To;
 
-			InputData() {}
-			InputData(const ParticleInputDataF& data) :
-				F(data.Fvalue), RandomBetweenConstsF(data.RandomBetweenConstsF),
-				Curve(data.Curve),
-				V4(data.V4value), RandomBetweenConstsV(data.RandomBetweenConstsV),
-				InputType(data.InputType) {}
-
+			InputFloat() {}
+			InputFloat(const ParticleInputDataF& input) :
+				IsRange(input.InputType == RandomBetweenFloats),
+				Value(input.Fvalue),
+				From(input.RandomBetweenConstsF.f1),
+				To(input.RandomBetweenConstsF.f2) {}
 			operator ParticleInputDataF() const
 			{
-				return
-				{
-					F,
-					RandomBetweenConstsF,
-					Curve,
-					V4,
-					RandomBetweenConstsV,
-					InputType
-				};
+				ParticleInputDataF data;
+				data.InputType = IsRange ? RandomBetweenFloats : SimpleFloat;
+				data.Fvalue = Value;
+				data.RandomBetweenConstsF.f1 = From;
+				data.RandomBetweenConstsF.f2 = To;
+				return data;
+			}
+		};
+
+		struct InputColor
+		{
+			bool IsRange;
+			ProxyVector4 Value;
+			ProxyVector4 From;
+			ProxyVector4 To;
+
+			InputColor() {}
+			InputColor(const ParticleInputDataF& input) :
+				IsRange(input.InputType == RandomBetweenVectors),
+				Value(input.V4value),
+				From(input.RandomBetweenConstsV.vec1),
+				To(input.RandomBetweenConstsV.vec2) {}
+			operator ParticleInputDataF() const
+			{
+				ParticleInputDataF data;
+				data.InputType = IsRange ? RandomBetweenVectors : SimpleVector;
+				data.V4value = Value;
+				data.RandomBetweenConstsV.vec1 = From;
+				data.RandomBetweenConstsV.vec2 = To;
+				return data;
 			}
 		};
 
@@ -39,7 +57,7 @@ namespace mono
 		{
 			float Time;
 			float TimeSinceLastBurst;
-			InputData Count;
+			InputFloat Count;
 			bool IsLooping;
 			float Probability;
 
@@ -63,20 +81,20 @@ namespace mono
 
 		float Duration;
 		bool IsLooping;
-		InputData StartDelayTime;
-		InputData StartLifeTime;
-		InputData StartSpeed;
-		InputData StartSize;
-		InputData StartColor;
-		InputData StartRotation;
-		InputData SizeOverLifetime;
-		InputData SpeedOverLifetime;
-		InputData RotationOverLifetime;
+		InputFloat StartDelayTime;
+		InputFloat StartLifeTime;
+		InputFloat StartSpeed;
+		InputFloat StartSize;
+		InputColor StartColor;
+		InputFloat StartRotation;
+		ProxyCurve SizeOverLifetime;
+		ProxyCurve SpeedOverLifetime;
+		InputFloat RotationOverLifetime;
 		uint32_t MaxParticles;
 		bool IsLit;
 		float AmbientAmount;
 
-		InputData RateOverTime;
+		InputFloat RateOverTime;
 		BurstData* Bursts;
 		int BurstsCount;
 

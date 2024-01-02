@@ -85,6 +85,7 @@ public class SyProxyEditor
 	{
 		if (_drawers.TryGetValue(type, out drawer))
 			return true;
+		
 		if (type.IsEnum)
 		{
 			var drawerType = typeof(EditorDrawerEnum<>).MakeGenericType(type);
@@ -92,7 +93,9 @@ public class SyProxyEditor
 			_drawers.Add(type, drawer);
 			return true;
 		}
-		if (type.GetInterface(nameof(SyEcs.IComp)) != null)
+		if (type == typeof(SceneObjectComp))
+			return false;
+		if (type.GetInterface(nameof(SyEcs.IInternalComp)) != null)
 		{
 			var drawerType = typeof(EditorDrawerComp<>).MakeGenericType(type);
 			drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this, _ecs);
@@ -148,10 +151,8 @@ public class SyProxyEditor
 			{ typeof(SyColor), new EditorDrawerColor(this) },
 			{ typeof(SyCurve), new EditorDrawerCurve(this) },
 
-			{ typeof(TransformComp), new EditorDrawerCompTransform(this, _ecs) },
-			{ typeof(LightComp), new EditorDrawerCompLight(this, _ecs) },
-			{ typeof(ParticlesComp), new EditorDrawerCompParticles(this, _ecs) },
-			{ typeof(ParticlesComp.BurstData), new EditorDrawerParticlesBurst(this) }
+			//{ typeof(TransformComp), new EditorDrawerCompTransform(this, _ecs) },
+			//{ typeof(LightComp), new EditorDrawerCompLight(this, _ecs) },
 		};
 
 		var compInterfaceType = typeof(SyEcs.IComp);
@@ -189,7 +190,7 @@ public class SyProxyEditor
 	internal static extern bool GeDrawIntField(string name, ref int val);
 
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern bool GeDrawFloatField(string name, ref float val);
+	internal static extern bool GeDrawFloatField(string name, ref float val, float min, float max, float step);
 
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern bool GeDrawBoolField(string name, ref bool val);

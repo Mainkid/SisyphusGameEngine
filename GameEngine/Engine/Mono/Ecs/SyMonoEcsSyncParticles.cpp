@@ -29,8 +29,8 @@ void SyMonoEcsSyncParticles::FillProxyByComp(const ParticleComponent& comp)
 	_proxy.StartSize = comp.StartSize;
 	_proxy.StartColor = comp.StartColor;
 	_proxy.StartRotation = comp.StartRotation;
-	_proxy.SizeOverLifetime = comp.SizeOverLifetime;
-	_proxy.SpeedOverLifetime = comp.SpeedOverLifetime;
+	_proxy.SizeOverLifetime = comp.SizeOverLifetime.Curve;
+	_proxy.SpeedOverLifetime = comp.SpeedOverLifetime.Curve;
 	_proxy.RotationOverLifetime = comp.RotationOverLifetime;
 	_proxy.MaxParticles = comp.MaxParticles;
 	_proxy.IsLit = comp.IsLit;
@@ -77,8 +77,8 @@ void SyMonoEcsSyncParticles::FillCompByProxy(
 	comp.StartSize = proxy.StartSize;
 	comp.StartColor = proxy.StartColor;
 	comp.StartRotation = proxy.StartRotation;
-	comp.SizeOverLifetime = proxy.SizeOverLifetime;
-	comp.SpeedOverLifetime = proxy.SpeedOverLifetime;
+	comp.SizeOverLifetime.Curve = proxy.SizeOverLifetime;
+	comp.SpeedOverLifetime.Curve = proxy.SpeedOverLifetime;
 	comp.RotationOverLifetime = proxy.RotationOverLifetime;
 	comp.MaxParticles = proxy.MaxParticles;
 	comp.IsLit = proxy.IsLit;

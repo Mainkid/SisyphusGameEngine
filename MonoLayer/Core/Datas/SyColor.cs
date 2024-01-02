@@ -36,6 +36,10 @@ public struct SyColor : IEquatable<SyColor>
 
 	public static implicit operator SyVector4(SyColor color)
 		=> new SyVector4(color.R, color.G, color.B, color.A);
+
+	public static implicit operator SyColor(SyVector4 v)
+		=> new SyColor(v.X, v.Y, v.Z, v.W);
+	
 	
 	public static SyColor White { get; } = new SyColor(1, 1, 1);
 	public static SyColor Red   { get; } = new SyColor(1, 0, 0);

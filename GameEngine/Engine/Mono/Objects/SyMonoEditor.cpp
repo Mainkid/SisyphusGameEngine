@@ -50,10 +50,10 @@ bool SyMonoEditor::GeDrawIntField(MonoString* rawName, int* val)
 	return ImGui::DragInt(name, val);
 }
 
-bool SyMonoEditor::GeDrawFloatField(MonoString* rawName, float* val)
+bool SyMonoEditor::GeDrawFloatField(MonoString* rawName, float* val, float valMin, float valMax, float valStep)
 {
 	SyMonoStr name{ rawName };
-	return ImGui::DragFloat(name, val, 0.1f);
+	return ImGui::DragFloat(name, val, valStep, valMin, valMax);
 }
 
 bool SyMonoEditor::GeDrawBoolField(MonoString* rawName, bool* val)

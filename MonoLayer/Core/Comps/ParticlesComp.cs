@@ -1,30 +1,40 @@
 ﻿using System.Collections.Generic;
-using Leopotam.EcsLite;
 using SyEngine.Core.Datas;
 using SyEngine.Core.Helpers;
 using SyEngine.Core.Resources;
+using SyEngine.Editor.Attributes;
 
 namespace SyEngine.Core.Comps
 {
 public struct ParticlesComp : SyEcs.IComp
 {
-	public float     Duration;
-	public bool      IsLooping;
-	public InputData StartDelayTime;
-	public InputData StartLifeTime;
-	public InputData StartSpeed;
-	public InputData StartSize;
-	public InputData StartColor;
-	public InputData StartRotation;
-	public InputData SizeOverLifetime;
-	public InputData SpeedOverLifetime;
-	public InputData RotationOverLifetime;
+	public float Duration;
+	public bool  IsLooping;
+	[Foldout]
+	public InputFloat StartDelayTime;
+	[Foldout]
+	public InputFloat StartLifeTime;
+	[Foldout]
+	public InputFloat StartSpeed;
+	[Foldout]
+	public InputFloat StartSize;
+	[Foldout]
+	public InputColor StartColor;
+	[Foldout]
+	public InputFloat StartRotation;
+	[Foldout]
+	public SyCurve SizeOverLifetime;
+	[Foldout]
+	public SyCurve SpeedOverLifetime;
+	[Foldout]
+	public InputFloat RotationOverLifetime;
 
 	public bool  IsLit;
 	public float AmbientAmount;
-	
-	public int             MaxParticles;
-	public InputData       RateOverTime;
+
+	public int MaxParticles;
+	[Foldout]
+	public InputFloat RateOverTime;
 	public List<BurstData> Bursts;
 
 	public EEmitShape EmitShape;
@@ -33,47 +43,49 @@ public struct ParticlesComp : SyEcs.IComp
 
 	public ResRef<ResTexture> Texture;
 
+	
+	[Hide]
 	public bool IsDirty;
-    
 
-	public struct InputData
+
+	public struct InputFloat
 	{
-		public float         F;
-		public SyVector2     RandomBetweenConstsF;
-		public SyCurve       Curve;
-		public SyVector4     V;
-		public SyVector4Pair RandomBetweenConstsV;
-		public EInputType    InputType;
-
+		public bool IsRange;
+		[ShowIfBool(nameof(IsRange), false)]
+		public float Value;
+		[ShowIfBool(nameof(IsRange), true)]
+		public float From;
+		[ShowIfBool(nameof(IsRange), true)]
+		public float To;
 
 		public override int GetHashCode()
-			=> HashHelper.Combine(
-				F,
-				RandomBetweenConstsF,
-				Curve,
-				V,
-				RandomBetweenConstsV,
-				InputType
-			);
+			=> HashHelper.Combine(IsRange, Value, From, To);
+	}
 
+	public struct InputColor
+	{
+		public bool IsRange;
+		[ShowIfBool(nameof(IsRange), false)]
+		public SyColor Value;
+		[ShowIfBool(nameof(IsRange), true)]
+		public SyColor From;
+		[ShowIfBool(nameof(IsRange), true)]
+		public SyColor To;
 
-		public enum EInputType
-		{
-			SimpleFloat,
-			RandomBetweenFloats,
-			SimpleVector,
-			RandomBetweenVectors,
-			SimpleCurve
-		}
+		public override int GetHashCode()
+			=> HashHelper.Combine(IsRange, Value, From, To);
 	}
 
 	public struct BurstData
 	{
-		public float     Time;
-		public float     TimeSinceLastBurst;
-		public InputData Count;
-		public bool      IsLooping;
-		public float     Probability;
+		public float      Time;
+		public float      TimeSinceLastBurst;
+		public InputFloat Count;
+		public bool       IsLooping;
+		public float      Probability;
+
+		public override int GetHashCode()
+			=> HashHelper.Combine(Time, TimeSinceLastBurst, Count, IsLooping, Probability);
 	}
 
 	public enum EEmitShape

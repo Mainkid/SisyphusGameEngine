@@ -1,17 +1,59 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
+using SyEngine.Editor.Attributes;
 
 namespace SyEngine.Editor.Drawers
 {
 public class EditorDrawerReflect<T> : EditorDrawerBase<T>
 {
-	private readonly SyProxyEditor _editor;
-	private readonly FieldInfo[]   _fields;
+	private readonly List<FieldInfo> _fields = new List<FieldInfo>();
+
+	private readonly Dictionary<FieldInfo, List<EditorFieldBaseAttribute>> _fieldToAttr;
+	
 	
 	public EditorDrawerReflect(SyProxyEditor editor) : base(editor)
 	{
-		_editor = editor;
-		_fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public);
+		var fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public);
+
+		_fieldToAttr = new Dictionary<FieldInfo, List<EditorFieldBaseAttribute>>();
+		foreach (var field in fields)
+		{
+			var isDrawable = true;
+			
+			foreach (var rawAttr in field.GetCustomAttributes())
+			{
+				if (rawAttr is HideAttribute)
+				{
+					isDrawable = false;
+					break;
+				}
+                
+				if (rawAttr.GetType().IsSubclassOf(typeof(EditorFieldBaseAttribute)))
+				{
+					if (!_fieldToAttr.TryGetValue(field, out var attrs))
+					{
+						attrs               = new List<EditorFieldBaseAttribute>();
+						_fieldToAttr[field] = attrs;
+					}
+
+					var attr = (EditorFieldBaseAttribute)rawAttr;
+					attr.Init(editor, typeof(T));
+
+					attrs.Add(attr);
+				}
+			}
+			if (isDrawable)
+			{
+				if (_fieldToAttr.TryGetValue(field, out var unsortedAttrs))
+					unsortedAttrs.Sort((a, b)
+						                   => b.Priority.CompareTo(a.Priority)
+					);
+				_fields.Add(field);
+			}
+			else
+				_fieldToAttr.Remove(field);
+		}
 	}
     
 	public override bool Draw(string name, ref T val)
@@ -41,7 +83,23 @@ public class EditorDrawerReflect<T> : EditorDrawerBase<T>
 			foreach (var field in _fields)
 			{
 				object fieldVal       = field.GetValue(rawVal);
-				bool   isFieldChanged = _editor.DrawField(field.Name, field.FieldType, ref fieldVal);
+				var    isFieldChanged = false;
+				
+				if (_fieldToAttr.TryGetValue(field, out var attrs))
+				{
+					isFieldChanged = attrs[0].Draw(
+						rawVal,
+						field.Name,
+						ref fieldVal,
+						attrs,
+						0
+					);
+				}
+				else
+				{
+					isFieldChanged = Editor.DrawField(field.Name, field.FieldType, ref fieldVal);
+				}
+				
 				if (isFieldChanged)
 				{
 					field.SetValue(rawVal, fieldVal);

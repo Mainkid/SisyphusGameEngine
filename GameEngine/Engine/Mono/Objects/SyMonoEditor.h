@@ -36,7 +36,7 @@ namespace mono
 		static int GeDrawCompHeader(MonoString* rawName, bool isRemovable);
 		static void GeDrawText(MonoString* rawName);
 		static bool GeDrawIntField(MonoString* rawName, int* val);
-		static bool GeDrawFloatField(MonoString* rawName, float* val);
+		static bool GeDrawFloatField(MonoString* rawName, float* val, float valMin, float valMax, float valStep);
 		static bool GeDrawBoolField(MonoString* rawName, bool* val);
 		static bool GeDrawVector2Field(MonoString* rawName, ProxyVector2* val);
 		static bool GeDrawVector3Field(MonoString* rawName, ProxyVector3* val);

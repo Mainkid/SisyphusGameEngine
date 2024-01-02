@@ -540,7 +540,7 @@ internal class SyEcsSync
             
             SyProxyEcs.GeUpdateSoundComp(_ecs.ToEngineEnt(ent), proxy);
             
-            Console.WriteLine($"[TEST] g{ent} skybox sent to engine");
+            Console.WriteLine($"[TEST] g{ent} sound sent to engine");
         }
     }
 
@@ -559,7 +559,7 @@ internal class SyEcsSync
 
         sound.Hash = sound.GetHashCode();
         
-        Console.WriteLine($"[TEST] g{gameEnt} skybox received from engine");
+        Console.WriteLine($"[TEST] g{gameEnt} sound received from engine");
     }
 }
 }
