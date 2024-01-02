@@ -25,6 +25,19 @@ struct HardwareContext;
 struct EngineContext;
 struct RenderContext;
 
+struct SoundData
+{
+	FMOD::Sound* Sound;
+	std::string soundPath;
+};
+
+struct SoundParam
+{
+	boost::uuids::uuid soundUuid;
+	bool is3D;
+	bool isLooping;
+};
+
 struct Implementation {
 
 	Implementation();
@@ -37,7 +50,7 @@ struct Implementation {
 
 	int _mnNextChannelId;
 
-	typedef std::map<std::string, FMOD::Sound*> SoundMap;
+	typedef std::map<uint32_t, SoundData> SoundMap;
 	typedef std::map<int, FMOD::Channel*> ChannelMap;
 	//typedef std::map<std::string, FMOD::Studio::EventInstance*> EventMap;
 	//typedef std::map<std::string, FMOD::Studio::Bank*> BankMap;
@@ -58,9 +71,9 @@ public:
 	//void LoadBank(const std::string& strBankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags);
 	//void LoadEvent(const std::string& strEventName);
 	void LoadSound(const boost::uuids::uuid& uuid, bool b3d = true, bool bLooping = false);// , bool bStream = false);
-	void UnLoadSound(const boost::uuids::uuid& uuid);
+	void UnLoadSound(const boost::uuids::uuid& uuid, bool b3d, bool bLooping);
 	//void Set3dListenerAndOrientation(const SyVector3& vPos = SyVector3{ 0, 0, 0 }, float fVolumedB = 0.0f);
-	int PlayFSound(const boost::uuids::uuid& uuid, const SyVector3& vPosition = SyVector3{ 0, 0, 0 }, float fVolumedB = 1.0f);
+	int PlayFSound(const boost::uuids::uuid& uuid, bool b3d, bool bLooping, const SyVector3& vPosition = SyVector3{ 0, 0, 0 }, float fVolumedB = 1.0f);
 	//void PlayEvent(const std::string& strEventName);
 	//void StopChannel(int nChannelId);
 	//void StopEvent(const std::string& strEventName, bool bImmediate = false);
@@ -84,8 +97,8 @@ private:
 	EngineContext* _ec = nullptr;
 	ResourceService* _rs = nullptr;
 
-	std::unordered_map<int, boost::uuids::uuid> deletionMap;
-	std::unordered_map<int, boost::uuids::uuid> activeMap;
+	std::unordered_map<int, SoundParam> deletionMap;
+	std::unordered_map<int, SoundParam> activeMap;
 
 	std::unordered_map<boost::uuids::uuid, int, boost::hash<boost::uuids::uuid>> soundComponentsMap;
 	std::unordered_map<boost::uuids::uuid, int, boost::hash<boost::uuids::uuid>> tmpComponentsMap;
