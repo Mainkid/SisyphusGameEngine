@@ -15,10 +15,6 @@
 #include "../Core/Tools/ErrorLogger.h"
 #include "../Features/Events/Tags/SyEventTag.h"
 
-
-
-
-
 class GameObjectHelper
 {
 public:

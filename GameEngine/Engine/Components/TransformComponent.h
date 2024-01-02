@@ -30,6 +30,7 @@ struct TransformComponent
 	uint32_t parent = entt::null;
 	std::set<entt::entity> children = {};
 
+
 	SER_COMP(TransformComponent,
 		_position,
 		_rotation,

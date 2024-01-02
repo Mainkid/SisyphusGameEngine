@@ -38,7 +38,7 @@ void TransformHelper::UpdateTransformMatrix(TransformComponent& tc)
 		TransformComponent& curTc = context->ecs.get<TransformComponent>(curID);
 		tc.transformMatrix = tc.transformMatrix * curTc.transformMatrix;
 	}
-
+	
 	for (auto& child : tc.children)
 	{
 		UpdateTransformMatrix(context->ecs.get<TransformComponent>(child));

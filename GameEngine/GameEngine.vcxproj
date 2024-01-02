@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Features\Physics\Systems\JointSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
     <ClCompile Include="Engine\Features\Physics\Components\ColliderComponent.cpp" />
     <ClCompile Include="Engine\Features\Physics\Systems\CollisionSystem.cpp" />
@@ -676,7 +677,14 @@
     <ClInclude Include="Engine\Features\Sounds\Components\FSoundComponent.h" />
     <ClInclude Include="Engine\Components\Components.h" />
     <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
+    <ClInclude Include="Engine\Contexts\PhysicsContext.h" />
+    <ClInclude Include="Engine\Core\Tools\Macro.h" />
+    <ClInclude Include="Engine\Features\Common\EComponentTypes.h" />
+    <ClInclude Include="Engine\Features\Common\Events\OnAddComponentEvent.h" />
+    <ClInclude Include="Engine\Features\Common\Events\OnRemoveComponentEvent.h" />
     <ClInclude Include="Engine\Features\Events\Tags\SyEventTag.h" />
+    <ClInclude Include="Engine\Features\Physics\Components\JointComponent.h" />
+    <ClInclude Include="Engine\Features\Physics\Systems\JointSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.h" />
     <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
@@ -684,7 +692,7 @@
     <ClInclude Include="Engine\Core\ResourcePath.h" />
     <ClInclude Include="Engine\Events\SyHotReloadEvent.h" />
     <ClInclude Include="Engine\Events\SyImageBasedLightingUpdateEvent.h" />
-    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateColliderEvent.h" />
+    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateCollider.h" />
     <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateRBodyEvent.h" />
     <ClInclude Include="Engine\Events\SyPlayModeEndedEvent.h" />
     <ClInclude Include="Engine\Events\SyPlayModeStartedEvent.h" />
@@ -973,6 +981,9 @@
     <Image Include="Engine\Assets\SkyBox\skybox_4.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_5.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Engine\Features\Common\Events\OnRemoveComponentEvent" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
