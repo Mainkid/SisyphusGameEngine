@@ -11,8 +11,7 @@ namespace mono
 	};
 
 
-	class SyMonoEcsSyncSceneObject :
-		public SyMonoEcsSyncBase<SyMonoEcsSyncSceneObject, GameObjectComp, ProxySceneObjectComp>
+	class SyMonoEcsSyncSceneObject : public SyMonoEcsSyncBase<GameObjectComp, ProxySceneObjectComp>
 	{
 	public:
 		ECompId GetCompId() const override { return ECompId::SceneObject; }

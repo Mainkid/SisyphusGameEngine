@@ -19,6 +19,7 @@ namespace mono
 		virtual void AddComp(entt::entity ent) = 0;
 		virtual void RemoveComp(entt::entity ent) = 0;
 
+		virtual void TrySendAll() = 0;
 		virtual void SendDirectly(entt::entity ent) = 0;
 	};
 }

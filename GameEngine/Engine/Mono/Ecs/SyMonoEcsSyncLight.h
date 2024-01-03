@@ -14,8 +14,7 @@ namespace mono
 	};
 
 
-	class SyMonoEcsSyncLight :
-		public SyMonoEcsSyncBase<SyMonoEcsSyncLight, LightComponent, ProxyLightComp>
+	class SyMonoEcsSyncLight : public SyMonoEcsSyncBase<LightComponent, ProxyLightComp>
 	{
 	public:
 		ECompId GetCompId() const override { return ECompId::Light; }

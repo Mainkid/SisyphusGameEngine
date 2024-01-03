@@ -145,6 +145,8 @@
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncParticles.cpp" />
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncSound.cpp" />
     <ClCompile Include="Engine\Features\Physics\Systems\JointSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncFixedJoint.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncHingeJoint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -427,6 +429,8 @@
     <ClInclude Include="Engine\Features\Physics\Systems\JointSystem.h" />
     <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateCollider.h" />
     <ClInclude Include="Engine\Contexts\PhysicsContext.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncFixedJoint.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncHingeJoint.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Downloads\skybox.jpg" />

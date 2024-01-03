@@ -14,8 +14,7 @@ namespace mono
 	};
 
 
-	class SyMonoEcsSyncSound :
-		public SyMonoEcsSyncBase<SyMonoEcsSyncSound, FSoundComponent, ProxySoundComp>
+	class SyMonoEcsSyncSound : public SyMonoEcsSyncBase<FSoundComponent, ProxySoundComp>
 	{
 	public:
 		ECompId GetCompId() const override { return ECompId::Sound; }

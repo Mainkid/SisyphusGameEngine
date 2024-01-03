@@ -3,6 +3,8 @@
 #include "../../Components/TransformComponent.h"
 #include "../../Scene/GameObjectHelper.h"
 #include "../Ecs/SyMonoEcsSyncCollider.h"
+#include "../Ecs/SyMonoEcsSyncFixedJoint.h"
+#include "../Ecs/SyMonoEcsSyncHingeJoint.h"
 #include "../Ecs/SyMonoEcsSyncLight.h"
 #include "../Ecs/SyMonoEcsSyncMesh.h"
 #include "../Ecs/SyMonoEcsSyncParticles.h"
@@ -65,6 +67,12 @@ void SyMonoEcs::BindEcs(entt::registry* ecs)
 	_ecs = ecs;
 }
 
+void SyMonoEcs::TrySendAll()
+{
+	for (auto sync : _syncs)
+		sync->TrySendAll();
+}
+
 ISyMonoEcsSync* SyMonoEcs::GetSync(ECompId id)
 {
 	return _compIdToSync[id];
@@ -116,6 +124,8 @@ SyResult SyMonoEcs::OnAfterCreate()
 	AddSync<SyMonoEcsSyncSkybox>();
 	AddSync<SyMonoEcsSyncParticles>();
 	AddSync<SyMonoEcsSyncSound>();
+	AddSync<SyMonoEcsSyncFixedJoint>();
+	AddSync<SyMonoEcsSyncHingeJoint>();
 
 	return {};
 }
@@ -127,9 +137,9 @@ SyResult SyMonoEcs::OnBeforeDestroy()
 	EgSyncEngineWithGame.UnBind();
 	_egDestroyEntity.UnBind();
 
-	for (auto pair : _syncTypeToSync)
-		delete pair.second;
-	_syncTypeToSync.clear();
+	for (auto sync : _syncs)
+		delete sync;
+	_syncs.clear();
 	_compIdToSync.clear();
 
 	return {};

@@ -1,6 +1,5 @@
 ﻿using System;
-using SyEngine.Core.Datas;
-using SyEngine.Core.Resources;
+using SyEngine.Resources;
 
 namespace SyEngine.Editor.Drawers
 {

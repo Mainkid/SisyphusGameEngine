@@ -28,15 +28,7 @@ SyResult MonoSyncEgSystem::Run()
 	if (!_monoEcs->IsValid())
 		return {};
 
-	_monoEcs->GetSync<mono::SyMonoEcsSyncSceneObject>()->TrySendAll();
-	_monoEcs->GetSync<mono::SyMonoEcsSyncTransform>()->TrySendAll();
-	_monoEcs->GetSync<mono::SyMonoEcsSyncMesh>()->TrySendAll();
-	_monoEcs->GetSync<mono::SyMonoEcsSyncLight>()->TrySendAll();
-	_monoEcs->GetSync<mono::SyMonoEcsSyncCollider>()->TrySendAll();
-	_monoEcs->GetSync<mono::SyMonoEcsSyncRigid>()->TrySendAll();
-	_monoEcs->GetSync<mono::SyMonoEcsSyncSkybox>()->TrySendAll();
-	_monoEcs->GetSync<mono::SyMonoEcsSyncParticles>()->TrySendAll();
-	_monoEcs->GetSync<mono::SyMonoEcsSyncSound>()->TrySendAll();
+	_monoEcs->TrySendAll();
 
 	return {};
 }

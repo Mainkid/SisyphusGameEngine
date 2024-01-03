@@ -7,7 +7,7 @@ namespace mono
 {
 	class SyMonoEcs : public SyMonoObj
 	{
-		inline static const std::string NAMESPACE = "SyEngine.Core";
+		inline static const std::string NAMESPACE = "SyEngine.Ecs";
 		inline static const std::string CLASS_NAME = "SyProxyEcs";
 
 		inline static const std::string GE_CREATE_ENTITY = "GeCreateEngineEntity";
@@ -29,15 +29,12 @@ namespace mono
 		SyMonoMethod<> EgSyncEngineWithGame{ "EgSyncEngineWithGame" };
 
 		void BindEcs(entt::registry* ecs);
-
-		template<typename TSync>
-		TSync* GetSync();
-		ISyMonoEcsSync* GetSync(ECompId id);
+		void TrySendAll();
 
 	private:
 		entt::registry* _ecs = nullptr;
 
-		std::unordered_map<std::type_index, ISyMonoEcsSync*> _syncTypeToSync;
+		std::vector<ISyMonoEcsSync*> _syncs;
 		std::unordered_map<ECompId, ISyMonoEcsSync*> _compIdToSync;
 
 		SyMonoMethod<uint32_t> _egDestroyEntity{ "EgDestroyEntity" };
@@ -45,6 +42,7 @@ namespace mono
 
 		template<typename T>
 		void AddSync();
+		ISyMonoEcsSync* GetSync(ECompId id);
 
 		void DestroyEntity(entt::entity ent, bool isRecursionStep);
 
@@ -58,16 +56,10 @@ namespace mono
 	template <typename T>
 	void SyMonoEcs::AddSync()
 	{
-		auto sync                        = new T();
-		_syncTypeToSync[typeid(T)]       = sync;
+		auto sync = new T();
+		_syncs.push_back(sync);
 		_compIdToSync[sync->GetCompId()] = sync;
 
 		sync->Bind(this, _ecs);
-	}
-
-	template <typename TSync>
-	TSync* SyMonoEcs::GetSync()
-	{
-		return (TSync*)_syncTypeToSync[typeid(TSync)];
 	}
 }

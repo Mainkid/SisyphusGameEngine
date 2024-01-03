@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using SimpleJSON;
-using SyEngine.Core.Helpers;
-using SyEngine.Core.Resources;
+using SyEngine.Helpers;
+using SyEngine.Resources;
 using SyEngine.Serialization.Serializers;
+using SimpleJSON;
 
 namespace SyEngine.Serialization
 {

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using SyEngine.Core;
+using SyEngine.Ecs;
 
 namespace SyEngine.Game
 {

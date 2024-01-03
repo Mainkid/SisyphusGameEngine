@@ -5,12 +5,11 @@
 
 using System;
 using System.Runtime.CompilerServices;
-
 #if ENABLE_IL2CPP
 using Unity.IL2CPP.CompilerServices;
 #endif
 
-namespace Leopotam.EcsLite {
+namespace LeoEcs {
     public interface IEcsPool {
         void Resize (int capacity);
         bool Has (int entity);

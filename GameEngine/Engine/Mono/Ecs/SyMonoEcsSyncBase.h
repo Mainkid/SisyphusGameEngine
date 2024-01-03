@@ -6,18 +6,18 @@
 
 namespace mono
 {
-	template<typename TSync, typename TComp, typename TProxyComp>
+	template<typename TComp, typename TProxyComp>
 	class SyMonoEcsSyncBase : public ISyMonoEcsSync
 	{
 	public:
-		virtual ~SyMonoEcsSyncBase()
+		~SyMonoEcsSyncBase() override
 		{
 			_instance = nullptr;
 		}
 
 		SyResult Bind(SyMonoEcs* monoEcs, entt::registry* ecs) final
 		{
-			_instance = (TSync*)this;
+			_instance = this;
 
 			_ecs = ecs;
 			_monoDomain = mono_object_get_domain(monoEcs->GetInstance());
@@ -30,7 +30,7 @@ namespace mono
 			return {};
 		}
 
-		void TrySendAll()
+		void TrySendAll() final
 		{
 			if constexpr (std::is_same_v<GameObjectComp, TComp>)
 			{
@@ -96,7 +96,7 @@ namespace mono
 		virtual size_t GetHash(const TComp& comp) = 0;
 
 	private:
-		inline static TSync* _instance = nullptr;
+		inline static SyMonoEcsSyncBase* _instance = nullptr;
 
 		SyMonoMethod<uint32_t, TProxyComp> _egUpdate{ "none" };
 

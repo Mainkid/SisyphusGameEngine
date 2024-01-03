@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using SyEngine.Core;
-using SyEngine.Core.Comps;
-using SyEngine.Core.Datas;
-using SyEngine.Core.Helpers;
-using SyEngine.Core.Resources;
+using SyEngine.Datas;
+using SyEngine.Ecs;
+using SyEngine.Ecs.Comps;
 using SyEngine.Editor.Drawers;
+using SyEngine.Helpers;
 using SyEngine.Logger;
+using SyEngine.Resources;
 
 namespace SyEngine.Editor
 {

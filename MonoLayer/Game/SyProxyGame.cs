@@ -1,6 +1,6 @@
 ﻿using System;
-using SyEngine.Core;
-using SyEngine.Core.Comps;
+using SyEngine.Ecs;
+using SyEngine.Ecs.Comps;
 using SyEngine.Logger;
 
 namespace SyEngine.Game

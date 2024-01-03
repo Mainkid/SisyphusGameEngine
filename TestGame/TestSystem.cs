@@ -1,8 +1,7 @@
-﻿using System;
-using Leopotam.EcsLite;
-using SyEngine.Core;
-using SyEngine.Core.Comps;
-using SyEngine.Core.Datas;
+﻿using LeoEcs;
+using SyEngine.Datas;
+using SyEngine.Ecs;
+using SyEngine.Ecs.Comps;
 using SyEngine.Logger;
 
 namespace TestGame

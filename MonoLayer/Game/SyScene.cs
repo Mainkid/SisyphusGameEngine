@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Leopotam.EcsLite;
-using SyEngine.Core;
-using SyEngine.Core.Comps;
+using SyEngine.Ecs;
+using SyEngine.Ecs.Comps;
+using LeoEcs;
 using SyEngine.Logger;
 using SyEngine.Serialization;
 

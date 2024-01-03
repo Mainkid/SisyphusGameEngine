@@ -1,5 +1,5 @@
-﻿using SimpleJSON;
-using SyEngine.Core.Resources;
+﻿using SyEngine.Resources;
+using SimpleJSON;
 
 namespace SyEngine.Serialization.Serializers
 {

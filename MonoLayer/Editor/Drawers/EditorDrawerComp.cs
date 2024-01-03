@@ -1,6 +1,6 @@
-﻿using Leopotam.EcsLite;
-using SyEngine.Core;
-using SyEngine.Core.Comps;
+﻿using SyEngine.Ecs;
+using SyEngine.Ecs.Comps;
+using LeoEcs;
 
 namespace SyEngine.Editor.Drawers
 {

@@ -13,7 +13,7 @@ namespace mono
 	};
 
 	class SyMonoEcsSyncCollider :
-		public SyMonoEcsSyncBase<SyMonoEcsSyncCollider, SyPrimitiveColliderComponent, ProxyColliderComp>
+		public SyMonoEcsSyncBase<SyPrimitiveColliderComponent, ProxyColliderComp>
 	{
 	public:
 		ECompId GetCompId() const override { return ECompId::Collider; }

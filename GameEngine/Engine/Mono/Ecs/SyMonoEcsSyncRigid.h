@@ -18,8 +18,7 @@ namespace mono
 	};
 
 
-	class SyMonoEcsSyncRigid :
-		public SyMonoEcsSyncBase<SyMonoEcsSyncRigid, SyRigidBodyComponent, ProxyRigidComp>
+	class SyMonoEcsSyncRigid : public SyMonoEcsSyncBase<SyRigidBodyComponent, ProxyRigidComp>
 	{
 	public:
 		ECompId GetCompId() const override { return ECompId::Rigid; }

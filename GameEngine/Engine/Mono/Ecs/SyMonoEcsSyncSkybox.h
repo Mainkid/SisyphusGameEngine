@@ -10,8 +10,7 @@ namespace mono
 	};
 
 
-	class SyMonoEcsSyncSkybox :
-		public SyMonoEcsSyncBase<SyMonoEcsSyncSkybox, SkyboxComponent, ProxySkyboxComp>
+	class SyMonoEcsSyncSkybox : public SyMonoEcsSyncBase<SkyboxComponent, ProxySkyboxComp>
 	{
 	public:
 		ECompId GetCompId() const override { return ECompId::Skybox; }

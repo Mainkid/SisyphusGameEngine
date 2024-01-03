@@ -106,8 +106,7 @@ namespace mono
 	};
 
 
-	class SyMonoEcsSyncParticles :
-		public SyMonoEcsSyncBase<SyMonoEcsSyncParticles, ParticleComponent, ProxyParticlesComp>
+	class SyMonoEcsSyncParticles : public SyMonoEcsSyncBase<ParticleComponent, ProxyParticlesComp>
 	{
 	public:
 		ECompId GetCompId() const override { return ECompId::Particles; }

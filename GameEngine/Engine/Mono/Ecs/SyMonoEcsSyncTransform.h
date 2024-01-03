@@ -18,8 +18,7 @@ namespace mono
 	};
 
 
-	class SyMonoEcsSyncTransform :
-		public SyMonoEcsSyncBase<SyMonoEcsSyncTransform, TransformComponent, ProxyTransformComp>
+	class SyMonoEcsSyncTransform : public SyMonoEcsSyncBase<TransformComponent, ProxyTransformComp>
 	{
 	public:
 		ECompId GetCompId() const override { return ECompId::Transform; }
