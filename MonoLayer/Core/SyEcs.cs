@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Leopotam.EcsLite;
 using SyEngine.Core.Comps;
 using SyEngine.Core.Datas;
@@ -111,8 +112,16 @@ public class SyEcs
                 throw new Exception($"cannot add scene component {engineCompId} to non-scene entity {ent}");
             SyLog.Debug(ELogTag.Ecs, $"add {engineCompId} to g{ent}");
             SyProxyEcs.GeAddEngineComp(engineEnt, engineCompId.Value);
+
+            return ref World.GetPool<T>().Get(ent);
         }
         return ref World.GetPool<T>().Add(ent);
+    }
+    
+    /// <summary> This method is only for reflection work-around use. </summary>
+    private void AddCompWithoutReturn<T>(int ent) where T : struct, IComp
+    {
+        AddComp<T>(ent);
     }
 
     public void RemoveComp<T>(int ent) where T : struct, IComp
@@ -150,23 +159,20 @@ public class SyEcs
         if (compType == typeof(SceneObjectComp) || 
             compType == typeof(TransformComp))
             throw new Exception($"cannot add {compType.Name}");
-        
-        if (compType == typeof(MeshComp))
-            AddComp<MeshComp>(ent);
-        else if (compType == typeof(LightComp))
-            AddComp<LightComp>(ent);
-        else if (compType == typeof(ColliderComp))
-            AddComp<ColliderComp>(ent);
-        else if (compType == typeof(RigidComp))
-            AddComp<RigidComp>(ent);
-        else if (compType == typeof(SkyboxComp))
-            AddComp<SkyboxComp>(ent);
-        else if (compType == typeof(ParticlesComp))
-            AddComp<ParticlesComp>(ent);
-        else if (compType == typeof(SoundComp))
-            AddComp<SoundComp>(ent);
+
+        if (EngineCompIdHelper.GetFromCompType(compType) != null)
+        {
+            var method = GetType().GetMethod(nameof(AddCompWithoutReturn),
+                                             BindingFlags.Instance |
+                                             BindingFlags.NonPublic
+                                  )
+                                  ?.MakeGenericMethod(compType);
+            method?.Invoke(this, new object[] { ent });
+        }
         else
+        {
             World.GetPoolByType(compType).AddRaw(ent, Activator.CreateInstance(compType));
+        }
     }
 
     internal void RemoveCompRaw(Type compType, int ent)
@@ -175,22 +181,16 @@ public class SyEcs
             compType == typeof(TransformComp))
             throw new Exception($"cannot remove {compType.Name}");
         
-        if (compType == typeof(MeshComp))
-            RemoveComp<MeshComp>(ent);
-        else if (compType == typeof(LightComp))
-            RemoveComp<LightComp>(ent);
-        else if (compType == typeof(ColliderComp))
-            RemoveComp<ColliderComp>(ent);
-        else if (compType == typeof(RigidComp))
-            RemoveComp<RigidComp>(ent);
-        else if (compType == typeof(SkyboxComp))
-            RemoveComp<SkyboxComp>(ent);
-        else if (compType == typeof(ParticlesComp))
-            RemoveComp<ParticlesComp>(ent);
-        else if (compType == typeof(SoundComp))
-            RemoveComp<SoundComp>(ent);
+        if (EngineCompIdHelper.GetFromCompType(compType) != null)
+        {
+            var method = GetType().GetMethod(nameof(RemoveComp))
+                                  ?.MakeGenericMethod(compType);
+            method?.Invoke(this, new object[] { ent });
+        }
         else
-            World.GetPoolByType(compType).Del(ent);
+        {
+            World.GetPoolByType(compType).AddRaw(ent, Activator.CreateInstance(compType));
+        }
     }
 
     //-----------------------------------------------------------

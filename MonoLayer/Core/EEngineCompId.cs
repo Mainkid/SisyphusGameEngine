@@ -10,8 +10,12 @@ public enum EEngineCompId
 	Transform,
 	Mesh,
 	Light,
+
 	Collider,
 	Rigid,
+	FixedJoint,
+	HingeJoint,
+
 	Skybox,
 	Particles,
 	Sound,

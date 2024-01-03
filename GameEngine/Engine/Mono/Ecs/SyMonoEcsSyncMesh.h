@@ -15,7 +15,7 @@ namespace mono
 		public SyMonoEcsSyncBase<SyMonoEcsSyncMesh, MeshComponent, ProxyMeshComp>
 	{
 	public:
-		EProxyCompId GetCompId() const override { return EProxyCompId::Mesh; }
+		ECompId GetCompId() const override { return ECompId::Mesh; }
 
 		void AddComp(entt::entity ent) override;
 		void RemoveComp(entt::entity ent) override;

@@ -8,8 +8,8 @@
 #include "../Components/RBodyComponent.h"
 #include "extensions/PxRevoluteJoint.h"
 #include "extensions/PxFixedJoint.h"
-#include "../../Common/Events/OnAddComponentEvent.h"
-#include "../../Common/Events/OnRemoveComponentEvent.h"
+#include "..\..\Common\Events\CompAddedEv.h"
+#include "..\..\Common\Events\CompRemovedEv.h"
 #include "../../../Core/Tools/Macro.h"
 
 SyResult SyJointSystem::Init()
@@ -41,7 +41,7 @@ SyResult SyJointSystem::Run()
                 if (InitFixedJointComponent(entity).code == SY_RESCODE_ERROR)
                 {
                     _ecs->remove<SyFixedJointComponent>(entity);
-                    CallEvent<SyOnRemoveComponentEvent>("RemoveJoint", ESyComponentType::FixedJoint, entity);
+                    CallEvent<CompRemovedEv>("RemoveJoint", ECompId::FixedJoint, entity);
                     SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
                         "Failed to initialize FixedJoint Component on entity (%s). The component has been removed.",
                         SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
@@ -67,7 +67,7 @@ SyResult SyJointSystem::Run()
             if (InitHingeJointComponent(entity).code == SY_RESCODE_ERROR)
             {
                 _ecs->remove<SyHingeJointComponent>(entity);
-                CallEvent<SyOnRemoveComponentEvent>("RemoveJoint", ESyComponentType::HingeJoint, entity);
+                CallEvent<CompRemovedEv>("RemoveJoint", ECompId::HingeJoint, entity);
                 SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
                     "Failed to initialize HingeJoint Component on entity (%s). The component has been removed.",
                     SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
@@ -93,7 +93,7 @@ SyResult SyJointSystem::ValidateJointComponent(const entt::entity& entity, const
     if (rigidBodyCPtr == nullptr)
     {
         _ecs->emplace<SyRigidBodyComponent>(entity);
-        CallEvent<SyOnAddComponentEvent>("AddRBody", ESyComponentType::RigidBody, entity);
+        CallEvent<CompAddedEv>("AddRBody", ECompId::Rigid, entity);
         SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
         "RigidBody Component required for %s Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
         jointCName.c_str(),
@@ -107,7 +107,7 @@ SyResult SyJointSystem::ValidateJointComponent(const entt::entity& entity, const
     if (otherEntity != entt::null && otherRigidBodyCPtr == nullptr)
     {
         _ecs->emplace<SyRigidBodyComponent>(otherEntity);
-        CallEvent<SyOnAddComponentEvent>("AddRBody", ESyComponentType::RigidBody, otherEntity);
+        CallEvent<CompAddedEv>("AddRBody", ECompId::Rigid, otherEntity);
         SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
                "RigidBody Component required for %s Component is missing on entity (%s). The RigidBody Component has been added in the next frame.",
                jointCName.c_str(),

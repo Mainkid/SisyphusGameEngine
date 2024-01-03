@@ -40,14 +40,18 @@ void SyMonoEcs::GeDestroyEntity(uint32_t rawEnt)
 	_instance->DestroyEntity(static_cast<entt::entity>(rawEnt), false);
 }
 
-void SyMonoEcs::GeAddComp(uint32_t rawEnt, EProxyCompId id)
+void SyMonoEcs::GeAddComp(uint32_t rawEnt, ECompId id)
 {
 	if (_instance == nullptr || _instance->_ecs == nullptr)
 		return;
 
-	_instance->GetSync(id)->AddComp(static_cast<entt::entity>(rawEnt));
+	auto ent = static_cast<entt::entity>(rawEnt);
+	auto sync = _instance->GetSync(id);
+	sync->AddComp(ent);
+	sync->SendDirectly(ent);
+
 }
-void SyMonoEcs::GeRemoveComp(uint32_t rawEnt, EProxyCompId id)
+void SyMonoEcs::GeRemoveComp(uint32_t rawEnt, ECompId id)
 {
 	if (_instance == nullptr || _instance->_ecs == nullptr)
 		return;
@@ -61,7 +65,7 @@ void SyMonoEcs::BindEcs(entt::registry* ecs)
 	_ecs = ecs;
 }
 
-ISyMonoEcsSync* SyMonoEcs::GetSync(EProxyCompId id)
+ISyMonoEcsSync* SyMonoEcs::GetSync(ECompId id)
 {
 	return _compIdToSync[id];
 }

@@ -18,7 +18,7 @@ namespace mono
 		public SyMonoEcsSyncBase<SyMonoEcsSyncLight, LightComponent, ProxyLightComp>
 	{
 	public:
-		EProxyCompId GetCompId() const override { return EProxyCompId::Light; }
+		ECompId GetCompId() const override { return ECompId::Light; }
 
 		void AddComp(entt::entity ent) override;
 		void RemoveComp(entt::entity ent) override;

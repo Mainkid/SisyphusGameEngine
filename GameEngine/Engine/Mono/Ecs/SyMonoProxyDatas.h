@@ -8,41 +8,6 @@
 
 namespace mono
 {
-enum class EProxyCompId
-{
-	SceneObject,
-	Transform,
-	Mesh,
-	Light,
-	Collider,
-	Rigid,
-	Skybox,
-	Particles,
-	Sound
-};
-
-class ProxyCompIdExt
-{
-public:
-	static constexpr std::string ToStr(EProxyCompId id)
-	{
-		switch(id)
-		{
-		case EProxyCompId::SceneObject: return "SceneObject";
-		case EProxyCompId::Transform: return "Transform";
-		case EProxyCompId::Mesh: return "Mesh";
-		case EProxyCompId::Light: return "Light";
-		case EProxyCompId::Collider: return "Collider";
-		case EProxyCompId::Rigid: return "Rigid";
-		case EProxyCompId::Skybox: return "Skybox";
-		case EProxyCompId::Particles: return "Particles";
-		case EProxyCompId::Sound: return "Sound";
-		default: return "Missing";
-		}
-	}
-};
-
-
 enum class EProxyResourceType
 {
 	Model,

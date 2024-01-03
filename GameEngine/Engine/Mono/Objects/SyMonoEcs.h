@@ -22,8 +22,8 @@ namespace mono
 		static uint32_t GeCreateEntity();
 		static void GeDestroyEntity(uint32_t rawEnt);
 
-		static void GeAddComp(uint32_t rawEnt, EProxyCompId id);
-		static void GeRemoveComp(uint32_t rawEnt, EProxyCompId id);
+		static void GeAddComp(uint32_t rawEnt, ECompId id);
+		static void GeRemoveComp(uint32_t rawEnt, ECompId id);
 
 	public:
 		SyMonoMethod<> EgSyncEngineWithGame{ "EgSyncEngineWithGame" };
@@ -32,13 +32,13 @@ namespace mono
 
 		template<typename TSync>
 		TSync* GetSync();
-		ISyMonoEcsSync* GetSync(EProxyCompId id);
+		ISyMonoEcsSync* GetSync(ECompId id);
 
 	private:
 		entt::registry* _ecs = nullptr;
 
 		std::unordered_map<std::type_index, ISyMonoEcsSync*> _syncTypeToSync;
-		std::unordered_map<EProxyCompId, ISyMonoEcsSync*> _compIdToSync;
+		std::unordered_map<ECompId, ISyMonoEcsSync*> _compIdToSync;
 
 		SyMonoMethod<uint32_t> _egDestroyEntity{ "EgDestroyEntity" };
 
@@ -58,8 +58,8 @@ namespace mono
 	template <typename T>
 	void SyMonoEcs::AddSync()
 	{
-		auto sync = new T();
-		_syncTypeToSync[typeid(T)] = sync;
+		auto sync                        = new T();
+		_syncTypeToSync[typeid(T)]       = sync;
 		_compIdToSync[sync->GetCompId()] = sync;
 
 		sync->Bind(this, _ecs);

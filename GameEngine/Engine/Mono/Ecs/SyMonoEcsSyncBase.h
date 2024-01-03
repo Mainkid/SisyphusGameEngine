@@ -15,7 +15,7 @@ namespace mono
 			_instance = nullptr;
 		}
 
-		SyResult Bind(SyMonoEcs* monoEcs, entt::registry* ecs) override
+		SyResult Bind(SyMonoEcs* monoEcs, entt::registry* ecs) final
 		{
 			_instance = (TSync*)this;
 
@@ -42,7 +42,10 @@ namespace mono
 					if (comp.MonoHash == hash)
 						continue;
 					comp.MonoHash = hash;
-					Send(ent, comp);
+
+					FillProxyByComp(comp);
+					_egUpdate.Invoke(static_cast<uint32_t>(ent), _proxy);
+					ReleaseProxy();
 				}
 			}
 			else
@@ -55,16 +58,23 @@ namespace mono
 					if (comp.MonoHash == hash)
 						continue;
 					comp.MonoHash = hash;
-					Send(ent, comp);
+
+					FillProxyByComp(comp);
+					_egUpdate.Invoke(static_cast<uint32_t>(ent), _proxy);
+					ReleaseProxy();
 				}
 			}
 		}
 
-		void Send(entt::entity ent, const TComp& comp)
+		void SendDirectly(entt::entity ent) final
 		{
+			auto& comp = _ecs->get<TComp>(ent);
+
 			FillProxyByComp(comp);
 			_egUpdate.Invoke(static_cast<uint32_t>(ent), _proxy);
 			ReleaseProxy();
+
+			comp.MonoHash = GetHash(comp);
 		}
 		
 	protected:
@@ -72,6 +82,7 @@ namespace mono
 		MonoDomain* _monoDomain = nullptr;
 
 		TProxyComp _proxy;
+
 
 		virtual std::string GetEgMethodName() const = 0;
 		virtual std::string GetGeMethodName() const = 0;
@@ -101,8 +112,7 @@ namespace mono
 			TComp* comp = _ecs->try_get<TComp>(ent);
 			if (comp == nullptr)
 			{
-				std::string compName = ProxyCompIdExt::ToStr(GetCompId());
-				std::cout << "[mono] e" << rawEnt << "does not have " << compName << std::endl;
+				std::cout << "[mono] e" << rawEnt << "does not have " << GetCompId() << std::endl;
 				return;
 			}
 			FillCompByProxy(proxy, ent, *comp);

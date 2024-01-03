@@ -690,9 +690,9 @@
     <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
     <ClInclude Include="Engine\Contexts\PhysicsContext.h" />
     <ClInclude Include="Engine\Core\Tools\Macro.h" />
-    <ClInclude Include="Engine\Features\Common\EComponentTypes.h" />
-    <ClInclude Include="Engine\Features\Common\Events\OnAddComponentEvent.h" />
-    <ClInclude Include="Engine\Features\Common\Events\OnRemoveComponentEvent.h" />
+    <ClInclude Include="Engine\Features\Common\ECompId.h" />
+    <ClInclude Include="Engine\Features\Common\Events\CompAddedEv.h" />
+    <ClInclude Include="Engine\Features\Common\Events\CompRemovedEv.h" />
     <ClInclude Include="Engine\Features\Events\Tags\SyEventTag.h" />
     <ClInclude Include="Engine\Features\Physics\Components\JointComponent.h" />
     <ClInclude Include="Engine\Features\Physics\Systems\JointSystem.h" />

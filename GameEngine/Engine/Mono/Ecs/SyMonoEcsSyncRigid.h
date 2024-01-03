@@ -19,10 +19,10 @@ namespace mono
 
 
 	class SyMonoEcsSyncRigid :
-		public SyMonoEcsSyncBase<SyMonoEcsSyncRigid, SyRBodyComponent, ProxyRigidComp>
+		public SyMonoEcsSyncBase<SyMonoEcsSyncRigid, SyRigidBodyComponent, ProxyRigidComp>
 	{
 	public:
-		EProxyCompId GetCompId() const override { return EProxyCompId::Rigid; }
+		ECompId GetCompId() const override { return ECompId::Rigid; }
 
 		void AddComp(entt::entity ent) override;
 		void RemoveComp(entt::entity ent) override;
@@ -31,8 +31,8 @@ namespace mono
 		std::string GetEgMethodName() const override { return "EgUpdateRigidComp"; }
 		std::string GetGeMethodName() const override { return "GeUpdateRigidComp"; }
 
-		void FillProxyByComp(const SyRBodyComponent& comp) override;
-		void FillCompByProxy(const ProxyRigidComp& proxy, entt::entity ent, SyRBodyComponent& comp) override;
-		size_t GetHash(const SyRBodyComponent& comp) override;
+		void FillProxyByComp(const SyRigidBodyComponent& comp) override;
+		void FillCompByProxy(const ProxyRigidComp& proxy, entt::entity ent, SyRigidBodyComponent& comp) override;
+		size_t GetHash(const SyRigidBodyComponent& comp) override;
 	};
 }

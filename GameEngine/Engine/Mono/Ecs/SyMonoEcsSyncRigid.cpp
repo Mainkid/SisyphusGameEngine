@@ -1,22 +1,18 @@
 #include "SyMonoEcsSyncRigid.h"
 
-#include "../../Features/Physics/Events/SyOnCreateRBodyEvent.h"
-#include "../../Scene/GameObjectHelper.h"
-
 using namespace mono;
 
 void SyMonoEcsSyncRigid::AddComp(entt::entity ent)
 {
-	_ecs->emplace<SyRBodyComponent>(ent);
-	GameObjectHelper::CallEvent<SyOnCreateRBodyEvent>(_ecs, "OnCreateRBody", ent);
+	_ecs->emplace<SyRigidBodyComponent>(ent);
 }
 
 void SyMonoEcsSyncRigid::RemoveComp(entt::entity ent)
 {
-	_ecs->remove<SyRBodyComponent>(ent);
+	_ecs->remove<SyRigidBodyComponent>(ent);
 }
 
-void SyMonoEcsSyncRigid::FillProxyByComp(const SyRBodyComponent& comp)
+void SyMonoEcsSyncRigid::FillProxyByComp(const SyRigidBodyComponent& comp)
 {
 	_proxy.Type = comp.RbType;
 	_proxy.Mass = comp.Mass;
@@ -27,7 +23,7 @@ void SyMonoEcsSyncRigid::FillProxyByComp(const SyRBodyComponent& comp)
 	_proxy.AngularVelocity = comp.AngularVelocity;
 }
 
-void SyMonoEcsSyncRigid::FillCompByProxy(const ProxyRigidComp& proxy, entt::entity ent, SyRBodyComponent& comp)
+void SyMonoEcsSyncRigid::FillCompByProxy(const ProxyRigidComp& proxy, entt::entity ent, SyRigidBodyComponent& comp)
 {
 	comp.RbType = proxy.Type;
 	comp.Mass = proxy.Mass;
@@ -39,7 +35,7 @@ void SyMonoEcsSyncRigid::FillCompByProxy(const ProxyRigidComp& proxy, entt::enti
 	comp.AngularVelocity = proxy.AngularVelocity;
 }
 
-size_t SyMonoEcsSyncRigid::GetHash(const SyRBodyComponent& comp)
+size_t SyMonoEcsSyncRigid::GetHash(const SyRigidBodyComponent& comp)
 {
 	size_t hash = 0;
 	boost::hash_combine(hash, comp.RbType);

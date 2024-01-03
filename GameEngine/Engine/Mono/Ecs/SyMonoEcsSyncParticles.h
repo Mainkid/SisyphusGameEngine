@@ -110,7 +110,7 @@ namespace mono
 		public SyMonoEcsSyncBase<SyMonoEcsSyncParticles, ParticleComponent, ProxyParticlesComp>
 	{
 	public:
-		EProxyCompId GetCompId() const override { return EProxyCompId::Particles; }
+		ECompId GetCompId() const override { return ECompId::Particles; }
 
 		void AddComp(entt::entity ent) override;
 		void RemoveComp(entt::entity ent) override;

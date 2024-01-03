@@ -22,7 +22,7 @@ namespace mono
 		public SyMonoEcsSyncBase<SyMonoEcsSyncTransform, TransformComponent, ProxyTransformComp>
 	{
 	public:
-		EProxyCompId GetCompId() const override { return EProxyCompId::Transform; }
+		ECompId GetCompId() const override { return ECompId::Transform; }
 
 		void AddComp(entt::entity ent) override;
 		void RemoveComp(entt::entity ent) override;

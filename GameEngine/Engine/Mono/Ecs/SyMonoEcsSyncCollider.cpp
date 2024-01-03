@@ -1,15 +1,11 @@
 #include "SyMonoEcsSyncCollider.h"
 
-#include "../../Features/Physics/Events/SyOnCreateColliderEvent.h"
-#include "../../Scene/GameObjectHelper.h"
-
 using namespace mono;
 
 
 void SyMonoEcsSyncCollider::AddComp(entt::entity ent)
 {
 	_ecs->emplace<SyPrimitiveColliderComponent>(ent);
-	GameObjectHelper::CallEvent<SyOnCreateColliderEvent>(_ecs, "OnCreateCollider", ent);
 }
 
 void SyMonoEcsSyncCollider::RemoveComp(entt::entity ent)

@@ -14,7 +14,7 @@ namespace mono
 		public SyMonoEcsSyncBase<SyMonoEcsSyncSkybox, SkyboxComponent, ProxySkyboxComp>
 	{
 	public:
-		EProxyCompId GetCompId() const override { return EProxyCompId::Skybox; }
+		ECompId GetCompId() const override { return ECompId::Skybox; }
 
 		void AddComp(entt::entity ent) override;
 		void RemoveComp(entt::entity ent) override;
