@@ -1,5 +1,7 @@
 #include "SyMonoEcsSyncFixedJoint.h"
 
+#include "../../Features/Common/Events/CompAddedEv.h"
+#include "../../Features/Common/Events/CompRemovedEv.h"
 #include "../../Scene/GameObjectHelper.h"
 
 using namespace mono;
@@ -7,11 +9,13 @@ using namespace mono;
 void SyMonoEcsSyncFixedJoint::AddComp(entt::entity ent)
 {
 	_ecs->emplace<SyFixedJointComponent>(ent);
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncFixedJoint::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<SyFixedJointComponent>(ent);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncFixedJoint::FillProxyByComp(const SyFixedJointComponent& comp)

@@ -1,16 +1,23 @@
 #include "SyMonoEcsSyncLight.h"
 
+#include "../../Features/Common/Events/CompAddedEv.h"
+#include "../../Features/Common/Events/CompRemovedEv.h"
+#include "../../Scene/GameObjectHelper.h"
+
 using namespace mono;
 
 void SyMonoEcsSyncLight::AddComp(entt::entity ent)
 {
 	auto& light = _ecs->emplace<LightComponent>(ent);
 	light.ParamsRadiusAndAttenuation = Vector4{ 1, 0, 0, 1 };
+
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncLight::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<LightComponent>(ent);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncLight::FillProxyByComp(const LightComponent& comp)

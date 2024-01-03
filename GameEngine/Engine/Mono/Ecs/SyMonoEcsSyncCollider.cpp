@@ -1,16 +1,22 @@
 #include "SyMonoEcsSyncCollider.h"
 
+#include "../../Features/Common/Events/CompAddedEv.h"
+#include "../../Features/Common/Events/CompRemovedEv.h"
+#include "../../Scene/GameObjectHelper.h"
+
 using namespace mono;
 
 
 void SyMonoEcsSyncCollider::AddComp(entt::entity ent)
 {
 	_ecs->emplace<SyPrimitiveColliderComponent>(ent);
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncCollider::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<SyPrimitiveColliderComponent>(ent);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncCollider::FillProxyByComp(const SyPrimitiveColliderComponent& comp)

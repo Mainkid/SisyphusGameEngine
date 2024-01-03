@@ -1,18 +1,7 @@
 #include "MonoSyncEgSystem.h"
 
 #include "../SyMono.h"
-#include "../../Components/SkyboxComponent.h"
-#include "../../Features/Mesh/Components/MeshComponent.h"
-#include "../../Components/TransformComponent.h"
-#include "../Ecs/SyMonoEcsSyncCollider.h"
-#include "../Ecs/SyMonoEcsSyncLight.h"
-#include "../Ecs/SyMonoEcsSyncMesh.h"
-#include "../Ecs/SyMonoEcsSyncParticles.h"
-#include "../Ecs/SyMonoEcsSyncRigid.h"
-#include "../Ecs/SyMonoEcsSyncSceneObject.h"
-#include "../Ecs/SyMonoEcsSyncSkybox.h"
-#include "../Ecs/SyMonoEcsSyncSound.h"
-#include "../Ecs/SyMonoEcsSyncTransform.h"
+#include "../../Features/Common/Events/CompRemovedEv.h"
 
 
 SyResult MonoSyncEgSystem::Init()
@@ -27,6 +16,14 @@ SyResult MonoSyncEgSystem::Run()
 {
 	if (!_monoEcs->IsValid())
 		return {};
+
+	auto compRemovedView = SY_GET_THIS_FRAME_EVENT_VIEW(CompRemovedEv);
+	for (auto ent : compRemovedView)
+	{
+		auto ev = compRemovedView.get<CompRemovedEv>(ent);
+		if (!ev.IsFromMono)
+			_monoEcs->EgRemoveComp.Invoke(static_cast<uint32_t>(ev.Ent), ev.Id);
+	}
 
 	_monoEcs->TrySendAll();
 

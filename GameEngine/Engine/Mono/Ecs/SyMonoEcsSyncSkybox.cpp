@@ -4,6 +4,10 @@
 #include "../../Components/ImageBasedLightingComponent.h"
 #include "../../Features/Resources/ResourceService.h"
 
+#include "../../Features/Common/Events/CompAddedEv.h"
+#include "../../Features/Common/Events/CompRemovedEv.h"
+#include "../../Scene/GameObjectHelper.h"
+
 using namespace mono;
 
 void SyMonoEcsSyncSkybox::AddComp(entt::entity ent)
@@ -11,12 +15,16 @@ void SyMonoEcsSyncSkybox::AddComp(entt::entity ent)
 	auto resService = ServiceLocator::instance()->Get<ResourceService>();
 	_ecs->emplace<SkyboxComponent>(ent).uuid = resService->baseResourceDB[EAssetType::ASSET_CUBEMAP].uuid;
 	_ecs->emplace<ImageBasedLightingComponent>(ent);
+
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncSkybox::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<SkyboxComponent>(ent);
 	_ecs->remove<ImageBasedLightingComponent>(ent);
+
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncSkybox::FillProxyByComp(const SkyboxComponent& comp)

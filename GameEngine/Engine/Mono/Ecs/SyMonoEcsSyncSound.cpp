@@ -6,17 +6,23 @@
 
 #include "../Api/SyMonoStr.h"
 
+#include "../../Features/Common/Events/CompAddedEv.h"
+#include "../../Features/Common/Events/CompRemovedEv.h"
+#include "../../Scene/GameObjectHelper.h"
+
 
 using namespace mono;
 
 void SyMonoEcsSyncSound::AddComp(entt::entity ent)
 {
 	_ecs->emplace<FSoundComponent>(ent);
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncSound::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<FSoundComponent>(ent);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncSound::FillProxyByComp(const FSoundComponent& comp)

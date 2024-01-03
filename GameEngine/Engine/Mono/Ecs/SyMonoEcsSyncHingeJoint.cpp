@@ -1,15 +1,21 @@
 #include "SyMonoEcsSyncHingeJoint.h"
 
+#include "../../Features/Common/Events/CompAddedEv.h"
+#include "../../Features/Common/Events/CompRemovedEv.h"
+#include "../../Scene/GameObjectHelper.h"
+
 using namespace mono;
 
 void SyMonoEcsSyncHingeJoint::AddComp(entt::entity ent)
 {
 	_ecs->emplace<SyHingeJointComponent>(ent);
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncHingeJoint::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<SyHingeJointComponent>(ent);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncHingeJoint::FillProxyByComp(const SyHingeJointComponent& comp)

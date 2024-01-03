@@ -1,15 +1,21 @@
 #include "SyMonoEcsSyncRigid.h"
 
+#include "../../Features/Common/Events/CompAddedEv.h"
+#include "../../Features/Common/Events/CompRemovedEv.h"
+#include "../../Scene/GameObjectHelper.h"
+
 using namespace mono;
 
 void SyMonoEcsSyncRigid::AddComp(entt::entity ent)
 {
 	_ecs->emplace<SyRigidBodyComponent>(ent);
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncRigid::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<SyRigidBodyComponent>(ent);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncRigid::FillProxyByComp(const SyRigidBodyComponent& comp)

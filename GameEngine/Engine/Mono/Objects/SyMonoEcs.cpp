@@ -107,6 +107,7 @@ SyResult SyMonoEcs::OnAfterCreate()
 	_instance = this;
 
 	SY_RESULT_CHECK(EgSyncEngineWithGame.Bind(this));
+	SY_RESULT_CHECK(EgRemoveComp.Bind(this));
 	SY_RESULT_CHECK(_egDestroyEntity.Bind(this));
 
 	BindCallback(GE_CREATE_ENTITY, &GeCreateEntity);
@@ -135,6 +136,7 @@ SyResult SyMonoEcs::OnBeforeDestroy()
 	_instance = nullptr;
 
 	EgSyncEngineWithGame.UnBind();
+	EgRemoveComp.UnBind();
 	_egDestroyEntity.UnBind();
 
 	for (auto sync : _syncs)

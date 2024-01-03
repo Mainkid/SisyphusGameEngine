@@ -27,6 +27,7 @@ namespace mono
 
 	public:
 		SyMonoMethod<> EgSyncEngineWithGame{ "EgSyncEngineWithGame" };
+		SyMonoMethod<uint32_t, ECompId> EgRemoveComp{ "EgRemoveComp" };
 
 		void BindEcs(entt::registry* ecs);
 		void TrySendAll();

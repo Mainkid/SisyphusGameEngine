@@ -3,6 +3,10 @@
 #include "../../Features/Resources/ResourceService.h"
 #include "../Api/SyMonoStr.h"
 
+#include "../../Features/Common/Events/CompAddedEv.h"
+#include "../../Features/Common/Events/CompRemovedEv.h"
+#include "../../Scene/GameObjectHelper.h"
+
 using namespace mono;
 
 void SyMonoEcsSyncMesh::AddComp(entt::entity ent)
@@ -10,11 +14,14 @@ void SyMonoEcsSyncMesh::AddComp(entt::entity ent)
 	auto resService = ServiceLocator::instance()->Get<ResourceService>();
 	auto uuid = resService->baseResourceDB[EAssetType::ASSET_MESH].uuid;
 	_ecs->emplace<MeshComponent>(ent).modelUUID = uuid;
+
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncMesh::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<MeshComponent>(ent);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncMesh::FillProxyByComp(const MeshComponent& comp)

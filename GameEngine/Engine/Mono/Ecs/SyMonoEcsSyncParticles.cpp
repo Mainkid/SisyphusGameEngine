@@ -6,17 +6,24 @@
 
 #include "../Api/SyMonoStr.h"
 
+#include "../../Features/Common/Events/CompAddedEv.h"
+#include "../../Features/Common/Events/CompRemovedEv.h"
+#include "../../Scene/GameObjectHelper.h"
+
 using namespace mono;
 
 void SyMonoEcsSyncParticles::AddComp(entt::entity ent)
 {
 	auto& particles = _ecs->emplace<ParticleComponent>(ent);
 	particles.IsMonoDirty = true;
+
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncParticles::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<ParticleComponent>(ent);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncParticles::FillProxyByComp(const ParticleComponent& comp)

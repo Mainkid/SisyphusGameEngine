@@ -2,6 +2,10 @@
 
 #include "../Api/SyMonoStr.h"
 
+#include "../../Features/Common/Events/CompAddedEv.h"
+#include "../../Features/Common/Events/CompRemovedEv.h"
+#include "../../Scene/GameObjectHelper.h"
+
 using namespace mono;
 
 void SyMonoEcsSyncSceneObject::AddComp(entt::entity ent)

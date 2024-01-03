@@ -105,7 +105,7 @@ public class SyEcs
     //-----------------------------------------------------------
     public ref T AddComp<T>(int ent) where T : struct, IComp
     {
-        var engineCompId = EngineCompIdHelper.GetFromCompType(typeof(T));
+        var engineCompId = EngineCompIdHelper.TypeToId(typeof(T));
         if (engineCompId != null)
         {
             if (!_gameEntToEngineEnt.TryGetValue(ent, out uint engineEnt))
@@ -128,7 +128,7 @@ public class SyEcs
     {
         World.GetPool<T>().Del(ent);
         
-        var engineCompId = EngineCompIdHelper.GetFromCompType(typeof(T));
+        var engineCompId = EngineCompIdHelper.TypeToId(typeof(T));
         if (engineCompId != null)
         {
             SyLog.Debug(ELogTag.Ecs, $"remove {engineCompId} comp from g{ent}");
@@ -160,7 +160,7 @@ public class SyEcs
             compType == typeof(TransformComp))
             throw new Exception($"cannot add {compType.Name}");
 
-        if (EngineCompIdHelper.GetFromCompType(compType) != null)
+        if (EngineCompIdHelper.TypeToId(compType) != null)
         {
             var method = GetType().GetMethod(nameof(AddCompWithoutReturn),
                                              BindingFlags.Instance |
@@ -181,7 +181,7 @@ public class SyEcs
             compType == typeof(TransformComp))
             throw new Exception($"cannot remove {compType.Name}");
         
-        if (EngineCompIdHelper.GetFromCompType(compType) != null)
+        if (EngineCompIdHelper.TypeToId(compType) != null)
         {
             var method = GetType().GetMethod(nameof(RemoveComp))
                                   ?.MakeGenericMethod(compType);
@@ -191,6 +191,17 @@ public class SyEcs
         {
             World.GetPoolByType(compType).AddRaw(ent, Activator.CreateInstance(compType));
         }
+    }
+
+    internal void RemoveCompFromEngine(uint engineEnt, EEngineCompId id)
+    {
+        if (!ToGameEnt(engineEnt, out int gameEnt))
+            return;
+        
+        var compType = EngineCompIdHelper.IdToType(id);
+        World.GetPoolByType(compType).Del(gameEnt);
+        
+        SyLog.Debug(ELogTag.Ecs, $"remove comp {id} from g{gameEnt} by engine");
     }
 
     //-----------------------------------------------------------

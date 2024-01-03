@@ -23,7 +23,7 @@ public enum EEngineCompId
 
 public static class EngineCompIdHelper
 {
-	private static readonly Dictionary<Type, EEngineCompId> _map = new Dictionary<Type, EEngineCompId>()
+	private static readonly Dictionary<Type, EEngineCompId> _typeToId = new Dictionary<Type, EEngineCompId>()
 	{
 		{ typeof(SceneObjectComp), EEngineCompId.Mesh },
 		{ typeof(TransformComp), EEngineCompId.Transform },
@@ -38,11 +38,26 @@ public static class EngineCompIdHelper
 		{ typeof(HingeJointComp), EEngineCompId.HingeJoint }
 	};
 
-	public static EEngineCompId? GetFromCompType(Type compType)
+	private static Dictionary<EEngineCompId, Type> _idToType;
+
+	public static EEngineCompId? TypeToId(Type compType)
 	{
-		if (_map.TryGetValue(compType, out var id))
+		if (_typeToId.TryGetValue(compType, out var id))
 			return id;
 		return null;
+	}
+
+	public static Type IdToType(EEngineCompId id)
+	{
+		if (_idToType == null)
+		{
+			_idToType = new Dictionary<EEngineCompId, Type>();
+			foreach (var pair in _typeToId)
+				_idToType[pair.Value] = pair.Key;
+		}
+		if (_idToType.TryGetValue(id, out var type))
+			return type;
+		throw new Exception($"type for id {id} is missing");
 	}
 }
 }
