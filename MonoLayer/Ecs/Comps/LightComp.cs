@@ -1,4 +1,5 @@
-﻿using SyEngine.Datas;
+﻿using System;
+using SyEngine.Datas;
 using SyEngine.Editor.Attributes;
 using SyEngine.Helpers;
 
@@ -16,9 +17,10 @@ public struct LightComp : SyEcs.IComp
 	[ShowIfEnum(nameof(Type), (int)EType.PointLight)]
 	public bool  ShouldCastShadows;
 
+	
+	[Hide, NonSerialized]
 	internal int? Hash;
-    
-
+	
 
 	public override int GetHashCode()
 		=> HashHelper.Combine(Type, Behaviour, Color, PointLightRadius, ShouldCastShadows);

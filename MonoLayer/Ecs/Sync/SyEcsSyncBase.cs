@@ -5,15 +5,15 @@ namespace SyEngine.Ecs.Sync
 {
 internal abstract class SyEcsSyncBase<TComp, TProxy> : ISyEcsSync<TProxy> where TComp: struct
 {
-	protected readonly SyEcs          _ecs;
-	protected readonly EcsPool<TComp> _pool;
-	protected readonly EcsFilter      _filter;
+	protected readonly SyEcs          Ecs;
+	protected readonly EcsPool<TComp> Pool;
+	protected readonly EcsFilter      Filter;
 
 	public SyEcsSyncBase(SyEcs ecs)
 	{
-		_ecs    = ecs;
-		_pool   = _ecs.World.GetPool<TComp>();
-		_filter = _ecs.World.Filter<TComp>().End();
+		Ecs    = ecs;
+		Pool   = Ecs.World.GetPool<TComp>();
+		Filter = Ecs.World.Filter<TComp>().End();
 	}
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
@@ -21,14 +21,14 @@ internal abstract class SyEcsSyncBase<TComp, TProxy> : ISyEcsSync<TProxy> where 
 
 	public void TrySendAll()
 	{
-		foreach (int ent in _filter)
+		foreach (int ent in Filter)
 		{
-			ref var comp = ref _pool.Get(ent);
+			ref var comp = ref Pool.Get(ent);
 			int     hash = comp.GetHashCode();
 			if (hash == GetHashImpl(ref comp))
 				continue;
 			SetHashImpl(ref comp, hash);
-			SendImpl(_ecs.ToEngineEnt(ent), ref comp);
+			SendImpl(Ecs.ToEngineEnt(ent), ref comp);
 			
 			Console.WriteLine($"[TEST] g{ent} {Id} sent to engine");
 		}
@@ -36,16 +36,16 @@ internal abstract class SyEcsSyncBase<TComp, TProxy> : ISyEcsSync<TProxy> where 
 
 	public void Receive(uint engineEnt, ref TProxy proxy)
 	{
-		int gameEnt = _ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
-		if (_pool.Has(gameEnt))
+		int gameEnt = Ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
+		if (Pool.Has(gameEnt))
 		{
-			ref var comp = ref _pool.Get(gameEnt);
+			ref var comp = ref Pool.Get(gameEnt);
 			ReceiveImpl(ref proxy, ref comp);
             SetHashImpl(ref comp, comp.GetHashCode());
 		}
 		else
 		{
-			ref var comp = ref _pool.Add(gameEnt);
+			ref var comp = ref Pool.Add(gameEnt);
 			ReceiveImpl(ref proxy, ref comp);
 			SetHashImpl(ref comp, comp.GetHashCode());
 		}

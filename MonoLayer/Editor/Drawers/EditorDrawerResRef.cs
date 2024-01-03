@@ -1,4 +1,5 @@
 ﻿using System;
+using SyEngine.Ecs;
 using SyEngine.Resources;
 
 namespace SyEngine.Editor.Drawers
@@ -7,7 +8,7 @@ public class EditorDrawerResRef<TResRef, TRes> : EditorDrawerBase<TResRef>
 	where TResRef: ResRef<TRes> 
 	where TRes : ResBase
 {
-	public EditorDrawerResRef(SyProxyEditor editor) : base(editor)
+	public EditorDrawerResRef(SyProxyEditor editor, SyEcs ecs) : base(editor, ecs)
 	{
 	}
 

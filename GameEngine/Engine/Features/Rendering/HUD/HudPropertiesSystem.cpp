@@ -42,7 +42,7 @@ SyResult HudPropertiesSystem::Run()
     ImGui::Begin(windowID.c_str());
     //Widget::Render();
 
-    
+    ImGui::PushItemWidth(ImGui::GetWindowContentRegionMax().x * -0.3f);
 
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 

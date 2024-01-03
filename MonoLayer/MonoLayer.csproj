@@ -40,6 +40,7 @@
         <Reference Include="System.Xml"/>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Datas\SySceneEnt.cs" />
         <Compile Include="Ecs\Comps\ColliderComp.cs" />
         <Compile Include="Ecs\Comps\FixedJointComp.cs" />
         <Compile Include="Ecs\Comps\HingeJointComp.cs" />
@@ -95,6 +96,7 @@
         <Compile Include="Editor\Drawers\EditorDrawerFloat.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerInt.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerResRef.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerSceneEntNull.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerVector2.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerVector3.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerVector4.cs" />
@@ -132,11 +134,13 @@
         <Compile Include="Serialization\Serializers\SerializerEnum.cs" />
         <Compile Include="Serialization\Serializers\SerializerFloat.cs" />
         <Compile Include="Serialization\Serializers\SerializerInt.cs" />
+        <Compile Include="Serialization\Serializers\SerializerJsonNode.cs" />
         <Compile Include="Serialization\Serializers\SerializerList.cs" />
         <Compile Include="Serialization\Serializers\SerializerObject.cs" />
         <Compile Include="Serialization\Serializers\SerializerReflect.cs" />
         <Compile Include="Serialization\Serializers\SerializerBase.cs" />
         <Compile Include="Serialization\Serializers\SerializerResRef.cs" />
+        <Compile Include="Serialization\Serializers\SerializerSceneEntNull.cs" />
         <Compile Include="Serialization\Serializers\SerializerString.cs" />
         <Compile Include="Serialization\ThirdParty\SimpleJSON.cs" />
     </ItemGroup>

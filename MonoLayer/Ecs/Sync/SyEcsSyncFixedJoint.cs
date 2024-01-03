@@ -1,4 +1,5 @@
-﻿using SyEngine.Ecs.Comps;
+﻿using SyEngine.Datas;
+using SyEngine.Ecs.Comps;
 
 namespace SyEngine.Ecs.Sync
 {
@@ -12,18 +13,22 @@ internal class SyEcsSyncFixedJoint : SyEcsSyncBase<FixedJointComp, ProxyFixedJoi
 	{
 		var proxy = new ProxyFixedJointComp();
 
-		uint attachedToEngineEnt = default;
-		proxy.IsAttachedToEnt = joint.AttachedToEnt != null &&
-		                        _ecs.ToEngineEnt(joint.AttachedToEnt.Value, out attachedToEngineEnt);
-		proxy.AttachedToEngineEnt = attachedToEngineEnt;
+		if (joint.AttachedToEnt?.InternalEnt != null &&
+		    Ecs.ToEngineEnt(joint.AttachedToEnt.Value.InternalEnt.Value, out uint attachedToEngineEnt))
+		{
+			proxy.IsAttachedToEnt     = true;
+			proxy.AttachedToEngineEnt = attachedToEngineEnt;
+		}
+		else
+			proxy.IsAttachedToEnt = false;
 	}
 
 	protected override void ReceiveImpl(ref ProxyFixedJointComp proxy, ref FixedJointComp joint)
 	{
-		joint.AttachedToEnt = proxy.IsAttachedToEnt &&
-		                      _ecs.ToGameEnt(proxy.AttachedToEngineEnt, out int gameEnt)
-			? (int?)gameEnt
-			: null;
+		if (proxy.IsAttachedToEnt && Ecs.ToGameEnt(proxy.AttachedToEngineEnt, out int gameEnt))
+			joint.AttachedToEnt = new SySceneEnt(gameEnt);
+		else
+			joint.AttachedToEnt = null;
 	}
 
 	protected override int? GetHashImpl(ref FixedJointComp comp)

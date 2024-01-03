@@ -1,4 +1,5 @@
-﻿using SyEngine.Datas;
+﻿using System;
+using SyEngine.Datas;
 using SyEngine.Editor.Attributes;
 using SyEngine.Helpers;
 
@@ -17,9 +18,11 @@ public struct TransformComp : SyEcs.IInternalComp
     public SyVector3 LocalRotation;
     public SyVector3 LocalScale;
 
-    public int? ParentEnt;
+	[Hide]
+    public SySceneEnt? Parent;
 
 
+    [Hide, NonSerialized]
     internal int? Hash;
     
     public override string ToString() => $"({Position}, {Rotation}, {Scale})";

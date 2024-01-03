@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SyEngine.Editor.Attributes
 {
+[AttributeUsage(AttributeTargets.Field)]
 public class FoldoutAttribute : EditorFieldBaseAttribute
 {
 	public override int Priority => 30;

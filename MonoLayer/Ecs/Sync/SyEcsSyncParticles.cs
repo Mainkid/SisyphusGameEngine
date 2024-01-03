@@ -109,7 +109,7 @@ internal class SyEcsSyncParticles : SyEcsSyncBase<ParticlesComp, ProxyParticlesC
 		=> comp.IsDirty = false;
 }
 
-internal struct ProxyParticlesComp : SyEcs.IComp
+internal struct ProxyParticlesComp
 {
 	public float                    Duration;
 	public bool                     IsLooping;

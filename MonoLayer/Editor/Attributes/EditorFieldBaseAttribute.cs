@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using SyEngine.Ecs;
 
 namespace SyEngine.Editor.Attributes
 {
 public abstract class EditorFieldBaseAttribute : Attribute
 {
-	public void Init(SyProxyEditor editor, Type holderType)
+	public void Init(SyProxyEditor editor, SyEcs ecs, Type holderType)
 	{
 		Editor     = editor;
 		HolderType = holderType;
@@ -13,6 +14,7 @@ public abstract class EditorFieldBaseAttribute : Attribute
 	}
     
 	protected SyProxyEditor Editor     { get; private set; }
+	protected SyEcs         Ecs        { get; private set; }
 	protected Type          HolderType { get; private set; }
 
 	public abstract int Priority { get; }

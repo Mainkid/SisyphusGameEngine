@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using SyEngine.Ecs;
 using SyEngine.Editor.Attributes;
 
 namespace SyEngine.Editor.Drawers
@@ -12,7 +13,7 @@ public class EditorDrawerReflect<T> : EditorDrawerBase<T>
 	private readonly Dictionary<FieldInfo, List<EditorFieldBaseAttribute>> _fieldToAttr;
 	
 	
-	public EditorDrawerReflect(SyProxyEditor editor) : base(editor)
+	public EditorDrawerReflect(SyProxyEditor editor, SyEcs ecs) : base(editor, ecs)
 	{
 		var fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public);
 
@@ -38,7 +39,7 @@ public class EditorDrawerReflect<T> : EditorDrawerBase<T>
 					}
 
 					var attr = (EditorFieldBaseAttribute)rawAttr;
-					attr.Init(editor, typeof(T));
+					attr.Init(editor, ecs, typeof(T));
 
 					attrs.Add(attr);
 				}
@@ -68,6 +69,8 @@ public class EditorDrawerReflect<T> : EditorDrawerBase<T>
 	{
 		if (name != null)
 		{
+			SyProxyEditor.GeBeginGroup(name);
+			
 			SyProxyEditor.GeDrawText(name);
 			SyProxyEditor.GeIndent(true);
 		}
@@ -109,7 +112,11 @@ public class EditorDrawerReflect<T> : EditorDrawerBase<T>
 		}
 
 		if (name != null)
+		{
 			SyProxyEditor.GeIndent(false);
+			
+			SyProxyEditor.GeEndGroup();
+		}
 		
 		return isChanged;
 	}

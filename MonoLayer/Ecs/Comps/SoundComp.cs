@@ -1,4 +1,6 @@
-﻿using SyEngine.Helpers;
+﻿using System;
+using SyEngine.Editor.Attributes;
+using SyEngine.Helpers;
 using SyEngine.Resources;
 
 namespace SyEngine.Ecs.Comps
@@ -12,6 +14,7 @@ public struct SoundComp : SyEcs.IComp
 
 	public ResRef<ResSound> Sound;
 
+	[Hide, NonSerialized]
 	internal int? Hash;
     
 	

@@ -5,6 +5,7 @@ using SyEngine.Logger;
 
 namespace SyEngine.Editor.Attributes
 {
+[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
 public abstract class ShowIfBaseAttribute : EditorFieldBaseAttribute
 {
 	public sealed override int Priority => 50;

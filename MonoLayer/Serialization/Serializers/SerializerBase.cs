@@ -2,6 +2,12 @@
 
 namespace SyEngine.Serialization.Serializers
 {
+public interface ISerializer
+{
+	JSONNode SerializeRaw(object   obj);
+	object DeserializeRaw(JSONNode json);
+}
+
 public abstract class SerializerBase<T> : ISerializer
 {
 	public abstract JSONNode Serialize(T obj);
@@ -17,11 +23,5 @@ public abstract class SerializerBase<T> : ISerializer
 	{
 		return Deserialize(json);
 	}
-}
-
-public interface ISerializer
-{
-	JSONNode SerializeRaw(object   obj);
-	object DeserializeRaw(JSONNode json);
 }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using SimpleJSON;
 
@@ -6,15 +7,18 @@ namespace SyEngine.Serialization.Serializers
 {
 public class SerializerReflect<T> : SerializerBase<T>
 {
-	private readonly FieldInfo[] _fields;
+	private readonly List<FieldInfo> _fields = new List<FieldInfo>();
 
 	public SerializerReflect()
 	{
 		var type = typeof(T);
-		_fields = type.GetFields(
+		var fields = type.GetFields(
 			BindingFlags.Instance |
 			BindingFlags.Public
 		);
+		foreach (var field in fields)
+			if (!field.IsNotSerialized)
+				_fields.Add(field);
 	}
 
 

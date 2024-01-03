@@ -12,8 +12,8 @@ internal class SyEcsSyncTransform : SyEcsSyncBase<TransformComp, ProxyTransformC
 	protected override void SendImpl(uint engineEnt, ref TransformComp tf)
 	{
 		uint engineParentEnt = default;
-		bool hasParent = tf.ParentEnt != null &&
-		                 _ecs.ToEngineEnt(tf.ParentEnt.Value, out engineParentEnt);
+		bool hasParent = tf.Parent?.InternalEnt != null &&
+		                 Ecs.ToEngineEnt(tf.Parent.Value.InternalEnt.Value, out engineParentEnt);
 
 		var proxy = new ProxyTransformComp
 		{
@@ -38,10 +38,10 @@ internal class SyEcsSyncTransform : SyEcsSyncBase<TransformComp, ProxyTransformC
 		tf.LocalRotation = proxy.LocalRotation;
 		tf.LocalScale    = proxy.LocalScale;
 
-		tf.ParentEnt = proxy.HasParent &&
-		               _ecs.ToGameEnt(proxy.ParentEngineEnt, out int parentEnt)
-			? (int?)parentEnt
-			: null;
+		if (proxy.HasParent && Ecs.ToGameEnt(proxy.ParentEngineEnt, out int parentEnt))
+			tf.Parent = new SySceneEnt(parentEnt);
+		else
+			tf.Parent = null;
 	}
 
 	protected override int? GetHashImpl(ref TransformComp comp)

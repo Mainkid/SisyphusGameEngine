@@ -1,10 +1,11 @@
 ﻿using SyEngine.Datas;
+using SyEngine.Ecs;
 
 namespace SyEngine.Editor.Drawers
 {
 public class EditorDrawerVector4Pair : EditorDrawerBase<SyVector4Pair>
 {
-	public EditorDrawerVector4Pair(SyProxyEditor editor) : base(editor) { }
+	public EditorDrawerVector4Pair(SyProxyEditor editor, SyEcs ecs) : base(editor, ecs) { }
 	
 	public override bool Draw(string name, ref SyVector4Pair val)
 	{

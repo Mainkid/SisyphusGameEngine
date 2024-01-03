@@ -18,17 +18,40 @@ void SyMonoEditor::GeIndent(bool isIncrease)
 		ImGui::Unindent(10.0f);
 }
 
-int SyMonoEditor::GeDrawCompHeader(MonoString* rawName, bool isRemovable)
+int SyMonoEditor::GeBeginComp(MonoString* rawName, bool isRemovable)
 {
 	int action = -1;
 
 	SyMonoStr name{ rawName };
-	ImGui::PushID(name);
 	ImGui::SeparatorText(name);
-	if (isRemovable && ImGui::Button("Remove"))
-		action = 0;
-	ImGui::PopID();
+	if (isRemovable)
+	{
+		ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 70.0f);
+		if (ImGui::Button("Remove"))
+			action = 0;
+	}
 	return action;
+}
+
+void SyMonoEditor::GeEndComp()
+{
+	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, 3.0f);
+	ImGui::Spacing();
+}
+
+void SyMonoEditor::GeBeginGroup(MonoString* rawName)
+{
+	SyMonoStr name { rawName };
+	ImGui::PushID(name);
+}
+void SyMonoEditor::GeEndGroup()
+{
+	ImGui::PopID();
+}
+
+void SyMonoEditor::GeSameLine()
+{
+	ImGui::SameLine();
 }
 
 void SyMonoEditor::GeDrawText(MonoString* rawName)
@@ -179,6 +202,65 @@ bool SyMonoEditor::GeDrawEnumField(MonoString* rawName, MonoArray* rawItems, int
 	return prevSelected != *selected;
 }
 
+bool SyMonoEditor::GeDrawEntityField(MonoString* rawName, bool* isValid, uint32_t* rawEnt)
+{
+	if (_instance == nullptr || _instance->_ecs == nullptr)
+		return false;
+
+	auto ecs = _instance->_ecs;
+	auto ent = *isValid ? static_cast<entt::entity>(*rawEnt) : entt::null;
+	if (ent != entt::null && !ecs->valid(ent))
+	{
+		*isValid = false;
+		return true;
+	}
+
+	const char* entName = nullptr;
+	if (ent == entt::null)
+	{
+		entName = "none";
+	}
+	else
+	{
+		auto obj = ecs->try_get<GameObjectComp>(ent);
+		if (obj == nullptr)
+		{
+			*isValid = false;
+			return true;
+		}
+		entName = obj->Name.c_str();
+	}
+
+	SyMonoStr name{ rawName };
+	ImGui::PushID(name);
+
+	bool isChanged = false;
+
+	if (ImGui::Button("Clear"))
+	{
+		*isValid = false;
+		isChanged = true;
+	}
+	ImGui::SameLine();
+
+	ImGui::LabelText(name, entName);
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENODE"))
+		{
+			auto newEnt = *((const entt::entity*)payload->Data);
+			*isValid = true;
+			*rawEnt = static_cast<int>(newEnt);
+			ImGui::EndDragDropTarget();
+			isChanged |= ent != newEnt;
+		}
+	}
+
+	ImGui::PopID();
+	return isChanged;
+}
+
 bool SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType rawResType, MonoString** rawSelectedUuid)
 {
 	if (_instance == nullptr || _instance->_resService == nullptr)
@@ -241,33 +323,26 @@ bool SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType rawRes
 	return isSelectedUuidChanged;
 }
 
-
-bool SyMonoEditor::GeDrawArrayHead(MonoString* rawName)
-{
-	SyMonoStr name{ rawName };
-	return ImGui::CollapsingHeader(name);
-}
-
 int SyMonoEditor::GeDrawArrayItemButtons(int idx)
 {
 	int action = 0;
 	ImGui::PushID(idx);
-	ImGui::SameLine();
 	if (ImGui::Button("-"))
 		action = 1;
 	ImGui::SameLine();
-	if (ImGui::Button("/\\"))
+	if (ImGui::ArrowButton("up", ImGuiDir_Up))
 		action = 2;
 	ImGui::SameLine();
-	if (ImGui::Button("\\/"))
+	if (ImGui::ArrowButton("down", ImGuiDir_Down))
 		action = 3;
 	ImGui::PopID();
 	return action;
 }
 
-bool SyMonoEditor::GeDrawArrayAddButton()
+bool SyMonoEditor::GeDrawButton(MonoString* rawName)
 {
-	return ImGui::Button("+");
+	SyMonoStr name{ rawName };
+	return ImGui::Button(name);
 }
 
 bool SyMonoEditor::GeDrawFoldout(MonoString* rawName)
@@ -285,7 +360,6 @@ int SyMonoEditor::GeDrawAddCompMenu(MonoArray* rawComponents)
 
 	if (ImGui::BeginPopupContextWindow("AddComponentPopup"))
 	{
-
 		int length = mono_array_length(rawComponents);
 		for (int i = 0; i < length; i++)
 		{
@@ -299,6 +373,11 @@ int SyMonoEditor::GeDrawAddCompMenu(MonoArray* rawComponents)
 	return result;
 }
 
+void SyMonoEditor::BindEcs(entt::registry* ecs)
+{
+	_ecs = ecs;
+}
+
 
 SyResult SyMonoEditor::OnAfterCreate()
 {
@@ -308,7 +387,11 @@ SyResult SyMonoEditor::OnAfterCreate()
 	SY_RESULT_CHECK(EgDrawEntityComps.Bind(this));
 
 	BindCallback(GE_INDENT, &GeIndent);
-	BindCallback(GE_DRAW_COMP_HEADER, &GeDrawCompHeader);
+	BindCallback(GE_BEGIN_COMP, &GeBeginComp);
+	BindCallback(GE_END_COMP, &GeEndComp);
+	BindCallback(GE_BEGIN_GROUP, &GeBeginGroup);
+	BindCallback(GE_END_GROUP, &GeEndGroup);
+	BindCallback(GE_SAME_LINE, &GeSameLine);
 	BindCallback(GE_DRAW_TEXT, &GeDrawText);
 	BindCallback(GE_DRAW_INT_FIELD, &GeDrawIntField);
 	BindCallback(GE_DRAW_FLOAT_FIELD, &GeDrawFloatField);
@@ -320,9 +403,9 @@ SyResult SyMonoEditor::OnAfterCreate()
 	BindCallback(GE_DRAW_COLOR_FIELD, &GeDrawColorField);
 	BindCallback(GE_DRAW_ENUM_FIELD, &GeDrawEnumField);
 	BindCallback(GE_DRAW_RES_FIELD, &GeDrawResField);
-	BindCallback(GE_DRAW_ARRAY_HEAD, &GeDrawArrayHead);
+	BindCallback(GE_DRAW_ENTITY_FIELD, &GeDrawEntityField);
 	BindCallback(GE_DRAW_ARRAY_ITEM_BUTTONS, &GeDrawArrayItemButtons);
-	BindCallback(GE_DRAW_ARRAY_ADD_BUTTON, &GeDrawArrayAddButton);
+	BindCallback(GE_DRAW_BUTTON, &GeDrawButton);
 	BindCallback(GE_DRAW_FOLDOUT, &GeDrawFoldout);
 	BindCallback(GE_DRAW_ADD_COMP_MENU, &GeDrawAddCompMenu);
 

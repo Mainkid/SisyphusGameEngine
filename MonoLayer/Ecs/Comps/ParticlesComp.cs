@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SyEngine.Datas;
 using SyEngine.Editor.Attributes;
 using SyEngine.Helpers;
@@ -44,7 +45,7 @@ public struct ParticlesComp : SyEcs.IComp
 	public ResRef<ResTexture> Texture;
 
 	
-	[Hide]
+	[Hide, NonSerialized]
 	public bool IsDirty;
 
 

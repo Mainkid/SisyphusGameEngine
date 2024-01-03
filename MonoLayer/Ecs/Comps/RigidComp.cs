@@ -1,4 +1,6 @@
-﻿using SyEngine.Datas;
+﻿using System;
+using SyEngine.Datas;
+using SyEngine.Editor.Attributes;
 using SyEngine.Helpers;
 
 namespace SyEngine.Ecs.Comps
@@ -16,6 +18,7 @@ public struct RigidComp : SyEcs.IComp
 	public SyVector3 AngularVelocity;
 
 
+	[Hide, NonSerialized]
 	internal int? Hash;
 	
 	

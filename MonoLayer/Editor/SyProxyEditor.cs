@@ -86,15 +86,16 @@ public class SyProxyEditor
 		if (_drawers.TryGetValue(type, out drawer))
 			return true;
 		
+		if (type == typeof(SceneObjectComp))
+			return false;
+		
 		if (type.IsEnum)
 		{
 			var drawerType = typeof(EditorDrawerEnum<>).MakeGenericType(type);
-			drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this);
+			drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this, _ecs);
 			_drawers.Add(type, drawer);
 			return true;
 		}
-		if (type == typeof(SceneObjectComp))
-			return false;
 		if (type.GetInterface(nameof(SyEcs.IInternalComp)) != null)
 		{
 			var drawerType = typeof(EditorDrawerComp<>).MakeGenericType(type);
@@ -107,14 +108,14 @@ public class SyProxyEditor
 			if (defType == typeof(ResRef<>))
 			{
 				var drawerType = typeof(EditorDrawerResRef<,>).MakeGenericType(type, genType);
-				drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this);
+				drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this, _ecs);
 				_drawers.Add(type, drawer);
 				return true;
 			}
 			if (defType == typeof(List<>))
 			{
 				var drawerType = typeof(EditorDrawerList<,>).MakeGenericType(type, genType);
-				drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this);
+				drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this, _ecs);
 				_drawers.Add(type, drawer);
 				return true;
 			}
@@ -127,7 +128,7 @@ public class SyProxyEditor
 		if (type.IsClass || type.IsValueType && !type.IsPrimitive)
 		{
 			var drawerType = typeof(EditorDrawerReflect<>).MakeGenericType(type);
-			drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this);
+			drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this, _ecs);
 			_drawers.Add(type, drawer);
 			return true;
 		}
@@ -142,17 +143,15 @@ public class SyProxyEditor
 
 		_drawers = new Dictionary<Type, IEditorDrawer>
 		{
-			{ typeof(int), new EditorDrawerInt(this) },
-			{ typeof(float), new EditorDrawerFloat(this) },
-			{ typeof(bool), new EditorDrawerBool(this) },
-			{ typeof(SyVector2), new EditorDrawerVector2(this) },
-			{ typeof(SyVector3), new EditorDrawerVector3(this) },
-			{ typeof(SyVector4), new EditorDrawerVector4(this) },
-			{ typeof(SyColor), new EditorDrawerColor(this) },
-			{ typeof(SyCurve), new EditorDrawerCurve(this) },
-
-			//{ typeof(TransformComp), new EditorDrawerCompTransform(this, _ecs) },
-			//{ typeof(LightComp), new EditorDrawerCompLight(this, _ecs) },
+			{ typeof(int), new EditorDrawerInt(this, _ecs) },
+			{ typeof(float), new EditorDrawerFloat(this, _ecs) },
+			{ typeof(bool), new EditorDrawerBool(this, _ecs) },
+			{ typeof(SyVector2), new EditorDrawerVector2(this, _ecs) },
+			{ typeof(SyVector3), new EditorDrawerVector3(this, _ecs) },
+			{ typeof(SyVector4), new EditorDrawerVector4(this, _ecs) },
+			{ typeof(SyColor), new EditorDrawerColor(this, _ecs) },
+			{ typeof(SyCurve), new EditorDrawerCurve(this, _ecs) },
+			{ typeof(SySceneEnt?), new EditorDrawerSceneEntNull(this, _ecs) }
 		};
 
 		var compInterfaceType = typeof(SyEcs.IComp);
@@ -181,7 +180,19 @@ public class SyProxyEditor
 	internal static extern void GeIndent(bool isIncrease);
     
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern int GeDrawCompHeader(string name, bool isRemovable);
+	internal static extern int GeBeginComp(string name, bool isRemovable);
+
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern void GeEndComp();
+
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern void GeBeginGroup(string name);
+
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern void GeEndGroup();
+
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern void GeSameLine();
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern void GeDrawText(string name);
@@ -215,15 +226,15 @@ public class SyProxyEditor
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern bool GeDrawResField(string name, EResourceType resType, ref string uuid);
-	
+
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern bool GeDrawArrayHead(string name);
+	internal static extern bool GeDrawEntityField(string name, ref bool isValid, ref uint engineEnt);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern int GeDrawArrayItemButtons(int idx);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern bool GeDrawArrayAddButton();
+	internal static extern bool GeDrawButton(string name);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern bool GeDrawFoldout(string name);

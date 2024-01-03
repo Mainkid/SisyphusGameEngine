@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SyEngine.Ecs;
 
 namespace SyEngine.Editor.Drawers
 {
@@ -8,7 +9,7 @@ public class EditorDrawerEnum<T> : EditorDrawerBase<T> where T: Enum
 	private readonly string[] _names;
 	private readonly T[]      _values;
 
-	public EditorDrawerEnum(SyProxyEditor editor) : base(editor)
+	public EditorDrawerEnum(SyProxyEditor editor, SyEcs ecs) : base(editor, ecs)
 	{
 		_names  = Enum.GetNames(typeof(T));
 		_values = (T[])Enum.GetValues(typeof(T));

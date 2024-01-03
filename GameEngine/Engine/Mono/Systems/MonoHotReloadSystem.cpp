@@ -9,6 +9,7 @@ SyResult MonoHotReloadSystem::Init()
 	_mono = ServiceLocator::instance()->Get<mono::SyMono>();
 
 	_mono->GetEcs()->BindEcs(_ecs);
+	_mono->GetEditor()->BindEcs(_ecs);
 
 	return {};
 }

@@ -13,10 +13,14 @@ internal class SyEcsSyncHingeJoint : SyEcsSyncBase<HingeJointComp, ProxyHingeJoi
 	{
 		var proxy = new ProxyHingeJointComp();
         
-		uint attachedToEngineEnt = default;
-		proxy.IsAttachedToEnt = joint.AttachedToEnt != null &&
-		                        _ecs.ToEngineEnt(joint.AttachedToEnt.Value, out attachedToEngineEnt);
-		proxy.AttachedToEngineEnt = attachedToEngineEnt;
+		if (joint.AttachedToEnt?.InternalEnt != null &&
+		    Ecs.ToEngineEnt(joint.AttachedToEnt.Value.InternalEnt.Value, out uint attachedToEngineEnt))
+		{
+			proxy.IsAttachedToEnt     = true;
+			proxy.AttachedToEngineEnt = attachedToEngineEnt;
+		}
+		else
+			proxy.IsAttachedToEnt = false;
 
 		proxy.PivotPos = joint.PivotPos;
 		proxy.PivotRot = joint.PivotRot;
@@ -24,10 +28,10 @@ internal class SyEcsSyncHingeJoint : SyEcsSyncBase<HingeJointComp, ProxyHingeJoi
 
 	protected override void ReceiveImpl(ref ProxyHingeJointComp proxy, ref HingeJointComp joint)
 	{
-		joint.AttachedToEnt = proxy.IsAttachedToEnt &&
-		                      _ecs.ToGameEnt(proxy.AttachedToEngineEnt, out int gameEnt)
-			? (int?)gameEnt
-			: null;
+		if (proxy.IsAttachedToEnt && Ecs.ToGameEnt(proxy.AttachedToEngineEnt, out int gameEnt))
+			joint.AttachedToEnt = new SySceneEnt(gameEnt);
+		else
+			joint.AttachedToEnt = null;
 
 		joint.PivotPos = proxy.PivotPos;
 		joint.PivotRot = proxy.PivotRot;

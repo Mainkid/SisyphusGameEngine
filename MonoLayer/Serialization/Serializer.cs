@@ -4,6 +4,7 @@ using SyEngine.Helpers;
 using SyEngine.Resources;
 using SyEngine.Serialization.Serializers;
 using SimpleJSON;
+using SyEngine.Datas;
 
 namespace SyEngine.Serialization
 {
@@ -15,7 +16,10 @@ public static class SerializeHelper
 		{typeof(bool), new SerializerBool()},
 		{typeof(float), new SerializerFloat()},
 		{typeof(string), new SerializerString()},
-		{typeof(object), new SerializerObject()}
+		{typeof(object), new SerializerObject()},
+		{typeof(JSONNode), new SerializerJsonNode()},
+		
+		{typeof(SySceneEnt?), new SerializerSceneEntNull()}
 	};
 
 	//-----------------------------------------------------------
@@ -23,6 +27,11 @@ public static class SerializeHelper
 	public static string ToJson<T>(T obj)
 	{
 		return TrySerialize(obj, out var json) ? json.ToString(4) : null;
+	}
+
+	public static JSONNode ToJsonNode<T>(T obj)
+	{
+		return TrySerialize(obj, out var json) ? json : null;
 	}
 
 	public static T FromJson<T>(string json)
@@ -33,6 +42,18 @@ public static class SerializeHelper
 		return TryDeserialize<T>(jNode, out var obj) ? obj : default;
 	}
 
+	public static T FromJsonNode<T>(JSONNode node)
+	{
+		if (node == null || node.IsNull)
+			return default;
+		return TryDeserialize<T>(node, out var obj) ? obj : default;
+	}
+    
+	public static void SetContext(Dictionary<int, int> oldEntToNewEnt)
+	{
+		((SerializerSceneEntNull)_serializers[typeof(SySceneEnt?)]).SetContext(oldEntToNewEnt);
+	}
+	
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
 	internal static bool TrySerialize<T>(T val, out JSONNode json)
@@ -131,12 +152,14 @@ public static class SerializeHelper
 			return false;
 		}
 
+		if (type.IsClass || type.IsValueType && !type.IsPrimitive)
 		{
 			var serType = typeof(SerializerReflect<>).MakeGenericType(type);
 			ser = (ISerializer)Activator.CreateInstance(serType);
 			_serializers.Add(type, ser);
 			return true;
 		}
+		return false;
 	}
 }
 }

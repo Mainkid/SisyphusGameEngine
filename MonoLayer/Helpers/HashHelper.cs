@@ -15,7 +15,7 @@ public static class HashHelper
 		return hash;
 	}
 
-	public static int Hash<T>(T val)
+	private static int Hash<T>(T val)
 	{
 		return EqualityComparer<T>.Default.Equals(val, default) ? 0 : val.GetHashCode();
 	}
