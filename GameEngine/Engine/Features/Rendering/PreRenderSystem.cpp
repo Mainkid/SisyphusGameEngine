@@ -14,7 +14,7 @@ SyResult PreRenderSystem::Init()
 
 SyResult PreRenderSystem::Run()
 {
-    
+    OPTICK_EVENT();
     hc->context->ClearRenderTargetView(hc->rtv.Get(), bgColor);
     hc->context->ClearRenderTargetView(rc->Rtvs[0], bgColor);
     hc->context->ClearRenderTargetView(rc->Rtvs[1], bgColor);

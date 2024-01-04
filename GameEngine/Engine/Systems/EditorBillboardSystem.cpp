@@ -12,6 +12,7 @@ SyResult EditorBillboardSystem::Init()
 
 SyResult EditorBillboardSystem::Run()
 {
+	OPTICK_EVENT();
 	auto view = _ec->ecs.view<EditorBillboardComponent>();
 	for (auto& entity : view)
 	{

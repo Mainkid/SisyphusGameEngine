@@ -40,7 +40,7 @@ struct LightComponent
     bool ShouldBakeShadows = true;
     
 
-    int ShadowMapSize = 1024;
+    int ShadowMapSize = 512;
 
     /*
      *  Rendering pointlight/spotlight shadows

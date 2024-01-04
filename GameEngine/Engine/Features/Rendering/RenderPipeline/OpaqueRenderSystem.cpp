@@ -24,6 +24,7 @@ SyResult OpaqueRenderSystem::Run()
     UINT strides[1] = { 112 };
     UINT offsets[1] = { 0 };
 
+    OPTICK_EVENT();
     _hc->context->RSSetState(_rc->CullBackRasterizerState.Get());
 
     auto view =_ecs->view<TransformComponent, MeshComponent>();

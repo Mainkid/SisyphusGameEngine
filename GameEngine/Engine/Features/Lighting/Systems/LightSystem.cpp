@@ -18,7 +18,7 @@ SyResult LightSystem::Init()
 
 SyResult LightSystem::Run()
 {
-
+    OPTICK_EVENT();
     auto [camera, cameraTf] = CameraHelper::Find(_ecs, _ec->playModeState);
     auto viewLights = _ecs->view<TransformComponent, LightComponent>();
     for (auto& ent : viewLights)

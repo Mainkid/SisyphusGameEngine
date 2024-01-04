@@ -19,6 +19,7 @@ SyResult SkyboxSystem::Init()
 
 SyResult SkyboxSystem::Run()
 {
+	OPTICK_EVENT();
 	auto view = _ecs->view<SkyboxComponent>();
 	for (auto& entity : view)
 	{

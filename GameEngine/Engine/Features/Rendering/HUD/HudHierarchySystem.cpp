@@ -15,6 +15,7 @@ SyResult HudHierarchySystem::Init()
 
 SyResult HudHierarchySystem::Run()
 {
+	OPTICK_EVENT();
 	ImGui::Begin(windowID.c_str());
 
 	std::set<entt::entity> rootEntities;
