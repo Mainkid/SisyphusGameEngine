@@ -1,5 +1,6 @@
 #include "SyMonoEcsSyncTransform.h"
 #include "../../Engine/Scene/GameObjectHelper.h"
+#include "../../Systems/TransformHelper.h"
 
 using namespace mono;
 
@@ -17,10 +18,10 @@ void SyMonoEcsSyncTransform::RemoveComp(entt::entity ent)
 void SyMonoEcsSyncTransform::FillProxyByComp(const TransformComponent& comp)
 {
 	_proxy.Position = comp._position;
-	_proxy.Rotation = comp._rotation;
+	_proxy.Rotation = TransformHelper::RadToDegrees(comp._rotation);
 	_proxy.Scale = comp.scale;
 	_proxy.LocalPosition = comp.localPosition;
-	_proxy.LocalRotation = comp.localRotation;
+	_proxy.LocalRotation = TransformHelper::RadToDegrees(comp.localRotation);
 	_proxy.LocalScale = comp.localScale;
 	_proxy.HasParent = comp.parent != entt::null;
 	_proxy.ParentEngineEnt = comp.parent;
@@ -29,11 +30,12 @@ void SyMonoEcsSyncTransform::FillProxyByComp(const TransformComponent& comp)
 
 void SyMonoEcsSyncTransform::FillCompByProxy(const ProxyTransformComp& proxy, entt::entity ent, TransformComponent& comp)
 {
+
 	comp._position = proxy.Position;
-	comp._rotation = proxy.Rotation;
+	comp._rotation = TransformHelper::DegreesToRad(proxy.Rotation);
 	comp.scale = proxy.Scale;
 	comp.localPosition = proxy.LocalPosition;
-	comp.localRotation = proxy.LocalRotation;
+	comp.localRotation = TransformHelper::DegreesToRad(proxy.LocalRotation);
 	comp.localScale = proxy.LocalScale;
 
 	if (proxy.HasParent)

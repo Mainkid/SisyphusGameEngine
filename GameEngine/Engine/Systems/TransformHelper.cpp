@@ -166,6 +166,26 @@ void TransformHelper::RadToDegrees(Vector3& vec)
 	vec.z *= 180.0f / M_PI;
 }
 
+SyVector3 TransformHelper::DegreesToRad(const SyVector3& vec)
+{
+	return
+	{
+		static_cast<float>(vec.x * M_PI / 180.0),
+		static_cast<float>(vec.y * M_PI / 180.0),
+		static_cast<float>(vec.z * M_PI / 180.0)
+	};
+}
+
+SyVector3 TransformHelper::RadToDegrees(const SyVector3& vec)
+{
+	return
+	{
+		static_cast<float>(vec.x * 180.0 / M_PI),
+		static_cast<float>(vec.y * 180.0 / M_PI),
+		static_cast<float>(vec.z * 180.0 / M_PI)
+	};
+}
+
 void TransformHelper::SetDefaultHash()
 {
 	size_t seed = 0;
