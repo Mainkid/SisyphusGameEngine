@@ -138,17 +138,17 @@ SyResult ShadowRenderSystem::Run()
                 light.ParamsRadiusAndAttenuation.x)*Matrix::CreateTranslation(lightTf._position);
             
             //dataShadow.baseData.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
-            dataShadow.view[0] = DirectX::XMMatrixLookAtLH( Vector3(lightTf._position), lightTf._position + Vector3(1, 0, 0),
+            dataShadow.view[0] = DirectX::XMMatrixLookAtLH(SyVector3(lightTf._position), lightTf._position + SyVector3(1, 0, 0),
                 Vector3(0, 1, 0));
-            dataShadow.view[1] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(-1, 0, 0),
+            dataShadow.view[1] = DirectX::XMMatrixLookAtLH(SyVector3(lightTf._position), lightTf._position + SyVector3(-1, 0, 0),
                 Vector3(0, 1, 0));
-            dataShadow.view[2] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(0, 1, 0),
+            dataShadow.view[2] = DirectX::XMMatrixLookAtLH(SyVector3(lightTf._position), lightTf._position + SyVector3(0, 1, 0),
                 Vector3(0, 0, -1));
-            dataShadow.view[3] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(0, -1, 0),
+            dataShadow.view[3] = DirectX::XMMatrixLookAtLH(SyVector3(lightTf._position), lightTf._position + SyVector3(0, -1, 0),
                 Vector3(0, 0, 1));
-            dataShadow.view[4] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(0, 0, 1),
+            dataShadow.view[4] = DirectX::XMMatrixLookAtLH(SyVector3(lightTf._position), lightTf._position + SyVector3(0, 0, 1),
                 Vector3(0, 1, 0));
-            dataShadow.view[5] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(0, 0, -1),
+            dataShadow.view[5] = DirectX::XMMatrixLookAtLH(SyVector3(lightTf._position), lightTf._position + SyVector3(0, 0, -1),
                 Vector3(0, 1, 0));
 
 

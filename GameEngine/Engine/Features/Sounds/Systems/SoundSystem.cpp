@@ -62,9 +62,9 @@ SyResult SoundSystem::Run()
     // â èíòåðôåéñå äî âîñïðîèçâåäåíèÿ ãðîìêîñòü ìîæíî âåðòåòü êàê õî÷åøü
 
     
-
-    deletionSet.clear();
-    activeSet.clear();
+    
+    deletionMap.clear();
+    activeMap.clear();
     tmpComponentsMap.clear();
 
     auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyPlayModeEndedEvent);
@@ -128,14 +128,17 @@ SyResult SoundSystem::Run()
        // on
         if (Scom.IsSoundPlaying)
         {
-            activeSet.insert(Scom.SoundUuid);
+            if (Scom.ChanelID>=0)
+                activeMap[Scom.ChanelID] = Scom.SoundUuid;
+            
             if (Scom.State == ESoundState::Disabled)
             {
                 LoadSound(Scom.SoundUuid, Scom.SoundType3D, Scom.LoopedSound);
+
                 // 3D
                 if (Scom.SoundType3D)
                 {
-                    auto* transformC = _ecs->try_get<TransformComponent>(Entity);
+                    auto transformC = _ecs->try_get<TransformComponent>(Entity);
 
                     // àdd transform comp
                     if (transformC == nullptr)
@@ -153,6 +156,8 @@ SyResult SoundSystem::Run()
                         Scom.ChanelID = PlayFSound( Scom.SoundUuid,
                                                     Vector3::Transform(tc._position, ñameraTransform.transformMatrix.Invert()),
                                                     VolumeRounding(Scom.SoundVolume));
+
+                        
                         continue;
                     }
                 }
@@ -166,8 +171,10 @@ SyResult SoundSystem::Run()
                     /*FMOD::Channel* pChannel = nullptr;
                     auto tFoundIt = Scom.SoundPath;
                     sgpImplementation->_mpSystem->playSound(tFoundIt, nullptr, true, &pChannel);*/
+                    
                     continue;
                 }
+                
             }
 
             // Volume
@@ -176,7 +183,9 @@ SyResult SoundSystem::Run()
                 SetChannelVolume(Scom.ChanelID, VolumeRounding(Scom.SoundVolume));
                 auto [ñameraComponent, ñameraTransform] = CameraHelper::Find(_ecs,_ec->playModeState);
                 TransformComponent& tc = _ecs->get<TransformComponent>(Entity);
-                SetChannel3dPosition(Scom.ChanelID, Vector3::Transform(tc._position, ñameraTransform.transformMatrix.Invert()));
+
+                if (Scom.SoundType3D)
+                    SetChannel3dPosition(Scom.ChanelID, Vector3::Transform(tc._position, ñameraTransform.transformMatrix.Invert()));
             }
         }
 
@@ -184,14 +193,16 @@ SyResult SoundSystem::Run()
         {
             Scom.State = ESoundState::Disabled;
             Scom.IsSoundPlaying = false;
-            deletionSet.insert(Scom.SoundUuid);
+            if (Scom.ChanelID>=0)
+                deletionMap[Scom.ChanelID]=Scom.SoundUuid;
             continue;
         }
     
        //off
        if (!Scom.IsSoundPlaying)
        {
-           deletionSet.insert(Scom.SoundUuid);
+           if (Scom.ChanelID >= 0)
+               deletionMap[Scom.ChanelID]=(Scom.SoundUuid);
            Scom.State = ESoundState::Disabled;
        }  
     }
@@ -202,14 +213,22 @@ SyResult SoundSystem::Run()
             ToggleStopChannel(compUuid.second);
     }
 
-    for (auto& soundPath : deletionSet)
+    for (auto& soundPath : deletionMap)
     {
-        if (!activeSet.contains(soundPath))
+        bool contains = false;
+        for (auto& activeSound : activeMap)
         {
-            UnLoadSound(soundPath);
+            if (activeSound.second == soundPath.second)
+                contains = true;
         }
-    }
 
+        if (!contains)
+        {
+            UnLoadSound(soundPath.second);
+        }
+        else
+            ToggleStopChannel(soundPath.first);
+    }
 
 
     soundComponentsMap = tmpComponentsMap;

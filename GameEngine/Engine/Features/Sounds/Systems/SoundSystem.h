@@ -85,8 +85,8 @@ private:
 	EngineContext* _ec = nullptr;
 	ResourceService* _rs = nullptr;
 
-	std::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>> deletionSet;
-	std::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>> activeSet;
+	std::unordered_map<int, boost::uuids::uuid> deletionMap;
+	std::unordered_map<int, boost::uuids::uuid> activeMap;
 
 	std::unordered_map<boost::uuids::uuid, int, boost::hash<boost::uuids::uuid>> soundComponentsMap;
 	std::unordered_map<boost::uuids::uuid, int, boost::hash<boost::uuids::uuid>> tmpComponentsMap;

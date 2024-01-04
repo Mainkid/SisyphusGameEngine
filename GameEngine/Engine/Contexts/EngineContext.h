@@ -11,7 +11,7 @@
 #include "../Core/Tools/FlagBitmask.h"
 #include "../Mono/SyMono.h"
 #include "../Serialization/Serializer.hpp"
-
+#include "../Systems/TransformSystem.h"
 
 
 struct SelectedContent
@@ -50,7 +50,7 @@ struct EngineContext : public IService
 	bool isClosed = false;
 	std::unordered_map<entt::entity, entt::entity> serEnttToSceneEnttMap;
 	unsigned propertyFlags = 0;
-
+	
 	//PlayMode states and var for it
 	enum class EPlayModeState
 	{
