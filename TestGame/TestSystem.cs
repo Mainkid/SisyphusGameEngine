@@ -41,7 +41,7 @@ public class TestSystem : SyEcsSystemBase
 		int     entB = Ecs.CreateEntity(true);
 		ref var entBTf  = ref Ecs.GetComp<TransformComp>(entB);
 		entBTf.Position = new SyVector3(0, 10, 0);
-		entBTf.ParentEnt     = entA;
+		entBTf.Parent     = new SySceneEnt(entA);
 		Ecs.AddComp<MeshComp>(entB);
 		Ecs.AddComp<ChildTag>(entB);
 
