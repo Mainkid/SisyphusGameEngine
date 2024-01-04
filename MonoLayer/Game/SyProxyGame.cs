@@ -1,26 +1,30 @@
 ﻿using System;
 using SyEngine.Ecs;
 using SyEngine.Ecs.Comps;
+using SyEngine.Input;
 using SyEngine.Logger;
 
 namespace SyEngine.Game
 {
 public class SyProxyGame
 {
-    private SyProxyEcs _proxyEcs;
+    private SyProxyEcs   _proxyEcs;
+    private SyProxyInput _proxyInput;
 
     private SyScene _scene;
     
     private bool _isGameSystemsInited;
     
     
-    private void EgInit(SyProxyEcs proxyEcs, SyGameConfigBase config)
+    private void EgInit(SyProxyEcs proxyEcs, SyProxyInput proxyInput, SyGameConfigBase config)
     {
         SyLog.Info(ELogTag.ProxyGame, "game init starts..");
         try
         {
-            _proxyEcs = proxyEcs;
-            _proxyEcs.Ecs.SetSystems(config.GetSystems());
+            _proxyEcs   = proxyEcs;
+            _proxyInput = proxyInput;
+            
+            _proxyEcs.Ecs.Init(config.GetSystems(), proxyInput);
 
             _proxyEcs.Ecs.AddSingletonRaw<TimeData>();
 
@@ -39,7 +43,13 @@ public class SyProxyGame
     private void EgLoopRun(TimeData timeData)
     {
         try
-        {
+        {   
+            if (_proxyInput.IsPressed(EKey.MouseLeft))
+            {
+                Console.WriteLine($"left click: {_proxyInput.MousePos}");
+            }
+            
+            return;
             if (!_isGameSystemsInited)
             {
                 SyLog.Info(ELogTag.ProxyGame, "game loop init starts..");

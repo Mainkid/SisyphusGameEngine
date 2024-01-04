@@ -20,7 +20,7 @@ SyResult MonoGameLoopSystem::Run()
 	if (!_monoEcs->IsValid() || !_monoGame->IsValid())
 		return {};
 
-	if (false)
+	if (true)
 	{
 		//TODO: rewrite when engine-context-time will be fixed.
 		auto time = std::chrono::steady_clock::now();

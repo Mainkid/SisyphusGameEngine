@@ -17,7 +17,10 @@ public struct SyVector2 : IEquatable<SyVector2>
 
 
 	public SyVector2 FloorToInt() => new SyVector2((int)X, (int)Y);
-	
+
+
+	public override string ToString()
+		=> $"({X}, {Y})";
 
 	public override int GetHashCode()
 		=> HashHelper.Combine(X, Y);

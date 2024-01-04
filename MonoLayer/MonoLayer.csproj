@@ -114,6 +114,8 @@
         <Compile Include="Helpers\HashHelper.cs" />
         <Compile Include="Helpers\MathExt.cs" />
         <Compile Include="Helpers\TypesExt.cs" />
+        <Compile Include="Input\EKey.cs" />
+        <Compile Include="Input\SyProxyInput.cs" />
         <Compile Include="LeoEcs\components.cs" />
         <Compile Include="LeoEcs\entities.cs" />
         <Compile Include="LeoEcs\filters.cs" />

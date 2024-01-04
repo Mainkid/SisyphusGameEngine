@@ -35,7 +35,7 @@ internal class SyProxyEcs
 	{
 		try
 		{
-			Ecs.RemoveCompFromEngine(engineEnt, id);
+			Ecs.RemoveCompByEngine(engineEnt, id);
 		}
 		catch (Exception e)
 		{

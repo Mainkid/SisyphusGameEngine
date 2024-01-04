@@ -162,6 +162,7 @@
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncHingeJoint.cpp" />
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncCamera.cpp" />
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncAnimator.cpp" />
+    <ClCompile Include="Engine\Mono\Objects\SyMonoInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -481,6 +482,7 @@
     <ClInclude Include="Engine\Features\Animations\Components\AnimatorComponent.h" />
     <ClInclude Include="Engine\Events\SyAnimatorComponentAdded.h" />
     <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncAnimator.h" />
+    <ClInclude Include="Engine\Mono\Objects\SyMonoInput.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Downloads\skybox.jpg" />

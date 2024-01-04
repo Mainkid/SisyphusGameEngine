@@ -14,7 +14,7 @@ namespace mono
 		inline static const std::string CLASS_NAME = "SyProxyGame";
 
 	public:
-		SyMonoMethod<MonoObject*, MonoObject*> EgInit{ "EgInit" };
+		SyMonoMethod<MonoObject*, MonoObject*, MonoObject*> EgInit{ "EgInit" };
 
 		SyMonoMethod<ProxyTimeData> EgLoopRun{ "EgLoopRun" };
 		SyMonoMethod<> EgLoopDestroy{ "EgLoopDestroy" };
