@@ -16,7 +16,7 @@
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
         <DebugSymbols>true</DebugSymbols>
-        <DebugType>full</DebugType>
+        <DebugType>portable</DebugType>
         <Optimize>false</Optimize>
         <OutputPath>..\GameEngine\</OutputPath>
         <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -25,34 +25,95 @@
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
-        <DebugType>pdbonly</DebugType>
+        <DebugType>portable</DebugType>
         <Optimize>true</Optimize>
         <OutputPath>bin\Release\</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
+        <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="System"/>
+        <Reference Include="System" />
         <Reference Include="System.Core"/>
         <Reference Include="System.Data"/>
         <Reference Include="System.Xml"/>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Core\Comps\MeshComp.cs" />
-        <Compile Include="Core\Comps\SingletonsTag.cs" />
-        <Compile Include="Core\Comps\TimeData.cs" />
-        <Compile Include="Core\Comps\TransformComp.cs" />
-        <Compile Include="Core\Datas\SyVector3.cs" />
-        <Compile Include="Core\Helpers\HashHelper.cs" />
-        <Compile Include="Core\ProxyComps\ProxyTransformComp.cs" />
-        <Compile Include="Core\SyEcs.cs" />
-        <Compile Include="Core\SyEcsSync.cs" />
-        <Compile Include="Core\SyEcsSystemBase.cs" />
-        <Compile Include="Core\SyProxyEcs.cs" />
+        <Compile Include="Datas\SySceneEnt.cs" />
+        <Compile Include="Ecs\Comps\AnimatorComp.cs" />
+        <Compile Include="Ecs\Comps\CameraComp.cs" />
+        <Compile Include="Ecs\Comps\ColliderComp.cs" />
+        <Compile Include="Ecs\Comps\FixedJointComp.cs" />
+        <Compile Include="Ecs\Comps\HingeJointComp.cs" />
+        <Compile Include="Ecs\Comps\ParticlesComp.cs" />
+        <Compile Include="Ecs\Comps\SceneObjectComp.cs" />
+        <Compile Include="Ecs\Comps\SkyboxComp.cs" />
+        <Compile Include="Ecs\Comps\SoundComp.cs" />
+        <Compile Include="Ecs\EEngineCompId.cs" />
+        <Compile Include="Ecs\Comps\LightComp.cs" />
+        <Compile Include="Ecs\Comps\MeshComp.cs" />
+        <Compile Include="Ecs\Comps\RigidComp.cs" />
+        <Compile Include="Ecs\Comps\SingletonsTag.cs" />
+        <Compile Include="Ecs\Comps\TimeData.cs" />
+        <Compile Include="Ecs\Comps\TransformComp.cs" />
+        <Compile Include="Ecs\SyEcs.cs" />
+        <Compile Include="Ecs\SyEcsSystemBase.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncAnimator.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncCamera.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncer.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncBase.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncCollider.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncFixedJoint.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncHingeJoint.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncLight.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncMesh.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncParticles.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncRigid.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncSceneObject.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncSkybox.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncSound.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncTransform.cs" />
+        <Compile Include="Ecs\SyProxyEcs.cs" />
+        <Compile Include="Datas\SyColor.cs" />
+        <Compile Include="Datas\SyCurve.cs" />
+        <Compile Include="Datas\SyVector2.cs" />
+        <Compile Include="Datas\SyVector3.cs" />
+        <Compile Include="Datas\SyVector4.cs" />
+        <Compile Include="Datas\SyVector4Pair.cs" />
+        <Compile Include="Editor\Attributes\ColorNoAlphaAttribute.cs" />
+        <Compile Include="Editor\Attributes\EditorFieldBaseAttribute.cs" />
+        <Compile Include="Editor\Attributes\FloatRangeAttribute.cs" />
+        <Compile Include="Editor\Attributes\FoldoutAttribute.cs" />
+        <Compile Include="Editor\Attributes\HideAttribute.cs" />
+        <Compile Include="Editor\Attributes\ShowIfBaseAttribute.cs" />
+        <Compile Include="Editor\Attributes\ShowIfBoolAttribute.cs" />
+        <Compile Include="Editor\Attributes\ShowIfEnumAttribute.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerCompParticles.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerCurve.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerList.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerBase.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerBool.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerColor.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerComp.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerReflect.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerEnum.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerFloat.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerInt.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerResRef.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerSceneEntNull.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerVector2.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerVector3.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerVector4.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerVector4Pair.cs" />
         <Compile Include="Editor\SyProxyEditor.cs" />
         <Compile Include="Game\SyGameConfigBase.cs" />
         <Compile Include="Game\SyProxyGame.cs" />
+        <Compile Include="Game\SyScene.cs" />
+        <Compile Include="Helpers\CollectionsExt.cs" />
+        <Compile Include="Helpers\HashHelper.cs" />
+        <Compile Include="Helpers\MathExt.cs" />
+        <Compile Include="Helpers\TypesExt.cs" />
         <Compile Include="LeoEcs\components.cs" />
         <Compile Include="LeoEcs\entities.cs" />
         <Compile Include="LeoEcs\filters.cs" />
@@ -60,7 +121,34 @@
         <Compile Include="LeoEcs\worlds.cs" />
         <Compile Include="Logger\SyLog.cs" />
         <Compile Include="Logger\SyProxyLogger.cs" />
-        <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="Resources\EResourceType.cs" />
+        <Compile Include="Resources\ResAnimation.cs" />
+        <Compile Include="Resources\ResBase.cs" />
+        <Compile Include="Resources\ResCubemap.cs" />
+        <Compile Include="Resources\ResHelper.cs" />
+        <Compile Include="Resources\ResMaterial.cs" />
+        <Compile Include="Resources\ResModel.cs" />
+        <Compile Include="Resources\ResRef.cs" />
+        <Compile Include="Resources\ResSound.cs" />
+        <Compile Include="Resources\ResTexture.cs" />
+        <Compile Include="Resources\SyProxyResManager.cs" />
+        <Compile Include="Resources\SyResManager.cs" />
+        <Compile Include="Serialization\Serializer.cs" />
+        <Compile Include="Serialization\Serializers\SerializerArray.cs" />
+        <Compile Include="Serialization\Serializers\SerializerBool.cs" />
+        <Compile Include="Serialization\Serializers\SerializerEnum.cs" />
+        <Compile Include="Serialization\Serializers\SerializerFloat.cs" />
+        <Compile Include="Serialization\Serializers\SerializerInt.cs" />
+        <Compile Include="Serialization\Serializers\SerializerJsonNode.cs" />
+        <Compile Include="Serialization\Serializers\SerializerList.cs" />
+        <Compile Include="Serialization\Serializers\SerializerObject.cs" />
+        <Compile Include="Serialization\Serializers\SerializerReflect.cs" />
+        <Compile Include="Serialization\Serializers\SerializerBase.cs" />
+        <Compile Include="Serialization\Serializers\SerializerResRef.cs" />
+        <Compile Include="Serialization\Serializers\SerializerSceneEntNull.cs" />
+        <Compile Include="Serialization\Serializers\SerializerString.cs" />
+        <Compile Include="Serialization\ThirdParty\SimpleJSON.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

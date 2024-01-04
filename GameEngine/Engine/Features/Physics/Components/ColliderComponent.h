@@ -59,6 +59,8 @@ struct SyPrimitiveColliderComponent
     SyColliderMaterial      Material;       //runtime modification is not supported, but will be added in future. The member has to be added to properties
     
     //members initialized in CollisionSystem::InitComponentP
+
+    size_t MonoHash = 0; // read/write only by mono sync system
 private:
     physx::PxShape*			_shape = nullptr;
     SyGeometry      _colliderGeometry;

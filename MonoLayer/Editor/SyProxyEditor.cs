@@ -1,116 +1,174 @@
 ﻿using System;
-using System.Reflection;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using SyEngine.Core;
-using SyEngine.Core.Comps;
+using SyEngine.Datas;
+using SyEngine.Ecs;
+using SyEngine.Ecs.Comps;
+using SyEngine.Editor.Drawers;
+using SyEngine.Helpers;
 using SyEngine.Logger;
+using SyEngine.Resources;
 
 namespace SyEngine.Editor
 {
 public class SyProxyEditor
 {
 	private SyEcs _ecs;
+		
+	private Type[] _compsTypesBuffer = new Type[20];
 
-	private Type[] _compsTypesBuffer = new Type[10];
+	private Dictionary<Type, IEditorDrawer> _drawers;
 
-	private void DrawEntityCustomComps(uint engineEnt)
+	private List<Type> _allCompsTypes       = new List<Type>();
+	private List<Type> _availableCompsTypes = new List<Type>();
+	private string[]   _availableCompsNames;
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
+	private int _prevCompsCount = -1;
+	
+	private void DrawEntityComps(uint engineEnt)
 	{
 		if (!_ecs.ToGameEnt(engineEnt, out int gameEnt))
 			return;
-
+		
+		//--------- Existing Components ---------------
 		for (var i = 0; i < _compsTypesBuffer.Length; i++)
 			_compsTypesBuffer[i] = null;
 
-		int count = _ecs.World.GetComponentTypes(gameEnt, ref _compsTypesBuffer);
-		
-		for (var i = 0; i < count; i++)
-		{
-			var type = _compsTypesBuffer[i];
-			if (type == typeof(TransformComp) ||
-			    type == typeof(MeshComp))
-				continue;
+		int compsCount = _ecs.World.GetComponentTypes(gameEnt, ref _compsTypesBuffer);
 
-			DrawCustomComp(gameEnt, type);
+		for (var i = 0; i < compsCount; i++)
+		{
+			var compType = _compsTypesBuffer[i];
+			if (TryGetDrawer(compType, out var drawer) && drawer is IEditorDrawerComp compDrawer)
+			{
+				compDrawer.DrawComp(gameEnt);
+			}
+		}
+		
+		//----------- Add Component ------------------
+		if (_prevCompsCount != compsCount)
+		{
+			_prevCompsCount = compsCount;
+			
+			_availableCompsTypes = new List<Type>(_allCompsTypes);
+			for (var i = 0; i < compsCount; i++)
+				_availableCompsTypes.Remove(_compsTypesBuffer[i]);
+			_availableCompsNames = new string[_availableCompsTypes.Count];
+			for (var i = 0; i < _availableCompsNames.Length; i++)
+				_availableCompsNames[i] = _availableCompsTypes[i].Name;
+		}
+		int result = GeDrawAddCompMenu(_availableCompsNames);
+		if (result >= 0)
+		{
+			var compType = _availableCompsTypes[result];
+			_ecs.AddCompRaw(compType, gameEnt);
 		}
 	}
 
-	private void DrawCustomComp(int ent, Type compType)
+	internal bool DrawField(string name, Type type, ref object val)
 	{
-		GeDrawCompHeader(compType.Name);
+		if (!TryGetDrawer(type, out var drawer))
+			return false;
+		return drawer.DrawRaw(name, ref val);
+	}
 
-		var    pool = _ecs.World.GetPoolByType(compType);
-		object comp = pool.GetRaw(ent);
-
-		var isCompChanged = false;
-
-		var fields = compType.GetFields(BindingFlags.Instance | BindingFlags.Public);
-		foreach (var field in fields)
-		{
-			bool isFieldChanged = false;
-
-			string name = field.Name;
-			object val  = field.GetValue(comp);
-
-			if (field.FieldType == typeof(int))
-				isFieldChanged |= DrawIntField(name, ref val);
-			else if (field.FieldType == typeof(float))
-				isFieldChanged |= DrawFloatField(name, ref val);
-			else if (field.FieldType == typeof(bool))
-				isFieldChanged |= DrawBoolField(name, ref val);
-
-			if (isFieldChanged)
-				field.SetValue(comp, val);
-
-			isCompChanged |= isFieldChanged;
-		}
+	internal bool DrawField<T>(string name, ref T val)
+	{
+		if (!TryGetDrawer(typeof(T), out var drawer))
+			return false;
+		return ((EditorDrawerBase<T>)drawer).Draw(name, ref val);
+	}
+	
+	private bool TryGetDrawer(Type type, out IEditorDrawer drawer)
+	{
+		if (_drawers.TryGetValue(type, out drawer))
+			return true;
 		
-		if (isCompChanged)
-			pool.SetRaw(ent, comp);
-	}
-
-	private bool DrawIntField(string name, ref object val)
-	{
-		var prevVal = (int)val;
-		int newVal  = GeDrawIntField(name, prevVal);
-		if (prevVal == newVal)
+		if (type == typeof(SceneObjectComp))
 			return false;
-		val = newVal;
-		return true;
-	}
-
-	private bool DrawFloatField(string name, ref object val)
-	{
-		var   prevVal = (float)val;
-		float newVal  = GeDrawFloatField(name, prevVal);
-		if (Math.Abs(prevVal - newVal) <= float.Epsilon)
+		
+		if (type.IsEnum)
+		{
+			var drawerType = typeof(EditorDrawerEnum<>).MakeGenericType(type);
+			drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this, _ecs);
+			_drawers.Add(type, drawer);
+			return true;
+		}
+		if (type.GetInterface(nameof(SyEcs.IInternalComp)) != null)
+		{
+			var drawerType = typeof(EditorDrawerComp<>).MakeGenericType(type);
+			drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this, _ecs);
+			_drawers.Add(type, drawer);
+			return true;
+		}
+		if (type.TryExtractGeneric(out var defType, out var genType))
+		{
+			if (defType == typeof(ResRef<>))
+			{
+				var drawerType = typeof(EditorDrawerResRef<,>).MakeGenericType(type, genType);
+				drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this, _ecs);
+				_drawers.Add(type, drawer);
+				return true;
+			}
+			if (defType == typeof(List<>))
+			{
+				var drawerType = typeof(EditorDrawerList<,>).MakeGenericType(type, genType);
+				drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this, _ecs);
+				_drawers.Add(type, drawer);
+				return true;
+			}
+		}
+		if (type.IsArray || type.IsDotNetType())
+		{
+			//TODO
 			return false;
-		val = newVal;
-		return true;
+		}
+		if (type.IsClass || type.IsValueType && !type.IsPrimitive)
+		{
+			var drawerType = typeof(EditorDrawerReflect<>).MakeGenericType(type);
+			drawer = (IEditorDrawer)Activator.CreateInstance(drawerType, this, _ecs);
+			_drawers.Add(type, drawer);
+			return true;
+		}
+		return false;
 	}
-
-	private bool DrawBoolField(string name, ref object val)
-	{
-		var  prevVal = (bool)val;
-		bool newVal  = GeDrawBoolField(name, prevVal);
-		if (prevVal == newVal)
-			return false;
-		val = newVal;
-		return true;
-	}
-
 
 	//-----------------------------------------------------------
 	//-----------------------------------------------------------
-	internal void EgInit(SyProxyEcs proxy)
+	private void EgInit(SyProxyEcs proxyEcs)
 	{
-		_ecs = proxy.Ecs;
+		_ecs = proxyEcs.Ecs;
+
+		_drawers = new Dictionary<Type, IEditorDrawer>
+		{
+			{ typeof(int), new EditorDrawerInt(this, _ecs) },
+			{ typeof(float), new EditorDrawerFloat(this, _ecs) },
+			{ typeof(bool), new EditorDrawerBool(this, _ecs) },
+			{ typeof(SyVector2), new EditorDrawerVector2(this, _ecs) },
+			{ typeof(SyVector3), new EditorDrawerVector3(this, _ecs) },
+			{ typeof(SyVector4), new EditorDrawerVector4(this, _ecs) },
+			{ typeof(SyColor), new EditorDrawerColor(this, _ecs) },
+			{ typeof(SyCurve), new EditorDrawerCurve(this, _ecs) },
+			{ typeof(SySceneEnt?), new EditorDrawerSceneEntNull(this, _ecs) },
+			
+			{ typeof(ParticlesComp), new EditorDrawerCompParticles(this, _ecs)}
+		};
+
+		var compInterfaceType = typeof(SyEcs.IComp);
+		foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		{
+			foreach (var type in assembly.GetTypes())
+				if (!type.IsInterface && compInterfaceType.IsAssignableFrom(type))
+					_allCompsTypes.Add(type);
+		}
 	}
 
-	internal void EgDrawEntityCustomComps(uint engineEnt)
+	private void EgDrawEntityComps(uint engineEnt)
 	{
 		try
 		{
-			DrawEntityCustomComps(engineEnt);
+			DrawEntityComps(engineEnt);
 		}
 		catch (Exception e)
 		{
@@ -118,16 +176,71 @@ public class SyProxyEditor
 		}
 	}
 
+	
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	private static extern void GeDrawCompHeader(string name);
+	internal static extern void GeIndent(bool isIncrease);
+    
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern int GeBeginComp(string name, bool isRemovable);
 
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	private static extern int GeDrawIntField(string name, int val);
+	internal static extern void GeEndComp();
 
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	private static extern float GeDrawFloatField(string name, float val);
+	internal static extern void GeBeginGroup(string name);
 
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	private static extern bool GeDrawBoolField(string name, bool val);
+	internal static extern void GeEndGroup();
+
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern void GeSameLine();
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern void GeDrawText(string name);
+
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawIntField(string name, ref int val);
+
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawFloatField(string name, ref float val, float min, float max, float step);
+
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawBoolField(string name, ref bool val);
+    
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawVector2Field(string name, ref SyVector2 val);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawVector3Field(string name, ref SyVector3 val);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawVector4Field(string name, ref SyVector4 val);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawCurveField(string name, ref SyCurve curve);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawColorField(string name, bool withAlpha, ref SyColor val);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawEnumField(string name, string[] items, ref int selected);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawResField(string name, EResourceType resType, ref string uuid);
+
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawEntityField(string name, ref bool isValid, ref uint engineEnt);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern int GeDrawArrayItemButtons(int idx);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawButton(string name);
+	
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern bool GeDrawFoldout(string name);
+
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern int GeDrawAddCompMenu(string[] compsNames);
 }
 }

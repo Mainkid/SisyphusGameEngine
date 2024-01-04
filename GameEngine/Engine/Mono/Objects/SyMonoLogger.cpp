@@ -1,5 +1,7 @@
 #include "SyMonoLogger.h"
 
+#include "../Api/SyMonoStr.h"
+
 using namespace mono;
 
 void SyMonoLogger::GE_Log(int rawLevel, MonoString* rawTag, MonoString* rawMsg)
@@ -16,10 +18,10 @@ void SyMonoLogger::GE_Log(int rawLevel, MonoString* rawTag, MonoString* rawMsg)
 		level = SY_LOGLEVEL_ERROR;
 	}
 
-	const char* tag = mono_string_to_utf8(rawTag);
-	const char* msg = mono_string_to_utf8(rawMsg);
+	SyMonoStr tag{ rawTag };
+	SyMonoStr msg{ rawMsg };
 
-	SY_LOG_GAME(level, "[%s] %s", tag, msg);
+	SY_LOG_GAME(level, "[%s] %s", tag.GetChar(), msg.GetChar());
 }
 
 SyResult SyMonoLogger::OnAfterCreate()

@@ -40,6 +40,7 @@
 #include "../../Features/Animations/Systems/SkeletalAnimationSystem.h"
 #include "../../Features/Sounds/Systems/SoundSystem.h"
 
-#include "../Mono/Systems/MonoSyncSystem.h"
+#include "../Mono/Systems/MonoSyncEgSystem.h"
+#include "../Mono/Systems/MonoGameLoopSystem.h"
 
 #include "../../Features/Events/Systems/PrepareEventsSystem.h"

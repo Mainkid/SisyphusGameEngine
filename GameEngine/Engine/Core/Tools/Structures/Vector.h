@@ -3,6 +3,7 @@
 #include <boost/container_hash/hash.hpp>
 
 #include "SimpleMath.h"
+#include "../HashHelper.h"
 #include "foundation/PxVec3.h"
 #include "foundation/PxQuat.h"
 
@@ -155,6 +156,7 @@ public:
 	static const SyVector3 ZERO;
 	static const SyVector3 ONE;
 };
+
 inline bool operator==(const SyVector3& left, const SyVector3& right)
 {
 	return (left.x == right.x) && (left.y == right.y) && (left.z == right.z);

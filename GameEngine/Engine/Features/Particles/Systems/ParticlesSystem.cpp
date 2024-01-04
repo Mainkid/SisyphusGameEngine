@@ -31,12 +31,17 @@ SyResult ParticlesSystem::Run()
         size_t hash = _hasher(ps.TextureUuid);
         if (hash != ps.Hash)
         {
-            ps.Hash = hash;
-            if (ps.TextureUuid==boost::uuids::nil_uuid())
-                ps.ParticleTexture = std::static_pointer_cast<Texture>(_rs->LoadResource(_rs->baseResourceDB[EAssetType::ASSET_TEXTURE].uuid));
-            else
-                ps.ParticleTexture = std::static_pointer_cast<Texture>(_rs->LoadResource(ps.TextureUuid));
-            InitRenderResources(ps);
+            if (ps.TextureUuid == boost::uuids::nil_uuid())
+            {
+                ps.TextureUuid = _rs->baseResourceDB[EAssetType::ASSET_TEXTURE].uuid;
+                ps.IsMonoDirty = true;
+            }
+            ps.ParticleTexture = std::static_pointer_cast<Texture>(_rs->LoadResource(ps.TextureUuid));
+
+            if (ps.Hash == 0)
+                InitRenderResources(ps);
+
+            ps.Hash = _hasher(ps.TextureUuid);
         }
     }
     return SyResult();

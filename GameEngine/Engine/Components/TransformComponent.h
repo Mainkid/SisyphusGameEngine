@@ -31,6 +31,9 @@ struct TransformComponent
 	std::set<entt::entity> children = {};
 
 
+	size_t MonoHash = 0; // read/write only by mono sync system
+
+
 	SER_COMP(TransformComponent,
 		_position,
 		_rotation,

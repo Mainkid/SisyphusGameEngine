@@ -47,13 +47,16 @@ struct FSoundComponent
 	bool IsSoundPlaying = false;
 	bool LoopedSound = false;
 	boost::uuids::uuid SoundUuid = boost::uuids::nil_uuid(); // = "Engine/Assets/Audio/LookinAtIt.ogg";
-	boost::uuids::uuid ComponentUuid = boost::uuids::random_generator()();
 	
 //----Engine vars----
+	boost::uuids::uuid ComponentUuid = boost::uuids::random_generator()();
+
 	ESoundState State= ESoundState::Disabled;
 	//bool HasStarted = false;
 	int ChanelID = -1;
-	
+
+	size_t MonoHash = 0; //used by mono sync systems
+
 	//SER_COMP(FSoundComponent, texturePath);
 };
 

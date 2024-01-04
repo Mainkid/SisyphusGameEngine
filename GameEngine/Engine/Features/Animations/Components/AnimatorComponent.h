@@ -41,4 +41,7 @@ public:
 	float m_CurrentTime;
 	float m_DeltaTime;
 	EAnimState state = EAnimState::Disabled;
+
+
+	size_t MonoHash = 0; // read/write only by mono
 };

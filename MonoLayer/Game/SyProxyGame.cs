@@ -1,6 +1,6 @@
 ﻿using System;
-using SyEngine.Core;
-using SyEngine.Core.Comps;
+using SyEngine.Ecs;
+using SyEngine.Ecs.Comps;
 using SyEngine.Logger;
 
 namespace SyEngine.Game
@@ -9,7 +9,12 @@ public class SyProxyGame
 {
     private SyProxyEcs _proxyEcs;
 
-    internal void EgInit(SyProxyEcs proxyEcs, SyGameConfigBase config)
+    private SyScene _scene;
+    
+    private bool _isGameSystemsInited;
+    
+    
+    private void EgInit(SyProxyEcs proxyEcs, SyGameConfigBase config)
     {
         SyLog.Info(ELogTag.ProxyGame, "game init starts..");
         try
@@ -18,6 +23,10 @@ public class SyProxyGame
             _proxyEcs.Ecs.SetSystems(config.GetSystems());
 
             _proxyEcs.Ecs.AddSingletonRaw<TimeData>();
+
+            _scene = new SyScene(_proxyEcs.Ecs);
+            _scene.Load();
+            
             
             SyLog.Info(ELogTag.ProxyGame, "game init done");
         }
@@ -27,29 +36,20 @@ public class SyProxyGame
         }
     }
 
-    internal void EgLoopInit()
+    private void EgLoopRun(TimeData timeData)
     {
-        SyLog.Info(ELogTag.ProxyGame, "game loop init starts..");
         try
         {
-            _proxyEcs.Ecs.InitSystems();
-            _proxyEcs.Sync.SyncEngineWithGame();
+            if (!_isGameSystemsInited)
+            {
+                SyLog.Info(ELogTag.ProxyGame, "game loop init starts..");
+                _proxyEcs.Ecs.InitSystems();
+                SyLog.Info(ELogTag.ProxyGame, "game loop init done");
+                _isGameSystemsInited = true;
+            }
             
-            SyLog.Info(ELogTag.ProxyGame, "game loop init done");
-        }
-        catch (Exception e)
-        {
-            SyLog.Err(ELogTag.ProxyGame, e.ToString());
-        }
-    }
-
-    internal void EgLoopRun(TimeData timeData)
-    {
-        try
-        {
             _proxyEcs.Ecs.GetSingleton<TimeData>() = timeData;
             _proxyEcs.Ecs.RunSystems();
-            _proxyEcs.Sync.SyncEngineWithGame();
         }
         catch (Exception e)
         {
@@ -57,7 +57,7 @@ public class SyProxyGame
         }
     }
 
-    internal void EgLoopDestroy()
+    private void EgLoopDestroy()
     {
         SyLog.Info(ELogTag.ProxyGame, "game loop destroy starts..");
         try
@@ -71,5 +71,21 @@ public class SyProxyGame
             SyLog.Err(ELogTag.ProxyGame, e.ToString());
         }
     }
+
+    
+    private void EgSaveScene()
+    {
+        try
+        {
+            _scene.Save();
+        }
+        catch (Exception e)
+        {
+            SyLog.Err(ELogTag.ProxyGame, e.ToString());
+        }
+    }
+    
+    //-----------------------------------------------------------
+    //-----------------------------------------------------------
 }
 }

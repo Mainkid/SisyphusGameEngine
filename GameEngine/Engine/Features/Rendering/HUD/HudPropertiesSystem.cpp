@@ -15,14 +15,15 @@
 #include "../../Sounds/Components/FSoundComponent.h"
 #include "../../Animations/Components/AnimatorComponent.h"
 #include "../../../../vendor/ImGui/curve_v122.hpp"
+#include "../../../Mono/SyMono.h"
+#include "../../../Mono/Objects/SyMonoEditor.h"
+
 #include "../../../../vendor/StateMachine/imgui_node_graph_test.h"
 #include "../../../../vendor/StateMachine/StateMachineLayer.h"
 
 #include "json.hpp"
 
 #include <fstream>
-
-
 
 
 SyResult HudPropertiesSystem::Init()
@@ -46,7 +47,7 @@ SyResult HudPropertiesSystem::Run()
     bool tr = true;
     ShowStateMachineGraph(&tr);
 
-    
+    ImGui::PushItemWidth(ImGui::GetWindowContentRegionMax().x * -0.3f);
 
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 
@@ -54,116 +55,11 @@ SyResult HudPropertiesSystem::Run()
 
     if (ec->hudData.selectedEntityIDs.size() != 0)
     {
-        TransformComponent* tc = _ecs->try_get<TransformComponent>(*ec->hudData.selectedEntityIDs.begin());
-        LightComponent* lc = _ecs->try_get<LightComponent>(*ec->hudData.selectedEntityIDs.begin());
-        ParticleComponent* pc = _ecs->try_get<ParticleComponent>(*ec->hudData.selectedEntityIDs.begin());
-        FSoundComponent* sc = _ecs->try_get<FSoundComponent>(*ec->hudData.selectedEntityIDs.begin());
-        AnimatorComponent* ac = _ecs->try_get<AnimatorComponent>(*ec->hudData.selectedEntityIDs.begin());
-
-
-        if (tc)
-        {
-            auto degToRadians = [](float angle) {return angle * M_PI / 180.0f; };
-            ImGui::Text("Transform");
-            Vector3 vec3Dx = tc->localPosition;
-            float vec3[3]{ vec3Dx.x, vec3Dx.y, vec3Dx.z };
-            ImGui::DragFloat3("Translation", vec3, 0.1f);
-            tc->localPosition = (Vector3(vec3[0], vec3[1], vec3[2]));
-
-            vec3Dx = TransformHelper::GetRotationDegrees(*tc);
-            vec3[0] = vec3Dx.x;
-            vec3[1] = vec3Dx.y;
-            vec3[2] = vec3Dx.z;
-
-            ImGui::DragFloat3("Rotation", vec3, 1.0f);
-            auto vec = Vector3(vec3[0], vec3[1], vec3[2]);
-            TransformHelper::DegreesToRad(vec);
-            tc->localRotation = vec;
-
-            vec3Dx = tc->localScale;
-            vec3[0] = vec3Dx.x;
-            vec3[1] = vec3Dx.y;
-            vec3[2] = vec3Dx.z;
-            ImGui::DragFloat3("Scale", vec3, 0.1f);
-            tc->localScale = (Vector3(vec3[0], vec3[1], vec3[2]));
-        }
-
-        if (lc)
-        {
-            ImGui::Text("Light");
-            Vector4 vec4D = lc->ParamsRadiusAndAttenuation;
-            Vector4 color = lc->Color;
-            float col3[3] = { lc->Color.x,lc->Color.y,lc->Color.z };
-            ImGui::PushItemWidth(100);
-            ImGui::ColorEdit3("Light Color", col3);
-            ImGui::DragFloat("Light Intensity", &lc->Color.w);
-
-            switch (lc->LightType)
-            {
-
-            case ELightType::PointLight:
-                ImGui::DragFloat("Light Radius", &lc->ParamsRadiusAndAttenuation.x);
-                ImGui::Checkbox("Bake Shadows", &lc->CastShadows);
-                break;
-            }
-            ImGui::PopItemWidth();
-            lc->Color.x = col3[0];
-            lc->Color.y = col3[1];
-            lc->Color.z = col3[2];
-        }
-
-        if (ac)
-        {
-            ImGui::Text("Animator");
-            std::vector<boost::uuids::uuid> items = rs->GetAllResourcesOfType(EAssetType::ASSET_ANIMATION);
-            std::vector<std::string> filePathsStr = rs->GetAllResourcesFilePaths(EAssetType::ASSET_ANIMATION);
-            std::vector<const char*> filePaths;
-
-            static int selectedItem = 0;
-
-            for (int i = 0; i < filePathsStr.size(); i++) {
-                if (filePathsStr[i] != "")
-                    filePaths.push_back(filePathsStr[i].c_str());
-            }ImGui::Combo("Filepaths", &selectedItem, filePaths.data(), filePaths.size());
-            ac->animationUUID = items[selectedItem];
-
-            ImGui::Checkbox("Is Looping", &ac->IsLooping);
-        }
-
-        // TODO S: demo
-        if (sc)
-        {
-            
-            //std::string SoundPath = "Engine/Assets/Audio/LookinAtIt.ogg";
-            ImGui::Checkbox("Sound3D", &sc->SoundType3D);
-            ImGui::DragFloat("Sound Volume", &sc->SoundVolume);
-            ImGui::Checkbox("Is Looping", &sc->LoopedSound);
-            ImGui::Checkbox("Is Playing", &sc->IsSoundPlaying);
-            
-        }
-
-        if (pc)
-        {
-            
-            //TODO: Add Bursts Array
-            //TODO: Add Simple float/int/bool/enum visualisation
-
-            DrawParticleProperties(pc->RotationOverLifetime, "Rotation over lifetime", EParticleInput::EFloats);
-            DrawParticleProperties(pc->StartDelayTime, "Start delay time", EParticleInput::EFloats);
-            DrawParticleProperties(pc->StartLifeTime, "Start Lifetime", EParticleInput::EFloats);
-            DrawParticleProperties(pc->StartRotation, "Start Rotation", EParticleInput::EFloats);
-            DrawParticleProperties(pc->StartSize, "Start Size", EParticleInput::EFloats);
-            DrawParticleProperties(pc->StartSpeed, "Start Speed", EParticleInput::EFloats);
-            DrawParticleProperties(pc->StartColor, "Start Color", EParticleInput::EVectors);
-            DrawParticleProperties(pc->SizeOverLifetime, "Size over lifetime", EParticleInput::ECurve);
-            DrawParticleProperties(pc->SpeedOverLifetime, "Speed over lifetime", EParticleInput::ECurve);
-        }
-
-            
-
-        auto rawEnt = static_cast<uint32_t>(*ec->hudData.selectedEntityIDs.begin());
         if (_monoEditor->IsValid())
-            _monoEditor->EgDrawEntityCustomComps.Invoke(rawEnt);
+        {
+            auto rawEnt = static_cast<uint32_t>(*ec->hudData.selectedEntityIDs.begin());
+            _monoEditor->EgDrawEntityComps.Invoke(rawEnt);
+        }
     }
     else if (ec->hudData.selectedContent.uuid!=boost::uuids::nil_uuid())
     {

@@ -4,12 +4,11 @@
 // ----------------------------------------------------------------------------
 
 using System.Collections.Generic;
-
 #if ENABLE_IL2CPP
 using Unity.IL2CPP.CompilerServices;
 #endif
 
-namespace Leopotam.EcsLite {
+namespace LeoEcs {
     public interface IEcsSystem { }
 
     public interface IEcsPreInitSystem : IEcsSystem {

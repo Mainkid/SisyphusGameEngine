@@ -3,6 +3,7 @@
 #include "../../../Contexts/EngineContext.h"
 #include "../../../Components/GameObjectComp.h"
 #include "../../../Events/SyEditorCameraMoveToTarget.h"
+#include "../../../Events/SyHotReloadEvent.h"
 #include "../../../Scene/GameObjectHelper.h"
 #include "../../Components/TransformComponent.h"
 
@@ -17,6 +18,13 @@ SyResult HudHierarchySystem::Run()
 {
 	OPTICK_EVENT();
 	ImGui::Begin(windowID.c_str());
+
+	for (auto ent : ec->hudData.selectedEntityIDs)
+		if (!_ecs->valid(ent))
+		{
+			ec->hudData.selectedEntityIDs.clear();
+			break;
+		}
 
 	std::set<entt::entity> rootEntities;
 	auto view = _ecs->view<GameObjectComp, TransformComponent>();
@@ -73,6 +81,7 @@ void HudHierarchySystem::RenderTree(std::set<entt::entity> entities)
 		treeFlags |= (_ecs->get<TransformComponent>(ent).children.size() == 0)
 			             ? ImGuiTreeNodeFlags_Leaf
 			             : ImGuiTreeNodeFlags_None;
+		
 		bool opened;
 		if (isRenaiming == ent)
 		{
@@ -104,8 +113,8 @@ void HudHierarchySystem::RenderTree(std::set<entt::entity> entities)
 		}
 
 		ProcessPopUp();
-		
-		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+
+		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left))
 		{
 			if (!ImGui::IsKeyDown(ImGuiMod_Ctrl))
 				ec->hudData.selectedEntityIDs.clear();

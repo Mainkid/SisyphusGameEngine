@@ -26,7 +26,7 @@ public:
 	SyResult CallEvent(const std::string& name, Args... eventArgs_)
 	{
 		entt::entity ent = _ecs->create();
-		_ecs->emplace<GameObjectComp>(ent, name);
+		//_ecs->emplace<GameObjectComp>(ent, name);
 		_ecs->emplace<T_Event>(ent, eventArgs_...);
 		_ecs->emplace<SyEventTag>(ent);
 		return SyResult();

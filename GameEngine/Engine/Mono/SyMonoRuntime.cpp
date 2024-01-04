@@ -5,6 +5,19 @@
 #include <iostream>
 #include <Windows.h>
 
+#include <mono/utils/mono-logger.h>
+#include <mono/metadata/assembly.h>
+#include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/threads.h>
+#include <mono/metadata/exception.h>
+#include <mono/metadata/mono-debug.h>
+#include <mono/metadata/object.h>
+#include <mono/metadata/environment.h>
+#include <mono/metadata/assembly.h>
+#include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/mono-config.h>
+#include <mono/metadata/profiler.h>
+
 #include "../Core/Tools/ErrorLogger.h"
 
 using namespace mono;
@@ -16,11 +29,23 @@ SyResult SyMonoRuntime::Init()
     auto path = std::filesystem::path(buffer).parent_path().append("vendor").append("mono").append("runtime");
     auto pathLib = std::filesystem::path(path).append("lib");
     auto pathEtc = std::filesystem::path(path).append("etc");
+    auto pathConfig = std::filesystem::path(pathEtc).append("mono").append("config");
 
-    //mono_set_assemblies_path(R"(..\vendor\mono\lib)");
+    mono_config_parse(pathConfig.string().c_str());
+
     mono_set_dirs(pathLib.string().c_str(), pathEtc.string().c_str());
 
+    //static const char* options[] = {
+    //  "--debug"
+    //};
+    //mono_jit_parse_options(1, (char**)options);
+    //mono_debug_init(MONO_DEBUG_FORMAT_MONO);
+
+    //mono_profiler_load("log:heapshot=100ms");
+
+    //_rootDomain = mono_jit_init_version("RootDomain", "4.5");
     _rootDomain = mono_jit_init("RootDomain");
+
     if (_rootDomain == nullptr)
 	    return SyResult{ SY_RESCODE_ERROR, "failed to init lib" };
     return {};

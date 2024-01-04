@@ -12,7 +12,8 @@ void SyMono::Init()
 {
 	SY_LOG_MONO(SY_LOGLEVEL_INFO, "init start..");
 
-	SyResult r = InitImpl();
+	SyResult r = _runtime.Init();
+
 	if (r.code == SY_RESCODE_OK)
 	{
 		SY_LOG_MONO(SY_LOGLEVEL_INFO, "init done");
@@ -28,9 +29,10 @@ void SyMono::Destroy()
 {
 	SY_LOG_MONO(SY_LOGLEVEL_INFO, "destroy start..");
 
-	SyResult r = DestroyImpl();
+	SyResult r = DestroyObjects();
 	if (r.code == SY_RESCODE_OK)
 	{
+		_runtime.Destroy();
 		SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "destroy done");
 	}
 	else
@@ -42,17 +44,32 @@ void SyMono::Destroy()
 
 void SyMono::HotReload()
 {
-	SY_LOG_MONO(SY_LOGLEVEL_INFO, "hot reload start..");
+	SyResult r{};
 
-	SyResult r = HotReloadImpl();
-	if (r.code == SY_RESCODE_OK)
+	SY_LOG_MONO(SY_LOGLEVEL_INFO, "[hot reload] destroying old objects..");
+	r = DestroyObjects();
+	if (r.code != SY_RESCODE_OK)
 	{
-		SY_LOG_MONO(SY_LOGLEVEL_INFO, "hot reload done");
+		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "[hot reload] failed; %s", r.message.ToString().c_str());
+		return;
 	}
-	else
+	SY_LOG_MONO(SY_LOGLEVEL_INFO, "[hot reload] old objects are destroyed");
+
+	SY_LOG_MONO(SY_LOGLEVEL_INFO, "[hot reload] reloading runtime assembly..");
+	r = _runtime.Reload();
+	if (r.code != SY_RESCODE_OK)
 	{
-		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "hot reload failed; %s", r.message.ToString().c_str());
-		ForceDestroy();
+		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "[hot reload] failed; %s", r.message.ToString().c_str());
+		return;
+	}
+	SY_LOG_MONO(SY_LOGLEVEL_INFO, "[hot reload] runtime assembly is reloaded");
+
+	SY_LOG_MONO(SY_LOGLEVEL_INFO, "[hot reload] creating new objects..");
+	r = CreateObjects();
+	if (r.code != SY_RESCODE_OK)
+	{
+		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "[hot reload] failed; %s", r.message.ToString().c_str());
+		return;
 	}
 }
 
@@ -71,28 +88,9 @@ SyMonoGame* SyMono::GetGame()
 	return &_game;
 }
 
-SyResult SyMono::InitImpl()
+
+SyResult SyMono::CreateObjects()
 {
-	SY_RESULT_CHECK_EXT(_runtime.Init(), "runtime");
-	return {};
-}
-
-SyResult SyMono::DestroyImpl()
-{
-	SY_RESULT_CHECK_EXT(_gameConfig.Destroy(), "game config");
-	SY_RESULT_CHECK_EXT(_game.Destroy(), "game");
-	SY_RESULT_CHECK_EXT(_editor.Destroy(), "editor");
-	SY_RESULT_CHECK_EXT(_ecs.Destroy(), "ecs");
-	SY_RESULT_CHECK_EXT(_logger.Destroy(), "logger");
-	return {};
-}
-
-SyResult SyMono::HotReloadImpl()
-{
-	SY_RESULT_CHECK_EXT(DestroyImpl(), "destroy");
-
-	SY_RESULT_CHECK_EXT(_runtime.Reload(), "runtime reload");
-
 	SY_RESULT_CHECK_EXT(_logger.Create(_runtime), "logger create");
 	SY_RESULT_CHECK_EXT(_ecs.Create(_runtime), "ecs create");
 	SY_RESULT_CHECK_EXT(_editor.Create(_runtime), "editor create");
@@ -104,6 +102,17 @@ SyResult SyMono::HotReloadImpl()
 
 	return {};
 }
+
+SyResult SyMono::DestroyObjects()
+{
+	SY_RESULT_CHECK_EXT(_gameConfig.Destroy(), "game config destroy");
+	SY_RESULT_CHECK_EXT(_game.Destroy(), "game destroy");
+	SY_RESULT_CHECK_EXT(_editor.Destroy(), "editor destroy");
+	SY_RESULT_CHECK_EXT(_ecs.Destroy(), "ecs destroy");
+	SY_RESULT_CHECK_EXT(_logger.Destroy(), "logger destroy");
+	return {};
+}
+
 
 void SyMono::ForceDestroy()
 {

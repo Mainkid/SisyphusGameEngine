@@ -30,7 +30,7 @@ struct EditorBillboardComponent
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState = nullptr;
 	std::string texturePath;
-	uint32_t hash = 0;
+	size_t hash = 0;
 
 	SER_COMP(EditorBillboardComponent, 
 		texturePath)

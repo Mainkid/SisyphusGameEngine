@@ -17,7 +17,7 @@ SyResult EditorBillboardSystem::Run()
 	for (auto& entity : view)
 	{
 		EditorBillboardComponent& ebc = view.get<EditorBillboardComponent>(entity);
-		uint32_t hsh = _hasher(ebc.texturePath);
+		size_t hsh = _hasher(ebc.texturePath);
 		if (ebc.hash != hsh)
 		{
 			ebc.hash = _hasher(ebc.texturePath);

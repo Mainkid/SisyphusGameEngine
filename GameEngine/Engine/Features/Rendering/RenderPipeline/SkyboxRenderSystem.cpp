@@ -44,6 +44,7 @@ SyResult SkyboxRenderSystem::Run()
     _hc->context->VSSetConstantBuffers(0, 1, _rc->OpaqueConstBuffer->buffer.GetAddressOf());
     _hc->context->PSSetConstantBuffers(0, 1, _rc->OpaqueConstBuffer->buffer.GetAddressOf());
     _hc->context->ClearRenderTargetView(_rc->GBuffer->SkyboxRtv.Get(), _rc->RhData.bgColor0000);
+    _hc->context->OMSetDepthStencilState(nullptr, 0);
     _hc->context->OMSetRenderTargets(1,_rc->GBuffer->HdrBufferRtv.GetAddressOf(), _hc->depthStencilView.Get());
     _hc->context->IASetInputLayout(_rc->SkyBoxShader->layout.Get());
     _hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

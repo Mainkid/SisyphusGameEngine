@@ -63,6 +63,9 @@ struct SyRigidBodyComponent
 	SyVector3			LinearVelocity = SyVector3::ZERO;
 	SyVector3			AngularVelocity = SyVector3::ZERO;
 
+
+	size_t MonoHash = 0; // read/write only by mono sync system
+
 private:
 	//members that are used by developers only
 	

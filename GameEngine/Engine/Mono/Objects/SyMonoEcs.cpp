@@ -1,65 +1,106 @@
 #include "SyMonoEcs.h"
-#include "../ISyMonoGameCallbackReceiver.h"
+#include "../../Components/GameObjectComp.h"
+#include "../../Components/TransformComponent.h"
+#include "../../Scene/GameObjectHelper.h"
+#include "../Ecs/SyMonoEcsSyncAnimator.h"
+#include "../Ecs/SyMonoEcsSyncCamera.h"
+#include "../Ecs/SyMonoEcsSyncCollider.h"
+#include "../Ecs/SyMonoEcsSyncFixedJoint.h"
+#include "../Ecs/SyMonoEcsSyncHingeJoint.h"
+#include "../Ecs/SyMonoEcsSyncLight.h"
+#include "../Ecs/SyMonoEcsSyncMesh.h"
+#include "../Ecs/SyMonoEcsSyncParticles.h"
+#include "../Ecs/SyMonoEcsSyncRigid.h"
+#include "../Ecs/SyMonoEcsSyncSceneObject.h"
+#include "../Ecs/SyMonoEcsSyncSkybox.h"
+#include "../Ecs/SyMonoEcsSyncSound.h"
+#include "../Ecs/SyMonoEcsSyncTransform.h"
 
 using namespace mono;
 
-void SyMonoEcs::GeCreateEngineEntity()
+uint32_t SyMonoEcs::GeCreateEntity()
 {
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnCreateEngineEntity();
+	if (_instance == nullptr)
+		return 0;
+	auto ecs = _instance->_ecs;
+	if (ecs == nullptr)
+		return 0;
+
+	auto ent = ecs->create();
+	ecs->emplace<GameObjectComp>(ent).Name = "C# entity";
+	ecs->emplace<TransformComponent>(ent);
+
+	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "engine entity e%d created", static_cast<int>(ent));
+	std::cout << "[mono] engine entity " << static_cast<uint32_t>(ent) << " created" << std::endl;
+
+	return static_cast<uint32_t>(ent);
 }
 
-void SyMonoEcs::GeDestroyEngineEntity(uint32_t rawEnt)
+void SyMonoEcs::GeDestroyEntity(uint32_t rawEnt)
 {
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnDestroyEngineEntity(rawEnt);
+	if (_instance == nullptr || _instance->_ecs == nullptr)
+		return;
+
+	_instance->DestroyEntity(static_cast<entt::entity>(rawEnt), false);
 }
 
-void SyMonoEcs::GeAddTransformComp(uint32_t rawEnt)
+void SyMonoEcs::GeAddComp(uint32_t rawEnt, ECompId id)
 {
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnAddTransformComp(rawEnt);
+	if (_instance == nullptr || _instance->_ecs == nullptr)
+		return;
+
+	auto ent = static_cast<entt::entity>(rawEnt);
+	auto sync = _instance->GetSync(id);
+	sync->AddComp(ent);
+	sync->SendDirectly(ent);
+
 }
-
-void SyMonoEcs::GeUpdateTransformComp(uint32_t rawEnt, ProxyTransformComp proxy)
+void SyMonoEcs::GeRemoveComp(uint32_t rawEnt, ECompId id)
 {
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnUpdateTransformComp(rawEnt, proxy);
-}
+	if (_instance == nullptr || _instance->_ecs == nullptr)
+		return;
 
-void SyMonoEcs::GeRemoveTransformComp(uint32_t rawEnt)
-{
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnRemoveTransformComp(rawEnt);
-}
-
-
-void SyMonoEcs::GeAddMeshComp(uint32_t rawEnt)
-{
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnAddMeshComp(rawEnt);
-}
-
-void SyMonoEcs::GeUpdateMeshComp(uint32_t rawEnt, ProxyMeshComp proxy)
-{
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnUpdateMeshComp(rawEnt, proxy);
-}
-
-void SyMonoEcs::GeRemoveMeshComp(uint32_t rawEnt)
-{
-	if (_instance != nullptr && _instance->_cbReceiver != nullptr)
-		_instance->_cbReceiver->OnRemoveMeshComp(rawEnt);
+	_instance->GetSync(id)->RemoveComp(static_cast<entt::entity>(rawEnt));
 }
 
 
-
-void SyMonoEcs::SetCallbackReceiver(ISyMonoEcsCallbackReceiver* receiver)
+void SyMonoEcs::BindEcs(entt::registry* ecs)
 {
-	_cbReceiver = receiver;
+	_ecs = ecs;
 }
 
+void SyMonoEcs::TrySendAll()
+{
+	for (auto sync : _syncs)
+		sync->TrySendAll();
+}
 
+ISyMonoEcsSync* SyMonoEcs::GetSync(ECompId id)
+{
+	return _compIdToSync[id];
+}
+
+void SyMonoEcs::DestroyEntity(entt::entity ent, bool isRecursionStep)
+{
+	SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "engine entity e%d destroy", static_cast<int>(ent));
+
+	auto tf = _ecs->try_get<TransformComponent>(ent);
+	if (tf != nullptr)
+	{
+		if (tf->children.size() > 0)
+		{
+			for (auto childEnt : tf->children)
+			{
+				SY_LOG_MONO(SY_LOGLEVEL_DEBUG, "continue entity destroy cascade, e%d destroy", static_cast<int>(childEnt));
+				DestroyEntity(childEnt, true);
+				_egDestroyEntity.Invoke(static_cast<uint32_t>(childEnt));
+			}
+		}
+		if (!isRecursionStep)
+			GameObjectHelper::SetParent(_ecs, ent, entt::null);
+	}
+	_ecs->destroy(ent);
+}
 
 SyResult SyMonoEcs::OnAfterCreate()
 {
@@ -67,20 +108,29 @@ SyResult SyMonoEcs::OnAfterCreate()
 
 	_instance = this;
 
-	SY_RESULT_CHECK(EgContinueEntityDestroyCascade.Bind(_instance));
-	SY_RESULT_CHECK(EgUpdateTransformComp.Bind(_instance));
-	SY_RESULT_CHECK(EgUpdateMeshComp.Bind(_instance));
+	SY_RESULT_CHECK(EgSyncEngineWithGame.Bind(this));
+	SY_RESULT_CHECK(EgRemoveComp.Bind(this));
+	SY_RESULT_CHECK(_egDestroyEntity.Bind(this));
 
-	BindCallback(GE_CREATE_ENTITY, &GeCreateEngineEntity);
-	BindCallback(GE_DESTROY_ENTITY, &GeDestroyEngineEntity);
+	BindCallback(GE_CREATE_ENTITY, &GeCreateEntity);
+	BindCallback(GE_DESTROY_ENTITY, &GeDestroyEntity);
 
-	BindCallback(GE_ADD_TRANSFORM_COMP, &GeAddTransformComp);
-	BindCallback(GE_UPDATE_TRANSFORM_COMP, &GeUpdateTransformComp);
-	BindCallback(GE_REMOVE_TRANSFORM_COMP, &GeRemoveTransformComp);
+	BindCallback(GE_ADD_COMP, &GeAddComp);
+	BindCallback(GE_REMOVE_COMP, &GeRemoveComp);
 
-	BindCallback(GE_ADD_MESH_COMP, &GeAddMeshComp);
-	BindCallback(GE_UPDATE_MESH_COMP, &GeUpdateMeshComp);
-	BindCallback(GE_REMOVE_MESH_COMP, &GeRemoveMeshComp);
+	AddSync<SyMonoEcsSyncSceneObject>();
+	AddSync<SyMonoEcsSyncTransform>();
+	AddSync<SyMonoEcsSyncMesh>();
+	AddSync<SyMonoEcsSyncLight>();
+	AddSync<SyMonoEcsSyncCollider>();
+	AddSync<SyMonoEcsSyncRigid>();
+	AddSync<SyMonoEcsSyncSkybox>();
+	AddSync<SyMonoEcsSyncParticles>();
+	AddSync<SyMonoEcsSyncSound>();
+	AddSync<SyMonoEcsSyncFixedJoint>();
+	AddSync<SyMonoEcsSyncHingeJoint>();
+	AddSync<SyMonoEcsSyncCamera>();
+	AddSync<SyMonoEcsSyncAnimator>();
 
 	return {};
 }
@@ -89,9 +139,14 @@ SyResult SyMonoEcs::OnBeforeDestroy()
 {
 	_instance = nullptr;
 
-	EgContinueEntityDestroyCascade.UnBind();
-	EgUpdateTransformComp.UnBind();
-	EgUpdateMeshComp.UnBind();
+	EgSyncEngineWithGame.UnBind();
+	EgRemoveComp.UnBind();
+	_egDestroyEntity.UnBind();
+
+	for (auto sync : _syncs)
+		delete sync;
+	_syncs.clear();
+	_compIdToSync.clear();
 
 	return {};
 }
