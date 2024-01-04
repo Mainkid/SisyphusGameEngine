@@ -25,6 +25,7 @@ SyResult SkeletalAnimationSystem::Init()
 
 SyResult SkeletalAnimationSystem::Run()
 {
+    OPTICK_EVENT();
     auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyPlayModeEndedEvent);
     if (eventView.begin() != eventView.end())
     {
