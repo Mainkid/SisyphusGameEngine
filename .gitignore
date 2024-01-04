@@ -3,7 +3,6 @@ GameEngine/imgui.ini
 GameEngine/logs
 
 
-
 ##### Windows
 # Windows thumbnail cache files
 Thumbs.db
@@ -1046,3 +1045,6 @@ dkms.conf
 *.uf2
 # Raspberry Pi Pico disassembler file
 *.dis
+
+!GameEngine/*.dll
+!GameEngine/TestGame.pdb
