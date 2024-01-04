@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SyEngine.Ecs.Comps;
 using SyEngine.Resources;
 
@@ -35,10 +36,10 @@ internal class SyEcsSyncMesh : SyEcsSyncBase<MeshComp, ProxyMeshComp>
 		if (mesh.Materials == null)
 			mesh.Materials = new List<ResRef<ResMaterial>>();
 		mesh.Materials.Clear();
-        
+		
 		if (proxy.MaterialsUuids != null)
 			foreach (string uuid in proxy.MaterialsUuids)
-				mesh.Materials.Add(new ResRef<ResMaterial>(uuid));
+				mesh.Materials.Add(uuid == null ? null : new ResRef<ResMaterial>(uuid));
 	}
 
 	protected override int? GetHashImpl(ref MeshComp comp)

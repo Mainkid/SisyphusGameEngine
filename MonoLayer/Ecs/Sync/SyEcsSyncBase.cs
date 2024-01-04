@@ -49,18 +49,11 @@ internal abstract class SyEcsSyncBase<TComp, TProxy> : ISyEcsSync<TProxy> where 
 	public void Receive(uint engineEnt, ref TProxy proxy)
 	{
 		int gameEnt = Ecs.GetOrCreateEntitiesPairByEngineEnt(engineEnt);
-		if (Pool.Has(gameEnt))
-		{
-			ref var comp = ref Pool.Get(gameEnt);
-			ReceiveImpl(ref proxy, ref comp);
-            SetHashImpl(ref comp, comp.GetHashCode());
-		}
-		else
-		{
-			ref var comp = ref Pool.Add(gameEnt);
-			ReceiveImpl(ref proxy, ref comp);
-			SetHashImpl(ref comp, comp.GetHashCode());
-		}
+
+		ref var comp = ref Pool.Has(gameEnt) ? ref Pool.Get(gameEnt) : ref Pool.Add(gameEnt);
+		
+		ReceiveImpl(ref proxy, ref comp);
+		SetHashImpl(ref comp, comp.GetHashCode());
 		
 		Console.WriteLine($"[TEST] g{gameEnt} {Id} received from engine");
 	}

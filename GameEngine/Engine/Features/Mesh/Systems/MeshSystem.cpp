@@ -21,7 +21,7 @@ SyResult MeshSystem::Run()
 	{
 		MeshComponent& mesh =view.get<MeshComponent>(entity);
 
-		uint32_t hash = hasherModelUuid(mesh.modelUUID);
+		size_t hash = hasherModelUuid(mesh.modelUUID);
 		if (mesh.hashModelUuid != hash)
 		{
 			mesh.hashModelUuid = hash;

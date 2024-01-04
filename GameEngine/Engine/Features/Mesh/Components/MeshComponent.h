@@ -53,8 +53,8 @@ struct MeshComponent
 	uint32_t flags = SyEMeshComponentFlags::MESH_RENDER;
 	UINT strides[1] = { 80 };
 	UINT offsets[1] = { 0 };
-	uint32_t hashMaterialUuid = 0;
-	uint32_t hashModelUuid = 0;
+	size_t hashMaterialUuid = 0;
+	size_t hashModelUuid = 0;
 
 	size_t MonoHash = 0; // read/write only by mono sync system
 
