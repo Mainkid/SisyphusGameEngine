@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<sm_1 nextStateID="6" nextTransitionID="4">
+	<states>
+		<state id="-842150451" name="อออออออออออออออออออออออออออออออ" type="2147483647" isDefault="true">
+			<pos x="0" y="0" />
+			<size width="136" height="48" />
+			<color r="0" g="0" b="0" a="0" />
+			<transitions />
+		</state>
+		<state id="-842150451" name="ออออออออออออออออออออออออออออออออออออ๐:hเ&#11;&#02;" type="3452816845" isDefault="true">
+			<pos x="0" y="0" />
+			<size width="163" height="48" />
+			<color r="0" g="0" b="0" a="0" />
+			<transitions />
+		</state>
+		<state id="-842150451" name="ออออออออออออออออออออออออออออออออออออ =hเ&#11;&#02;" type="3452816845" isDefault="true">
+			<pos x="0" y="0" />
+			<size width="170" height="48" />
+			<color r="0" g="0" b="0" a="0" />
+			<transitions />
+		</state>
+		<state id="3" name="MainTex" type="0" isDefault="false">
+			<pos x="140" y="50" />
+			<size width="136" height="48" />
+			<color r="0.392156899" g="0.392156899" b="0.392156899" a="1" />
+			<transitions id="2" id="3" />
+		</state>
+		<state id="4" name="BumpMap" type="0" isDefault="false">
+			<pos x="140" y="150" />
+			<size width="136" height="48" />
+			<color r="0.392156899" g="0.392156899" b="0.392156899" a="1" />
+			<transitions />
+		</state>
+		<state id="5" name="Combine" type="0" isDefault="false">
+			<pos x="370" y="80" />
+			<size width="136" height="48" />
+			<color r="0.392156899" g="0.392156899" b="0.392156899" a="1" />
+			<transitions />
+		</state>
+	</states>
+	<transitions>
+		<transition id="2" fromID="3" toID="1" solo="false" mute="false" hasExit="false" />
+		<transition id="3" fromID="3" toID="2" solo="false" mute="false" hasExit="false" />
+	</transitions>
+</sm_1>

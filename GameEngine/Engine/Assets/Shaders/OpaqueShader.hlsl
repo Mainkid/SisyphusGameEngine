@@ -1,4 +1,7 @@
 
+#define MAX_BONES 100
+#define MAX_BONES_INFLUENCE 4
+
 cbuffer mycBuffer : register(b0)
 {
     row_major float4x4 world;
@@ -12,6 +15,11 @@ cbuffer mycBuffer : register(b0)
     float4 emissiveVec;
     float4 specularVec;
     float4 instanceID;
+};
+
+cbuffer SkeletalBuffer : register(b1)
+{
+   row_major float4x4 finalBonesMatrices[MAX_BONES];
 };
 
 Texture2D albedoTex : TEXTURE : register(t0);
@@ -29,6 +37,8 @@ struct VS_IN
     float4 normals : NORMAL;
     float4 tangents : TANGENT;
     float4 bitangents : BITANGENT;
+    float4 boneIDs : BONE;
+    float4 boneWeights : BONEWEIGHTS;
 };
 
 struct PS_IN
@@ -39,6 +49,7 @@ struct PS_IN
     float4 col : COLOR;
     float4 normals : NORMAL;
     float3x3 TBN : POSITION3;
+    float4 debugColor : COLOR2;
 };
 
 struct GBuffer
@@ -56,20 +67,53 @@ PS_IN VSMain(VS_IN input)
 {
     PS_IN output = (PS_IN) 0;
 	
-    float4 res = input.col;
+    output.debugColor = float4(0, 0, 0, 1);
+    float4 totalPosition = float4(0, 0, 0, 0);
+    float4 outputNormal = float4(0, 0, 0, 0);
+     
+    for (int i = 0; i < MAX_BONES_INFLUENCE; i++)
+        {
+            if (input.boneIDs[i] < 0)
+                continue;
+            if (input.boneIDs[i] >= MAX_BONES)
+            {
+                totalPosition = input.pos;
+                break;
+            }
+        
+            if (input.boneIDs[i] == 13)
+                output.debugColor = float4(input.boneWeights[i], 0, 0, 1);
+        
+            float4 localPosition = mul(input.pos, finalBonesMatrices[int(input.boneIDs[i])]);
+            totalPosition += localPosition * float(input.boneWeights[i]);
+            float3 localNormal = mul(input.normals.xyz, (float3x3) finalBonesMatrices[int(input.boneIDs[i])]);
+        
+            outputNormal.xyz += localNormal.xyz * float(input.boneWeights[i]);
 
-    output.normals.xyz = normalize(mul(input.normals.xyz, (float3x3) worldViewInverseT));
-    output.posH = mul(input.pos, worldViewProj);
-    output.posW = mul(input.pos, world);
-    output.posWV = mul(input.pos, worldView);
-    output.col = input.col;
-    float3 T = normalize(mul(float3(input.tangents.xyz), (float3x3) world));
-    float3 B = normalize(mul(float3(input.bitangents.xyz), (float3x3) world));
-    float3 N = normalize(mul(float3(input.normals.xyz), (float3x3) world));
-    output.TBN = float3x3(T.xyz, B.xyz,N.xyz);
+        }
+    
+    if (input.boneIDs[0] < 0)
+    {
+        totalPosition = input.pos;
+        outputNormal = input.normals;
+    }
+    //outputNormal.xyz = normalize(outputNormal.xyz)
+    //outputNormal.w = input.normals.w;
+
+        output.normals.xyz = normalize(mul(outputNormal.xyz, (float3x3) worldViewInverseT));
+        output.posH = mul(totalPosition, worldViewProj);
+        output.posW = mul(totalPosition, world);
+        output.posWV = mul(totalPosition, worldView);
+        output.col = input.col;
+    
+    
+        float3 T = normalize(mul(float3(input.tangents.xyz), (float3x3) world));
+        float3 B = normalize(mul(float3(input.bitangents.xyz), (float3x3) world));
+        float3 N = normalize(mul(float3(outputNormal.xyz), (float3x3) world));
+        output.TBN = float3x3(T.xyz, B.xyz, N.xyz);
 	
-    return output;
-}
+        return output;
+    }
 
 
 
@@ -83,6 +127,9 @@ GBuffer PSMain(PS_IN input) : SV_Target
     float3 metallicColor = metallicTex.Sample(objSamplerState, input.col.xy).xyz * (metallicVec.w < 0) + metallicVec.xyz * (metallicVec.w >= 0);
     float roughness = roughnessTex.Sample(objSamplerState, input.col.xy).r * (roughnessVec.w < 0) + roughnessVec.xyz * (roughnessVec.w >= 0);
     float4 emissive = emissiveTex.Sample(objSamplerState, input.col.xy) * (emissiveVec.w < 0) + emissiveVec.xyzw * (emissiveVec.w >= 0);
+    
+    //pixelColor = input.debugColor;
+    
     float3 normal = normalMapTex.Sample(objSamplerState, input.col.xy);
     normal = normal* 2.0f - 1.0f;
     

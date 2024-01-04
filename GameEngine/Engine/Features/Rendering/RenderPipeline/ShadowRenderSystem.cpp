@@ -9,6 +9,7 @@
 #include "../../Mesh/Components/MeshComponent.h"
 #include "DirectXMath.h"
 #include "../../../Scene/CameraHelper.h"
+#include "../../Animations/Components/AnimatorComponent.h"
 
 SyResult ShadowRenderSystem::Init()
 {
@@ -58,13 +59,37 @@ SyResult ShadowRenderSystem::Run()
                 for (int i = 0; i < 4; i++)
                     dataShadow.viewProjs[i] = light.ViewMatrices[i] * light.OrthoMatrices[i];
 
+                
+
                 D3D11_MAPPED_SUBRESOURCE mappedResource;
                 HRESULT res = _hc->context->Map(_rc->ShadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
                 CopyMemory(mappedResource.pData, &dataShadow, sizeof(CB_ShadowBuffer));
                 _hc->context->Unmap(_rc->ShadowConstBuffer->buffer.Get(), 0);
+
+
+                auto animComp = _ecs->try_get<AnimatorComponent>(ent);
+                if (animComp)
+                {
+                    res = _hc->context->Map(_rc->BonesConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                    CopyMemory(mappedResource.pData, animComp->m_FinalBoneMatrices.data(), sizeof(CB_BonesBuffer));
+                    _hc->context->Unmap(_rc->BonesConstBuffer->buffer.Get(), 0);
+                }
+                else
+                {
+                    res = _hc->context->Map(_rc->BonesConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                    CopyMemory(mappedResource.pData, _rc->AnimationDefaultMatrices.data(), sizeof(CB_BonesBuffer));
+                    _hc->context->Unmap(_rc->BonesConstBuffer->buffer.Get(), 0);
+                }
+
                 _hc->context->VSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
                 _hc->context->PSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
                 _hc->context->GSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
+
+                _hc->context->VSSetConstantBuffers(1, 1, _rc->BonesConstBuffer->buffer.GetAddressOf());
+                _hc->context->PSSetConstantBuffers(1, 1, _rc->BonesConstBuffer->buffer.GetAddressOf());
+                _hc->context->GSSetConstantBuffers(1, 1, _rc->BonesConstBuffer->buffer.GetAddressOf());
+
+               
 
                 for (auto& mesh : meshComp.model->meshes)
                 {
@@ -91,7 +116,7 @@ SyResult ShadowRenderSystem::Run()
                     //!_hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                     //    engineActor->model->strides, engineActor->model->offsets);
                     _hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
-                        meshComp.strides, meshComp.offsets);
+                        _rc->RhData.strides112, _rc->RhData.offsets0);
                     _hc->context->DrawIndexedInstanced(mesh->indexBuffer->size, 4, 0, 0,0);
                 }
             }
@@ -170,7 +195,7 @@ SyResult ShadowRenderSystem::Run()
                     //!_hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                     //    engineActor->model->strides, engineActor->model->offsets);
                     _hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
-                        meshComp.strides, meshComp.offsets);
+                        _rc->RhData.strides112, _rc->RhData.offsets0);
                     _hc->context->DrawIndexedInstanced(mesh->indexBuffer->size, 6, 0, 0,0);
                     
                 }

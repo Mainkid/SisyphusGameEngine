@@ -7,6 +7,9 @@
 #include "../../Core/Tools/ImageLoader.h"
 #include "../../Scene/Prefab.h"
 #include "../../Scene/Scene.h"
+#include "../Animations/SkeletalAnimation.h"
+#include "../Animations/Components/AnimatorComponent.h"
+#include <tuple>
 
 ResourceService::ResourceService()
 {
@@ -158,6 +161,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_MESH)
 		{
 			auto model = std::make_shared<Model>();
+			//model->animator = std::make_shared<AnimatorComponent>();
 			std::string filePath = FindFilePathByUUID(uuid);
 			if (filePath == "")
 			{
@@ -165,7 +169,10 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 					boost::lexical_cast<std::string>(uuid).c_str());
 				filePath = FindFilePathByUUID(baseResourceDB[EAssetType::ASSET_MESH].uuid);
 			}
-			MeshLoader::LoadModel(filePath, model->meshes);
+			MeshLoader::LoadModel(filePath, model->meshes,model->m_BoneInfoMap);
+			
+
+			auto [animationTmp, skeletonTmp] = MeshLoader::LoadAnimation(filePath, model->m_BoneInfoMap);
 
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>( model);
 			return model;
@@ -441,6 +448,35 @@ void ResourceService::SaveStringToFile(std::filesystem::path filePath, std::stri
 	file.open(filePath);
 	file << data;
 	file.close();
+}
+
+void ResourceService::SaveAnimationToFile(std::filesystem::path filePath, SkeletalAnimation* animation)
+{
+	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+	auto json = ser.Serialize<SkeletalAnimation>(*animation);
+	std::ofstream file;
+	file.open(filePath, std::ios::trunc);
+	file << std::setw(1) << json;
+	file.close();
+
+
+	GenerateMetaFiles(filePath.parent_path());
+	LoadResourceLibrary(".\\Game\\Assets", true);
+	LoadResourceLibrary(".\\Engine\\Assets\\Resources", false, true);
+	updateContentBrowser.Broadcast(true);
+}
+
+std::shared_ptr<SkeletalAnimation> ResourceService::LoadAnimationFromFile(std::filesystem::path filePath)
+{
+	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+	std::ifstream file;
+	nlohmann::json json;
+	file.open(filePath);
+	file >> json;
+	file.close();
+	SkeletalAnimation anim;
+	ser.Deserialize<SkeletalAnimation>(json, anim);
+	return std::make_shared<SkeletalAnimation>(anim);
 }
 
 void ResourceService::GenerateMetaFiles(std::filesystem::path currentDirectory)

@@ -48,6 +48,7 @@ public:
 	static SyResult AddMeshComponent(entt::registry* ecs, entt::entity entity, boost::uuids::uuid uuid, unsigned flags = SyEMeshComponentFlags::MESH_RENDER);
 	static SyResult AddCubeMeshComponent(entt::registry* ecs, entt::entity entity);
 	static SyResult AddSphereMeshComponent(entt::registry* ecs, entt::entity entity);
+	static SyResult AddAnimatorComponent(entt::registry* ecs, entt::entity entity);
 	static entt::entity CreateParticleSystem(entt::registry* ecs);
 	static entt::entity CreateCamera(entt::registry* ecs);
 

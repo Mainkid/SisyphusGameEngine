@@ -13,7 +13,8 @@ static const std::map<EAssetType, std::filesystem::path> cb_iconsPathsDB{
 	{EAssetType::ASSET_CUBEMAP, "Engine/Assets/HUD/ContentBrowser/cubeMap.png"},
 	{EAssetType::ASSET_SCENE, "Engine/Assets/HUD/ContentBrowser/scene.png"},
 	{EAssetType::ASSET_PREFAB, "Engine/Assets/HUD/ContentBrowser/prefab.png"},
-	{EAssetType::ASSET_SOUND, "Engine/Assets/HUD/ContentBrowser/audio.png"}
+	{EAssetType::ASSET_SOUND, "Engine/Assets/HUD/ContentBrowser/audio.png"},
+	{EAssetType::ASSET_ANIMATION, "Engine/Assets/HUD/ContentBrowser/Animation.png"}
 };
 
 //static std::map<std::string, EAsset> cb_extensionsDB{

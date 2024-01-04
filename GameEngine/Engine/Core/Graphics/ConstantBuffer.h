@@ -66,7 +66,10 @@ public:
     DirectX::SimpleMath::Matrix proj;
 };
 
-
+struct CB_BonesBuffer
+{
+    DirectX::SimpleMath::Matrix bones[100];
+};
 
 class CB_viewProjBuffer
 {

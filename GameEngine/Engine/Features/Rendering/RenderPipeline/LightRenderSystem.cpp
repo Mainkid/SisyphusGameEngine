@@ -189,7 +189,7 @@ SyResult LightRenderSystem::Run()
             _hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
             _hc->context->IASetIndexBuffer(light.Aabb->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
             _hc->context->IASetVertexBuffers(0, 1, light.Aabb->vertexBuffer->buffer.GetAddressOf(),
-                _rc->RhData.strides80, _rc->RhData.offsets0);
+                _rc->RhData.strides112, _rc->RhData.offsets0);
 
             _hc->context->DrawIndexed(light.Aabb->indexBuffer->size, 0, 0);
 
@@ -204,7 +204,7 @@ SyResult LightRenderSystem::Run()
             _hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
             _hc->context->IASetIndexBuffer(light.Aabb->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
             _hc->context->IASetVertexBuffers(0, 1, light.Aabb->vertexBuffer->buffer.GetAddressOf(),
-                _rc->RhData.strides80, _rc->RhData.offsets0);
+                _rc->RhData.strides112, _rc->RhData.offsets0);
 
             _hc->context->DrawIndexed(light.Aabb->indexBuffer->size, 0, 0);
 
@@ -237,7 +237,7 @@ SyResult LightRenderSystem::Run()
             _hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
             _hc->context->IASetIndexBuffer(light.Aabb->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
             _hc->context->IASetVertexBuffers(0, 1, light.Aabb->vertexBuffer->buffer.GetAddressOf(),
-                _rc->RhData.strides80, _rc->RhData.offsets0);
+                _rc->RhData.strides112, _rc->RhData.offsets0);
 
             _hc->context->DrawIndexed(light.Aabb->indexBuffer->size, 0, 0);
 
@@ -254,7 +254,7 @@ SyResult LightRenderSystem::Run()
             _hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //?
             _hc->context->IASetIndexBuffer(light.Aabb->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
             _hc->context->IASetVertexBuffers(0, 1, light.Aabb->vertexBuffer->buffer.GetAddressOf(),
-                _rc->RhData.strides80, _rc->RhData.offsets0);
+                _rc->RhData.strides112, _rc->RhData.offsets0);
 
             _hc->context->DrawIndexed(light.Aabb->indexBuffer->size, 0, 0);
 

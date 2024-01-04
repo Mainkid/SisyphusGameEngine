@@ -16,6 +16,7 @@ enum class EAssetType
 	ASSET_PARTICLESYS,
 	ASSET_SCENE,
 	ASSET_PREFAB,
+	ASSET_ANIMATION,
 
 	ASSET_TYPE_AMOUNT
 };
@@ -53,6 +54,7 @@ const std::unordered_map<std::string, EAssetType> extensionToAssetTypeMap =
 {
 	{".obj",EAssetType::ASSET_MESH},
 	{".fbx",EAssetType::ASSET_MESH},
+	{".dae",EAssetType::ASSET_MESH},
 	{".mat",EAssetType::ASSET_MATERIAL},
 	{".wav",EAssetType::ASSET_SOUND},
 	{".png",EAssetType::ASSET_TEXTURE},
@@ -64,5 +66,6 @@ const std::unordered_map<std::string, EAssetType> extensionToAssetTypeMap =
 	{".prefab", EAssetType::ASSET_PREFAB},
 	{".wav", EAssetType::ASSET_SOUND},
 	{".mp3", EAssetType::ASSET_SOUND},
-	{".ogg", EAssetType::ASSET_SOUND}
+	{".ogg", EAssetType::ASSET_SOUND},
+	{".anim", EAssetType::ASSET_ANIMATION}
 };
