@@ -111,6 +111,7 @@ void EngineCore::StartUpSystems()
 
 	_systems.Add<LightSystem>();
 	_systems.Add<MeshSystem>();
+	_systems.Add<SkeletalAnimationSystem>();
 	_systems.Add<SkyboxSystem>();
 	//_systems.Add<LightSystem>();
 	_systems.Add<ParticlesSystem>();

@@ -62,6 +62,7 @@ private:
     
     void DrawMaterialProperties();
     void DrawTextureProperties();
+    void DrawMeshProperties();
     void UpdateHudProperties(bool);
     void DrawParticleProperties(ParticleInputDataF& data, std::string label, EParticleInput inputType);
 

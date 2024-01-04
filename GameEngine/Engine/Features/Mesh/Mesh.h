@@ -1,9 +1,11 @@
 #pragma once
 #include <vector>
+#include <map>
 #include <memory>
 #include "SimpleMath.h"
 #include "../../Core/Graphics/Buffer.h"
 #include "../../Components/Material.h"
+#include "../Animations/Bone.h"
 
 class EngineCore;
 
@@ -13,6 +15,8 @@ struct CubeMesh {
 	static const std::vector<DirectX::SimpleMath::Vector4> verts;
 	static const std::vector<int> indices;
 };
+
+
 
 using namespace DirectX::SimpleMath;
 struct Mesh
@@ -26,6 +30,7 @@ public:
 	std::vector<int> indices;
 	std::shared_ptr<Buffer> indexBuffer;
 	std::shared_ptr<Buffer> vertexBuffer;
+
 };
 
 

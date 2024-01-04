@@ -13,8 +13,10 @@
 #include "../../Particles/Components/ParticleComponent.h"
 #include "../../Lighting/Components/LightComponent.h"
 #include "../../Sounds/Components/FSoundComponent.h"
+#include "../../Animations/Components/AnimatorComponent.h"
 #include "../../../../vendor/ImGui/curve_v122.hpp"
-
+#include "../../../../vendor/StateMachine/imgui_node_graph_test.h"
+#include "../../../../vendor/StateMachine/StateMachineLayer.h"
 
 #include "json.hpp"
 
@@ -41,6 +43,8 @@ SyResult HudPropertiesSystem::Run()
     //ImGui::ShowDemoWindow();
     ImGui::Begin(windowID.c_str());
     //Widget::Render();
+    bool tr = true;
+    ShowStateMachineGraph(&tr);
 
     
 
@@ -54,6 +58,7 @@ SyResult HudPropertiesSystem::Run()
         LightComponent* lc = _ecs->try_get<LightComponent>(*ec->hudData.selectedEntityIDs.begin());
         ParticleComponent* pc = _ecs->try_get<ParticleComponent>(*ec->hudData.selectedEntityIDs.begin());
         FSoundComponent* sc = _ecs->try_get<FSoundComponent>(*ec->hudData.selectedEntityIDs.begin());
+        AnimatorComponent* ac = _ecs->try_get<AnimatorComponent>(*ec->hudData.selectedEntityIDs.begin());
 
 
         if (tc)
@@ -107,6 +112,24 @@ SyResult HudPropertiesSystem::Run()
             lc->Color.z = col3[2];
         }
 
+        if (ac)
+        {
+            ImGui::Text("Animator");
+            std::vector<boost::uuids::uuid> items = rs->GetAllResourcesOfType(EAssetType::ASSET_ANIMATION);
+            std::vector<std::string> filePathsStr = rs->GetAllResourcesFilePaths(EAssetType::ASSET_ANIMATION);
+            std::vector<const char*> filePaths;
+
+            static int selectedItem = 0;
+
+            for (int i = 0; i < filePathsStr.size(); i++) {
+                if (filePathsStr[i] != "")
+                    filePaths.push_back(filePathsStr[i].c_str());
+            }ImGui::Combo("Filepaths", &selectedItem, filePaths.data(), filePaths.size());
+            ac->animationUUID = items[selectedItem];
+
+            ImGui::Checkbox("Is Looping", &ac->IsLooping);
+        }
+
         // TODO S: demo
         if (sc)
         {
@@ -136,6 +159,8 @@ SyResult HudPropertiesSystem::Run()
             DrawParticleProperties(pc->SpeedOverLifetime, "Speed over lifetime", EParticleInput::ECurve);
         }
 
+            
+
         auto rawEnt = static_cast<uint32_t>(*ec->hudData.selectedEntityIDs.begin());
         if (_monoEditor->IsValid())
             _monoEditor->EgDrawEntityCustomComps.Invoke(rawEnt);
@@ -150,7 +175,7 @@ SyResult HudPropertiesSystem::Run()
                 DrawMaterialProperties();
                 break;
             case EAssetType::ASSET_MESH:
-                
+                DrawMeshProperties();
                 break;
             case EAssetType::ASSET_SOUND:
 
@@ -397,7 +422,6 @@ void HudPropertiesSystem::DrawMaterialProperties()
 void HudPropertiesSystem::DrawTextureProperties()
 {
     
-
     std::vector<const char*> textureTypeStr = { "Texture 2D", "Cubemap" };
     std::vector<const char*> wrapModeStr = { "Repeat","Clamp","Mirror" };
     std::vector<const char*> filterModeStr = { "Bilinear","Trilinear","Point" };
@@ -461,6 +485,17 @@ void HudPropertiesSystem::DrawTextureProperties()
 
         //rs->LoadResource(ec->hudData.selectedContent.uuid, true);
     }
+}
+
+void HudPropertiesSystem::DrawMeshProperties()
+{
+    if (ImGui::Button("Extract animations"))
+    {
+        std::string fileName = rs->FindFilePathByUUID(ec->hudData.selectedContent.uuid);
+        std::unordered_map<std::string, BoneInfo> tmp;
+        MeshLoader::LoadAnimation(fileName, tmp, true);
+    }
+    
 }
 
 void HudPropertiesSystem::UpdateHudProperties(bool)

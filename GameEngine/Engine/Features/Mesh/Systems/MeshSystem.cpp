@@ -46,7 +46,6 @@ SyResult MeshSystem::Run()
 				mesh.materials[i] = std::static_pointer_cast<Material>(rs->LoadResource(mesh.materialUUIDs[i]));
 			}
 		}
-
 	}
 
 	return SyResult();
