@@ -274,5 +274,22 @@ internal class SyProxyEcs
 			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
 		}
 	}
+
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern void GeUpdateAnimatorComp(uint engineEnt, ProxyAnimatorComp proxy);
+
+	private void EgUpdateAnimatorComp(uint engineEnt, ProxyAnimatorComp proxy)
+	{
+		try
+		{
+			Syncer.Receive(engineEnt, ref proxy);
+		}
+		catch (Exception e)
+		{
+			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
+		}
+	}
 }
 }

@@ -15,7 +15,8 @@ enum class ECompId
 	Skybox,
 	Particles,
 	Sound,
-	Camera
+	Camera,
+	Animator
 };
 
 inline std::ostream& operator<<(std::ostream& os, ECompId id)

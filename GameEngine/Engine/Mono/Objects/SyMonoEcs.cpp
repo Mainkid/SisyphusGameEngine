@@ -2,6 +2,7 @@
 #include "../../Components/GameObjectComp.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Scene/GameObjectHelper.h"
+#include "../Ecs/SyMonoEcsSyncAnimator.h"
 #include "../Ecs/SyMonoEcsSyncCamera.h"
 #include "../Ecs/SyMonoEcsSyncCollider.h"
 #include "../Ecs/SyMonoEcsSyncFixedJoint.h"
@@ -129,6 +130,7 @@ SyResult SyMonoEcs::OnAfterCreate()
 	AddSync<SyMonoEcsSyncFixedJoint>();
 	AddSync<SyMonoEcsSyncHingeJoint>();
 	AddSync<SyMonoEcsSyncCamera>();
+	AddSync<SyMonoEcsSyncAnimator>();
 
 	return {};
 }

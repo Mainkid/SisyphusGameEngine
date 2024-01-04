@@ -17,6 +17,8 @@ public static class ResHelper
 			return EResourceType.Texture;
 		if (type == typeof(ResSound))
 			return EResourceType.Sound;
+		if (type == typeof(ResAnimation))
+			return EResourceType.Animation;
 
 		throw new Exception($"unknown res type {type.FullName}");
 	}

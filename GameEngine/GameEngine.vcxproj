@@ -673,6 +673,7 @@
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncHingeJoint.cpp" />
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncCamera.cpp" />
     <ClCompile Include="Engine\Features\Animations\Systems\SkeletalAnimationSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncAnimator.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -854,6 +855,7 @@
     <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncHingeJoint.h" />
     <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncCamera.h" />
     <ClInclude Include="Engine\Features\Animations\Systems\SkeletalAnimationSystem.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncAnimator.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\core\algorithm.hpp" />
     <ClInclude Include="vendor\entt\core\any.hpp" />

@@ -161,6 +161,7 @@
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncFixedJoint.cpp" />
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncHingeJoint.cpp" />
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncCamera.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncAnimator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -446,7 +447,6 @@
     <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncFixedJoint.h" />
     <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncHingeJoint.h" />
     <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncCamera.h" />
-    <ClInclude Include="Engine\Features\Physics\Systems\RBodySimulationSystem.h" />
     <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
     <ClInclude Include="Engine\Scene\Prefab.h" />
     <ClInclude Include="Engine\Scene\Scene.h" />
@@ -480,6 +480,7 @@
     <ClInclude Include="Engine\Features\Animations\SkeletalAnimation.h" />
     <ClInclude Include="Engine\Features\Animations\Components\AnimatorComponent.h" />
     <ClInclude Include="Engine\Events\SyAnimatorComponentAdded.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncAnimator.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Downloads\skybox.jpg" />

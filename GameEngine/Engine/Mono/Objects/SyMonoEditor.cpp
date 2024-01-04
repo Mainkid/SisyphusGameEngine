@@ -278,6 +278,8 @@ bool SyMonoEditor::GeDrawResField(MonoString* rawName, EProxyResourceType rawRes
 		resType = EAssetType::ASSET_TEXTURE;
 	else if (rawResType == EProxyResourceType::Sound)
 		resType = EAssetType::ASSET_SOUND;
+	else if (rawResType == EProxyResourceType::Animation)
+		resType = EAssetType::ASSET_ANIMATION;
 	else
 	{
 		SY_LOG_MONO(SY_LOGLEVEL_ERROR, "failed to convert resource type");

@@ -14,7 +14,8 @@ enum class EProxyResourceType
 	Material,
 	Cubemap,
 	Texture,
-	Sound
+	Sound,
+	Animation
 };
 
 struct ProxyVector2

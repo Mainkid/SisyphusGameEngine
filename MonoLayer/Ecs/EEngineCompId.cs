@@ -20,6 +20,7 @@ public enum EEngineCompId
 	Particles,
 	Sound,
 	Camera,
+	Animator,
 }
 
 public static class EngineCompIdHelper

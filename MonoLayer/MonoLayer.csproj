@@ -41,6 +41,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Datas\SySceneEnt.cs" />
+        <Compile Include="Ecs\Comps\AnimatorComp.cs" />
         <Compile Include="Ecs\Comps\CameraComp.cs" />
         <Compile Include="Ecs\Comps\ColliderComp.cs" />
         <Compile Include="Ecs\Comps\FixedJointComp.cs" />
@@ -58,6 +59,7 @@
         <Compile Include="Ecs\Comps\TransformComp.cs" />
         <Compile Include="Ecs\SyEcs.cs" />
         <Compile Include="Ecs\SyEcsSystemBase.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncAnimator.cs" />
         <Compile Include="Ecs\Sync\SyEcsSyncCamera.cs" />
         <Compile Include="Ecs\Sync\SyEcsSyncer.cs" />
         <Compile Include="Ecs\Sync\SyEcsSyncBase.cs" />
@@ -120,6 +122,7 @@
         <Compile Include="Logger\SyProxyLogger.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Resources\EResourceType.cs" />
+        <Compile Include="Resources\ResAnimation.cs" />
         <Compile Include="Resources\ResBase.cs" />
         <Compile Include="Resources\ResCubemap.cs" />
         <Compile Include="Resources\ResHelper.cs" />
