@@ -38,7 +38,6 @@ public class EditorDrawerComp<T> : EditorDrawerBase<T>, IEditorDrawerComp where 
 		{
 			ref var comp = ref _pool.Get(ent);
 			Draw(null, ref comp);
-			_pool.Get(ent) = comp;	
 		}
 		SyProxyEditor.GeEndComp();
 		

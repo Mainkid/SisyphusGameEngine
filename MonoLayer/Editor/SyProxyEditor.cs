@@ -70,8 +70,7 @@ public class SyProxyEditor
 	{
 		if (!TryGetDrawer(type, out var drawer))
 			return false;
-		drawer.DrawRaw(name, ref val);
-		return true;
+		return drawer.DrawRaw(name, ref val);
 	}
 
 	internal bool DrawField<T>(string name, ref T val)
@@ -151,7 +150,9 @@ public class SyProxyEditor
 			{ typeof(SyVector4), new EditorDrawerVector4(this, _ecs) },
 			{ typeof(SyColor), new EditorDrawerColor(this, _ecs) },
 			{ typeof(SyCurve), new EditorDrawerCurve(this, _ecs) },
-			{ typeof(SySceneEnt?), new EditorDrawerSceneEntNull(this, _ecs) }
+			{ typeof(SySceneEnt?), new EditorDrawerSceneEntNull(this, _ecs) },
+			
+			{ typeof(ParticlesComp), new EditorDrawerCompParticles(this, _ecs)}
 		};
 
 		var compInterfaceType = typeof(SyEcs.IComp);

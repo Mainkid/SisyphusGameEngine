@@ -61,7 +61,8 @@ public class EditorDrawerReflect<T> : EditorDrawerBase<T>
 	{
 		object rawVal    = val;
 		bool   isChanged = DrawRaw(name, ref rawVal);
-		val = (T)rawVal;
+		if (isChanged)
+			val = (T)rawVal;
 		return isChanged;
 	}
 

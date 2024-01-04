@@ -49,8 +49,7 @@ public struct ParticlesComp : SyEcs.IComp
 	public bool IsDirty;
 
 
-	public override int GetHashCode()
-		=> IsDirty ? 1 : 0;
+	public override int GetHashCode() => IsDirty ? 1 : 0;
 
 
 	public struct InputFloat

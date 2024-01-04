@@ -103,7 +103,7 @@ internal class SyEcsSyncParticles : SyEcsSyncBase<ParticlesComp, ProxyParticlesC
 	}
 
 	protected override int? GetHashImpl(ref ParticlesComp comp)
-		=> comp.IsDirty ? 1 : 0;
+		=> 0;
 
 	protected override void SetHashImpl(ref ParticlesComp comp, int hash)
 		=> comp.IsDirty = false;

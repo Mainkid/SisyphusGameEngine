@@ -14,9 +14,7 @@ using namespace mono;
 
 void SyMonoEcsSyncParticles::AddComp(entt::entity ent)
 {
-	auto& particles = _ecs->emplace<ParticleComponent>(ent);
-	particles.IsMonoDirty = true;
-
+	_ecs->emplace<ParticleComponent>(ent);
 	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
 }
 
