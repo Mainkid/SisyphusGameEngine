@@ -56,7 +56,7 @@ SyResult SyErrorLoggingSystem::Init()
 
 SyResult SyErrorLoggingSystem::Run()
 {
-	
+	OPTICK_EVENT();
 	for (auto& sink : SY_EL->sinks)
 		for (auto& message : SY_EL->messagePool)
 		{

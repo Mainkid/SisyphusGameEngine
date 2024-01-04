@@ -19,6 +19,7 @@ SyResult SkyboxRenderSystem::Init()
 
 SyResult SkyboxRenderSystem::Run()
 {
+    OPTICK_EVENT();
     if (_ecs->view<SkyboxComponent>().size() == 0)
         return SyResult();
     //_hc->context->OMSetDepthStencilState(_rc->OffStencilState.Get(), 0);

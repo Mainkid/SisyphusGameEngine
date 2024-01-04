@@ -20,7 +20,7 @@ SyResult EditorBillboardRenderSystem::Init()
 
 SyResult EditorBillboardRenderSystem::Run()
 {
-
+    OPTICK_EVENT();
     _hc->context->OMSetRenderTargets(5, _rc->RhData.NullRtv, nullptr);
     _hc->context->RSSetState(_rc->CullBackRasterizerState.Get());
     _hc->context->OMSetBlendState(nullptr, nullptr, 0xffffffff);

@@ -22,7 +22,7 @@ SyResult ShadowRenderSystem::Init()
 
 SyResult ShadowRenderSystem::Run()
 {
-
+    OPTICK_EVENT();
     
     auto [camera, cameraTf] = CameraHelper::Find(_ecs, _ec->playModeState);
 

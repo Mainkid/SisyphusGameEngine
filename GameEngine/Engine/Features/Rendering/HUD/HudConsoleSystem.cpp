@@ -22,6 +22,7 @@ SyResult SyHudConsoleSystem::Init()
 
 SyResult SyHudConsoleSystem::Run()
 {
+	OPTICK_EVENT();
 	SyResult result;
 	for (auto& message : SY_EL->messagePool)
 		messageBuffer.Push(message);

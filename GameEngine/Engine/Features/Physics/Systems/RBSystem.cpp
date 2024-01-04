@@ -42,6 +42,7 @@ SyResult SyRigidBodySystem::Init()
 
 SyResult SyRigidBodySystem::Run()
 {
+	OPTICK_EVENT();
 	SyResult result;
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
 	if (deltaTime == 0)

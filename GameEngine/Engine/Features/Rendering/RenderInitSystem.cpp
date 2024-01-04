@@ -83,6 +83,7 @@ SyResult RenderInitSystem::Init()
 
 SyResult RenderInitSystem::Run()
 {
+	OPTICK_EVENT();
 	return SyResult();
 }
 

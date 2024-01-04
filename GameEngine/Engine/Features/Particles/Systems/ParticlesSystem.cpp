@@ -22,6 +22,7 @@ SyResult ParticlesSystem::Init()
 
 SyResult ParticlesSystem::Run()
 {
+    OPTICK_EVENT();
     auto viewParticlesSystem = _ecs->view<ParticleComponent>();
 
     for (auto& ent : viewParticlesSystem)

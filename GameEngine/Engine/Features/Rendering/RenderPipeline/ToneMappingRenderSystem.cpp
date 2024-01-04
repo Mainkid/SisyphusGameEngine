@@ -14,6 +14,7 @@ SyResult ToneMappingRenderSystem::Init()
 
 SyResult ToneMappingRenderSystem::Run()
 {
+	OPTICK_EVENT();
 	_hc->context->PSSetSamplers(0, 1, _rc->SamplerState.GetAddressOf());
 	_hc->renderTarget->SetRenderTarget(nullptr);
 	_hc->context->PSSetShaderResources(0, 1, _rc->GBuffer->HdrBufferSrv.GetAddressOf());

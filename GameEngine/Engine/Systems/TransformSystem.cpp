@@ -15,6 +15,7 @@ SyResult TransformSystem::Init()
 
 SyResult TransformSystem::Run()
 {
+	OPTICK_EVENT();
 	SyResult result;
 	auto view = _ecs->view<TransformComponent>();
 

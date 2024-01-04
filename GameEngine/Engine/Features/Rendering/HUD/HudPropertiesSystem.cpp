@@ -41,7 +41,7 @@ SyResult HudPropertiesSystem::Init()
 
 SyResult HudPropertiesSystem::Run()
 {
-    //ImGui::ShowDemoWindow();
+    OPTICK_EVENT();
     ImGui::Begin(windowID.c_str());
     //Widget::Render();
     bool tr = true;

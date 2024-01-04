@@ -23,6 +23,7 @@ SyResult ImageBasedLightingSystem::Init()
 
 SyResult ImageBasedLightingSystem::Run()
 {
+	OPTICK_EVENT();
 	if (_ecs->view<SkyboxComponent>().size() == 0)
 		return SyResult();
 

@@ -4,6 +4,7 @@
 #include "../Features/Mesh/Components/MeshComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/ImageBasedLightingComponent.h"
+#include "optick.h"
 #include "../Mono/Systems/MonoHotReloadSystem.h"
 
 
@@ -20,15 +21,18 @@ HWND EngineCore::GetWindowHWND()
 
 void EngineCore::Update()
 {
+	
 	PrevTime = std::chrono::steady_clock::now();
 	while (!_context->isClosed) 
 	{
+		
 		UpdateImpl();
 	}
 }
 
 void EngineCore::UpdateImpl()
 {
+	
 	auto	curTime = std::chrono::steady_clock::now();
 	_context->deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - PrevTime).count() / 1000000.0f;
 	PrevTime = curTime;

@@ -39,7 +39,7 @@ struct LightComponent
     Matrix OrthoMatrix;
     bool ShouldBakeShadows = true;
 
-    int ShadowMapSize = 1024;
+    int ShadowMapSize = 512;
 
     size_t MonoHash = 0; // read/write only by mono sync system
 
