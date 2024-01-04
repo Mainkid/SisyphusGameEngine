@@ -289,7 +289,7 @@ SyResult HudContentBrowserSystem::Run()
 
     duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
 
-    std::cout << "printf: " << duration << '\n';
+    //std::cout << "printf: " << duration << '\n';
 
     OPTICK_TAG("FINISH", "");
     return SyResult();
