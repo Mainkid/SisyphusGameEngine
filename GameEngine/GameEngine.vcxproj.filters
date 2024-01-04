@@ -147,6 +147,7 @@
     <ClCompile Include="Engine\Features\Physics\Systems\JointSystem.cpp" />
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncFixedJoint.cpp" />
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncHingeJoint.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -431,6 +432,7 @@
     <ClInclude Include="Engine\Contexts\PhysicsContext.h" />
     <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncFixedJoint.h" />
     <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncHingeJoint.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Downloads\skybox.jpg" />

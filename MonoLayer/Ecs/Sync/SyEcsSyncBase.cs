@@ -3,6 +3,18 @@ using LeoEcs;
 
 namespace SyEngine.Ecs.Sync
 {
+internal interface ISyEcsSync
+{
+	void TrySendAll();
+
+	Type ProxyType { get; }
+}
+
+internal interface ISyEcsSync<TProxy> : ISyEcsSync
+{
+	void Receive(uint engineEnt, ref TProxy proxy);
+}
+
 internal abstract class SyEcsSyncBase<TComp, TProxy> : ISyEcsSync<TProxy> where TComp: struct
 {
 	protected readonly SyEcs          Ecs;

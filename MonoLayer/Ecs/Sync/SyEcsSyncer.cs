@@ -24,6 +24,7 @@ internal class SyEcsSyncer
         Add(new SyEcsSyncSound(ecs));
         Add(new SyEcsSyncFixedJoint(ecs));
         Add(new SyEcsSyncHingeJoint(ecs));
+        Add(new SyEcsSyncCamera(ecs));
     }
 
     //-----------------------------------------------------------

@@ -257,5 +257,22 @@ internal class SyProxyEcs
 			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
 		}
 	}
+	
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern void GeUpdateCameraComp(uint engineEnt, ProxyCameraComp proxy);
+
+	private void EgUpdateCameraComp(uint engineEnt, ProxyCameraComp proxy)
+	{
+		try
+		{
+			Syncer.Receive(engineEnt, ref proxy);
+		}
+		catch (Exception e)
+		{
+			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
+		}
+	}
 }
 }

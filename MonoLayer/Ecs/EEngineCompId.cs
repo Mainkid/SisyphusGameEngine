@@ -19,6 +19,7 @@ public enum EEngineCompId
 	Skybox,
 	Particles,
 	Sound,
+	Camera,
 }
 
 public static class EngineCompIdHelper
@@ -35,7 +36,8 @@ public static class EngineCompIdHelper
 		{ typeof(ParticlesComp), EEngineCompId.Particles },
 		{ typeof(SoundComp), EEngineCompId.Sound },
 		{ typeof(FixedJointComp), EEngineCompId.FixedJoint },
-		{ typeof(HingeJointComp), EEngineCompId.HingeJoint }
+		{ typeof(HingeJointComp), EEngineCompId.HingeJoint },
+		{ typeof(CameraComp), EEngineCompId.Camera }
 	};
 
 	private static Dictionary<EEngineCompId, Type> _idToType;
