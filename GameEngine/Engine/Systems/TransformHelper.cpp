@@ -170,9 +170,9 @@ SyVector3 TransformHelper::DegreesToRad(const SyVector3& vec)
 {
 	return
 	{
-		static_cast<float>(vec.x * M_PI / 180.0),
-		static_cast<float>(vec.y * M_PI / 180.0),
-		static_cast<float>(vec.z * M_PI / 180.0)
+		static_cast<float>(vec.x * (M_PI / 180.0)),
+		static_cast<float>(vec.y * (M_PI / 180.0)),
+		static_cast<float>(vec.z * (M_PI / 180.0))
 	};
 }
 
@@ -180,9 +180,9 @@ SyVector3 TransformHelper::RadToDegrees(const SyVector3& vec)
 {
 	return
 	{
-		static_cast<float>(vec.x * 180.0 / M_PI),
-		static_cast<float>(vec.y * 180.0 / M_PI),
-		static_cast<float>(vec.z * 180.0 / M_PI)
+		static_cast<float>(vec.x * (180.0 / M_PI)),
+		static_cast<float>(vec.y * (180.0 / M_PI)),
+		static_cast<float>(vec.z * (180.0 / M_PI))
 	};
 }
 
