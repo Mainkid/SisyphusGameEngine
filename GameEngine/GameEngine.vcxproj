@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\FMod\api\core\inc;$(SolutionDir)GameEngine\vendor\FMod\api\studio\inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\FMod\api\core\inc;$(SolutionDir)GameEngine\vendor\FMod\api\studio\inc;$(SolutionDir)GameEngine\vendor\recastnavigation\Recast\Include;$(SolutionDir)GameEngine\vendor\recastnavigation\Detour\Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
   </PropertyGroup>
@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Features\AI\Systems\NavMeshSystem.cpp" />
     <ClCompile Include="Engine\Features\Physics\Systems\JointSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
     <ClCompile Include="Engine\Features\Physics\Components\ColliderComponent.cpp" />
@@ -674,6 +675,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="Engine\Events\SySoundDeletedEvent.h" />
+    <ClInclude Include="Engine\Features\AI\Components\NavMeshComponent.h" />
+    <ClInclude Include="Engine\Features\AI\Systems\NavMeshSystem.h" />
     <ClInclude Include="Engine\Features\Sounds\Components\FSoundComponent.h" />
     <ClInclude Include="Engine\Components\Components.h" />
     <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
@@ -981,9 +984,6 @@
     <Image Include="Engine\Assets\SkyBox\skybox_4.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_5.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_6.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Engine\Features\Common\Events\OnRemoveComponentEvent" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

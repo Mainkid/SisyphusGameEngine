@@ -1,4 +1,4 @@
-﻿#include <iostream>
+﻿    #include <iostream>
 #include <uuid.hpp>
 
 #include "Core/EngineCore.h"
@@ -64,23 +64,23 @@ int main()
     // auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
 #pragma endregion
 #pragma region Test Cube 1
-    auto cube1 = GameObjectHelper::Create(ecs, "Cube1", { 0.0f, 5.0f, 8.0f });
-    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
-    auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube1);
-    SyPrimitiveColliderShapeDesc cubeColDesc;
-    cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
-    auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube1,
-        BOX,
-        cubeColDesc,
-        SyColliderMaterial());
-
-    auto cube2 = GameObjectHelper::Create(ecs, "Cube1", { 1.0f, 0.0f, 8.0f });
-    auto result13 = GameObjectHelper::AddRigidBodyComponent(ecs, cube2, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
-    auto result14 = GameObjectHelper::AddCubeMeshComponent(ecs, cube2);
-    auto result15 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube2,
-        BOX,
-        cubeColDesc,
-        SyColliderMaterial());
+    // auto cube1 = GameObjectHelper::Create(ecs, "Cube1", { 0.0f, 5.0f, 8.0f });
+    // auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
+    // auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube1);
+    // SyPrimitiveColliderShapeDesc cubeColDesc;
+    // cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
+    // auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube1,
+    //     BOX,
+    //     cubeColDesc,
+    //     SyColliderMaterial());
+    //
+    // auto cube2 = GameObjectHelper::Create(ecs, "Cube1", { 1.0f, 0.0f, 8.0f });
+    // auto result13 = GameObjectHelper::AddRigidBodyComponent(ecs, cube2, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
+    // auto result14 = GameObjectHelper::AddCubeMeshComponent(ecs, cube2);
+    // auto result15 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube2,
+    //     BOX,
+    //     cubeColDesc,
+    //     SyColliderMaterial());
     
 #pragma endregion
 #pragma region Test Sphere 1
@@ -95,7 +95,7 @@ int main()
     //     SyColliderMaterial());
     // ecs->emplace<SyHingeJointComponent>(cube1, SyVector3(1.0f, 1.0f, 0.0f),
     //     SyVector3(0.0f, SyMathHelper::PI / 2, 0.0f));
-    ecs->emplace<SyFixedJointComponent>(cube2, cube1);
+    //ecs->emplace<SyFixedJointComponent>(cube2, cube1);
 
 #pragma endregion
     
