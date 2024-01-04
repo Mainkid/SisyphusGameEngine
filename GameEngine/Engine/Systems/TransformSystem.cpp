@@ -1,4 +1,4 @@
-#include "TransformSystem.h"
+﻿#include "TransformSystem.h"
 #include "../Contexts/EngineContext.h"
 #include "../Core/ServiceLocator.h"
 #include "TransformHelper.h"
@@ -10,7 +10,6 @@ SyResult TransformSystem::Init()
 {
 	SyResult result;
 	ec = ServiceLocator::instance()->Get<EngineContext>();
-	TransformHelper::SetDefaultHash();
 	return result;
 }
 
@@ -24,9 +23,21 @@ SyResult TransformSystem::Run()
 
 	auto view2 = SY_GET_THIS_FRAME_EVENT_VIEW(SyHotReloadEvent);
 
+	// if (view2.size_hint()>0)
+	// {
+	// 	std::cout << std::endl;
+	// }
+
+	//NOT WORKING!!!
+	// 
+	//for (auto& entity : eventView)
+	//{
+	//	SySceneLoadEvent& testEvent = eventView.get<SySceneLoadEvent>(entity);	//ïîëó÷èëè ñàìî ñîáûòèå (îáúåêò) ñî âñåìè ïåðåäàííûìè â íåãî äàííûìè
+	//	SY_LOG_EVSY(SY_LOGLEVEL_WARNING, testEvent.message.c_str());	//ëîãèêà îáðàáîòêè èâåíòà
+	//}
 
 
-	if (eventView.size_hint()>0)
+	if (eventView.size_hint() > 0)
 	{
 		ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
 		for (auto& entity : view)
@@ -43,7 +54,7 @@ SyResult TransformSystem::Run()
 		}
 	}
 
-	for (auto& entity :view)
+	for (auto& entity : view)
 	{
 		TransformComponent& tc = view.get<TransformComponent>(entity);
 
@@ -56,15 +67,8 @@ SyResult TransformSystem::Run()
 		boost::hash_combine(lHash, tc.localPosition);
 		boost::hash_combine(lHash, tc.localRotation);
 		boost::hash_combine(lHash, tc.localScale);
-		boost::hash_combine(lHash, tc.parent);
-
-		if (tc.localHash != lHash && lHash!=TransformHelper::localHashDefault)
-		{
-			tc.localHash = lHash;
-			TransformHelper::UpdateTransformMatrix(tc);
-			std::cout << std::endl;
-		}
-		else if (tc.worldHash != wHash)
+		
+		if (tc.worldHash != wHash)
 		{
 			tc.worldHash = wHash;
 			Matrix parentTransform = Matrix::Identity;
@@ -73,13 +77,13 @@ SyResult TransformSystem::Run()
 				TransformComponent& parentTc = _ecs->get<TransformComponent>((entt::entity)tc.parent);
 				parentTransform = parentTc.transformMatrix;
 			}
-			TransformHelper::UpdateWorldTransformMatrix(tc,parentTransform);
+			TransformHelper::UpdateWorldTransformMatrix(tc, parentTransform);
 		}
-		
-		
-
-		
-		
+		if (tc.localHash != lHash)
+		{
+			tc.localHash = lHash;
+			TransformHelper::UpdateTransformMatrix(tc);
+		}
 
 	}
 	return result;

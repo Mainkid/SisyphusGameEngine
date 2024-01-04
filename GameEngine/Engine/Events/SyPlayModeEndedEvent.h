@@ -3,3 +3,8 @@ struct SyPlayModeEndedEvent
 {
 	
 };
+
+struct SyPauseModeEvent
+{
+
+};

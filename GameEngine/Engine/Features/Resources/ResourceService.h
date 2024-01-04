@@ -28,6 +28,8 @@
 #include "../../Contexts/EngineContext.h"
 #include "../../Components/GameObjectComp.h"
 
+class SkeletalAnimation;
+
 struct BaseResourceInfo
 {
 	using uuid_hash = boost::hash<boost::uuids::uuid>;
@@ -61,6 +63,9 @@ public:
 	
 	void LoadSceneFromFile(std::filesystem::path file, entt::registry* ecs);
 	void SaveSceneToFile(std::filesystem::path file, entt::registry* ecs);
+	void SaveStringToFile(std::filesystem::path file, std::string data);
+	void SaveAnimationToFile(std::filesystem::path file, SkeletalAnimation* animation);
+	std::shared_ptr<SkeletalAnimation> LoadAnimationFromFile(std::filesystem::path file);
 
 private:
 	const std::string baseTexture = ".\\Engine\\Assets\\Resources\\Textures\\spotlight_1.png";
@@ -68,6 +73,7 @@ private:
 	const std::string baseMaterial = ".\\Engine\\Assets\\Resources\\Materials\\baseMaterial.mat";
 	const std::string baseModel = ".\\Engine\\Assets\\Resources\\Cube.fbx";
 	const std::string baseParticle = ".\\Engine\\Assets\\Resources\\ParticleSystem\\baseParticles.ps";
+	const std::string baseSound = ".\\Engine\\Assets\\Resources\\Audio\\Sisyphus.mp3";
 	const std::string baseScene = ".\\Engine\\Assets\\Resources\\Scenes\\baseScene.scene";
 	
 	

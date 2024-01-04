@@ -23,7 +23,7 @@ using ComponentsTypelist = Typelist <CameraComponent,
 	LightComponent,
 	MeshComponent,
 	//ParticleComponent,
-	SyRBodyComponent,
+	SyRigidBodyComponent,
 	//SkyboxComponent,
 	TransformComponent
 >;

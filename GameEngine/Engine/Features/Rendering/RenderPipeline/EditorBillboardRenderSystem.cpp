@@ -25,7 +25,7 @@ SyResult EditorBillboardRenderSystem::Run()
     _hc->context->RSSetState(_rc->CullBackRasterizerState.Get());
     _hc->context->OMSetBlendState(nullptr, nullptr, 0xffffffff);
 
-    auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+    auto [camera, cameraTf] = CameraHelper::Find(_ecs,_ec->playModeState);
 
     auto viewBb = _ecs->view<TransformComponent, EditorBillboardComponent>();
 

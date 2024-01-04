@@ -48,7 +48,10 @@ SyResult HudContentBrowserSystem::Run()
         return SyResult();
     }
     
-    OPTICK_TAG("START2", "");
+    //if (ImGui::IsKeyPressed(ImGuiKey_T))
+    //{
+    //    rs->SaveStringToFile("./Game/Assets/hello.scene", "YOPTA");
+    //}
 
 
     ImGui::Begin("Content Browser");
@@ -320,7 +323,7 @@ void HudContentBrowserSystem::ProcessPopUp()
     };
     ESelectedCategory selectedCategory = None;
     const char* mainPopupsNames[] = { "Copy","Paste","Delete","Rename","Show in explorer"};
-    const char* createPopupNames[] = { "Folder","Material" };
+    const char* createPopupNames[] = { "Folder","Material","Skybox"};
     std::vector<std::function<bool(std::set<std::filesystem::path>)>> mainPredicates = {
         [](const std::set<std::filesystem::path>& set) {return set.size() > 0; },
         [](const std::set<std::filesystem::path>& set) {return true; },
@@ -369,6 +372,7 @@ void HudContentBrowserSystem::ProcessPopUp()
                     ResourceHelper::FillFileWithBaseData(createdFile, EAssetType::ASSET_MATERIAL);
                     rs->resourceLibrary[rs->GetUUIDFromPath(createdFile)] = { EAssetType::ASSET_MATERIAL,createdFile.string() };
                     break;
+
             }
             InitializePathFileViews(curDirectory);
             break;

@@ -61,8 +61,9 @@ void EngineCore::StartUp()
 	ServiceLocator::instance()->Register<SyErrorLogger>();
 	ServiceLocator::instance()->Register<EngineContext>();
 	ServiceLocator::instance()->Register<ResourceService>();
+	ServiceLocator::instance()->Register<SyPhysicsContext>();
+	
 	_context = ServiceLocator::instance()->Get<EngineContext>();
-
 
 	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
 	ser.AddEcsCompMeta<GameObjectComp>();
@@ -72,7 +73,7 @@ void EngineCore::StartUp()
 	ser.AddEcsCompMeta<EditorBillboardComponent>();
 	ser.AddEcsCompMeta<SkyboxComponent>();
 	ser.AddEcsCompMeta<ImageBasedLightingComponent>();
-	ser.AddEcsCompMeta<ParticleComponent>();
+	//ser.AddEcsCompMeta<ParticleComponent>();
 	//ser.AddEcsCompMeta<SharedParticlesData>();
 
 
@@ -97,34 +98,39 @@ void EngineCore::StartUpSystems()
 	
 	_systems.Add<InputSystem>();
 	_systems.Add<ResourceSystem>();
-	//_systems.Add<MeshSystem>();
-	_systems.Add<SyRBodySystem>();
-	_systems.Add<SyCollisionSystem>();
+	_systems.Add<MeshSystem>();
 
+	_systems.Add<TransformSystem>();
+	_systems.Add<SyJointSystem>();
+	_systems.Add<SyRigidBodySystem>();
+	_systems.Add<SyCollisionSystem>();
+	_systems.Add<SoundSystem>();
 	_systems.Add<MonoSyncSystem>();
 
 	
 
-	_systems.Add<TransformSystem>();
+
 
 	_systems.Add<EditorCameraSystem>();
 
-	//_systems.Add<LightSystem>();
-	_systems.Add<MeshSystem>();
-	_systems.Add<SkyboxSystem>();
 	_systems.Add<LightSystem>();
+	_systems.Add<MeshSystem>();
+	_systems.Add<SkeletalAnimationSystem>();
+	_systems.Add<SkyboxSystem>();
+	//_systems.Add<LightSystem>();
 	_systems.Add<ParticlesSystem>();
 	_systems.Add<EditorBillboardSystem>();
-
 	_systems.Add<PreRenderSystem>();
 	_systems.Add<ShadowRenderSystem>();
-	_systems.Add<SkyboxRenderSystem>();
 	_systems.Add<ImageBasedLightingSystem>();
 	_systems.Add<OpaqueRenderSystem>();
 	_systems.Add<HbaoRenderSystem>();
 	_systems.Add<ShadowMapGenerationSystem>();
 	_systems.Add<LightRenderSystem>();
+	_systems.Add<SkyboxRenderSystem>();
 	_systems.Add<ParticleRenderSystem>();
+	
+
 	_systems.Add<EditorBillboardRenderSystem>();
 	_systems.Add<ToneMappingRenderSystem>();
 	_systems.Add<EditorColliderRenderSystem>();

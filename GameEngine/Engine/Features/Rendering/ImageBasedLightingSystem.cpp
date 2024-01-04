@@ -24,6 +24,9 @@ SyResult ImageBasedLightingSystem::Init()
 SyResult ImageBasedLightingSystem::Run()
 {
 	OPTICK_EVENT();
+	if (_ecs->view<SkyboxComponent>().size() == 0)
+		return SyResult();
+
 	ID3D11ShaderResourceView* nullSrv[1] = { nullptr };
 	ID3D11UnorderedAccessView* nullUav[1] = { nullptr };
 	auto view = _ecs->view<ImageBasedLightingComponent>();

@@ -10,7 +10,9 @@
 #include "Scene/GameObjectHelper.h"
 
 #include "SimpleMath.h"
+#include "Features/Physics/Components/JointComponent.h"
 #include "Serialization/Serializable.h"
+
 
 #define SY_PI 3.14f
 #define SY_PI2 SY_PI / 2
@@ -22,46 +24,25 @@ int main()
     
     entt::registry* ecs = &ServiceLocator::instance()->Get<EngineContext>()->ecs;
     EngineContext* ec = EngineCore::instance()->ec;
-  /*  auto box1 = _ec->scene->AddStaticBox({ -5.0f, -5.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 3.0f, 1.0f, 3.0f });
-    auto box2 = _ec->scene->AddDynamicBox({ -5.0f, 10.0f, 0.0f }, { SY_PI2 / 2, 0.0f, SY_PI2 / 2 });*/
-    //auto _go = EngineCore::instance()->_ec->scene->AddGameObject();
-    //auto _go1 = EngineCore::instance()->_ec->scene->AddGameObject();
-    //auto _go2 = EngineCore::instance()->_ec->scene->AddGameObject();
-    ////_go->GetComponent<TransformComponent>().SetPosition(Vector3(-3, 0, 0));
-    //auto t = _go->GetComponent<TransformComponent>();
-    //
-    //GameObject* _go2 = EngineCore::instance()->scene->AddGameObject();
-    //_go2->SetParent(_go);
-    //_ec->scene->registry.get<MeshComponent>(_go).modelPath = "./Engine/Assets/sphere.fbx";
-    //_ec->scene->registry.get<MeshComponent>(_go).texturePath = "./Engine/Assets/Textures/black_texture.png";
-
-    //_ec->scene->registry.get<MeshComponent>(_go1).modelPath = "./Engine/Assets/PBR_test/ssphere.FBX.fbx";
-    
-    //_ec->scene->registry.get<MeshComponent>(_go1).material = _rc->materials[0].get();
-    //_ec->scene->registry.get<MeshComponent>(_go1).texturePath = "./Engine/Assets/PBR_test/Crystal_stone_baseColor.jpg";
-    //_ec->scene->registry.get<TransformComponent>(_go1).localScale = Vector3(0.05f, 0.05f, 0.05f);
-    //auto mesh = _go->GetComponent<MeshComponent>();
-    //GameObject* _go3 = EngineCore::instance()->scene->AddGameObject();
-    //
-    ////_go3->GetComponent<TransformComponent>().SetPosition(Vector3(-3, 0, 0));
-    //_go3->GetComponent<MeshComponent>().UpdateMesh("./Game/Assets/DefaultModel.obj");
     auto lightDir = GameObjectHelper::CreateLight(ecs, ELightType::Directional);
 
     auto light = GameObjectHelper::CreateLight(ecs, ELightType::Ambient);
     ecs->get<LightComponent>(light).Color = Vector4(0.15f, 0.15f, 0.15f, 0.15f);
 
-    auto lightPoint = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
+   /* auto lightPoint = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
     ecs->get<LightComponent>(lightPoint).ParamsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
     ecs->get<LightComponent>(lightPoint).Color = Vector4(1, 1, 0.0f, 3.0f);
     ecs->get<TransformComponent>(lightPoint)._position = Vector3(3, 0, 0);
 
-    auto lightPoint2 = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);
+    auto lightPoint2 = GameObjectHelper::CreateLight(ecs, ELightType::PointLight);*/
 
-    ecs->get<LightComponent>(lightPoint2).ParamsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
-    ecs->get<LightComponent>(lightPoint2).Color = Vector4(1, 0, 0.0f, 3.0f);
-    ecs->get<TransformComponent>(lightPoint2)._position = Vector3(3, 0, 0);
-    ecs->get<LightComponent>(lightPoint2).LightBehavior = LightBehavior::Movable;
+    //ecs->get<LightComponent>(lightPoint2).ParamsRadiusAndAttenuation = Vector4(3.0f, 0.0f, 0.0f, 1.0f);
+    //ecs->get<LightComponent>(lightPoint2).Color = Vector4(1, 0, 0.0f, 3.0f);
+    //ecs->get<TransformComponent>(lightPoint2)._position = Vector3(3, 0, 0);
+    //ecs->get<LightComponent>(lightPoint2).LightBehavior = LightBehavior::Movable;
 
+
+#pragma region Test Base
     auto base = GameObjectHelper::Create(ecs, "Base", { 0.0f, -5.0f, 13.0f });
     ecs->get<TransformComponent>(base).scale = {10.0f, 1.0f, 10.0f};
     auto result1 = GameObjectHelper::AddRigidBodyComponent(ecs, base, STATIC);
@@ -72,17 +53,19 @@ int main()
                                                             BOX,
                                                             baseColDesc,
                                                             SyColliderMaterial());
+#pragma endregion 
 
-    
-    auto meshUuid = ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Game\\Assets\\fbx\\barrel.fbx");
-    auto staticMesh = GameObjectHelper::Create(ecs, "Static Mesh", {0.0f, -2.5f, 8.0f});
-    ecs->get<TransformComponent>(staticMesh).scale = { 3.0f, 3.0f, 3.0f };
-    auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid, SyEMeshComponentFlags::MESH_COLLIDER | SyEMeshComponentFlags::MESH_RENDER);
-    auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
-    auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
-
+#pragma region Test Mesh
+    // auto meshUuid = ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Game\\Assets\\fbx\\barrel.fbx");
+    // auto staticMesh = GameObjectHelper::Create(ecs, "Static Mesh", {0.0f, -2.5f, 8.0f});
+    // ecs->get<TransformComponent>(staticMesh).scale = { 3.0f, 3.0f, 3.0f };
+    // auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid, SyEMeshComponentFlags::MESH_COLLIDER | SyEMeshComponentFlags::MESH_RENDER);
+    // auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
+    // auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
+#pragma endregion
+#pragma region Test Cube 1
     auto cube1 = GameObjectHelper::Create(ecs, "Cube1", { 0.0f, 5.0f, 8.0f });
-    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC);
+    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
     auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube1);
     SyPrimitiveColliderShapeDesc cubeColDesc;
     cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
@@ -91,9 +74,36 @@ int main()
         cubeColDesc,
         SyColliderMaterial());
 
-    ecs->get<SyRBodyComponent>(cube1).LinearVelocity = SyVector3(5.0f, 0.0f, 0.0f);
+    auto cube2 = GameObjectHelper::Create(ecs, "Cube1", { 1.0f, 0.0f, 8.0f });
+    auto result13 = GameObjectHelper::AddRigidBodyComponent(ecs, cube2, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
+    auto result14 = GameObjectHelper::AddCubeMeshComponent(ecs, cube2);
+    auto result15 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube2,
+        BOX,
+        cubeColDesc,
+        SyColliderMaterial());
     
+#pragma endregion
+#pragma region Test Sphere 1
+    // auto sphere1 = GameObjectHelper::Create(ecs, "Sphere", { 1.0f, 0.0f, 8.0f });
+    // auto result10 = GameObjectHelper::AddRigidBodyComponent(ecs, sphere1, DYNAMIC, 2/*, SyERBodyFlags::DISABLE_GRAVITY*/);
+    // auto result11 = GameObjectHelper::AddSphereMeshComponent(ecs, sphere1);
+    // SyPrimitiveColliderShapeDesc sphereColDesc; 
+    // sphereColDesc.Radius = 1;
+    // auto result12 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, sphere1,
+    //     SPHERE,
+    //     sphereColDesc,
+    //     SyColliderMaterial());
+    // ecs->emplace<SyHingeJointComponent>(cube1, SyVector3(1.0f, 1.0f, 0.0f),
+    //     SyVector3(0.0f, SyMathHelper::PI / 2, 0.0f));
+    ecs->emplace<SyFixedJointComponent>(cube2, cube1);
 
+#pragma endregion
+    
+    auto running = GameObjectHelper::Create(ecs, "Running", Vector3(0, 0, 0));
+    GameObjectHelper::AddMeshComponent(ecs, running, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath("Game\\Assets\\Anims\\Runner.dae"));
+    GameObjectHelper::AddAnimatorComponent(ecs, running);
+    
+    GameObjectHelper::CreateCamera(ecs);
     
     //---------- Serialization test ----------------
 
@@ -117,10 +127,10 @@ int main()
     // ser.Deserialize(json, *ecs);
     //---------------------------------------------
 
+    //sound
+    GameObjectHelper::CreateSoundComponent(ecs);
+    GameObjectHelper::CreateSoundComponent(ecs);
 
     EngineCore::instance()->Update();
-    EngineCore::instance()->ShutDown();
-    
-
-    
+    EngineCore::instance()->ShutDown();   
 }

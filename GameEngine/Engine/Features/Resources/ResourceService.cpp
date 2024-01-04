@@ -7,6 +7,9 @@
 #include "../../Core/Tools/ImageLoader.h"
 #include "../../Scene/Prefab.h"
 #include "../../Scene/Scene.h"
+#include "../Animations/SkeletalAnimation.h"
+#include "../Animations/Components/AnimatorComponent.h"
+#include <tuple>
 
 ResourceService::ResourceService()
 {
@@ -39,6 +42,9 @@ void ResourceService::LoadBaseAssets()
 	baseResourceDB[EAssetType::ASSET_PARTICLESYS].uuid = GetUUIDFromPath(baseParticle);
 	baseResourceDB[EAssetType::ASSET_PARTICLESYS].resource = LoadResource(GetUUIDFromPath(baseParticle));
 	resourceLibrary[GetUUIDFromPath(baseParticle)].resource = baseResourceDB[EAssetType::ASSET_PARTICLESYS].resource;
+
+	//FMod loads resource!
+	baseResourceDB[EAssetType::ASSET_SOUND].uuid = GetUUIDFromPath(baseSound);
 
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Base assets loaded successfuly!");
 }
@@ -155,6 +161,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_MESH)
 		{
 			auto model = std::make_shared<Model>();
+			//model->animator = std::make_shared<AnimatorComponent>();
 			std::string filePath = FindFilePathByUUID(uuid);
 			if (filePath == "")
 			{
@@ -162,7 +169,10 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 					boost::lexical_cast<std::string>(uuid).c_str());
 				filePath = FindFilePathByUUID(baseResourceDB[EAssetType::ASSET_MESH].uuid);
 			}
-			MeshLoader::LoadModel(filePath, model->meshes);
+			MeshLoader::LoadModel(filePath, model->meshes,model->m_BoneInfoMap);
+			
+
+			auto [animationTmp, skeletonTmp] = MeshLoader::LoadAnimation(filePath, model->m_BoneInfoMap);
 
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>( model);
 			return model;
@@ -200,8 +210,14 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 				data[i].SysMemPitch = sizeof(float) * width * 4;
 				data[i].SysMemSlicePitch = 0;
 			}
+			
 			HRESULT result = _hc->device->CreateTexture2D(&textureDesc_, data, skyboxResource->cubemapTexture.GetAddressOf());
 			
+			for (int i=0; i<6 ;i++)
+			{
+				delete cubeMapArray[i];
+			}
+
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 			srvDesc.Format = textureDesc_.Format;
 			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
@@ -212,7 +228,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			return skyboxResource;
 
 		}
-		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_PARTICLESYS)
+		/*else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_PARTICLESYS)
 		{
 			std::shared_ptr<SharedParticlesData> spd = std::make_shared<SharedParticlesData>();
 			ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
@@ -235,7 +251,7 @@ std::shared_ptr<ResourceBase> ResourceService::LoadResource(const boost::uuids::
 			resourceLibrary[uuid].resource = std::static_pointer_cast<ResourceBase>(spd);
 			return spd;
 
-		}
+		}*/
 		else if (resourceLibrary[uuid].assetType == EAssetType::ASSET_PREFAB)
 		{
 			
@@ -426,6 +442,43 @@ void ResourceService::SaveSceneToFile(std::filesystem::path filePath, entt::regi
 	file.close();
 }
 
+void ResourceService::SaveStringToFile(std::filesystem::path filePath, std::string data)
+{
+	std::ofstream file;
+	file.open(filePath);
+	file << data;
+	file.close();
+}
+
+void ResourceService::SaveAnimationToFile(std::filesystem::path filePath, SkeletalAnimation* animation)
+{
+	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+	auto json = ser.Serialize<SkeletalAnimation>(*animation);
+	std::ofstream file;
+	file.open(filePath, std::ios::trunc);
+	file << std::setw(1) << json;
+	file.close();
+
+
+	GenerateMetaFiles(filePath.parent_path());
+	LoadResourceLibrary(".\\Game\\Assets", true);
+	LoadResourceLibrary(".\\Engine\\Assets\\Resources", false, true);
+	updateContentBrowser.Broadcast(true);
+}
+
+std::shared_ptr<SkeletalAnimation> ResourceService::LoadAnimationFromFile(std::filesystem::path filePath)
+{
+	ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
+	std::ifstream file;
+	nlohmann::json json;
+	file.open(filePath);
+	file >> json;
+	file.close();
+	SkeletalAnimation anim;
+	ser.Deserialize<SkeletalAnimation>(json, anim);
+	return std::make_shared<SkeletalAnimation>(anim);
+}
+
 void ResourceService::GenerateMetaFiles(std::filesystem::path currentDirectory)
 {
 	SY_LOG_CORE(SY_LOGLEVEL_INFO, "Generating metafiles in %s folder",currentDirectory.string().c_str());
@@ -448,10 +501,29 @@ void ResourceService::GenerateMetaFiles(std::filesystem::path currentDirectory)
 
 				file.open(directoryEntry.path().string() + ".meta");
 
+				EAssetType assetType;
+
 				if (extensionToAssetTypeMap.count(extension) > 0)
+				{
 					fileData["AssetType"] = static_cast<int>(extensionToAssetTypeMap.at(extension));
+					assetType = extensionToAssetTypeMap.at(extension);
+				}
 				else
+				{
 					fileData["AssetType"] = static_cast<int>(EAssetType::ASSET_NONE);
+					assetType = EAssetType::ASSET_NONE;
+				}
+
+				switch (assetType)
+				{
+				case EAssetType::ASSET_TEXTURE:
+					fileData["TextureType"] = 0;
+					fileData["sRGB"] = false;
+					fileData["GenerateMipMaps"] = false;
+					fileData["WrapMode"] = 0;
+					fileData["FilterMode"] = 0;
+					break;
+				}
 
 				file << fileData;
 				file.close();

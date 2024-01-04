@@ -3,7 +3,7 @@
 #include "../../../vendor/entt/entt.hpp"
 #include "../Features/Physics/Components/RBodyComponent.h"
 #include "../Features/Physics/Events/SyOnCreateRBodyEvent.h"
-#include "../Features/Physics/Events/SyOnCreateColliderEvent.h"
+#include "..\Features\Physics\Events\SyOnCreateCollider.h"
 #include "../Features/Mesh/Components/MeshComponent.h"
 #include "../Features/Lighting/Components/LightComponent.h"
 #include "../../Components/TransformComponent.h"
@@ -14,6 +14,9 @@
 #include "../Components/ImageBasedLightingComponent.h"
 #include "../Components/SkyboxComponent.h"
 #include "../Features/Resources/ResourceService.h"
+#include "../Features/Animations/Components/AnimatorComponent.h"
+#include "../Events/SyAnimatorComponentAdded.h"
+#include "../Features/Sounds/Components/FSoundComponent.h"
 
 
 entt::entity GameObjectHelper::Create(entt::registry* ecs, const std::string& name, SyVector3 pos = Vector3::Zero)
@@ -118,7 +121,7 @@ SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::enti
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity %d lacks Transform Component. You can't attach RigidBody Component to it.", (int)entity);
 		return result;
 	}
-	ecs->emplace<SyRBodyComponent>(	entity,
+	ecs->emplace<SyRigidBodyComponent>(	entity,
 									rbType,
 									mass,
 									flags);
@@ -132,7 +135,7 @@ SyResult GameObjectHelper::AddPrimitiveColliderComponent(entt::registry* ecs, en
 	const SyColliderMaterial& material)
 {
 	SyResult result;
-	auto* rbComponent = ecs->try_get<SyRBodyComponent>(entity);
+	auto* rbComponent = ecs->try_get<SyRigidBodyComponent>(entity);
 	if (rbComponent == nullptr)
 	{
 		result.code = SY_RESCODE_ERROR;
@@ -158,7 +161,7 @@ SyResult GameObjectHelper::AddTrimeshColliderComponent(entt::registry* ecs, entt
 	const SyColliderMaterial& material)
 {
 	SyResult result;
-	auto* rbComponent = ecs->try_get<SyRBodyComponent>(entity);
+	auto* rbComponent = ecs->try_get<SyRigidBodyComponent>(entity);
 	if (rbComponent == nullptr)
 	{
 		result.code = SY_RESCODE_ERROR;
@@ -235,25 +238,66 @@ SyResult GameObjectHelper::AddSphereMeshComponent(entt::registry* ecs, entt::ent
 	return AddMeshComponent(ecs, entity, ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Engine\\Assets\\Resources\\sphere.fbx"));
 }
 
+SyResult GameObjectHelper::AddAnimatorComponent(entt::registry* ecs, entt::entity entity)
+{
+	SyResult result;
+	auto meshComp = ecs->try_get<MeshComponent>(entity);
+	if (meshComp == nullptr)
+	{
+		result.code = SY_RESCODE_ERROR;
+		result.message = xstring("Could not find Mesh Component on entity (%d). Hence, you can't attach an animator component to it. ", (int)entity);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Could not find Mesh Component on entity (%d). Hence, you can't attach an animator component to it. ", (int)entity);
+		return result;
+	}
+
+	ecs->emplace<AnimatorComponent>(entity);
+	CallEvent<SyAnimatorComponentAdded>(ecs, "SyAnimatorComponentAdded", entity);
+
+	return SyResult();
+}
+
 entt::entity GameObjectHelper::CreateParticleSystem(entt::registry* ecs)
 {
 	//TODO: Translate to resource service!
 	auto ent = Create(ecs, "ParticleSystem");
 	ParticleComponent& pc = ecs->emplace<ParticleComponent>(ent);
-	pc.SharedParticlesDataUuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_PARTICLESYS].uuid;
+	//pc.SharedParticlesDataUuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_PARTICLESYS].uuid;
+	return ent;
+}
+
+entt::entity GameObjectHelper::CreateCamera(entt::registry* ecs)
+{
+	auto ent = Create(ecs, "Camera");
+	ecs->emplace<CameraComponent>(ent, ECameraType::PlayerCamera);
 	return ent;
 }
 
 entt::entity GameObjectHelper::CreateSkybox(entt::registry* ecs, boost::uuids::uuid uuid)
 {
-	auto ent = ecs->create();
-	ecs->emplace<GameObjectComp>(ent);
+	auto view=ecs->view<SkyboxComponent, ImageBasedLightingComponent>();
+	if (view.size_hint()>0)
+		GameObjectHelper::Destroy(ecs,(view.front()));
+
+	auto ent = GameObjectHelper::Create(ecs,"Skybox");
 	ecs->emplace<SkyboxComponent>(ent);
+	
 	ecs->emplace<ImageBasedLightingComponent>(ent);
 	
 	if (uuid == boost::uuids::nil_uuid())
 		uuid = ServiceLocator::instance()->Get<ResourceService>()->baseResourceDB[EAssetType::ASSET_CUBEMAP].uuid;
+	/*else
+		ServiceLocator::instance()->Get<ResourceService>()->LoadResource(uuid);*/
 	ecs->get<SkyboxComponent>(ent).uuid = uuid;
 
 	return ent;
+}
+
+// TODO S: creating correctly? 
+// how to link Transform (FSoundComponent and EditorBillboardComponent) ?
+entt::entity GameObjectHelper::CreateSoundComponent(entt::registry* ecs)
+{ 
+	auto ent = Create(ecs, "SoundObject");
+	ecs->emplace<EditorBillboardComponent>(ent, "Engine/Assets/Sprites/Sound.png");
+	FSoundComponent& Sound = ecs->emplace<FSoundComponent>(ent, boost::uuids::nil_uuid());
+	return entt::entity();
 }

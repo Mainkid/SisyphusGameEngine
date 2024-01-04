@@ -16,8 +16,29 @@ enum class EAssetType
 	ASSET_PARTICLESYS,
 	ASSET_SCENE,
 	ASSET_PREFAB,
+	ASSET_ANIMATION,
 
 	ASSET_TYPE_AMOUNT
+};
+
+enum class EWrapMode
+{
+	WRAP_REPEAT,
+	WRAP_CLAMP,
+	WRAP_MIRROR
+};
+
+enum class EFilterMode
+{
+	FILTER_BILINEAR,
+	FILTER_ANISOTROPIC,
+	FILTER_POINT
+};
+
+enum class ETextureType
+{
+	TEXTURE_2D,
+	TEXTURE_CUBEMAP
 };
 
 struct ResourceInfo
@@ -33,13 +54,18 @@ const std::unordered_map<std::string, EAssetType> extensionToAssetTypeMap =
 {
 	{".obj",EAssetType::ASSET_MESH},
 	{".fbx",EAssetType::ASSET_MESH},
+	{".dae",EAssetType::ASSET_MESH},
 	{".mat",EAssetType::ASSET_MATERIAL},
 	{".wav",EAssetType::ASSET_SOUND},
 	{".png",EAssetType::ASSET_TEXTURE},
 	{".bmp",EAssetType::ASSET_TEXTURE},
-	{".hdr",EAssetType::ASSET_CUBEMAP},
+	{".hdr",EAssetType::ASSET_TEXTURE},
 	{".jpg",EAssetType::ASSET_TEXTURE},
 	{".ps",EAssetType::ASSET_PARTICLESYS},
 	{".scene", EAssetType::ASSET_SCENE},
-	{".prefab", EAssetType::ASSET_PREFAB}
+	{".prefab", EAssetType::ASSET_PREFAB},
+	{".wav", EAssetType::ASSET_SOUND},
+	{".mp3", EAssetType::ASSET_SOUND},
+	{".ogg", EAssetType::ASSET_SOUND},
+	{".anim", EAssetType::ASSET_ANIMATION}
 };

@@ -24,7 +24,7 @@ SyResult EditorGridRenderSystem::Run()
 	CB_GridEditorBuffer dataOpaque;
 
 	_hc->context->OMSetBlendState(_rc->GridBlendState.Get(), nullptr, 0xffffffff);
-	auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
+	auto [camera, cameraTransform] = CameraHelper::Find(_ecs,_ec->playModeState);
 
 	dataOpaque.baseData.worldViewProj =
 		camera.view * camera.projection;

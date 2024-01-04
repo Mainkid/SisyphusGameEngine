@@ -4,6 +4,7 @@
 #include "../../../Core/EngineCore.h"
 #include "../../../Core/ECS/SystemBase.h"
 
+#define GET_PHYSICS_CONTEXT ServiceLocator::instance()->Get<SyPhysicsContext>()
 
 #pragma region forward declaration
 namespace physx
@@ -14,14 +15,14 @@ namespace physx
     class PxPhysics;
     class PxScene;
 }
-struct SyRBodyComponent;
+struct SyRigidBodyComponent;
 #pragma endregion
 
-class SyRBodySystem :
+class SyRigidBodySystem :
     public SystemBase
 {
-    std::shared_ptr<physx::PxDefaultAllocator>		allocator = nullptr;
-    std::shared_ptr<physx::PxDefaultErrorCallback>	errorCallback = nullptr;
+    std::shared_ptr<physx::PxDefaultAllocator>		_allocator = nullptr;
+    std::shared_ptr<physx::PxDefaultErrorCallback>	_errorCallback = nullptr;
     physx::PxFoundation* _foundation = nullptr;
     
     physx::PxPhysics*                               _physics = nullptr;
@@ -34,8 +35,12 @@ public:
     SyResult Destroy() override;
 
 private:
-    SyResult InitComponent(const entt::entity& entity, SyRBodyComponent& rbComponent, TransformComponent& tComponent);
+    SyResult InitComponent(const entt::entity& entity, SyRigidBodyComponent& rigidBodyC, TransformComponent& transformC);
+    SyResult UpdateRigidBodyType(const entt::entity& entity, SyRigidBodyComponent& rigidBodyC, TransformComponent& transformC);
+    SyResult UpdateRigidBodyValues(const entt::entity& entity, SyRigidBodyComponent& rigidBodyC, TransformComponent& transformC);
 
+    std::vector<entt::entity> GetJointOtherEntities(const entt::entity& entity);
     friend class SyCollisionSystem;
+    friend class SyRBodySimulationSystem;
 };
 

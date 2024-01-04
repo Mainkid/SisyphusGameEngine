@@ -193,7 +193,7 @@ void RenderInitSystem::CompileShaders() const
 	_rc->OpaqueShader = std::make_unique<Shader>();
 	_rc->OpaqueShader->Initialize(L"./Engine/Assets/Shaders/OpaqueShader.hlsl",
 	                              COMPILE_VERTEX | COMPILE_PIXEL,
-	                              USE_POSITION | USE_NORMAL | USE_COLOR | USE_TANGENT_BITANGENT);
+	                              USE_POSITION | USE_NORMAL | USE_COLOR | USE_TANGENT_BITANGENT | USE_SKELETAL_ANIM);
 
 	_rc->DirLightShader = std::make_unique<Shader>();
 	_rc->DirLightShader->Initialize(L"./Engine/Assets/Shaders/LightShader.hlsl",
@@ -221,13 +221,13 @@ void RenderInitSystem::CompileShaders() const
 
 	_rc->ShadowShader = std::make_unique<Shader>();
 	_rc->ShadowShader->Initialize(L"./Engine/Assets/Shaders/ShadowShader.hlsl",
-	                              COMPILE_VERTEX | COMPILE_GEOM | COMPILE_PIXEL, USE_POSITION | USE_COLOR | USE_NORMAL,
+	                              COMPILE_VERTEX | COMPILE_GEOM | COMPILE_PIXEL, USE_POSITION | USE_NORMAL | USE_COLOR | USE_TANGENT_BITANGENT | USE_SKELETAL_ANIM,
 	                              "DepthVertexShader", "PS_Main");
 
 	_rc->ShadowPointLightShader = std::make_unique<Shader>();
 	_rc->ShadowPointLightShader->Initialize(L"./Engine/Assets/Shaders/ShadowPointlightShader.hlsl",
 	                                        COMPILE_VERTEX | COMPILE_GEOM | COMPILE_PIXEL,
-	                                        USE_POSITION | USE_COLOR | USE_NORMAL, "DepthVertexShader", "PSMain");
+	                                        USE_POSITION | USE_COLOR | USE_NORMAL | USE_TANGENT_BITANGENT| USE_SKELETAL_ANIM, "DepthVertexShader", "PSMain");
 
 	_rc->BillboardShader = std::make_unique<Shader>();
 	_rc->BillboardShader->Initialize(L"./Engine/Assets/Shaders/SpriteBillboardShader.hlsl",
@@ -395,6 +395,9 @@ void RenderInitSystem::CreateBuffers() const
 
 	_rc->ShadowPointlightConstBuffer = std::make_unique<Buffer>(_hc->device.Get());
 	_rc->ShadowPointlightConstBuffer->Initialize(sizeof(CB_PointlightShadowBuffer));
+
+	_rc->BonesConstBuffer = std::make_unique<Buffer>(_hc->device.Get());
+	_rc->BonesConstBuffer->Initialize(sizeof(CB_BonesBuffer));
 
 	_rc->GBuffer = std::make_unique<GBuffer>(_hc->device);
 	_rc->GBuffer->Initialize(_hc->window->GetWidth(), _hc->window->GetHeight());

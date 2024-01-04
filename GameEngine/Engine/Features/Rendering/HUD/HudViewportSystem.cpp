@@ -17,6 +17,7 @@
 #include "../../../Scene/Prefab.h"
 #include "../../../Scene/Scene.h"
 #include "optick.h"
+#include "json.hpp"
 
 SyResult HudViewportSystem::Init()
 {
@@ -94,7 +95,7 @@ SyResult HudViewportSystem::Run()
 
 			if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_MESH)
 			{
-				auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
+				auto [camera, cameraTransform] = CameraHelper::Find(_ecs, ec->playModeState);
 				Vector3 pos = cameraTransform.localPosition + camera.forward * 5.0f;
 				auto go = GameObjectHelper::CreateMesh(_ecs, uuid,pos);
 			}
@@ -118,13 +119,19 @@ SyResult HudViewportSystem::Run()
 				auto scene = std::static_pointer_cast<Scene>(rs->LoadResource(uuid));
 				//TODO: scene drag drop
 			}
+			else if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_CUBEMAP)
+			{
+
+				GameObjectHelper::CreateSkybox(_ecs, uuid);
+
+			}
 		}
 		ImGui::EndDragDropTarget();
 	}
 
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-	auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+	auto [camera, cameraTf] = CameraHelper::Find(_ecs,ec->playModeState);
 	camera.mouseWheel = io.MouseWheel;
 
 	//Gizmos
@@ -163,7 +170,7 @@ SyResult HudViewportSystem::Run()
 				transformMat = tc.transformMatrix * deltaMatrix;
 				transformMat = transformMat * TransformHelper::ConstructInverseParentTransform(tc);
 				transformMat.Decompose(scale, rotation, translation);
-				Vector3 deltaRotation = rotation.ToEuler() - tc.localRotation;
+				SyVector3 deltaRotation = SyVector3(rotation.ToEuler()) - tc.localRotation;
 				tc.localRotation = tc.localRotation + deltaRotation;
 				tc.localPosition = translation;
 				tc.localScale = scale;
@@ -238,15 +245,18 @@ void HudViewportSystem::InitSRV()
 
 void HudViewportSystem::HandleResize()
 {
+	static EngineContext::EPlayModeState prevPlayMode = EngineContext::EPlayModeState::PauseMode;
+
+
 	auto newWidgetSize = ImGui::GetWindowSize();
-	if (widgetSize.x != newWidgetSize.x || widgetSize.y != newWidgetSize.y)
+	if (widgetSize.x != newWidgetSize.x || widgetSize.y != newWidgetSize.y || ec->playModeState!=prevPlayMode)
 	{
-		//hud->ViewportResizedEvent.Broadcast(newWidgetSize.x * 1.0f / newWidgetSize.y);
 		widgetSize = newWidgetSize;
 
-		auto [cc,_] = CameraHelper::Find(_ecs);
+		auto [cc,_] = CameraHelper::Find(_ecs,ec->playModeState);
 		cc.aspectRatio = widgetSize.x / widgetSize.y;
 	}
+	prevPlayMode = ec->playModeState;
 }
 
 void HudViewportSystem::DrawMainMenuBar()
@@ -331,8 +341,7 @@ void HudViewportSystem::DrawMainMenuBar()
 		}
 		if (ImGui::BeginMenu("GameObject"))
 		{
-			auto [camera, cameraTransform] = CameraHelper::Find(_ecs);
-
+			auto [camera, cameraTransform] = CameraHelper::Find(_ecs,ec->playModeState);
 
 			Vector3 pos = Vector3(cameraTransform._position.x, cameraTransform._position.y, cameraTransform._position.z) +
 				Vector3(camera.forward.x, camera.forward.y, camera.forward.z) * 3;
@@ -384,6 +393,15 @@ void HudViewportSystem::DrawMainMenuBar()
 				if (ImGui::MenuItem("Particle System"))
 				{
 					GameObjectHelper::CreateParticleSystem(_ecs);
+				}
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Audio"))
+			{
+				if (ImGui::MenuItem("Sound Component"))
+				{
+					GameObjectHelper::CreateSoundComponent(_ecs);
 				}
 				ImGui::EndMenu();
 			}
@@ -472,6 +490,7 @@ void HudViewportSystem::DrawPlayMode(ImVec2 cursorStartPostion)
 		ec->playModeState == EngineContext::EPlayModeState::PlayMode)
 	{
 		ec->playModeState = EngineContext::EPlayModeState::PauseMode;
+		CallEvent<SyPauseModeEvent>("SyPauseModeEvent");
 	}
 	offset += dtOffset;
 	ImGui::SameLine(offset);

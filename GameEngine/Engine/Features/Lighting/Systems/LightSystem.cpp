@@ -6,6 +6,7 @@
 #include "../../../Core/ServiceLocator.h"
 #include "../../../Components/TransformComponent.h"
 #include "../../../Core/Tools/MathHelper.h"
+#include "../../../Scene/CameraHelper.h"
 
 SyResult LightSystem::Init()
 {
@@ -18,9 +19,7 @@ SyResult LightSystem::Init()
 SyResult LightSystem::Run()
 {
     OPTICK_EVENT();
-    auto viewCamera = _ecs->view<TransformComponent, CameraComponent>();
-    auto [cameraTf, camera] = viewCamera.get(viewCamera.front());
-
+    auto [camera, cameraTf] = CameraHelper::Find(_ecs, _ec->playModeState);
     auto viewLights = _ecs->view<TransformComponent, LightComponent>();
     for (auto& ent : viewLights)
     {
@@ -85,7 +84,7 @@ std::vector<Vector4> LightSystem::GetFrustumCorners(const Matrix& view, const Ma
 
 std::vector<Matrix> LightSystem::GenerateOrthosFromFrustum(LightComponent& lc, Vector3 direction, const Matrix& view, const Matrix proj, float farZ)
 {
-    if ((direction - Vector3(0, 1, 0)).Length() < 0.001f)
+    if ((direction - Vector3(0, 1, 0)).Length() < 0.001f || (direction - Vector3(0, -1, 0)).Length() < 0.001f)
     {
         direction += Vector3(0, 0, 0.01f);
         direction.Normalize();

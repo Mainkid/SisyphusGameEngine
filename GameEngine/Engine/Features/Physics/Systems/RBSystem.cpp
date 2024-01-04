@@ -4,26 +4,27 @@
 #include "../Components/RBodyComponent.h"
 #include "../../../Core/Tools/ErrorLogger.h"
 #include "../../../Components/TransformComponent.h"
-#include "../Events/SyOnCreateRBodyEvent.h"
-
+#include "../../../Scene/GameObjectHelper.h"
+#include "../../Common/Events/OnAddComponentEvent.h"
+#include "../../Common/Events/OnRemoveComponentEvent.h"
+#include "../../../Core/Tools/Macro.h"
+#include "../Components/JointComponent.h"
 
 using namespace physx;
 
-PxPhysics* SyRBodyComponent::_physics;
-PxScene* SyRBodyComponent::_scene;
 
-SyResult SyRBodySystem::Init() 
+SyResult SyRigidBodySystem::Init() 
 {
-	allocator = std::make_shared<PxDefaultAllocator>();
-	errorCallback = std::make_shared<PxDefaultErrorCallback>();
-	_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, *allocator, *errorCallback);
+	_allocator = std::make_shared<PxDefaultAllocator>();
+	_errorCallback = std::make_shared<PxDefaultErrorCallback>();
+	_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, *_allocator, *_errorCallback);
 	if (_foundation == nullptr)
 	{
 		SY_LOG_PHYS(SY_LOGLEVEL_CRITICAL, "PxCreate_foundation returned nullptr. ");
 		exit(-1);
 	}
 	_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *_foundation, PxTolerancesScale(), true, nullptr);
-	SyRBodyComponent::_physics = _physics;
+	ServiceLocator::instance()->Get<SyPhysicsContext>()->Physics = _physics;
 	if (_physics == nullptr)
 	{
 		SY_LOG_PHYS(SY_LOGLEVEL_CRITICAL, "PxCreatePhysics returned nullptr. ");
@@ -36,81 +37,51 @@ SyResult SyRBodySystem::Init()
 	_scene = _physics->createScene(sceneDesc);
 	_scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
 	_scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
-	SyRBodyComponent::_scene = _scene;
 	return SyResult();
 }
 
-SyResult SyRBodySystem::Run()
+SyResult SyRigidBodySystem::Run()
 {
 	OPTICK_EVENT();
 	SyResult result;
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
 	if (deltaTime == 0)
-	{
-		result.code = SY_RESCODE_UNEXPECTED;
-		result.message = "EngineContext.deltaTime == 0";
 		return result;
-	}
 	//initialize components that were created at this frame
-	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyOnCreateRBodyEvent);
-	for (auto& eventEntity : eventView)
-	{
-		auto entity = _ecs->get<SyOnCreateRBodyEvent>(eventEntity).Entity;
-		auto* rbComponent = _ecs->try_get<SyRBodyComponent>(entity);
-		if (rbComponent == nullptr)
-		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "RigidBody Component has not been attached to entity (%d). Something went wrong", (int)entity);
-			continue;
-		}
-		auto* tComponent = _ecs->try_get<TransformComponent>(entity);
-		if (tComponent == nullptr)
-		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity (%d) is missing the Transform Component. Hence, you can't attach RigidBody Component to it. The RigidBody Component has been removed.", (int)entity);
-			_ecs->remove<SyRBodyComponent>(entity);
-			continue;
-		}
-		if (InitComponent(entity, *rbComponent, *tComponent).code != SY_RESCODE_OK)
-		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to initialize RigidBody Component on entity (%d). The RigidBody Component has been removed.", (int)entity);
-			_ecs->remove<SyRBodyComponent>(entity);
-		}
-	}
-	//update PhysX according to changes in components member values
-	auto view = _ecs->view<SyRBodyComponent, TransformComponent>();
+	auto view = _ecs->view<SyRigidBodyComponent>();
 	for (auto& entity : view)
 	{
-		SyRBodyComponent& rbComponent = view.get<SyRBodyComponent>(entity);
-		TransformComponent& trComponent = view.get<TransformComponent>(entity);
-		if (rbComponent.RbType == STATIC)
-			continue;
-		if (rbComponent._rbActor == nullptr)
+		auto name = SY_GET_ENTITY_NAME_CHAR(_ecs, entity); //for debug
+		auto& rigidBodyC = _ecs->get<SyRigidBodyComponent>(entity);
+		auto* transformC = _ecs->try_get<TransformComponent>(entity);
+		if (transformC == nullptr)
 		{
-			result.code = SY_RESCODE_ERROR;
-			result.message = "rbComponent.rbActor is nullptr.";
-			_ecs->remove<SyRBodyComponent>(entity);
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
+			_ecs->emplace<TransformComponent>(entity);
+			CallEvent<SyOnAddComponentEvent>("AddTransform", ESyComponentType::Transform, entity);
+			SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+				"Transform Component required for RigidBody Component is missing on entity (%s). The Transform Component has been added in the next frame.",
+				SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
 			continue;
 		}
-		PxRigidDynamic* rb = rbComponent._rbActor->is<PxRigidDynamic>();
-		PxTransform rbTransform = rb->getGlobalPose();
-		if (SyVector3(rbTransform.p) != trComponent.localPosition || SyVector3::PxQuatToEuler(rbTransform.q) != trComponent.localRotation)
-			rb->setGlobalPose(PxTransform(trComponent._position,
-				SyVector3::EulerToPxQuat(trComponent._rotation)));
-		SyVector3 pxLinearVelocity = rb->getLinearVelocity();
-		if (rbComponent.LinearVelocity != pxLinearVelocity)
-			rb->setLinearVelocity(rbComponent.LinearVelocity);
-		SyVector3 pxAngularVelocity = rb->getAngularVelocity();
-		if (rbComponent.AngularVelocity != pxAngularVelocity)
-			rb->setAngularVelocity(rbComponent.AngularVelocity);
-		float pxMass = rb->getMass();
-		if (rbComponent.Mass != pxMass)
-			rb->setMass(rbComponent.Mass);
-		if (rbComponent.Flags & SyERBodyFlags::KINEMATIC)
-			rb->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
-		if (rbComponent.Flags & SyERBodyFlags::DISABLE_GRAVITY)
-			rbComponent._rbActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
-		rbComponent._rbActor->setActorFlag(PxActorFlag::eVISUALIZATION, false);
+		if (rigidBodyC._rbActor == nullptr)
+		{
+			if (InitComponent(entity, rigidBodyC, *transformC).code == SY_RESCODE_ERROR)
+			{
+				_ecs->remove<SyRigidBodyComponent>(entity);
+				CallEvent<SyOnRemoveComponentEvent>("RemoveRigidBody", ESyComponentType::RigidBody, entity);
+				SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
+					"Failed to initialize RigidBody Component on entity (%s). The component has been removed.",
+					SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+				continue;
+			};
+		}
+		else if (ServiceLocator::instance()->Get<EngineContext>()->playModeState == EngineContext::EPlayModeState::PlayMode)
+		{
+			UpdateRigidBodyType(entity, rigidBodyC, *transformC);
+			UpdateRigidBodyValues(entity, rigidBodyC, *transformC);
+		}
 	}
+	
 	//do not simulate if in pause mode
 	if(ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
 		return result;
@@ -129,66 +100,221 @@ SyResult SyRBodySystem::Run()
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
 		return result;
 	}
-	//update components member values according to simulation results  
+	//update components member values according to simulation results
 	for (auto& entity : view)
 	{
-		SyRBodyComponent& rbComponent = view.get<SyRBodyComponent>(entity);
-		TransformComponent& trComponent = view.get<TransformComponent>(entity);
-		if (rbComponent.RbType == STATIC)
+		auto name = SY_GET_ENTITY_NAME_CHAR(_ecs, entity); //for debug
+		auto& rigidBodyC = _ecs->get<SyRigidBodyComponent>(entity);
+		auto* transformC = _ecs->try_get<TransformComponent>(entity);
+		if (rigidBodyC.RbType == STATIC)
 			continue;
-		if (rbComponent._rbActor == nullptr)
+		if (rigidBodyC._rbActor == nullptr)
 		{
 			result.code = SY_RESCODE_ERROR;
 			result.message = "rbComponent.rbActor is nullptr.";
-			_ecs->remove<SyRBodyComponent>(entity);
+			_ecs->remove<SyRigidBodyComponent>(entity);
 			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
 			continue;
 		}
-		PxRigidDynamic* rb = rbComponent._rbActor->is<PxRigidDynamic>();
+		PxRigidDynamic* rbDyn = rigidBodyC._rbActor->is<PxRigidDynamic>();
 		
-		PxTransform rbTrasform = rb->getGlobalPose();
-		trComponent._position = rbTrasform.p;
-		trComponent._rotation = SyVector3::PxQuatToEuler(rbTrasform.q);
-		rbComponent.LinearVelocity = rb->getLinearVelocity();
-		rbComponent.AngularVelocity = rb->getAngularVelocity();
+		PxTransform rbTrasform = rbDyn->getGlobalPose();
+		transformC->_position = rbTrasform.p;
+		transformC->_rotation = SyVector3::PxQuatToEuler(rbTrasform.q);
+		if (rigidBodyC._mustSaveUserVelocity == false)
+		{
+			rigidBodyC.LinearVelocity = rbDyn->getLinearVelocity();
+			rigidBodyC.AngularVelocity = rbDyn->getAngularVelocity();
+		}
+		rigidBodyC._wasTransformChangedFromOutside = false;
+		rigidBodyC._mustSaveUserVelocity = false;
+		rbDyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, rigidBodyC.Flags & SyERBodyFlags::KINEMATIC);
+		
 	}
 	return SyResult();
 }
 
-SyResult SyRBodySystem::Destroy()
+SyResult SyRigidBodySystem::Destroy()
 {
 	PX_RELEASE(_physics);
 	PX_RELEASE(_foundation);
 	return SyResult();
 }
 
-SyResult SyRBodySystem::InitComponent(const entt::entity& entity, SyRBodyComponent& rbComponent, TransformComponent& tComponent)
+SyResult SyRigidBodySystem::InitComponent(const entt::entity& entity, SyRigidBodyComponent& rigidBodyC,
+	TransformComponent& transformC)
 {
 	SyResult result;
-	switch (rbComponent.RbType)
+	switch (rigidBodyC.RbType)
 	{
-	case STATIC: rbComponent._rbActor = _physics->createRigidStatic(PxTransform(tComponent._position, 
-														SyVector3::EulerToPxQuat(tComponent._rotation)));
+	case STATIC: rigidBodyC._rbActor = _physics->createRigidStatic(PxTransform(transformC._position, 
+														SyVector3::EulerToPxQuat(transformC._rotation)));
 		break;
-	case DYNAMIC: rbComponent._rbActor = _physics->createRigidDynamic(PxTransform(tComponent._position, 
-														SyVector3::EulerToPxQuat(tComponent._rotation)));
-		if (PxRigidBodyExt::setMassAndUpdateInertia(*static_cast<PxRigidBody*>(rbComponent._rbActor), rbComponent.Mass)  == false)
+	case DYNAMIC: rigidBodyC._rbActor = _physics->createRigidDynamic(PxTransform(transformC._position, 
+														SyVector3::EulerToPxQuat(transformC._rotation)));
+		if (rigidBodyC.Mass < 0)
 		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::setMassAndUpdateInertia returned false");
+			SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+						"Negative mass for RigidBody Component detected on entity (%s). It is illegal. Instead, default mass 1 is used. ", 
+						SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+			rigidBodyC.Mass = 1.0f;
+		}
+		if (PxRigidBodyExt::setMassAndUpdateInertia(*static_cast<PxRigidBody*>(rigidBodyC._rbActor), rigidBodyC.Mass) == false)
+		{
+			SY_PROCESS_PHYS_ERROR(	result,
+									"PxRigidBodyExt::setMassAndUpdateInertia returned false for RigidBody Component on entity (%s). ", 
+									SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
 			return result;
 		}
 		break;
-	default:
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Unknown Rigid Body type in SyRbComponent. Entity: %d.", (unsigned)entity);
-		result.code = SY_RESCODE_ERROR;
-		result.message = xstring("Unknown Rigid Body type in SyRbComponent. Entity: %d.", (unsigned)entity);
-		return result;
-	};
-	if (_scene->addActor(*rbComponent._rbActor) == false)
+	}
+	rigidBodyC._prevFrameRbodyType = rigidBodyC.RbType;
+	rigidBodyC._wasActorRecreatedThisFrame = true;
+	if (rigidBodyC._rbActor == nullptr)
 	{
-		result.code = SY_RESCODE_ERROR;
-		result.message = xstring("scene->addActor returned false for RigidBody component on entity %d", (int)entity);
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "scene->addActor returned false for RigidBody component on entity %d", (int)entity);
+		SY_PROCESS_PHYS_ERROR(	result,
+								"Failed to create PxRigidActor in RigidBody Component on entity (%s)",
+								SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+	}
+	if (_scene->addActor(*rigidBodyC._rbActor) == false)
+	{
+		SY_PROCESS_PHYS_ERROR(	result,
+								"scene->addActor returned false for RigidBody Component on entity (%s).",
+								SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
 	};
 	return result;
 }
+
+SyResult SyRigidBodySystem::UpdateRigidBodyType(const entt::entity& entity, SyRigidBodyComponent& rigidBodyC, TransformComponent& transformC)
+{
+	SyResult result;
+	if (rigidBodyC._prevFrameRbodyType == rigidBodyC.RbType)
+	{
+		rigidBodyC._wasActorRecreatedThisFrame = false;
+		return result;
+	}
+	rigidBodyC._wasActorRecreatedThisFrame = true;
+	if (rigidBodyC._rbActor != nullptr)
+		rigidBodyC._rbActor->release();
+	switch (rigidBodyC.RbType)
+	{
+	case STATIC: rigidBodyC._rbActor = _physics->createRigidStatic(PxTransform(transformC._position, 
+														SyVector3::EulerToPxQuat(transformC._rotation)));
+		break;
+	case DYNAMIC: rigidBodyC._rbActor = _physics->createRigidDynamic(PxTransform(transformC._position, 
+														SyVector3::EulerToPxQuat(transformC._rotation)));
+		if (rigidBodyC.Mass < 0)
+		{
+			SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
+						"Negative mass for RigidBody Component detected on entity (%s). It is illegal. Instead, default mass 1 is used. ", 
+						SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+			rigidBodyC.Mass = 1.0f;
+		}
+		if (PxRigidBodyExt::setMassAndUpdateInertia(*static_cast<PxRigidBody*>(rigidBodyC._rbActor), rigidBodyC.Mass) == false)
+		{
+			SY_PROCESS_PHYS_ERROR(	result,
+									"PxRigidBodyExt::setMassAndUpdateInertia returned false for RigidBody Component on entity (%s). ", 
+									SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+			return result;
+		}
+		break;
+	};
+	if (_scene->addActor(*rigidBodyC._rbActor) == false)
+	{
+		SY_PROCESS_PHYS_ERROR(	result,
+								"scene->addActor returned false for RigidBody Component on entity (%s).",
+								SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
+	};
+	return result;
+}
+
+SyResult SyRigidBodySystem::UpdateRigidBodyValues(const entt::entity& entity, SyRigidBodyComponent& rigidBodyC,
+	TransformComponent& transformC)
+{
+	PxRigidDynamic* rbDyn = rigidBodyC._rbActor->is<PxRigidDynamic>();
+	if (rbDyn != nullptr)
+	{
+		PxTransform rbTransform = rbDyn->getGlobalPose();
+		if (SyVector3(rbTransform.p) != transformC._position ||
+			!SyMathHelper::AreEqual(SyVector3::PxQuatToEuler(rbTransform.q), transformC._rotation))
+		{
+			rigidBodyC._wasTransformChangedFromOutside = true;
+			rigidBodyC._mustSaveUserVelocity = true;
+			auto otherEntities = GetJointOtherEntities(entity);
+			for (auto& anotherEntity : otherEntities)
+			{
+				SyRigidBodyComponent* anotherRBodyCPtr = _ecs->try_get<SyRigidBodyComponent>(anotherEntity);
+				if (anotherRBodyCPtr != nullptr)
+					anotherRBodyCPtr->_mustSaveUserVelocity = true;
+				else
+				SY_LOG_PHYS(SY_LOGLEVEL_DEBUG,
+					"No rigid body was found on entity (%s) with a joint atached. That is weird",
+					SY_GET_ENTITY_NAME_CHAR(_ecs, anotherEntity));
+			}
+			auto* jointCHelperPtr = _ecs->try_get<SyJointComponentHelper>(entity);
+			if (jointCHelperPtr != nullptr)
+			{
+				SyRigidBodyComponent* otherRBodyCPtr = _ecs->try_get<SyRigidBodyComponent>(jointCHelperPtr->jointHolder);
+				if (otherRBodyCPtr != nullptr)
+					otherRBodyCPtr->_mustSaveUserVelocity = true;
+				else
+					SY_LOG_PHYS(SY_LOGLEVEL_DEBUG,
+						"No rigid body was found on entity (%s) with a joint atached. That is weird",
+						SY_GET_ENTITY_NAME_CHAR(_ecs, jointCHelperPtr->jointHolder));
+			}
+			rbDyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+			rbDyn->setKinematicTarget(PxTransform(	transformC._position,
+													SyVector3::EulerToPxQuat(transformC._rotation)));
+			return SyResult();
+		}
+
+		SyVector3 pxLinearVelocity = rbDyn->getLinearVelocity();
+		if (rigidBodyC.LinearVelocity != pxLinearVelocity)
+			rbDyn->setLinearVelocity(rigidBodyC.LinearVelocity);
+		SyVector3 pxAngularVelocity = rbDyn->getAngularVelocity();
+		if (rigidBodyC.AngularVelocity != pxAngularVelocity)
+			rbDyn->setAngularVelocity(rigidBodyC.AngularVelocity);
+		float pxMass = rbDyn->getMass();
+		if (rigidBodyC.Mass != pxMass)
+			rbDyn->setMass(rigidBodyC.Mass);
+		if ((rigidBodyC.Flags & SyERBodyFlags::KINEMATIC) != ((bool)(rbDyn->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC)))
+			rbDyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, rigidBodyC.Flags & SyERBodyFlags::KINEMATIC);
+		if ((rigidBodyC.Flags & SyERBodyFlags::DISABLE_GRAVITY) != ((bool)(rigidBodyC._rbActor->getActorFlags() & PxActorFlag::eDISABLE_GRAVITY)))
+			rigidBodyC._rbActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, (rigidBodyC.Flags & SyERBodyFlags::DISABLE_GRAVITY));
+	}
+	else
+	{
+		PxRigidStatic* rbSt = rigidBodyC._rbActor->is<PxRigidStatic>();
+		PxTransform rbTransform = rbSt->getGlobalPose();
+		if (SyVector3(rbTransform.p) != transformC._position || SyVector3::PxQuatToEuler(rbTransform.q) != transformC._rotation)
+		{
+			rbSt->setGlobalPose(PxTransform(transformC._position,
+				SyVector3::EulerToPxQuat(transformC._rotation)));
+			rigidBodyC._wasTransformChangedFromOutside = true;
+			rigidBodyC._rbActor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, true);
+			return SyResult();
+		}
+		else
+		{
+			rigidBodyC._wasTransformChangedFromOutside = false;
+			rigidBodyC._rbActor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, false);
+		}
+	}
+	rigidBodyC._rbActor->setActorFlag(PxActorFlag::eVISUALIZATION, false);
+	return SyResult();
+}
+
+std::vector<entt::entity> SyRigidBodySystem::GetJointOtherEntities(const entt::entity& entity)
+{
+	std::vector<entt::entity> result;
+	auto* fixedJointCPtr = _ecs->try_get<SyFixedJointComponent>(entity);
+	if (fixedJointCPtr != nullptr)
+		result.push_back(fixedJointCPtr->OtherEntity);
+	auto* hingeJointCPtr = _ecs->try_get<SyHingeJointComponent>(entity);
+	if (hingeJointCPtr != nullptr)
+		result.push_back(hingeJointCPtr->OtherEntity);
+	//and other joint types
+	return result;
+	
+}
+

@@ -24,7 +24,10 @@ namespace mono
 struct EngineContext;
 struct HardwareContext;
 struct RenderContext;
+struct ParticleInputDataF;
 class ResourceService;
+
+
 
 //namespace ImGui
 //{
@@ -40,6 +43,13 @@ public:
     SyResult Run() override;
     SyResult Destroy() override;
 private:
+
+    enum EParticleInput {
+        EFloats,
+        EVectors,
+        ECurve
+    };
+
     EngineContext* ec;
     RenderContext* rc;
     HardwareContext* hc;
@@ -51,5 +61,10 @@ private:
     bool isFocused;
     
     void DrawMaterialProperties();
+    void DrawTextureProperties();
+    void DrawMeshProperties();
     void UpdateHudProperties(bool);
+    void DrawParticleProperties(ParticleInputDataF& data, std::string label, EParticleInput inputType);
+
+
 };

@@ -4,7 +4,7 @@
 
 struct TransformComponent;
 struct SyPrimitiveColliderComponent;
-struct SyRBodyComponent;
+struct SyRigidBodyComponent;
 struct SyTrimeshColliderComponent;
 struct MeshComponent;
 
@@ -17,11 +17,11 @@ public:
 
 private:
     SyResult InitComponentP(const entt::entity& entity,
-                            SyRBodyComponent& rbComponent,
+                            SyRigidBodyComponent& rbComponent,
                             SyPrimitiveColliderComponent& cComponent);
     
     SyResult InitComponentTm(const entt::entity& entity,
-                             SyRBodyComponent& rbComponent,
+                             SyRigidBodyComponent& rbComponent,
                              SyTrimeshColliderComponent& cComponent,
                              const MeshComponent& mComponent,
                              const TransformComponent& tComponent);

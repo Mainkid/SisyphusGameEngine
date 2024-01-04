@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\vendor\optick\src;$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\entt;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\vendor\optick\src;$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\entt;$(SolutionDir)GameEngine\vendor\skeletalAnim;$(SolutionDir)GameEngine\vendor\FMod\api\core\inc;$(SolutionDir)GameEngine\vendor\FMod\api\studio\inc;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
   </PropertyGroup>
@@ -121,7 +121,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;GFSDK_SSAO_D3D11.win64.lib;mono-2.0-sgen.lib;OptickCore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;GFSDK_SSAO_D3D11.win64.lib;mono-2.0-sgen.lib;fmod_vc.lib;fmodL_vc.lib;fmodstudio_vc.lib;OptickCore.lib;fmodstudioL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>
@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Features\Physics\Systems\JointSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
     <ClCompile Include="Engine\Features\Physics\Components\ColliderComponent.cpp" />
     <ClCompile Include="Engine\Features\Physics\Systems\CollisionSystem.cpp" />
@@ -622,6 +623,7 @@
     <ClCompile Include="Engine\Core\Tools\ErrorLogger.cpp" />
     <ClCompile Include="Engine\Core\Tools\ImageLoader.cpp" />
     <ClCompile Include="Engine\Features\Particles\Particle.cpp" />
+    <ClCompile Include="Engine\Features\Sounds\Systems\SoundSystem.cpp" />
     <ClCompile Include="Engine\Systems\TransformSystem.cpp" />
     <ClCompile Include="Engine\Systems\TransformHelper.cpp" />
     <ClCompile Include="Engine\Features\Mesh\Systems\MeshSystem.cpp" />
@@ -655,6 +657,7 @@
     <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
     <ClCompile Include="Engine\Features\Particles\Systems\ParticlesSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
+    <ClCompile Include="Engine\Features\Animations\Systems\SkeletalAnimationSystem.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -668,12 +671,38 @@
     <ClCompile Include="vendor\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_tables.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="vendor\skeletalAnim\AssimpConverter\AssimpConverter.cpp" />
+    <ClCompile Include="vendor\skeletalAnim\SkeletalAnimation\SkeletalModel.cpp" />
+    <ClCompile Include="vendor\skeletalAnim\SkeletalAnimation\SkeletalModelSerializer.cpp" />
+    <ClCompile Include="vendor\StateMachine\imgui_node_graph_test.cpp" />
+    <ClCompile Include="vendor\StateMachine\pugixml.cpp" />
+    <ClCompile Include="vendor\StateMachine\State.cpp" />
+    <ClCompile Include="vendor\StateMachine\StateMachine.cpp" />
+    <ClCompile Include="vendor\StateMachine\StateMachineInteraction.cpp" />
+    <ClCompile Include="vendor\StateMachine\StateMachineLayer.cpp" />
+    <ClCompile Include="vendor\StateMachine\StateMachinePainter.cpp" />
+    <ClCompile Include="vendor\StateMachine\state_machine_graph.cpp" />
+    <ClCompile Include="vendor\StateMachine\Transition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
+    <ClInclude Include="Engine\Events\SySoundDeletedEvent.h" />
+    <ClInclude Include="Engine\Features\Sounds\Components\FSoundComponent.h" />
     <ClInclude Include="Engine\Components\Components.h" />
+    <ClInclude Include="Engine\Events\SyAnimatorComponentAdded.h" />
     <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
+    <ClInclude Include="Engine\Contexts\PhysicsContext.h" />
+    <ClInclude Include="Engine\Core\Tools\Macro.h" />
+    <ClInclude Include="Engine\Features\Common\EComponentTypes.h" />
+    <ClInclude Include="Engine\Features\Common\Events\OnAddComponentEvent.h" />
+    <ClInclude Include="Engine\Features\Common\Events\OnRemoveComponentEvent.h" />
+    <ClInclude Include="Engine\Features\Animations\AnimationDataTypes.h" />
+    <ClInclude Include="Engine\Features\Animations\Bone.h" />
+    <ClInclude Include="Engine\Features\Animations\Components\AnimatorComponent.h" />
+    <ClInclude Include="Engine\Features\Animations\SkeletalAnimation.h" />
     <ClInclude Include="Engine\Features\Events\Tags\SyEventTag.h" />
+    <ClInclude Include="Engine\Features\Physics\Components\JointComponent.h" />
+    <ClInclude Include="Engine\Features\Physics\Systems\JointSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.h" />
     <ClInclude Include="Engine\Components\ImageBasedLightingComponent.h" />
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
@@ -681,7 +710,7 @@
     <ClInclude Include="Engine\Core\ResourcePath.h" />
     <ClInclude Include="Engine\Events\SyHotReloadEvent.h" />
     <ClInclude Include="Engine\Events\SyImageBasedLightingUpdateEvent.h" />
-    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateColliderEvent.h" />
+    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateCollider.h" />
     <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateRBodyEvent.h" />
     <ClInclude Include="Engine\Events\SyPlayModeEndedEvent.h" />
     <ClInclude Include="Engine\Events\SyPlayModeStartedEvent.h" />
@@ -793,6 +822,7 @@
     <ClInclude Include="Engine\Features\Particles\Systems\ParticlesSystem.h" />
     <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.h" />
+    <ClInclude Include="Engine\Features\Animations\Systems\SkeletalAnimationSystem.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\core\algorithm.hpp" />
     <ClInclude Include="vendor\entt\core\any.hpp" />
@@ -844,6 +874,14 @@
     <ClInclude Include="vendor\entt\resource\fwd.hpp" />
     <ClInclude Include="vendor\entt\resource\loader.hpp" />
     <ClInclude Include="vendor\entt\resource\resource.hpp" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod.hpp" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_codec.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_common.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp_effects.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_errors.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_output.h" />
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
     <ClInclude Include="vendor\ImGuizmo\ImCurveEdit.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGradient.h" />
@@ -862,6 +900,20 @@
     <ClInclude Include="vendor\ImGui\imstb_truetype.h" />
     <ClInclude Include="vendor\DirectXTK\Inc\SimpleMath.h" />
     <ClInclude Include="vendor\nlohmann_json\json.hpp" />
+    <ClInclude Include="vendor\skeletalAnim\AssimpConverter\AssimpConverter.h" />
+    <ClInclude Include="vendor\skeletalAnim\SkeletalAnimation\SkeletalModel.h" />
+    <ClInclude Include="vendor\skeletalAnim\SkeletalAnimation\SkeletalModelSerializer.h" />
+    <ClInclude Include="vendor\skeletalAnim\SkeletalAnimation\Types.h" />
+    <ClInclude Include="vendor\StateMachine\imgui_node_graph_test.h" />
+    <ClInclude Include="vendor\StateMachine\pugiconfig.hpp" />
+    <ClInclude Include="vendor\StateMachine\pugixml.hpp" />
+    <ClInclude Include="vendor\StateMachine\State.h" />
+    <ClInclude Include="vendor\StateMachine\StateMachine.h" />
+    <ClInclude Include="vendor\StateMachine\StateMachineInteraction.h" />
+    <ClInclude Include="vendor\StateMachine\StateMachineLayer.h" />
+    <ClInclude Include="vendor\StateMachine\StateMachinePainter.h" />
+    <ClInclude Include="vendor\StateMachine\state_machine_graph.h" />
+    <ClInclude Include="vendor\StateMachine\Transition.h" />
     <ClInclude Include="vendor\stb_image.h" />
     <ClInclude Include="vendor\WICTextureLoader.h" />
   </ItemGroup>
@@ -962,6 +1014,9 @@
     <Image Include="Engine\Assets\SkyBox\skybox_4.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_5.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Engine\Features\Common\Events\OnRemoveComponentEvent" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

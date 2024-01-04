@@ -9,6 +9,7 @@
 #include "../../Mesh/Components/MeshComponent.h"
 #include "DirectXMath.h"
 #include "../../../Scene/CameraHelper.h"
+#include "../../Animations/Components/AnimatorComponent.h"
 
 SyResult ShadowRenderSystem::Init()
 {
@@ -21,9 +22,9 @@ SyResult ShadowRenderSystem::Init()
 
 SyResult ShadowRenderSystem::Run()
 {
-
     OPTICK_EVENT();
-    auto [camera, cameraTf] = CameraHelper::Find(_ecs);
+    
+    auto [camera, cameraTf] = CameraHelper::Find(_ecs, _ec->playModeState);
 
     auto viewLights = _ecs->view<LightComponent, TransformComponent>();
     for (auto& lightEnt : viewLights)
@@ -58,13 +59,37 @@ SyResult ShadowRenderSystem::Run()
                 for (int i = 0; i < 4; i++)
                     dataShadow.viewProjs[i] = light.ViewMatrices[i] * light.OrthoMatrices[i];
 
+                
+
                 D3D11_MAPPED_SUBRESOURCE mappedResource;
                 HRESULT res = _hc->context->Map(_rc->ShadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
                 CopyMemory(mappedResource.pData, &dataShadow, sizeof(CB_ShadowBuffer));
                 _hc->context->Unmap(_rc->ShadowConstBuffer->buffer.Get(), 0);
+
+
+                auto animComp = _ecs->try_get<AnimatorComponent>(ent);
+                if (animComp)
+                {
+                    res = _hc->context->Map(_rc->BonesConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                    CopyMemory(mappedResource.pData, animComp->m_FinalBoneMatrices.data(), sizeof(CB_BonesBuffer));
+                    _hc->context->Unmap(_rc->BonesConstBuffer->buffer.Get(), 0);
+                }
+                else
+                {
+                    res = _hc->context->Map(_rc->BonesConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                    CopyMemory(mappedResource.pData, _rc->AnimationDefaultMatrices.data(), sizeof(CB_BonesBuffer));
+                    _hc->context->Unmap(_rc->BonesConstBuffer->buffer.Get(), 0);
+                }
+
                 _hc->context->VSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
                 _hc->context->PSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
                 _hc->context->GSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
+
+                _hc->context->VSSetConstantBuffers(1, 1, _rc->BonesConstBuffer->buffer.GetAddressOf());
+                _hc->context->PSSetConstantBuffers(1, 1, _rc->BonesConstBuffer->buffer.GetAddressOf());
+                _hc->context->GSSetConstantBuffers(1, 1, _rc->BonesConstBuffer->buffer.GetAddressOf());
+
+               
 
                 for (auto& mesh : meshComp.model->meshes)
                 {
@@ -91,7 +116,7 @@ SyResult ShadowRenderSystem::Run()
                     //!_hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                     //    engineActor->model->strides, engineActor->model->offsets);
                     _hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
-                        meshComp.strides, meshComp.offsets);
+                        _rc->RhData.strides112, _rc->RhData.offsets0);
                     _hc->context->DrawIndexedInstanced(mesh->indexBuffer->size, 4, 0, 0,0);
                 }
             }
@@ -113,17 +138,17 @@ SyResult ShadowRenderSystem::Run()
                 light.ParamsRadiusAndAttenuation.x)*Matrix::CreateTranslation(lightTf._position);
             
             //dataShadow.baseData.world = engineActor->transform->world * engineActor->transform->GetViewMatrix();
-            dataShadow.view[0] = DirectX::XMMatrixLookAtLH( Vector3(lightTf._position), lightTf._position + Vector3(1, 0, 0),
+            dataShadow.view[0] = DirectX::XMMatrixLookAtLH(SyVector3(lightTf._position), lightTf._position + SyVector3(1, 0, 0),
                 Vector3(0, 1, 0));
-            dataShadow.view[1] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(-1, 0, 0),
+            dataShadow.view[1] = DirectX::XMMatrixLookAtLH(SyVector3(lightTf._position), lightTf._position + SyVector3(-1, 0, 0),
                 Vector3(0, 1, 0));
-            dataShadow.view[2] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(0, 1, 0),
+            dataShadow.view[2] = DirectX::XMMatrixLookAtLH(SyVector3(lightTf._position), lightTf._position + SyVector3(0, 1, 0),
                 Vector3(0, 0, -1));
-            dataShadow.view[3] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(0, -1, 0),
+            dataShadow.view[3] = DirectX::XMMatrixLookAtLH(SyVector3(lightTf._position), lightTf._position + SyVector3(0, -1, 0),
                 Vector3(0, 0, 1));
-            dataShadow.view[4] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(0, 0, 1),
+            dataShadow.view[4] = DirectX::XMMatrixLookAtLH(SyVector3(lightTf._position), lightTf._position + SyVector3(0, 0, 1),
                 Vector3(0, 1, 0));
-            dataShadow.view[5] = DirectX::XMMatrixLookAtLH(Vector3(lightTf._position), lightTf._position + Vector3(0, 0, -1),
+            dataShadow.view[5] = DirectX::XMMatrixLookAtLH(SyVector3(lightTf._position), lightTf._position + SyVector3(0, 0, -1),
                 Vector3(0, 1, 0));
 
 
@@ -170,7 +195,7 @@ SyResult ShadowRenderSystem::Run()
                     //!_hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
                     //    engineActor->model->strides, engineActor->model->offsets);
                     _hc->context->IASetVertexBuffers(0, 1, mesh->vertexBuffer->buffer.GetAddressOf(),
-                        meshComp.strides, meshComp.offsets);
+                        _rc->RhData.strides112, _rc->RhData.offsets0);
                     _hc->context->DrawIndexedInstanced(mesh->indexBuffer->size, 6, 0, 0,0);
                     
                 }

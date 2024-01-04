@@ -3,7 +3,7 @@
 #include "../../../Components/TransformComponent.h"
 #include "../Components/RBodyComponent.h"
 #include "../../Mesh/Components/MeshComponent.h"
-#include "../Events/SyOnCreateColliderEvent.h"
+#include "..\Events\SyOnCreateCollider.h"
 #include "PxPhysicsAPI.h"
 #include "RBSystem.h"
 
@@ -29,7 +29,7 @@ SyResult SyCollisionSystem::Run()
 	for (auto& eventEntity : eventView)
 	{
 		auto& entity = _ecs->get<SyOnCreateColliderEvent>(eventEntity).Entity;
-		auto* rbComponent = _ecs->try_get<SyRBodyComponent>(entity);
+		auto* rbComponent = _ecs->try_get<SyRigidBodyComponent>(entity);
 		if (rbComponent == nullptr)
 		{
 			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity (%d) is missing the RigidBody Component. Hence, you can't attach a collider component to it. The collider component has been removed. ", (int)entity);
@@ -84,11 +84,11 @@ SyResult SyCollisionSystem::Destroy()
 	return SyResult();
 }
 
-SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyComponent& rbComponent,
+SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRigidBodyComponent& rbComponent,
                                            SyPrimitiveColliderComponent& cComponent)
 {
 	SyResult result;
-	auto& pxMaterial = *SyRBodyComponent::_physics->createMaterial(	cComponent.Material.staticFriction,
+	auto& pxMaterial = *GET_PHYSICS_CONTEXT->Physics->createMaterial(	cComponent.Material.staticFriction,
 																	cComponent.Material.dynamicFriction,
 																	cComponent.Material.restitution);
 	switch (cComponent.ColliderType)
@@ -130,7 +130,7 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRBodyCo
 	return result;
 }
 
-SyResult SyCollisionSystem::InitComponentTm(const entt::entity& entity, SyRBodyComponent& rbComponent,
+SyResult SyCollisionSystem::InitComponentTm(const entt::entity& entity, SyRigidBodyComponent& rbComponent,
                                             SyTrimeshColliderComponent& cComponent, const MeshComponent& mComponent, const TransformComponent& tComponent)
 {
 	SyResult result;
@@ -148,7 +148,7 @@ SyResult SyCollisionSystem::InitComponentTm(const entt::entity& entity, SyRBodyC
 		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "You can't create TrimeshCollider Component on entity (%d) unless it's marked with flag KINEMATIC. ", (int)entity);
 		return result;
 	}
-	auto& pxMaterial = *SyRBodyComponent::_physics->createMaterial(	cComponent.Material.staticFriction,
+	auto& pxMaterial = *GET_PHYSICS_CONTEXT->Physics->createMaterial(	cComponent.Material.staticFriction,
 																	cComponent.Material.dynamicFriction,
 																	cComponent.Material.restitution);
 	auto meshPtr = mComponent.model->meshes[0];
@@ -177,7 +177,7 @@ SyResult SyCollisionSystem::InitComponentTm(const entt::entity& entity, SyRBodyC
  	}
 	PxMeshScale scale(tComponent.localScale, PxQuat(PxIdentity));
  	PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
- 	PxTriangleMesh* trimeshPtr = rbComponent._physics->createTriangleMesh(readBuffer);
+ 	PxTriangleMesh* trimeshPtr = GET_PHYSICS_CONTEXT->Physics->createTriangleMesh(readBuffer);
 	PxTriangleMeshGeometry trimeshGeometry = PxTriangleMeshGeometry(trimeshPtr, scale);
  	cComponent._shape = PxRigidActorExt::createExclusiveShape(*(rbComponent._rbActor),
  														trimeshGeometry,
