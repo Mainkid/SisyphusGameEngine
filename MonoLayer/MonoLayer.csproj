@@ -81,6 +81,7 @@
         <Compile Include="Datas\SyVector3.cs" />
         <Compile Include="Datas\SyVector4.cs" />
         <Compile Include="Datas\SyVector4Pair.cs" />
+        <Compile Include="Editor\Attributes\ColorNoAlphaAttribute.cs" />
         <Compile Include="Editor\Attributes\EditorFieldBaseAttribute.cs" />
         <Compile Include="Editor\Attributes\FloatRangeAttribute.cs" />
         <Compile Include="Editor\Attributes\FoldoutAttribute.cs" />

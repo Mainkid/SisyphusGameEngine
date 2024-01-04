@@ -9,7 +9,9 @@ public struct LightComp : SyEcs.IComp
 {
 	public EType      Type;
 	public EBehaviour Behaviour;
-	public SyColor    Color;
+	[ColorNoAlpha]
+	public SyColor Color;
+	public float Intensity;
     
 	[ShowIfEnum(nameof(Type), (int)EType.PointLight)]
 	[FloatRange(min:0.0f)]
@@ -23,7 +25,7 @@ public struct LightComp : SyEcs.IComp
 	
 
 	public override int GetHashCode()
-		=> HashHelper.Combine(Type, Behaviour, Color, PointLightRadius, ShouldCastShadows);
+		=> HashHelper.Combine(Type, Behaviour, Color, Intensity, PointLightRadius, ShouldCastShadows);
 	
 	
 	public enum EType

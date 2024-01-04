@@ -34,17 +34,18 @@ public struct SyColor : IEquatable<SyColor>
 		A = v.W;
 	}
 
-	public static implicit operator SyVector4(SyColor color)
-		=> new SyVector4(color.R, color.G, color.B, color.A);
-
-	public static implicit operator SyColor(SyVector4 v)
-		=> new SyColor(v.X, v.Y, v.Z, v.W);
-	
+	public SyColor WithA(float a) => new SyColor(R, G, B, a);
 	
 	public static SyColor White { get; } = new SyColor(1, 1, 1);
 	public static SyColor Red   { get; } = new SyColor(1, 0, 0);
 	public static SyColor Green { get; } = new SyColor(0, 1, 0);
 	public static SyColor Blue  { get; } = new SyColor(0, 0, 1);
+	
+	public static implicit operator SyVector4(SyColor color)
+		=> new SyVector4(color.R, color.G, color.B, color.A);
+
+	public static implicit operator SyColor(SyVector4 v)
+		=> new SyColor(v.X, v.Y, v.Z, v.W);
 	
 	
 	public static bool operator==(SyColor a, SyColor b) 

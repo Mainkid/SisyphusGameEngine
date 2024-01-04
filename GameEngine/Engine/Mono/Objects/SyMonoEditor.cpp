@@ -157,15 +157,28 @@ bool SyMonoEditor::GeDrawCurveField(MonoString* rawName, ProxyCurve* curve)
 }
 
 
-bool SyMonoEditor::GeDrawColorField(MonoString* rawName, ProxyVector4* val)
+bool SyMonoEditor::GeDrawColorField(MonoString* rawName, bool withAlpha, ProxyVector4* val)
 {
+	bool isChanged = false;
+
 	SyMonoStr name{ rawName };
-	float rawVal[4]{ val->X, val->Y, val->Z, val->W };
-	bool isChanged = ImGui::ColorEdit4(name, rawVal);
-	val->X = rawVal[0];
-	val->Y = rawVal[1];
-	val->Z = rawVal[2];
-	val->W = rawVal[3];
+	if (withAlpha)
+	{
+		float rawVal[4]{ val->X, val->Y, val->Z, val->W };
+		isChanged = ImGui::ColorEdit4(name, rawVal);
+		val->X = rawVal[0];
+		val->Y = rawVal[1];
+		val->Z = rawVal[2];
+		val->W = rawVal[3];
+	}
+	else
+	{
+		float rawVal[3]{ val->X, val->Y, val->Z };
+		isChanged = ImGui::ColorEdit3(name, rawVal);
+		val->X = rawVal[0];
+		val->Y = rawVal[1];
+		val->Z = rawVal[2];
+	}
 	return isChanged;
 }
 

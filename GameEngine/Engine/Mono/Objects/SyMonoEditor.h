@@ -50,7 +50,7 @@ namespace mono
 		static bool GeDrawVector3Field(MonoString* rawName, ProxyVector3* val);
 		static bool GeDrawVector4Field(MonoString* rawName, ProxyVector4* val);
 		static bool GeDrawCurveField(MonoString* rawName, ProxyCurve* curve);
-		static bool GeDrawColorField(MonoString* rawName, ProxyVector4* val);
+		static bool GeDrawColorField(MonoString* rawName, bool withAlpha, ProxyVector4* val);
 		static bool GeDrawEnumField(MonoString* rawName, MonoArray* rawItems, int* selected);
 		static bool GeDrawEntityField(MonoString* rawName, bool* isValid, uint32_t* rawEnt);
 		static bool GeDrawResField(MonoString* rawName, EProxyResourceType rawResType, MonoString** rawSelectedUuid);

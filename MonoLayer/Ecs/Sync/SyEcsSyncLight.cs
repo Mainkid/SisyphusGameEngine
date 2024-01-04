@@ -15,7 +15,7 @@ internal class SyEcsSyncLight : SyEcsSyncBase<LightComp, ProxyLightComp>
 		{
 			Type              = light.Type,
 			Behaviour         = light.Behaviour,
-			Color             = light.Color,
+			Color             = light.Color.WithA(light.Intensity),
 			PointLightRadius  = light.PointLightRadius,
 			ShouldCastShadows = light.ShouldCastShadows
 		};
@@ -27,6 +27,7 @@ internal class SyEcsSyncLight : SyEcsSyncBase<LightComp, ProxyLightComp>
 		light.Type              = proxy.Type;
 		light.Behaviour         = proxy.Behaviour;
 		light.Color             = proxy.Color;
+		light.Intensity         = proxy.Color.W;
 		light.PointLightRadius  = proxy.PointLightRadius;
 		light.ShouldCastShadows = proxy.ShouldCastShadows;
 	}

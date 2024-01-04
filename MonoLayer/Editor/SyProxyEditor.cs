@@ -220,7 +220,7 @@ public class SyProxyEditor
 	internal static extern bool GeDrawCurveField(string name, ref SyCurve curve);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
-	internal static extern bool GeDrawColorField(string name, ref SyColor val);
+	internal static extern bool GeDrawColorField(string name, bool withAlpha, ref SyColor val);
 	
 	[MethodImpl(MethodImplOptions.InternalCall)]
 	internal static extern bool GeDrawEnumField(string name, string[] items, ref int selected);
