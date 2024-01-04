@@ -102,6 +102,7 @@
     <ClCompile Include="vendor\ImGui\imgui_tables.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Engine\Features\Sounds\Systems\SoundSystem.cpp" />
+    <ClCompile Include="Engine\Features\Physics\Systems\JointSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -114,7 +115,6 @@
     <ClInclude Include="Engine\Core\ResourcePath.h" />
     <ClInclude Include="Engine\Events\SyHotReloadEvent.h" />
     <ClInclude Include="Engine\Events\SyImageBasedLightingUpdateEvent.h" />
-    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateColliderEvent.h" />
     <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateRBodyEvent.h" />
     <ClInclude Include="Engine\Events\SyPlayModeEndedEvent.h" />
     <ClInclude Include="Engine\Events\SyPlayModeStartedEvent.h" />
@@ -360,10 +360,22 @@
     <ClInclude Include="Engine\Features\Common\Events\OnAddComponentEvent.h" />
     <ClInclude Include="Engine\Features\Common\Events\OnRemoveComponentEvent.h" />
     <ClInclude Include="Engine\Features\Physics\Components\JointComponent.h" />
-    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateJoint.h" />
     <ClInclude Include="Engine\Features\Physics\Systems\JointSystem.h" />
     <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateCollider.h" />
-    <ClInclude Include="Engine\Features\Physics\Systems\RBodySimulationSystem.h" />
+    <ClInclude Include="Engine\Events\SySoundDeletedEvent.h" />
+    <ClInclude Include="Engine\Features\Sounds\Components\FSoundComponent.h" />
+    <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
+    <ClInclude Include="Engine\Contexts\PhysicsContext.h" />
+    <ClInclude Include="Engine\Scene\Prefab.h" />
+    <ClInclude Include="Engine\Scene\Scene.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod.hpp" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_codec.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_common.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_dsp_effects.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_errors.h" />
+    <ClInclude Include="vendor\FMod\api\core\inc\fmod_output.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Downloads\skybox.jpg" />
