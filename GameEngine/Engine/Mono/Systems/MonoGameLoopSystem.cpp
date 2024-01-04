@@ -17,6 +17,8 @@ SyResult MonoGameLoopSystem::Init()
 
 SyResult MonoGameLoopSystem::Run()
 {
+	OPTICK_EVENT()
+
 	if (!_monoEcs->IsValid() || !_monoGame->IsValid())
 		return {};
 

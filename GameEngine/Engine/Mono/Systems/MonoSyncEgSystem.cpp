@@ -14,6 +14,8 @@ SyResult MonoSyncEgSystem::Init()
 
 SyResult MonoSyncEgSystem::Run()
 {
+	OPTICK_EVENT()
+
 	if (!_monoEcs->IsValid())
 		return {};
 
