@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Recast.h"
-
+#include "DetourNavMesh.h"
+#include "DetourNavMeshQuery.h"
 #include <memory>
 
 
@@ -54,13 +55,18 @@ private:
     unsigned numTris;
     std::vector<int> triangles;
     std::vector<unsigned char> triAreaTypes;
+
+    rcConfig buildConfig;
+    std::shared_ptr<rcContext> recastContext = std::make_shared<rcContext>();
     std::shared_ptr<rcHeightfield> heightfield;
     std::shared_ptr<rcCompactHeightfield> compactHeightfield;
     std::shared_ptr<rcContourSet> contourSet;
     std::shared_ptr<rcPolyMesh> mesh;
-    rcConfig buildConfig;	
     std::shared_ptr<rcPolyMeshDetail> meshDetail;
-    std::shared_ptr<rcContext> recastContext = std::make_shared<rcContext>();
     rcAreaModification const SAMPLE_AREAMOD_GROUND = rcAreaModification(SAMPLE_POLYAREA_TYPE_GROUND, SAMPLE_POLYAREA_TYPE_MASK);;
+
+    std::shared_ptr<dtNavMesh> navMesh;
+    std::shared_ptr<dtNavMeshQuery> navQuery = std::make_shared<dtNavMeshQuery>();
+    static const int MAX_VERTS_PER_POLYGON = 6;
     friend class SyNavMeshSystem;
 };

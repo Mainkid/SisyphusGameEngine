@@ -4,7 +4,8 @@
 #include "../../Core/Tools/Macro.h"
 #include "../../Mesh/Components/MeshComponent.h"
 #include "../Components/NavMeshComponent.h"
-
+//#include "Sample.h"
+#include "DetourNavMeshBuilder.h"
 
 #define LOG_AND_RETURN_ERROR(messageText, ...)  result.code = SY_RESCODE_ERROR; \
                                                 result.message = xstring(messageText, __VA_ARGS__); \
@@ -50,6 +51,7 @@ SyResult SyNavMeshSystem::Destroy()
         rcFreeContourSet(navMeshC.contourSet.get());
         rcFreePolyMesh(navMeshC.mesh.get());
         rcFreePolyMeshDetail(navMeshC.meshDetail.get());
+        dtFreeNavMesh(navMeshC.navMesh.get());
     }
     return SyResult();
 }
@@ -129,6 +131,7 @@ SyResult SyNavMeshSystem::BuildNavMesh(const entt::entity& entity)
                     &navMeshC.buildConfig.width, &navMeshC.buildConfig.height);
 #pragma endregion
 #pragma region 2. Rasterize input polygon soup
+    navMeshC.recastContext->startTimer(RC_TIMER_TOTAL);
     navMeshC.heightfield = std::shared_ptr<rcHeightfield>(rcAllocHeightfield());
     if (!navMeshC.heightfield)
     {
@@ -180,6 +183,7 @@ SyResult SyNavMeshSystem::BuildNavMesh(const entt::entity& entity)
     //     delete [] m_triareas;
     //     m_triareas = 0;
     // }
+#pragma endregion
 #pragma region 3. Filter walkables surfaces
     rcFilterLowHangingWalkableObstacles(navMeshC.recastContext.get(),
                                         navMeshC.buildConfig.walkableClimb,
@@ -292,6 +296,81 @@ SyResult SyNavMeshSystem::BuildNavMesh(const entt::entity& entity)
         LOG_AND_RETURN_ERROR("Could not build detail mesh for NavMesh Component on entity (%s). ", entityName);
     }
 #pragma endregion
-    SY_LOG_AI(SY_LOGLEVEL_INFO, "NavMesh build complete!");
+#pragma region 8. Create Detour data from Recast poly mesh
+    assert(navMeshC.maxVertsPerPoly <= SyNavMeshComponent::MAX_VERTS_PER_POLYGON);
+    unsigned char* navData = 0;
+    int navDataSize = 0;
+
+    // Update poly flags from areas.
+    // for (int i = 0; i < navMeshC.mesh->npolys; ++i)
+    // {
+	   //  navMeshC.mesh->flags[i] = sampleAreaToFlags(navMeshC.mesh->areas[i]);
+    // }
+
+
+    dtNavMeshCreateParams params;
+    memset(&params, 0, sizeof(params));
+    params.verts = navMeshC.mesh->verts;
+    params.vertCount = navMeshC.mesh->nverts;
+    params.polys = navMeshC.mesh->polys;
+    params.polyAreas = navMeshC.mesh->areas;
+    params.polyFlags = navMeshC.mesh->flags;
+    params.polyCount = navMeshC.mesh->npolys;
+    params.nvp = navMeshC.mesh->nvp;
+    params.detailMeshes = navMeshC.meshDetail->meshes;
+    params.detailVerts = navMeshC.meshDetail->verts;
+    params.detailVertsCount = navMeshC.meshDetail->nverts;
+    params.detailTris = navMeshC.meshDetail->tris;
+    params.detailTriCount = navMeshC.meshDetail->ntris;
+    params.offMeshConVerts = nullptr;
+    params.offMeshConRad = nullptr;
+    params.offMeshConDir = nullptr;
+    params.offMeshConAreas = nullptr;
+    params.offMeshConFlags = nullptr;
+    params.offMeshConUserID = nullptr;
+    params.offMeshConCount = 0;
+    params.walkableHeight = navMeshC.agentHeight;
+    params.walkableRadius = navMeshC.agentRadius;
+    params.walkableClimb = navMeshC.agentMaxClimb;
+    rcVcopy(params.bmin, navMeshC.mesh->bmin);
+    rcVcopy(params.bmax, navMeshC.mesh->bmax);
+    params.cs = navMeshC.buildConfig.cs;
+    params.ch = navMeshC.buildConfig.ch;
+    params.buildBvTree = true;
+
+    if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
+    {
+        navMeshC.recastContext->log(RC_LOG_ERROR, "Could not create navmesh data .");
+	    LOG_AND_RETURN_ERROR("Could not create navmesh data for NavMesh component for entity (%s). ", entityName)
+    }
+
+    navMeshC.navMesh = std::shared_ptr<dtNavMesh>(dtAllocNavMesh());
+    if (!navMeshC.navMesh)
+    {
+	    dtFree(navData);
+	    navMeshC.recastContext->log(RC_LOG_ERROR, "Could not create Detour navmesh");
+        LOG_AND_RETURN_ERROR("Could not create Detour navmesh for NavMesh component for entity (%s). ", entityName)
+    }
+    dtStatus status;
+    status = navMeshC.navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA);
+    if (dtStatusFailed(status))
+    {
+	    dtFree(navData);
+	    navMeshC.recastContext->log(RC_LOG_ERROR, "Could not init Detour navmesh");
+        LOG_AND_RETURN_ERROR("Could not init Detour navmesh for NavMesh component for entity (%s). ", entityName)
+    }
+
+    status = navMeshC.navQuery->init(navMeshC.navMesh.get(), 2048);
+    if (dtStatusFailed(status))
+    {
+	    navMeshC.recastContext->log(RC_LOG_ERROR, "Could not init Detour navmesh query");
+        LOG_AND_RETURN_ERROR("Could not init Detour navmesh query for NavMesh component for entity (%s). ", entityName)
+    }
+#pragma endregion
+    navMeshC.recastContext->stopTimer(RC_TIMER_TOTAL);
+    
+    SY_LOG_AI(SY_LOGLEVEL_INFO,     "NavMesh build complete. Polymesh: %d vertices  %d polygons",
+                                    navMeshC.mesh->nverts,
+                                    navMeshC.mesh->npolys);
     return SyResult();
 }

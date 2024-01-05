@@ -45,17 +45,17 @@ int main()
 
 
 #pragma region Test Base
-    auto base = GameObjectHelper::Create(ecs, "Base", { 0.0f, -5.0f, 13.0f });
-    ecs->get<TransformComponent>(base).scale = {10.0f, 1.0f, 10.0f};
-    auto result1 = GameObjectHelper::AddRigidBodyComponent(ecs, base, STATIC);
-    auto result2 = GameObjectHelper::AddCubeMeshComponent(ecs, base);
-    ecs->get<MeshComponent>(base).flags |= AFFECTS_NAVMESH;
-    SyPrimitiveColliderShapeDesc baseColDesc;
-    baseColDesc.Extent = { 10.0f, 1.0f, 10.0f };
-    auto result3 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, base,
-                                                            BOX,
-                                                            baseColDesc,
-                                                            SyColliderMaterial());
+     auto base = GameObjectHelper::Create(ecs, "Base", { 0.0f, -5.0f, 13.0f });
+     ecs->get<TransformComponent>(base).scale = {10.0f, 1.0f, 10.0f};
+     auto result1 = GameObjectHelper::AddRigidBodyComponent(ecs, base, STATIC);
+     auto result2 = GameObjectHelper::AddCubeMeshComponent(ecs, base);
+     ecs->get<MeshComponent>(base).flags |= AFFECTS_NAVMESH;
+     SyPrimitiveColliderShapeDesc baseColDesc;
+     baseColDesc.Extent = { 10.0f, 1.0f, 10.0f };
+     auto result3 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, base,
+                                                             BOX,
+                                                             baseColDesc,
+                                                             SyColliderMaterial());
 #pragma endregion 
 
 #pragma region Test Mesh
@@ -101,10 +101,13 @@ int main()
     //ecs->emplace<SyFixedJointComponent>(cube2, cube1);
 
 #pragma endregion
-
+   
+   
 #pragma region NavMesh
-    auto navMeshEntity = GameObjectHelper::Create(ecs, "NavMesh", SyVector3::ZERO);
+    auto navMeshEntity = GameObjectHelper::Create(ecs, "NavMesh", { 0.0f, -5.0f, 13.0f });
     auto result01 = ecs->emplace<SyNavMeshComponent>(navMeshEntity);
+    auto& nmc = ecs->get<SyNavMeshComponent>(navMeshEntity);
+    nmc.extent = SyVector3::ONE * 10.0f;
 #pragma endregion
 
     //sound
