@@ -41,6 +41,16 @@ SyResult SyNavMeshSystem::Run()
 
 SyResult SyNavMeshSystem::Destroy()
 {
+    auto view = _ecs->view<SyNavMeshComponent>();
+    for (auto& entity : view)
+    {
+        auto& navMeshC = _ecs->get<SyNavMeshComponent>(entity);
+        rcFreeHeightField(navMeshC.heightfield.get());
+        rcFreeCompactHeightfield(navMeshC.compactHeightfield.get());
+        rcFreeContourSet(navMeshC.contourSet.get());
+        rcFreePolyMesh(navMeshC.mesh.get());
+        rcFreePolyMeshDetail(navMeshC.meshDetail.get());
+    }
     return SyResult();
 }
 
