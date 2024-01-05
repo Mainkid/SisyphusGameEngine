@@ -13,5 +13,6 @@ public:
     SyResult Destroy() override;
     
 private:
+    SyResult PrepareData(const entt::entity& entity);
     SyResult BuildNavMesh(const entt::entity& entity);
 };

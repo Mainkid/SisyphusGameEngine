@@ -63,7 +63,7 @@ SyResult SyErrorLoggingSystem::Run()
 			switch (sink)
 			{
 			case SY_SINK_CONSOLE:
-				//std::cout << message.ToString();
+				std::cout << message.ToString();
 				break;
 			case SY_SINK_TXT:
 				fout << message.ToString();

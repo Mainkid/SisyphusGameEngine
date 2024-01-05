@@ -13,6 +13,8 @@
 #include "Features/Physics/Components/JointComponent.h"
 #include "Serialization/Serializable.h"
 
+#include "Features/AI/Components/NavMeshComponent.h"
+
 
 #define SY_PI 3.14f
 #define SY_PI2 SY_PI / 2
@@ -47,6 +49,7 @@ int main()
     ecs->get<TransformComponent>(base).scale = {10.0f, 1.0f, 10.0f};
     auto result1 = GameObjectHelper::AddRigidBodyComponent(ecs, base, STATIC);
     auto result2 = GameObjectHelper::AddCubeMeshComponent(ecs, base);
+    ecs->get<MeshComponent>(base).flags |= AFFECTS_NAVMESH;
     SyPrimitiveColliderShapeDesc baseColDesc;
     baseColDesc.Extent = { 10.0f, 1.0f, 10.0f };
     auto result3 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, base,
@@ -98,29 +101,11 @@ int main()
     //ecs->emplace<SyFixedJointComponent>(cube2, cube1);
 
 #pragma endregion
-    
-    
-    //---------- Serialization test ----------------
 
-    // ser::Serializer& ser = ServiceLocator::instance()->Get<EngineContext>()->serializer;
-    // ser.AddEcsCompMeta<GameObjectComp>();
-    // ser.AddEcsCompMeta<TransformComponent>();
-    // ser.AddEcsCompMeta<MeshComponent>();
-    // ser.AddEcsCompMeta<LightComponent>();
-    // ser.AddEcsCompMeta<EditorBillboardComponent>();
-    //
-    // auto json = ser.Serialize<GameObjectComp>(*ecs);
-    // std::ofstream file;
-    // file.open("scene.json", std::ios::trunc);
-    // file << std::setw(1) << json;
-    // file.close();
-    //
-    // auto view = ecs->view<GameObjectComp>();
-    // for (auto ent : view)
-    //     ecs->destroy(ent);
-    //
-    // ser.Deserialize(json, *ecs);
-    //---------------------------------------------
+#pragma region NavMesh
+    auto navMeshEntity = GameObjectHelper::Create(ecs, "NavMesh", SyVector3::ZERO);
+    auto result01 = ecs->emplace<SyNavMeshComponent>(navMeshEntity);
+#pragma endregion
 
     //sound
     GameObjectHelper::CreateSoundComponent(ecs);
