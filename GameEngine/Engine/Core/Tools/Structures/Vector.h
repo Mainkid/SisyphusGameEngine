@@ -44,6 +44,12 @@ public:
 		y = pxVector3_.y;
 		z = pxVector3_.z;
 	}
+	SyVector3(const float* vectorf) : SyVector3()
+	{
+		x = vectorf[0];
+		y = vectorf[1];
+		z = vectorf[2];
+	}
 	operator const DirectX::SimpleMath::Vector3&() const
 	{
 		return dxVector3;
@@ -103,19 +109,19 @@ public:
 		z /= divisor_;
 		return *this;
 	}
-	SyVector3 ReflectX()
+	SyVector3 ReflectX() const
 	{
 		SyVector3 newVector = *this;
 		newVector.x *= -1;
 		return newVector;
 	}
-	SyVector3 ReflectY()
+	SyVector3 ReflectY() const
 	{
 		SyVector3 newVector = *this;
 		newVector.y *= -1;
 		return newVector;
 	}
-	SyVector3 ReflectZ()
+	SyVector3 ReflectZ() const
 	{
 		SyVector3 newVector = *this;
 		newVector.z *= -1;

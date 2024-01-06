@@ -3,7 +3,7 @@
 #include "DetourNavMesh.h"
 #include "DetourNavMeshQuery.h"
 #include <memory>
-
+#include "../../Core/Graphics/Buffer.h"
 
 /// Mask of the ceil part of the area id (3 lower bits)
 /// the 0 value (RC_NULL_AREA) is left unused
@@ -31,6 +31,7 @@ enum ESyNavMeshPartitionType
 struct SyNavMeshComponent
 {
 public:
+    //---- User vars ----
     SyVector3 origin = SyVector3::ZERO;        //center of navmesh AABB
     SyVector3 extent = SyVector3::ONE;         //extent of navmesh AABB 
     float cellSize = 0.3f;                     //xz-plane cell size
@@ -49,13 +50,15 @@ public:
     
     ESyNavMeshPartitionType partitioningType;
 private:
-
+    //---- Engine vars ----
+    //---- Scene Mesh vars
     unsigned numVerts;
     std::vector<float> vertices;
     unsigned numTris;
     std::vector<int> triangles;
     std::vector<unsigned char> triAreaTypes;
 
+    //---- Recast navmesh vars ----
     rcConfig buildConfig;
     std::shared_ptr<rcContext> recastContext = std::make_shared<rcContext>();
     std::shared_ptr<rcHeightfield> heightfield;
@@ -65,8 +68,21 @@ private:
     std::shared_ptr<rcPolyMeshDetail> meshDetail;
     rcAreaModification const SAMPLE_AREAMOD_GROUND = rcAreaModification(SAMPLE_POLYAREA_TYPE_GROUND, SAMPLE_POLYAREA_TYPE_MASK);;
 
+    //---- Detour vars
     std::shared_ptr<dtNavMesh> navMesh;
     std::shared_ptr<dtNavMeshQuery> navQuery = std::make_shared<dtNavMeshQuery>();
     static const int MAX_VERTS_PER_POLYGON = 6;
+
+    //---- Debug draw vars
+    std::shared_ptr<Buffer> _aabbVertexBuffer = std::make_shared<Buffer>();
+    std::shared_ptr<Buffer> _aabbIndexBuffer = std::make_shared<Buffer>();
+    bool _wasMeshDataPrepared = true;
+    std::shared_ptr<Buffer> _meshVertexBuffer = std::make_shared<Buffer>();
+    bool _wasIntEdgesDataPrepared = true;
+    std::shared_ptr<Buffer> _internalEdgesVertexBuffer = std::make_shared<Buffer>();
+    bool _wasExtEdgesDataPrepared = true;
+    std::shared_ptr<Buffer> _externalEdgesVertexBuffer = std::make_shared<Buffer>();
+    
     friend class SyNavMeshSystem;
+    friend class SyNavMeshDrawSystem;
 };

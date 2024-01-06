@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Features\AI\Systems\NavMeshDrawSystem.cpp" />
     <ClCompile Include="Engine\Features\AI\Systems\NavMeshSystem.cpp" />
     <ClCompile Include="Engine\Features\Physics\Systems\JointSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
@@ -694,6 +695,7 @@
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="Engine\Events\SySoundDeletedEvent.h" />
     <ClInclude Include="Engine\Features\AI\Components\NavMeshComponent.h" />
+    <ClInclude Include="Engine\Features\AI\Systems\NavMeshDrawSystem.h" />
     <ClInclude Include="Engine\Features\AI\Systems\NavMeshSystem.h" />
     <ClInclude Include="Engine\Features\Sounds\Components\FSoundComponent.h" />
     <ClInclude Include="Engine\Components\Components.h" />
