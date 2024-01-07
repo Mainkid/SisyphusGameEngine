@@ -52,6 +52,21 @@ void TransformHelper::UpdateTransformMatrix(TransformComponent& tc)
 	tc.scale = scaleNew;
 	tc._rotation = q.ToEuler();
 
+	//if (curID == entt::null)
+	//{
+	//	tc.localPosition = tc._position;
+	//	tc.localScale = tc.scale;
+	//	tc.localRotation = tc._rotation;
+
+	//	size_t seed = 0;
+	//	boost::hash_combine(seed, tc.localPosition);
+	//	boost::hash_combine(seed, tc.localRotation);
+	//	boost::hash_combine(seed, tc.scale);
+
+	//	tc.localHash = seed;
+
+	//}
+
 	size_t seed = 0;
 	boost::hash_combine(seed, tc._position);
 	boost::hash_combine(seed, tc._rotation);
@@ -69,18 +84,19 @@ void TransformHelper::UpdateWorldTransformMatrix(TransformComponent& tc, Matrix 
 	//{
 		Quaternion rotation;
 		tc.transformMatrix = Matrix::CreateScale(tc.scale) * Matrix::CreateFromYawPitchRoll(tc._rotation) * Matrix::CreateTranslation(tc._position);
-		tc.transformMatrix = tc.transformMatrix * parentTransform;
-		tc.transformMatrix.Decompose(tc.localScale, rotation, tc.localPosition);
+		//tc.transformMatrix = tc.transformMatrix * parentTransform;
+		auto localTransforms = tc.transformMatrix * parentTransform.Invert();
+		localTransforms.Decompose(tc.localScale, rotation, tc.localPosition);
 
-		tc.localPosition = tc._position;
+		//tc.localPosition = tc._position;
 		tc.localRotation = rotation.ToEuler();
-		tc.localScale = tc.scale;
+		//tc.localScale = tc.scale;
 
-		//boost::hash_combine(seed, tc.localPosition);
-		//boost::hash_combine(seed, tc.localRotation);
-		//boost::hash_combine(seed, tc.localScale);
+		boost::hash_combine(seed, tc.localPosition);
+		boost::hash_combine(seed, tc.localRotation);
+		boost::hash_combine(seed, tc.localScale);
 
-		//tc.localHash = seed;
+		tc.localHash = seed;
 	//}
 
 }

@@ -40,7 +40,7 @@ public class PlayerMoveSystem : SyEcsSystemBase
 		ref var player = ref Ecs.GetComp<PlayerData>(ent);
 		ref var tf     = ref Ecs.GetComp<TransformComp>(ent);
 
-		tf.LocalPosition += dir * player.MoveSpeed * Ecs.GetSingleton<TimeData>().DeltaTime;
+		tf.Position += dir * player.MoveSpeed * Ecs.GetSingleton<TimeData>().DeltaTime;
 	}
 }
 }

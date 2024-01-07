@@ -24,6 +24,6 @@ public struct TransformComp : SyEcs.IInternalComp
     public override string ToString() => $"({Position}, {Rotation}, {Scale})";
 
     public override int GetHashCode()
-	    => HashHelper.Combine(LocalPosition, LocalRotation, LocalScale);
+	    => HashHelper.Combine(Position,Rotation,Scale,LocalPosition, LocalRotation, LocalScale);
 }
 }
