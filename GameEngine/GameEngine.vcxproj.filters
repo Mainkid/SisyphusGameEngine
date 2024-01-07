@@ -12,6 +12,7 @@
     <FxCompile Include="Engine\Assets\Shaders\SpotLightShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\StencilPassShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\TextureShader.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\LineShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
@@ -122,6 +123,7 @@
     <ClCompile Include="vendor\recastnavigation\Detour\Source\DetourNavMeshBuilder.cpp" />
     <ClCompile Include="vendor\recastnavigation\Detour\Source\DetourNavMeshQuery.cpp" />
     <ClCompile Include="vendor\recastnavigation\Detour\Source\DetourNode.cpp" />
+    <ClCompile Include="Engine\Features\Rendering\RenderPipeline\NavMeshDrawSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -411,6 +413,7 @@
     <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourNavMeshQuery.h" />
     <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourNode.h" />
     <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourStatus.h" />
+    <ClInclude Include="Engine\Features\Rendering\RenderPipeline\NavMeshDrawSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Downloads\skybox.jpg" />

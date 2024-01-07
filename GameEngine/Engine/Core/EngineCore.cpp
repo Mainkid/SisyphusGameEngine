@@ -103,7 +103,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<SoundSystem>();
 	_systems.Add<MonoSyncSystem>();
 	_systems.Add<SyNavMeshSystem>();
-	_systems.Add<SyNavMeshDrawSystem>();
+	
 
 
 
@@ -129,6 +129,7 @@ void EngineCore::StartUpSystems()
 	_systems.Add<EditorBillboardRenderSystem>();
 	_systems.Add<ToneMappingRenderSystem>();
 	_systems.Add<EditorColliderRenderSystem>();
+	_systems.Add<SyNavMeshDrawSystem>();
 	_systems.Add<EditorGridRenderSystem>();
 	_systems.Add<PostViewportRenderSystem>();
 
