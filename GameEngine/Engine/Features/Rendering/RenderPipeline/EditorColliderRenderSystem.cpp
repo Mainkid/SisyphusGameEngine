@@ -28,6 +28,7 @@ SyResult EditorColliderRenderSystem::Run()
 	auto [camera, cameraTransform] = CameraHelper::Find(_ecs,_ec->playModeState);
 
 	dataOpaque.baseData.worldViewProj = camera.view * camera.projection;
+	dataOpaque.eyePos.x = 2;
 	_hc->context->OMSetDepthStencilState(_rc->OffStencilState.Get(), 0);
 
 

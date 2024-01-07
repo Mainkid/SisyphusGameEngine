@@ -12,27 +12,28 @@ cbuffer mycBuffer : register(b0)
 struct VS_IN
 {
     float4 pos : POSITION0;
+    float4 color : COLOR0;
 };
 
 struct PS_IN
 {
     float4 pos : SV_Position;
     float4 worldPos : Position;
+    float4 color : COLOR;
 };
 
 PS_IN VSMain(VS_IN input)
 {
-    PS_IN output = (PS_IN) 0;
-    output.pos = mul(input.pos, world);
-    output.pos = mul(output.pos, worldViewProj);
+    PS_IN output = (PS_IN)0;
+    output.pos = mul(input.pos, worldViewProj);
+    output.worldPos = mul(input.pos, worldView);
+    output.color = input.color;
     return output;
 }
 
 float4 PSMain(PS_IN input) : SV_Target
 {
-    if (eyePos.x > 1)
-        return float4(0, 1, 0, 1);
-    else
-        return float4(0,1,1,1);
+    float4 col = input.color;
+    return float4(col.xyz,1);
 
 }

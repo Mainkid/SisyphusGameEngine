@@ -101,7 +101,7 @@ SyResult SyNavMeshDrawSystem::Run()
             _hc->context->PSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
             _hc->renderTarget->SetRenderTarget(_hc->depthStencilView.Get());
             _hc->context->IASetInputLayout(_rc->NavMeshShader->layout.Get());
-            _hc->context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+            _hc->context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 
             //_hc->context->IASetIndexBuffer(navMesh._meshVertexBuffer.get()->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
@@ -112,7 +112,23 @@ SyResult SyNavMeshDrawSystem::Run()
             _hc->context->VSSetShader(_rc->NavMeshShader->vertexShader.Get(), nullptr, 0);
             _hc->context->PSSetShader(_rc->NavMeshShader->pixelShader.Get(), nullptr, 0);
             _hc->context->Draw(navMesh._meshVertexBuffer.get()->size/(sizeof(Vector4)*2), 0);
-           // _hc->context->DrawIndexed(navMesh._mesh, 0, 0);
+            
+            //------External Edges-----
+
+            _hc->context->VSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
+            _hc->context->PSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
+            _hc->renderTarget->SetRenderTarget(_hc->depthStencilView.Get());
+            _hc->context->IASetInputLayout(_rc->LineShader->layout.Get());
+            _hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+
+            _hc->context->IASetVertexBuffers(0, 1, navMesh._externalEdgesVertexBuffer.get()->buffer.GetAddressOf(),
+                _rc->RhData.strides32, _rc->RhData.offsets0);
+
+
+            _hc->context->VSSetShader(_rc->LineShader->vertexShader.Get(), nullptr, 0);
+            _hc->context->PSSetShader(_rc->LineShader->pixelShader.Get(), nullptr, 0);
+
+            _hc->context->Draw(navMesh._externalEdgesVertexBuffer.get()->size / (sizeof(Vector4) * 2), 0);
 
         }
 
@@ -265,7 +281,7 @@ SyResult SyNavMeshDrawSystem::PrepareRenderDataInternalEdges(const entt::entity&
 SyResult SyNavMeshDrawSystem::PrepareRenderDataExternalEdges(const entt::entity& entity, SyNavMeshComponent& navMeshC)
 {
     SyResult result;
-    std::vector<SyVector3> vertices;
+    std::vector<Vector4> vertices;
     if (navMeshC.meshDetail.get() == nullptr)
     {
         SY_LOG_AI(SY_LOGLEVEL_ERROR, "No NavMesh detail found on entity (%s)", SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
@@ -274,6 +290,9 @@ SyResult SyNavMeshDrawSystem::PrepareRenderDataExternalEdges(const entt::entity&
         result.message = xstring("No NavMesh detail found on entity (%s)", SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
         return result;
     }
+
+    Vector4 tmp;
+    SyVector3 tmpSy;
     const auto& dmesh = *navMeshC.meshDetail.get();
     for (int i = 0; i < dmesh.nmeshes; ++i)
     {
@@ -293,16 +312,25 @@ SyResult SyNavMeshDrawSystem::PrepareRenderDataExternalEdges(const entt::entity&
                 if (ef != 0)
                 {
                     // Ext edge
-                    vertices.push_back(&verts[t[kp] * 3]);
-                    vertices.push_back(&verts[t[k] * 3]);
+                    tmpSy = &verts[t[kp] * 3];
+
+                    vertices.push_back(Vector4(tmpSy.x,tmpSy.y,tmpSy.z,1));
+                    vertices.push_back(Vector4(0, 0, 0, 1));
+
+
+                    tmpSy = &verts[t[k] * 3];
+                    vertices.push_back(Vector4(tmpSy.x, tmpSy.y, tmpSy.z, 1));
+                    vertices.push_back(Vector4(0, 0, 0, 1));
                 }
             }
         }
     }
+
+
     std::vector<SyVector3> colors(vertices.size(), SyVector3::ZERO); //paint it black
     navMeshC._wasExtEdgesDataPrepared = false;
     //!!!
-    //navMeshC._externalEdgesVertexBuffer->Initialize(vertices, colors);
+    navMeshC._externalEdgesVertexBuffer->Initialize(vertices);
     return SyResult();
 }
 

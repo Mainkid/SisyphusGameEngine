@@ -81,6 +81,7 @@ struct RenderContext : public IService
 	 * NavMesh shader;
 	 */
 	std::unique_ptr<Shader> NavMeshShader;
+	std::unique_ptr<Shader> LineShader;
 
 
 	std::shared_ptr<Mesh> CubeMesh;

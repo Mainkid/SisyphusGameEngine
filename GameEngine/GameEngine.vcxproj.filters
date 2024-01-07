@@ -13,6 +13,7 @@
     <FxCompile Include="Engine\Assets\Shaders\StencilPassShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\TextureShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\NavMesh.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\LineShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
