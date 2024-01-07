@@ -28,7 +28,7 @@ SyResult SkyboxSystem::Run()
 		if (sc.Hash!= sc_hash)
 		{
 			sc.SkyboxRes = std::static_pointer_cast<SkyboxResource>(_rs->LoadResource(sc.uuid));
-			CallEvent<SyImageBasedLightingUpdateEvent>("SyImageBasedLightingUpdateEvent");
+			CallEvent<SyImageBasedLightingUpdateEvent>();
 			sc.Hash = _hasher(sc.uuid);
 		}
 	}

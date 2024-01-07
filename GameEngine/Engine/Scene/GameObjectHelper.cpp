@@ -2,7 +2,6 @@
 
 #include "../../../vendor/entt/entt.hpp"
 #include "../Features/Physics/Components/RBodyComponent.h"
-#include "..\Features\Physics\Events\SyOnCreateCollider.h"
 #include "../Features/Mesh/Components/MeshComponent.h"
 #include "../Features/Lighting/Components/LightComponent.h"
 #include "../../Components/TransformComponent.h"
@@ -124,7 +123,6 @@ SyResult GameObjectHelper::AddRigidBodyComponent(entt::registry* ecs, entt::enti
 									rbType,
 									mass,
 									flags);
-	CallEvent<SyOnCreateRBodyEvent>(ecs, "OnCreateRBody", entity);
 	//ecs->emplace<SyRbCreateOnNextUpdateTag>(entity);
 	return result;
 }
@@ -152,7 +150,6 @@ SyResult GameObjectHelper::AddPrimitiveColliderComponent(entt::registry* ecs, en
 		return result;
 	}
 	ecs->emplace<SyPrimitiveColliderComponent>(entity, colliderType, colliderShapeDesc,  material);
-	CallEvent<SyOnCreateColliderEvent>(ecs, "OnCreateCollider", entity);
 	return result;
 }
 
@@ -186,7 +183,6 @@ SyResult GameObjectHelper::AddTrimeshColliderComponent(entt::registry* ecs, entt
 		return result;
 	}
 	ecs->emplace<SyTrimeshColliderComponent>(entity, material);
-	CallEvent<SyOnCreateColliderEvent>(ecs, "OnCreateCollider", entity);
 	return result;
 }
 
@@ -250,7 +246,7 @@ SyResult GameObjectHelper::AddAnimatorComponent(entt::registry* ecs, entt::entit
 	}
 
 	ecs->emplace<AnimatorComponent>(entity);
-	CallEvent<SyAnimatorComponentAdded>(ecs, "SyAnimatorComponentAdded", entity);
+	CallEvent<SyAnimatorComponentAdded>(ecs, entity);
 
 	return SyResult();
 }

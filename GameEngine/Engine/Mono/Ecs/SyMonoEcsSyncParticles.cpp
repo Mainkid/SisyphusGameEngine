@@ -15,13 +15,13 @@ using namespace mono;
 void SyMonoEcsSyncParticles::AddComp(entt::entity ent)
 {
 	_ecs->emplace<ParticleComponent>(ent);
-	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncParticles::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<ParticleComponent>(ent);
-	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncParticles::FillProxyByComp(const ParticleComponent& comp)

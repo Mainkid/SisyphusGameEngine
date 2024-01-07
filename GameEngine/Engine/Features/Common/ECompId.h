@@ -7,7 +7,8 @@ enum class ECompId
 	Mesh,
 	Light,
 
-	Collider,
+	PrimCollider,
+	TriMeshCollider,
 	Rigid,
 	FixedJoint,
 	HingeJoint,
@@ -35,7 +36,7 @@ inline std::ostream& operator<<(std::ostream& os, ECompId id)
 	case ECompId::Light:
 		os << "Light";
 		break;
-	case ECompId::Collider:
+	case ECompId::PrimCollider:
 		os << "Collider";
 		break;
 	case ECompId::Rigid:

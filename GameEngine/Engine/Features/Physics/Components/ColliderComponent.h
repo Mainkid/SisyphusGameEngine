@@ -86,6 +86,7 @@ struct SyTrimeshColliderComponent
     //members initialized in CollisionSystem::InitComponentTm
 
 private:
+    bool _wasInit = false;
     physx::PxShape* _shape;
     
     friend class SyCollisionSystem;

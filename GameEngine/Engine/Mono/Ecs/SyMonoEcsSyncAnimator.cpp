@@ -14,14 +14,14 @@ using namespace mono;
 void SyMonoEcsSyncAnimator::AddComp(entt::entity ent)
 {
 	_ecs->emplace<AnimatorComponent>(ent);
-	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", ECompId::Animator, ent, true);
-	GameObjectHelper::CallEvent<SyAnimatorComponentAdded>(_ecs, "Mono", ent);
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, ECompId::Animator, ent, true);
+	GameObjectHelper::CallEvent<SyAnimatorComponentAdded>(_ecs, ent);
 }
 
 void SyMonoEcsSyncAnimator::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<AnimatorComponent>(ent);
-	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", ECompId::Animator, ent, true);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, ECompId::Animator, ent, true);
 }
 
 void SyMonoEcsSyncAnimator::FillProxyByComp(const AnimatorComponent& comp)

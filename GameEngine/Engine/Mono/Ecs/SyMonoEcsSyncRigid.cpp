@@ -9,13 +9,13 @@ using namespace mono;
 void SyMonoEcsSyncRigid::AddComp(entt::entity ent)
 {
 	_ecs->emplace<SyRigidBodyComponent>(ent);
-	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncRigid::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<SyRigidBodyComponent>(ent);
-	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncRigid::FillProxyByComp(const SyRigidBodyComponent& comp)

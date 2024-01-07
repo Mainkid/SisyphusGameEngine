@@ -9,13 +9,13 @@ using namespace mono;
 void SyMonoEcsSyncCamera::AddComp(entt::entity ent)
 {
 	_ecs->emplace<CameraComponent>(ent);
-	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncCamera::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<CameraComponent>(ent);
-	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncCamera::FillProxyByComp(const CameraComponent& comp)

@@ -15,13 +15,13 @@ void SyMonoEcsSyncMesh::AddComp(entt::entity ent)
 	auto uuid = resService->baseResourceDB[EAssetType::ASSET_MESH].uuid;
 	_ecs->emplace<MeshComponent>(ent).modelUUID = uuid;
 
-	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncMesh::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<MeshComponent>(ent);
-	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncMesh::FillProxyByComp(const MeshComponent& comp)

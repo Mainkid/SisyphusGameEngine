@@ -11,13 +11,13 @@ void SyMonoEcsSyncLight::AddComp(entt::entity ent)
 	auto& light = _ecs->emplace<LightComponent>(ent);
 	light.ParamsRadiusAndAttenuation = Vector4{ 1, 0, 0, 1 };
 
-	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncLight::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<LightComponent>(ent);
-	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncLight::FillProxyByComp(const LightComponent& comp)

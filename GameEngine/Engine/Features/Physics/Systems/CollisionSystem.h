@@ -21,8 +21,8 @@ private:
                             SyPrimitiveColliderComponent& pColC);
     
     SyResult InitComponentTm(const entt::entity& entity,
-                             SyRigidBodyComponent& rbComponent,
-                             SyTrimeshColliderComponent& cComponent,
-                             const MeshComponent& mComponent,
-                             const TransformComponent& tComponent);
+                             SyRigidBodyComponent& rigidBC,
+                             SyTrimeshColliderComponent& tmColC,
+                             const MeshComponent& meshC,
+                             const TransformComponent& transformC);
 };

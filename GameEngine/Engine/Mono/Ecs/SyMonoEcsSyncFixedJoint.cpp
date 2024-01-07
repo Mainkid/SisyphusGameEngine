@@ -9,13 +9,13 @@ using namespace mono;
 void SyMonoEcsSyncFixedJoint::AddComp(entt::entity ent)
 {
 	_ecs->emplace<SyFixedJointComponent>(ent);
-	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, "Mono", GetCompId(), ent, true);
+	GameObjectHelper::CallEvent<CompAddedEv>(_ecs, GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncFixedJoint::RemoveComp(entt::entity ent)
 {
 	_ecs->remove<SyFixedJointComponent>(ent);
-	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, "Mono", GetCompId(), ent, true);
+	GameObjectHelper::CallEvent<CompRemovedEv>(_ecs, GetCompId(), ent, true);
 }
 
 void SyMonoEcsSyncFixedJoint::FillProxyByComp(const SyFixedJointComponent& comp)

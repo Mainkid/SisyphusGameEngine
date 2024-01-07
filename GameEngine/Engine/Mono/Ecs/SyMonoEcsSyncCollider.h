@@ -16,7 +16,7 @@ namespace mono
 		public SyMonoEcsSyncBase<SyPrimitiveColliderComponent, ProxyColliderComp>
 	{
 	public:
-		ECompId GetCompId() const override { return ECompId::Collider; }
+		ECompId GetCompId() const override { return ECompId::PrimCollider; }
 
 		void AddComp(entt::entity ent) override;
 		void RemoveComp(entt::entity ent) override;

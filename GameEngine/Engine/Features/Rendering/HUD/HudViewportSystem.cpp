@@ -294,7 +294,7 @@ void HudViewportSystem::DrawMainMenuBar()
 				if (ok) {
 				
 					rs->LoadSceneFromFile(ofn.lpstrFile, _ecs);
-					CallEvent<SySceneLoadEvent>("SySceneLoadEvent");
+					CallEvent<SySceneLoadEvent>();
 					MessageBox(hc->window->GetHWND(), L"Plumb", L"Plumb", MB_OK);
 				}
 
@@ -339,7 +339,7 @@ void HudViewportSystem::DrawMainMenuBar()
 
 			if (ImGui::MenuItem("Hot Reload"))
 			{
-				CallEvent<SyHotReloadEvent>("SyHotreloadEvent");
+				CallEvent<SyHotReloadEvent>();
 			}
 			
 			ImGui::EndMenu();
@@ -488,7 +488,7 @@ void HudViewportSystem::DrawPlayMode(ImVec2 cursorStartPostion)
 	if (ImGui::IsItemClicked())
 	{
 		ec->playModeState = EngineContext::EPlayModeState::PlayMode;
-		CallEvent<SyPlayModeStartedEvent>("SyPlayModeStartedEvent");
+		CallEvent<SyPlayModeStartedEvent>();
 	}
 	offset += dtOffset;
 	ImGui::SameLine(offset);
@@ -499,7 +499,7 @@ void HudViewportSystem::DrawPlayMode(ImVec2 cursorStartPostion)
 		ec->playModeState == EngineContext::EPlayModeState::PlayMode)
 	{
 		ec->playModeState = EngineContext::EPlayModeState::PauseMode;
-		CallEvent<SyPauseModeEvent>("SyPauseModeEvent");
+		CallEvent<SyPauseModeEvent>();
 	}
 	offset += dtOffset;
 	ImGui::SameLine(offset);
@@ -511,7 +511,7 @@ void HudViewportSystem::DrawPlayMode(ImVec2 cursorStartPostion)
 		ec->playModeState != EngineContext::EPlayModeState::EditorMode)
 	{
 		ec->playModeState = EngineContext::EPlayModeState::EditorMode;
-		CallEvent<SyPlayModeEndedEvent>("SyPlayModeEndedEvent");
+		CallEvent<SyPlayModeEndedEvent>();
 	}
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar();

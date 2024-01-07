@@ -55,7 +55,7 @@ public:
 	static entt::entity CreateSkybox(entt::registry* ecs,boost::uuids::uuid uuid = boost::uuids::nil_uuid());
 
 	template <typename T_Event, typename ... Args>
-	static SyResult CallEvent(entt::registry* ecs, const std::string& name, Args... eventArgs);
+	static SyResult CallEvent(entt::registry* ecs, Args... eventArgs);
 
 	static void CopyEntity(entt::registry* ecs, std::set<entt::entity> entitiesToCopy, entt::entity parent = entt::null)
 	{
@@ -141,7 +141,7 @@ public:
 
 //Calls the event to be listened to NEXT FRAME. Events are only to be listened to in Runtime (it is possible to listen to events in Init(), but it relies on order of systems update). Use the macros from SystemBase.h to listen to event!
 template <typename T_Event, typename ... Args>
-SyResult GameObjectHelper::CallEvent(entt::registry* ecs, const std::string& name, Args... eventArgs)
+SyResult GameObjectHelper::CallEvent(entt::registry* ecs, Args... eventArgs)
 {
 	entt::entity ent = ecs->create();
 	//ecs->emplace<GameObjectComp>(ent, name);

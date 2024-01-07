@@ -109,7 +109,7 @@ void HudHierarchySystem::RenderTree(std::set<entt::entity> entities)
 
 		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 		{
-			CallEvent<SyEditorCameraMoveToTarget>("SyEditorCameraMoveToTarget", ent);
+			CallEvent<SyEditorCameraMoveToTarget>(ent);
 		}
 
 		ProcessPopUp();

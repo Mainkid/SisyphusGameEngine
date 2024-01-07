@@ -57,7 +57,7 @@ SyResult SyRigidBodySystem::Run()
 		if (transformC == nullptr)
 		{
 			_ecs->emplace<TransformComponent>(entity);
-			CallEvent<CompAddedEv>("AddTransform", ECompId::Transform, entity);
+			CallEvent<CompAddedEv>(ECompId::Transform, entity);
 			SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
 				"Transform Component required for RigidBody Component is missing on entity (%s). The Transform Component has been added in the next frame.",
 				SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
@@ -68,7 +68,7 @@ SyResult SyRigidBodySystem::Run()
 			if (InitComponent(entity, rigidBodyC, *transformC).code == SY_RESCODE_ERROR)
 			{
 				_ecs->remove<SyRigidBodyComponent>(entity);
-				CallEvent<CompRemovedEv>("RemoveRigidBody", ECompId::Rigid, entity);
+				CallEvent<CompRemovedEv>(ECompId::Rigid, entity);
 				SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
 					"Failed to initialize RigidBody Component on entity (%s). The component has been removed.",
 					SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
