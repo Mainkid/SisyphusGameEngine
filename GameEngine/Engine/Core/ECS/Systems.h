@@ -39,7 +39,6 @@
 #include "../../Features/Rendering/RenderPipeline/EditorColliderRenderSystem.h"
 #include "../../Features/Sounds/Systems/SoundSystem.h"
 #include "../../Features/AI/Systems/NavMeshSystem.h"
-//#include "../../Features/AI/Systems/NavMeshDrawSystem.h"
 #include "../../Features/Rendering/RenderPipeline/NavMeshDrawSystem.h"
 #include "../Mono/Systems/MonoSyncSystem.h"
 

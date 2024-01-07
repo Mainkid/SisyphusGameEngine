@@ -19,7 +19,7 @@ struct CameraComponent
 
 	//----User vars----
 	float nearPlane = 0.01f;
-	float farPlane = 100.0f;
+	float farPlane = 1000.0f;
 	float fovDegrees = 60.0f;
 	
 	//----Engine vars----

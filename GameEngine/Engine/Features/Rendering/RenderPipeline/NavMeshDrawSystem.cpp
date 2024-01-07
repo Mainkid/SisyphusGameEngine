@@ -174,7 +174,7 @@ SyResult SyNavMeshDrawSystem::PrepareRenderDataAabb(const entt::entity& entity, 
 
     tmpVec = o + e.ReflectZ().ReflectY();
     vertices[7] = Vector4(tmpVec.x, tmpVec.y, tmpVec.z, 1);
-    std::vector<int> indices = {0,1,2,3,0, 0,3,7,4,0, 0,1,5,4,0, 1,2,6,5,1, 3,2,6,7,3, 4,5,6,7,4};
+    std::vector<int> indices = {0,1,1,2,2,3,3,0, 4,5,5,6,6,7,7,4, 0,4, 1,5, 2,6, 3,7};
     navMeshC._aabbVertexBuffer->Initialize(vertices);
     navMeshC._aabbIndexBuffer->Initialize(indices);
     return SyResult();    
@@ -208,17 +208,17 @@ SyResult SyNavMeshDrawSystem::PrepareRenderDataMesh(const entt::entity& entity, 
         for (int j = 0; j < ntris; ++j)
         {
             tmpSy = &verts[tris[j * 4 + 0] * 3];
-            tmp = Vector4(tmpSy.x, tmpSy.y, tmpSy.z, 1);
+            tmp = Vector4(tmpSy.x, tmpSy.y, tmpSy.z + 0.01f, 1);
             vertices.push_back(tmp);
             vertices.push_back(color);
 
             tmpSy = &verts[tris[j * 4 + 1] * 3];
-            tmp = Vector4(tmpSy.x, tmpSy.y, tmpSy.z, 1);
+            tmp = Vector4(tmpSy.x, tmpSy.y, tmpSy.z + 0.01f, 1);
             vertices.push_back(tmp);
             vertices.push_back(color);
 
             tmpSy = &verts[tris[j * 4 + 2] * 3];
-            tmp = Vector4(tmpSy.x, tmpSy.y, tmpSy.z, 1);
+            tmp = Vector4(tmpSy.x, tmpSy.y, tmpSy.z + 0.01f, 1);
             vertices.push_back(tmp);
             vertices.push_back(color);
 
