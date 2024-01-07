@@ -106,7 +106,6 @@ void EngineCore::StartUpSystems()
 	_systems.Add<SyCollisionSystem>();
 	
 	_systems.Add<SoundSystem>();
-	_systems.Add<MonoSyncSystem>();
 	_systems.Add<SyNavMeshSystem>();
 	
 

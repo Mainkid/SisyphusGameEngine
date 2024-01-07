@@ -44,6 +44,5 @@
 #include "../Mono/Systems/MonoGameLoopSystem.h"
 #include "../../Features/AI/Systems/NavMeshSystem.h"
 #include "../../Features/Rendering/RenderPipeline/NavMeshDrawSystem.h"
-#include "../Mono/Systems/MonoSyncSystem.h"
 
 #include "../../Features/Events/Systems/PrepareEventsSystem.h"
