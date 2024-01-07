@@ -64,6 +64,7 @@ struct RenderContext : public IService
 	std::unique_ptr<Shader> IrradianceMapGenerator;
 	std::unique_ptr<Shader> EnvironmentPrefilter;
 	std::unique_ptr<Shader> IblLookUpGenerator;
+	
 
 	/*
 	 * Particle System Shader;
@@ -75,6 +76,11 @@ struct RenderContext : public IService
 	std::unique_ptr<Shader> BitonicSort;
 	std::unique_ptr<Shader> MatrixTranspose;
 	std::unique_ptr<Shader> MultiplyBy6Shader;
+
+	/*
+	 * NavMesh shader;
+	 */
+	std::unique_ptr<Shader> NavMeshShader;
 
 
 	std::shared_ptr<Mesh> CubeMesh;

@@ -72,7 +72,7 @@ SyResult SyNavMeshDrawSystem::Run()
             auto& navMesh = _ecs->get<SyNavMeshComponent>(ent);
             
 
-            dataOpaque.baseData.world = Matrix::CreateScale(Vector3(1.001f, 1.001f, 1.001f)) * Matrix::CreateFromYawPitchRoll(transform.localRotation) * Matrix::CreateTranslation(transform.localPosition);
+            dataOpaque.baseData.world = Matrix::CreateScale(Vector3(1.002f, 1.002f, 1.002f)) * Matrix::CreateFromYawPitchRoll(transform.localRotation) * Matrix::CreateTranslation(transform.localPosition);
             D3D11_MAPPED_SUBRESOURCE mappedResource;
 
             HRESULT res = _hc->context->Map(_rc->ShadowConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0,
@@ -93,6 +93,27 @@ SyResult SyNavMeshDrawSystem::Run()
             _hc->context->VSSetShader(_rc->EditorColliderRenderer->vertexShader.Get(), nullptr, 0);
             _hc->context->PSSetShader(_rc->EditorColliderRenderer->pixelShader.Get(), nullptr, 0);
             _hc->context->DrawIndexed(navMesh._aabbIndexBuffer.get()->size, 0, 0);
+
+
+            //---- Mesh Rendering ----
+
+            _hc->context->VSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
+            _hc->context->PSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
+            _hc->renderTarget->SetRenderTarget(_hc->depthStencilView.Get());
+            _hc->context->IASetInputLayout(_rc->NavMeshShader->layout.Get());
+            _hc->context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+            //_hc->context->IASetIndexBuffer(navMesh._meshVertexBuffer.get()->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+            _hc->context->IASetVertexBuffers(0, 1, navMesh._meshVertexBuffer.get()->buffer.GetAddressOf(),
+                _rc->RhData.strides32, _rc->RhData.offsets0);
+
+
+            _hc->context->VSSetShader(_rc->NavMeshShader->vertexShader.Get(), nullptr, 0);
+            _hc->context->PSSetShader(_rc->NavMeshShader->pixelShader.Get(), nullptr, 0);
+            _hc->context->Draw(navMesh._meshVertexBuffer.get()->size/(sizeof(Vector4)*2), 0);
+           // _hc->context->DrawIndexed(navMesh._mesh, 0, 0);
+
         }
 
 
@@ -146,8 +167,8 @@ SyResult SyNavMeshDrawSystem::PrepareRenderDataAabb(const entt::entity& entity, 
 SyResult SyNavMeshDrawSystem::PrepareRenderDataMesh(const entt::entity& entity, SyNavMeshComponent& navMeshC)
 {
     SyResult result;
-    std::vector<SyVector3> vertices;
-    std::vector<SyVector3> colors;
+    std::vector<Vector4> vertices;
+    std::vector<Vector4> colors;
     if (navMeshC.meshDetail.get() == nullptr)
     {
         SY_LOG_AI(SY_LOGLEVEL_ERROR, "No NavMesh detail found on entity (%s)", SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
@@ -165,20 +186,31 @@ SyResult SyNavMeshDrawSystem::PrepareRenderDataMesh(const entt::entity& entity, 
         const int ntris = (int)m[3];
         const float* verts = &dmesh.verts[bverts*3];
         const unsigned char* tris = &dmesh.tris[btris*4];
-        SyVector3 color = IntToColor(i);
+        Vector4 color = Vector4(IntToColor(i).x, IntToColor(i).y, IntToColor(i).z, 1.0f);
+        Vector4 tmp;
+        SyVector3 tmpSy;
         for (int j = 0; j < ntris; ++j)
         {
-            vertices.push_back(&verts[tris[j * 4 + 0] * 3]);
+            tmpSy = &verts[tris[j * 4 + 0] * 3];
+            tmp = Vector4(tmpSy.x, tmpSy.y, tmpSy.z, 1);
+            vertices.push_back(tmp);
             vertices.push_back(color);
-            vertices.push_back(&verts[tris[j * 4 + 1] * 3]);
+
+            tmpSy = &verts[tris[j * 4 + 1] * 3];
+            tmp = Vector4(tmpSy.x, tmpSy.y, tmpSy.z, 1);
+            vertices.push_back(tmp);
             vertices.push_back(color);
-            vertices.push_back(&verts[tris[j * 4 + 2] * 3]);
+
+            tmpSy = &verts[tris[j * 4 + 2] * 3];
+            tmp = Vector4(tmpSy.x, tmpSy.y, tmpSy.z, 1);
+            vertices.push_back(tmp);
             vertices.push_back(color);
+
             //colors.insert(colors.end(), 3, color);
         }
     }
     //!!!
-    //navMeshC._meshVertexBuffer->Initialize(vertices, colors)
+    navMeshC._meshVertexBuffer->Initialize(vertices);
     navMeshC._wasMeshDataPrepared = true;
     return SyResult();
 }

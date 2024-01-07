@@ -12,7 +12,7 @@
     <FxCompile Include="Engine\Assets\Shaders\SpotLightShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\StencilPassShader.hlsl" />
     <FxCompile Include="Engine\Assets\Shaders\TextureShader.hlsl" />
-    <FxCompile Include="Engine\Assets\Shaders\LineShader.hlsl" />
+    <FxCompile Include="Engine\Assets\Shaders\NavMesh.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
