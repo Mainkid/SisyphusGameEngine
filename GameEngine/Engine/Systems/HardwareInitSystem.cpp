@@ -2,6 +2,7 @@
 #include "../Core/DisplayWin32.h"
 #include "../Core/Rendering/RenderTarget.h"
 #include "../../vendor/HBAO/GFSDK_SSAO.h"
+#include "optick.h"
 
 SyResult HardwareInitSystem::Init()
 {
@@ -17,6 +18,7 @@ SyResult HardwareInitSystem::Init()
 
 SyResult HardwareInitSystem::Run()
 {
+	OPTICK_FRAME("MainThread");
 	return SyResult();
 }
 

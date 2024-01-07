@@ -9,7 +9,6 @@
 #include <boost/uuid/nil_generator.hpp>
 #include <set>
 #include "../Core/Tools/FlagBitmask.h"
-#include "../Mono/SyMono.h"
 #include "../Serialization/Serializer.hpp"
 #include "../Systems/TransformSystem.h"
 

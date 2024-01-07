@@ -44,6 +44,8 @@ struct CameraComponent
 
 	float mouseWheel = 0;
 	ECameraType cameraType;
+
+	size_t MonoHash = 0; // read/write only by Mono
 };
 
 namespace std

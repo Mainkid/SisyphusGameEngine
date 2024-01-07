@@ -37,7 +37,11 @@
 #include "../../Features/Rendering/RenderPipeline/HbaoRenderSystem.h"
 #include "../../Features/Rendering/RenderPipeline/ParticleRenderSystem.h"
 #include "../../Features/Rendering/RenderPipeline/EditorColliderRenderSystem.h"
+#include "../../Features/Animations/Systems/SkeletalAnimationSystem.h"
 #include "../../Features/Sounds/Systems/SoundSystem.h"
+
+#include "../Mono/Systems/MonoSyncEgSystem.h"
+#include "../Mono/Systems/MonoGameLoopSystem.h"
 #include "../../Features/AI/Systems/NavMeshSystem.h"
 #include "../../Features/Rendering/RenderPipeline/NavMeshDrawSystem.h"
 #include "../Mono/Systems/MonoSyncSystem.h"

@@ -13,14 +13,17 @@
 #include "../../Particles/Components/ParticleComponent.h"
 #include "../../Lighting/Components/LightComponent.h"
 #include "../../Sounds/Components/FSoundComponent.h"
+#include "../../Animations/Components/AnimatorComponent.h"
 #include "../../../../vendor/ImGui/curve_v122.hpp"
+#include "../../../Mono/SyMono.h"
+#include "../../../Mono/Objects/SyMonoEditor.h"
 
+#include "../../../../vendor/StateMachine/imgui_node_graph_test.h"
+#include "../../../../vendor/StateMachine/StateMachineLayer.h"
 
 #include "json.hpp"
 
 #include <fstream>
-
-
 
 
 SyResult HudPropertiesSystem::Init()
@@ -38,11 +41,13 @@ SyResult HudPropertiesSystem::Init()
 
 SyResult HudPropertiesSystem::Run()
 {
-    //ImGui::ShowDemoWindow();
+    OPTICK_EVENT();
     ImGui::Begin(windowID.c_str());
     //Widget::Render();
+    bool tr = true;
+    ShowStateMachineGraph(&tr);
 
-    
+    ImGui::PushItemWidth(ImGui::GetWindowContentRegionMax().x * -0.3f);
 
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 
@@ -50,95 +55,11 @@ SyResult HudPropertiesSystem::Run()
 
     if (ec->hudData.selectedEntityIDs.size() != 0)
     {
-        TransformComponent* tc = _ecs->try_get<TransformComponent>(*ec->hudData.selectedEntityIDs.begin());
-        LightComponent* lc = _ecs->try_get<LightComponent>(*ec->hudData.selectedEntityIDs.begin());
-        ParticleComponent* pc = _ecs->try_get<ParticleComponent>(*ec->hudData.selectedEntityIDs.begin());
-        FSoundComponent* sc = _ecs->try_get<FSoundComponent>(*ec->hudData.selectedEntityIDs.begin());
-
-
-        if (tc)
-        {
-            auto degToRadians = [](float angle) {return angle * M_PI / 180.0f; };
-            ImGui::Text("Transform");
-            Vector3 vec3Dx = tc->localPosition;
-            float vec3[3]{ vec3Dx.x, vec3Dx.y, vec3Dx.z };
-            ImGui::DragFloat3("Translation", vec3, 0.1f);
-            tc->localPosition = (Vector3(vec3[0], vec3[1], vec3[2]));
-
-            vec3Dx = TransformHelper::GetRotationDegrees(*tc);
-            vec3[0] = vec3Dx.x;
-            vec3[1] = vec3Dx.y;
-            vec3[2] = vec3Dx.z;
-
-            ImGui::DragFloat3("Rotation", vec3, 1.0f);
-            auto vec = Vector3(vec3[0], vec3[1], vec3[2]);
-            TransformHelper::DegreesToRad(vec);
-            tc->localRotation = vec;
-
-            vec3Dx = tc->localScale;
-            vec3[0] = vec3Dx.x;
-            vec3[1] = vec3Dx.y;
-            vec3[2] = vec3Dx.z;
-            ImGui::DragFloat3("Scale", vec3, 0.1f);
-            tc->localScale = (Vector3(vec3[0], vec3[1], vec3[2]));
-        }
-
-        if (lc)
-        {
-            ImGui::Text("Light");
-            Vector4 vec4D = lc->ParamsRadiusAndAttenuation;
-            Vector4 color = lc->Color;
-            float col3[3] = { lc->Color.x,lc->Color.y,lc->Color.z };
-            ImGui::PushItemWidth(100);
-            ImGui::ColorEdit3("Light Color", col3);
-            ImGui::DragFloat("Light Intensity", &lc->Color.w);
-
-            switch (lc->LightType)
-            {
-
-            case ELightType::PointLight:
-                ImGui::DragFloat("Light Radius", &lc->ParamsRadiusAndAttenuation.x);
-                ImGui::Checkbox("Bake Shadows", &lc->CastShadows);
-                break;
-            }
-            ImGui::PopItemWidth();
-            lc->Color.x = col3[0];
-            lc->Color.y = col3[1];
-            lc->Color.z = col3[2];
-        }
-
-        // TODO S: demo
-        if (sc)
-        {
-            
-            //std::string SoundPath = "Engine/Assets/Audio/LookinAtIt.ogg";
-            ImGui::Checkbox("Sound3D", &sc->SoundType3D);
-            ImGui::DragFloat("Sound Volume", &sc->SoundVolume);
-            ImGui::Checkbox("Is Looping", &sc->LoopedSound);
-            ImGui::Checkbox("Is Playing", &sc->IsSoundPlaying);
-            
-        }
-
-        if (pc)
-        {
-            
-            //TODO: Add Bursts Array
-            //TODO: Add Simple float/int/bool/enum visualisation
-
-            DrawParticleProperties(pc->RotationOverLifetime, "Rotation over lifetime", EParticleInput::EFloats);
-            DrawParticleProperties(pc->StartDelayTime, "Start delay time", EParticleInput::EFloats);
-            DrawParticleProperties(pc->StartLifeTime, "Start Lifetime", EParticleInput::EFloats);
-            DrawParticleProperties(pc->StartRotation, "Start Rotation", EParticleInput::EFloats);
-            DrawParticleProperties(pc->StartSize, "Start Size", EParticleInput::EFloats);
-            DrawParticleProperties(pc->StartSpeed, "Start Speed", EParticleInput::EFloats);
-            DrawParticleProperties(pc->StartColor, "Start Color", EParticleInput::EVectors);
-            DrawParticleProperties(pc->SizeOverLifetime, "Size over lifetime", EParticleInput::ECurve);
-            DrawParticleProperties(pc->SpeedOverLifetime, "Speed over lifetime", EParticleInput::ECurve);
-        }
-
-        auto rawEnt = static_cast<uint32_t>(*ec->hudData.selectedEntityIDs.begin());
         if (_monoEditor->IsValid())
-            _monoEditor->EgDrawEntityCustomComps.Invoke(rawEnt);
+        {
+            auto rawEnt = static_cast<uint32_t>(*ec->hudData.selectedEntityIDs.begin());
+            _monoEditor->EgDrawEntityComps.Invoke(rawEnt);
+        }
     }
     else if (ec->hudData.selectedContent.uuid!=boost::uuids::nil_uuid())
     {
@@ -150,7 +71,7 @@ SyResult HudPropertiesSystem::Run()
                 DrawMaterialProperties();
                 break;
             case EAssetType::ASSET_MESH:
-                
+                DrawMeshProperties();
                 break;
             case EAssetType::ASSET_SOUND:
 
@@ -397,7 +318,6 @@ void HudPropertiesSystem::DrawMaterialProperties()
 void HudPropertiesSystem::DrawTextureProperties()
 {
     
-
     std::vector<const char*> textureTypeStr = { "Texture 2D", "Cubemap" };
     std::vector<const char*> wrapModeStr = { "Repeat","Clamp","Mirror" };
     std::vector<const char*> filterModeStr = { "Bilinear","Trilinear","Point" };
@@ -461,6 +381,17 @@ void HudPropertiesSystem::DrawTextureProperties()
 
         //rs->LoadResource(ec->hudData.selectedContent.uuid, true);
     }
+}
+
+void HudPropertiesSystem::DrawMeshProperties()
+{
+    if (ImGui::Button("Extract animations"))
+    {
+        std::string fileName = rs->FindFilePathByUUID(ec->hudData.selectedContent.uuid);
+        std::unordered_map<std::string, BoneInfo> tmp;
+        MeshLoader::LoadAnimation(fileName, tmp, true);
+    }
+    
 }
 
 void HudPropertiesSystem::UpdateHudProperties(bool)

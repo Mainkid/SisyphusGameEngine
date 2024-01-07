@@ -1,54 +1,51 @@
 #pragma once
-#include "../SyMonoObj.h"
-#include "../SyMonoMethod.h"
+#include "../Api/SyMonoObj.h"
+#include "../Api/SyMonoMethod.h"
+#include "../Ecs/ISyMonoEcsSync.h"
 
 namespace mono
 {
-	class ISyMonoEcsCallbackReceiver;
-	struct ProxyTransformComp;
-	struct ProxyMeshComp;
-
 	class SyMonoEcs : public SyMonoObj
 	{
-		inline static const std::string NAMESPACE = "SyEngine.Core";
+		inline static const std::string NAMESPACE = "SyEngine.Ecs";
 		inline static const std::string CLASS_NAME = "SyProxyEcs";
 
 		inline static const std::string GE_CREATE_ENTITY = "GeCreateEngineEntity";
 		inline static const std::string GE_DESTROY_ENTITY = "GeDestroyEngineEntity";
 
-		inline static const std::string GE_ADD_TRANSFORM_COMP = "GeAddTransformComp";
-		inline static const std::string GE_UPDATE_TRANSFORM_COMP = "GeUpdateTransformComp";
-		inline static const std::string GE_REMOVE_TRANSFORM_COMP = "GeRemoveTransformComp";
-
-		inline static const std::string GE_ADD_MESH_COMP = "GeAddMeshComp";
-		inline static const std::string GE_UPDATE_MESH_COMP = "GeUpdateMeshComp";
-		inline static const std::string GE_REMOVE_MESH_COMP = "GeRemoveMeshComp";
+		inline static const std::string GE_ADD_COMP = "GeAddEngineComp";
+		inline static const std::string GE_REMOVE_COMP = "GeRemoveEngineComp";
 
 	private:
 		inline static SyMonoEcs* _instance = nullptr;
 
-		static void GeCreateEngineEntity();
-		static void GeDestroyEngineEntity(uint32_t rawEnt);
+		static uint32_t GeCreateEntity();
+		static void GeDestroyEntity(uint32_t rawEnt);
 
-		static void GeAddTransformComp(uint32_t rawEnt);
-		static void GeUpdateTransformComp(uint32_t rawEnt, ProxyTransformComp proxy);
-		static void GeRemoveTransformComp(uint32_t rawEnt);
-
-		static void GeAddMeshComp(uint32_t rawEnt);
-		static void GeUpdateMeshComp(uint32_t rawEnt, ProxyMeshComp proxy);
-		static void GeRemoveMeshComp(uint32_t rawEnt);
+		static void GeAddComp(uint32_t rawEnt, ECompId id);
+		static void GeRemoveComp(uint32_t rawEnt, ECompId id);
 
 	public:
-		SyMonoMethod<uint32_t> EgContinueEntityDestroyCascade { "EgContinueEntityDestroyCascade" };
+		SyMonoMethod<> EgSyncEngineWithGame{ "EgSyncEngineWithGame" };
+		SyMonoMethod<uint32_t, ECompId> EgRemoveComp{ "EgRemoveComp" };
 
-		SyMonoMethod<uint32_t, ProxyTransformComp> EgUpdateTransformComp{ "EgUpdateTransformComp" };
-		SyMonoMethod<uint32_t, ProxyTransformComp> EgUpdateMeshComp{ "EgUpdateMeshComp" };
+		void BindEcs(entt::registry* ecs);
+		void TrySendAll();
 
-		void SetCallbackReceiver(ISyMonoEcsCallbackReceiver* receiver);
 	private:
+		entt::registry* _ecs = nullptr;
+
+		std::vector<ISyMonoEcsSync*> _syncs;
+		std::unordered_map<ECompId, ISyMonoEcsSync*> _compIdToSync;
+
+		SyMonoMethod<uint32_t> _egDestroyEntity{ "EgDestroyEntity" };
 
 
-		ISyMonoEcsCallbackReceiver* _cbReceiver = nullptr;
+		template<typename T>
+		void AddSync();
+		ISyMonoEcsSync* GetSync(ECompId id);
+
+		void DestroyEntity(entt::entity ent, bool isRecursionStep);
 
 		SyResult OnAfterCreate() override;
 		SyResult OnBeforeDestroy() override;
@@ -56,4 +53,14 @@ namespace mono
 		const std::string& GetNamespace() override;
 		bool IsUserClass() override;
 	};
+
+	template <typename T>
+	void SyMonoEcs::AddSync()
+	{
+		auto sync = new T();
+		_syncs.push_back(sync);
+		_compIdToSync[sync->GetCompId()] = sync;
+
+		sync->Bind(this, _ecs);
+	}
 }

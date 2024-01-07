@@ -38,9 +38,10 @@ struct LightComponent
     Matrix ViewMatrix;
     Matrix OrthoMatrix;
     bool ShouldBakeShadows = true;
-    
 
-    int ShadowMapSize = 1024;
+    int ShadowMapSize = 512;
+
+    size_t MonoHash = 0; // read/write only by mono sync system
 
     /*
      *  Rendering pointlight/spotlight shadows
@@ -78,39 +79,22 @@ struct LightComponent
         ParamsRadiusAndAttenuation)
 };
 
-namespace std
-{
-    template<> struct hash<Vector4>
-    {
-        using argument_type = Vector4;
-        using result_type = std::size_t;
-        result_type operator()(argument_type const& a) const
-        {
-            result_type const h1(std::hash<float>()(a.x));
-            result_type const h2(std::hash<float>()(a.y));
-            result_type const h3(std::hash<float>()(a.z));
-            result_type const h4(std::hash<float>()(a.w));
-            return h1*37+
-                (h1*37+h2)*37+
-                ((h1 * 37 + h2) * 37 + h3) * 37 + 
-                (((h1 * 37 +h2) * 37 + h3) * 37)*h4;
-        }
-    };
-}
-
-namespace std
-{
-    template<> struct hash<LightComponent>
-    {
-        using argument_type = LightComponent;
-        using result_type = std::size_t;
-        result_type operator()(argument_type const& a) const
-        {
-            result_type const h1(std::hash<Vector4>()(a.Color));
-            result_type const h3(std::hash<Vector4>()(a.ParamsRadiusAndAttenuation));
-            return h1 * 37 + (h1 * 37 + h3) * 37 + ((h1 * 37 + h3) * 37 + h3);
-        }
-    };
-}
+//inline size_t hash_value(const Vector4& v)
+//{
+//    size_t hash = 0;
+//    boost::hash_combine(hash, v.x);
+//    boost::hash_combine(hash, v.y);
+//    boost::hash_combine(hash, v.z);
+//    boost::hash_combine(hash, v.w);
+//    return hash;
+//}
+//
+//inline size_t hash_value(const LightComponent& light)
+//{
+//    size_t hash = 0;
+//    boost::hash_combine(hash, light.Color);
+//    boost::hash_combine(hash, light.ParamsRadiusAndAttenuation);
+//    return hash;
+//}
 
 //TODO: Добавить MeshComponent Aabb!!!

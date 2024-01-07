@@ -48,6 +48,7 @@ public:
 	static SyResult AddMeshComponent(entt::registry* ecs, entt::entity entity, boost::uuids::uuid uuid, unsigned flags = SyEMeshComponentFlags::MESH_RENDER);
 	static SyResult AddCubeMeshComponent(entt::registry* ecs, entt::entity entity);
 	static SyResult AddSphereMeshComponent(entt::registry* ecs, entt::entity entity);
+	static SyResult AddAnimatorComponent(entt::registry* ecs, entt::entity entity);
 	static entt::entity CreateParticleSystem(entt::registry* ecs);
 	static entt::entity CreateCamera(entt::registry* ecs);
 
@@ -143,7 +144,7 @@ template <typename T_Event, typename ... Args>
 SyResult GameObjectHelper::CallEvent(entt::registry* ecs, const std::string& name, Args... eventArgs)
 {
 	entt::entity ent = ecs->create();
-	ecs->emplace<GameObjectComp>(ent, name);
+	//ecs->emplace<GameObjectComp>(ent, name);
 	auto c = ecs->emplace<T_Event>(ent, eventArgs...);
 	ecs->emplace<SyEventTag>(ent);
 	return SyResult();

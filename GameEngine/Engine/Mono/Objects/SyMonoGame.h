@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 
-#include "../SyMonoMethod.h"
-#include "../SyMonoObj.h"
-#include "../SyMonoProxyDatas.h"
+#include "../Api/SyMonoMethod.h"
+#include "../Api/SyMonoObj.h"
+#include "../Ecs/SyMonoProxyDatas.h"
 
 namespace mono
 {
@@ -16,9 +16,10 @@ namespace mono
 	public:
 		SyMonoMethod<MonoObject*, MonoObject*> EgInit{ "EgInit" };
 
-		SyMonoMethod<> EgLoopInit{ "EgLoopInit" };
 		SyMonoMethod<ProxyTimeData> EgLoopRun{ "EgLoopRun" };
 		SyMonoMethod<> EgLoopDestroy{ "EgLoopDestroy" };
+
+		SyMonoMethod<> EgSaveScene{ "EgSaveScene" };
 
 	private:
 		SyResult OnAfterCreate() override;

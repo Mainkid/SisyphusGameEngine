@@ -18,6 +18,7 @@ SyResult EditorColliderRenderSystem::Init()
 
 SyResult EditorColliderRenderSystem::Run()
 {
+	OPTICK_EVENT();
 	if (_ec->playModeState == EngineContext::EPlayModeState::PlayMode &&
 		_ec->propertyFlags & SyEEnginePropertiesFlags::SHOW_COLLIDERS_IN_PLAYMODE == 0)
 		return SyResult();

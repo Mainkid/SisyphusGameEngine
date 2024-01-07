@@ -54,7 +54,8 @@ private:
     RenderContext* rc;
     HardwareContext* hc;
     ResourceService* rs;
-    mono::SyMonoEditor* _monoEditor;
+
+    mono::SyMonoEditor* _monoEditor = nullptr;
 
     std::string windowID;
     boost::uuids::uuid prevSelectedUUID = boost::uuids::nil_uuid();
@@ -62,6 +63,7 @@ private:
     
     void DrawMaterialProperties();
     void DrawTextureProperties();
+    void DrawMeshProperties();
     void UpdateHudProperties(bool);
     void DrawParticleProperties(ParticleInputDataF& data, std::string label, EParticleInput inputType);
 

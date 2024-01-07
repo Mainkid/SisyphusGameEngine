@@ -9,6 +9,7 @@ SyResult SyPrepareEventsSystem::Init()
 
 SyResult SyPrepareEventsSystem::Run()
 {
+    OPTICK_EVENT();
     auto thisFrameView = _ecs->view<SyEventTag, SyThisFrameEventTag>();
     _ecs->destroy(thisFrameView.begin(), thisFrameView.end());
     auto nextFrameView = _ecs->view<SyEventTag>();

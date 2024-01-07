@@ -23,6 +23,10 @@ struct SyFixedJointComponent
     //Set by user. Can be updated in runtime. The entity which the joint attaches the owning entity to.
     //Can be set to entt::null, meaning that the owning entity is attached to a fixed point in global space.
     entt::entity OtherEntity;
+
+
+    size_t MonoHash = 0; // read/write only by mono
+
 private:
     //Internal members
     
@@ -57,6 +61,10 @@ struct SyHingeJointComponent
     //Sets the entity which the pivot point and axis are attached to.
     //If set to entt::null, they are attached to a fixed point in global space.
     entt::entity OtherEntity;
+
+
+    size_t MonoHash = 0; // read/write only by mono
+
 private:
     //Internal component
     

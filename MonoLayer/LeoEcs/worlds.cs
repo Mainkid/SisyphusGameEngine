@@ -6,12 +6,11 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-
 #if ENABLE_IL2CPP
 using Unity.IL2CPP.CompilerServices;
 #endif
 
-namespace Leopotam.EcsLite {
+namespace LeoEcs {
     public static class RawEntityOffsets {
         public const int ComponentsCount = 0;
         public const int Gen = 1;

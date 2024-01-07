@@ -10,6 +10,7 @@ SyResult PostViewportRenderSystem::Init()
 
 SyResult PostViewportRenderSystem::Run()
 {
+	OPTICK_EVENT();
 	hc->context->ClearState();
 	return SyResult();
 }

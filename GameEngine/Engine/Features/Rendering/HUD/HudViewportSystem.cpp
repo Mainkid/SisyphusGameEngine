@@ -14,8 +14,10 @@
 #include "../../Events/SyPlayModeStartedEvent.h"
 #include "../../Events/SySceneLoadEvent.h"
 #include "../../../Components/ImageBasedLightingComponent.h"
+#include "../../../Mono/SyMono.h"
 #include "../../../Scene/Prefab.h"
 #include "../../../Scene/Scene.h"
+#include "optick.h"
 #include "json.hpp"
 
 SyResult HudViewportSystem::Init()
@@ -26,12 +28,18 @@ SyResult HudViewportSystem::Init()
 	rs = ServiceLocator::instance()->Get<ResourceService>();
 	windowID = "Viewport";
 	InitSRV();
+
+	auto mono = ServiceLocator::instance()->Get<mono::SyMono>();
+	_monoGame = mono->GetGame();
+
 	return SyResult();
 	
 }
 
 SyResult HudViewportSystem::Run()
 {
+	OPTICK_EVENT();
+
 	ImGui::Begin(windowID.c_str());
 	DrawMainMenuBar();
 
@@ -108,7 +116,7 @@ SyResult HudViewportSystem::Run()
 			else if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_PREFAB)
 			{
 				auto prefab = std::static_pointer_cast<Prefab>(rs->LoadResource(uuid));
-				std::cout << std::endl;
+				//std::cout << std::endl;
 				//TODO: prefab drag drop
 			}
 			else if (rs->resourceLibrary[uuid].assetType == EAssetType::ASSET_SCENE)
@@ -296,6 +304,10 @@ void HudViewportSystem::DrawMainMenuBar()
 			}
 			if (ImGui::MenuItem("Save scene"))
 			{
+				if (_monoGame->IsValid())
+					_monoGame->EgSaveScene.Invoke();
+
+				/*
 				OPENFILENAME ofn;
 				WCHAR* szFile = new WCHAR[512];
 				WCHAR* szFileTitle = new WCHAR[512];
@@ -322,7 +334,7 @@ void HudViewportSystem::DrawMainMenuBar()
 
 				delete[]szFile;
 				delete[]szFileTitle;
-
+				*/
 			}
 
 			if (ImGui::MenuItem("Hot Reload"))

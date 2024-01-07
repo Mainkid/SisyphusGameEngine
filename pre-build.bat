@@ -32,3 +32,4 @@ set monoDllsDir=%1GameEngine\vendor\mono\dlls
 
 copy %monoDllsDir%\mono-2.0-sgen.dll %geDir%
 copy %monoDllsDir%\MonoPosixHelper.dll %geDir%
+copy %monoDllsDir%\mono-profiler-log.dll %geDir%

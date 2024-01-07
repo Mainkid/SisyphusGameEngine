@@ -29,6 +29,8 @@ struct RenderHelperData
 	UINT strides48[1] = { 48 };
 	UINT strides64[1] = { 64 };
 	UINT strides80[1] = { 80 };
+	UINT strides96[1] = { 96 };
+	UINT strides112[1] = { 112 };
 	UINT offsets0[1] = { 0 };
 
 	float bgColor0000[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -120,6 +122,7 @@ struct RenderContext : public IService
 	std::unique_ptr<Buffer> VertexQuadBuffer;
 	std::unique_ptr<Buffer> OpaqueConstBuffer;
 	std::unique_ptr<Buffer> LightConstBuffer;
+	std::unique_ptr<Buffer> BonesConstBuffer;
 
 	/*
 	 * Light AABB
@@ -133,8 +136,8 @@ struct RenderContext : public IService
 	 * Shadows
 	 *
 	 */
-	int ShadowmapWidth = 1024;
-	int ShadowmapHeight = 1024;
+	int ShadowmapWidth = 512;
+	int ShadowmapHeight = 512;
 	
 
 	/*
@@ -171,4 +174,10 @@ struct RenderContext : public IService
 	GFSDK_SSAO_Context_D3D11* pAOContext;
 
 	RenderHelperData RhData;
+
+	/*
+	 *  Animations
+	 */
+
+	std::vector<DirectX::SimpleMath::Matrix> AnimationDefaultMatrices= std::vector<DirectX::SimpleMath::Matrix>(100, DirectX::SimpleMath::Matrix::Identity);
 };

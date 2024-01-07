@@ -7,6 +7,7 @@
 #include "../../Core/Graphics/ConstantBuffer.h"
 #include "../../Components/TransformComponent.h"
 #include "../../Mesh/Components/MeshComponent.h"
+#include "../../Animations/Components/AnimatorComponent.h"
 
 
 SyResult OpaqueRenderSystem::Init()
@@ -20,6 +21,10 @@ SyResult OpaqueRenderSystem::Init()
 
 SyResult OpaqueRenderSystem::Run()
 {
+    UINT strides[1] = { 112 };
+    UINT offsets[1] = { 0 };
+
+    OPTICK_EVENT();
     _hc->context->RSSetState(_rc->CullBackRasterizerState.Get());
 
     auto view =_ecs->view<TransformComponent, MeshComponent>();
@@ -66,15 +71,32 @@ SyResult OpaqueRenderSystem::Run()
             HRESULT res = _hc->context->Map(_rc->OpaqueConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
             CopyMemory(mappedResource.pData, &dataOpaque, sizeof(CB_BaseEditorBuffer));
             _hc->context->Unmap(_rc->OpaqueConstBuffer->buffer.Get(), 0);
+
+            auto animComp = _ecs->try_get<AnimatorComponent>(entity);
+            if (animComp)
+            {
+                res = _hc->context->Map(_rc->BonesConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                CopyMemory(mappedResource.pData, animComp->m_FinalBoneMatrices.data(), sizeof(CB_BonesBuffer));
+                _hc->context->Unmap(_rc->BonesConstBuffer->buffer.Get(), 0);
+            }
+            else
+            {
+                res = _hc->context->Map(_rc->BonesConstBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                CopyMemory(mappedResource.pData, _rc->AnimationDefaultMatrices.data(), sizeof(CB_BonesBuffer));
+                _hc->context->Unmap(_rc->BonesConstBuffer->buffer.Get(), 0);
+            }
+
             _hc->context->VSSetConstantBuffers(0, 1, _rc->OpaqueConstBuffer->buffer.GetAddressOf());
+            _hc->context->VSSetConstantBuffers(1, 1, _rc->BonesConstBuffer->buffer.GetAddressOf());
             _hc->context->PSSetConstantBuffers(0, 1, _rc->OpaqueConstBuffer->buffer.GetAddressOf());
+            _hc->context->PSSetConstantBuffers(1, 1, _rc->BonesConstBuffer->buffer.GetAddressOf());
 
             _hc->context->OMSetRenderTargets(7, _rc->Rtvs, _hc->depthStencilView.Get());
             _hc->context->IASetInputLayout(_rc->OpaqueShader->layout.Get());
             _hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             _hc->context->IASetIndexBuffer(meshComp.model->meshes[i]->indexBuffer->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
             _hc->context->IASetVertexBuffers(0, 1, meshComp.model->meshes[i]->vertexBuffer->buffer.GetAddressOf(),
-                meshComp.strides, meshComp.offsets);
+                strides, offsets);
             _hc->context->PSSetSamplers(0, 1, meshComp.materials[i]->albedoSRV->textureSamplerState.GetAddressOf());
             _hc->context->OMSetDepthStencilState(_hc->depthStencilState.Get(), 0);
             _hc->context->VSSetShader(_rc->OpaqueShader->vertexShader.Get(), nullptr, 0);

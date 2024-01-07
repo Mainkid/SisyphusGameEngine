@@ -4,12 +4,11 @@
 // ----------------------------------------------------------------------------
 
 using System.Runtime.CompilerServices;
-
 #if ENABLE_IL2CPP
 using Unity.IL2CPP.CompilerServices;
 #endif
 
-namespace Leopotam.EcsLite {
+namespace LeoEcs {
     public struct EcsPackedEntity {
         internal int Id;
         internal int Gen;

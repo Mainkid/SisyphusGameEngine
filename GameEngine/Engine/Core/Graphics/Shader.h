@@ -21,6 +21,7 @@
 #define USE_NORMAL 8
 #define USE_TANGENT_BITANGENT 16
 #define USE_VERTEXID 32
+#define USE_SKELETAL_ANIM 64
 
 struct HardwareContext;
 

@@ -15,6 +15,7 @@ SyResult HudPostRenderSystem::Init()
 
 SyResult HudPostRenderSystem::Run()
 {
+    OPTICK_EVENT();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     //ImGui::ShowDemoWindow();
     ImGui::Render();

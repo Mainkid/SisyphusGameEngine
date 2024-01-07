@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using SyEngine.Core;
+using SyEngine.Ecs;
 using SyEngine.Game;
 using TestGame;
 

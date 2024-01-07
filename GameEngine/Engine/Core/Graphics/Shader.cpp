@@ -77,7 +77,7 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
 
     //UNIFORM parameters
 
-    D3D11_INPUT_ELEMENT_DESC inputElements [5];
+    D3D11_INPUT_ELEMENT_DESC inputElements [7];
     int ctr = 0;
 
     if ((uniform_flags & USE_VERTEXID) == USE_VERTEXID)
@@ -147,6 +147,30 @@ void Shader::Initialize(LPCWSTR shaderPath, unsigned int compile_flags, unsigned
 
         inputElements[ctr] = D3D11_INPUT_ELEMENT_DESC{
             "BITANGENT",
+            0,
+            DXGI_FORMAT_R32G32B32A32_FLOAT,
+            0,
+            D3D11_APPEND_ALIGNED_ELEMENT,
+            D3D11_INPUT_PER_VERTEX_DATA,
+            0 };
+        ctr++;
+    }
+
+    if ((uniform_flags & USE_SKELETAL_ANIM) == USE_SKELETAL_ANIM)
+    {
+        inputElements[ctr] = D3D11_INPUT_ELEMENT_DESC{
+            "BONE",
+            0,
+            
+            DXGI_FORMAT_R32G32B32A32_FLOAT,
+            0,
+            D3D11_APPEND_ALIGNED_ELEMENT,
+            D3D11_INPUT_PER_VERTEX_DATA,
+            0 };
+        ctr++;
+
+        inputElements[ctr] = D3D11_INPUT_ELEMENT_DESC{
+            "BONEWEIGHTS",
             0,
             DXGI_FORMAT_R32G32B32A32_FLOAT,
             0,

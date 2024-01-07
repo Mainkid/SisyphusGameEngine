@@ -18,6 +18,9 @@
 
 #include "../Features/Resources/ResourceService.h"
 
+#include "../Mono/SyMono.h"
+
+
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")

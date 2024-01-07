@@ -71,9 +71,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\FMod\api\core\inc;$(SolutionDir)GameEngine\vendor\FMod\api\studio\inc;$(SolutionDir)GameEngine\vendor\recastnavigation\Recast\Include;$(SolutionDir)GameEngine\vendor\recastnavigation\Detour\Include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\vendor\optick\src;$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\entt;$(SolutionDir)GameEngine\vendor\skeletalAnim;$(SolutionDir)GameEngine\vendor\FMod\api\core\inc;$(SolutionDir)GameEngine\vendor\FMod\api\studio\inc;$(SolutionDir)GameEngine\vendor\recastnavigation\Recast\Include;$(SolutionDir)GameEngine\vendor\recastnavigation\Detour\Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnabled>false</VcpkgEnabled>
@@ -121,7 +122,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;GFSDK_SSAO_D3D11.win64.lib;mono-2.0-sgen.lib;fmod_vc.lib;fmodL_vc.lib;fmodstudio_vc.lib;fmodstudioL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;assimp.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;Ws2_32.lib;GFSDK_SSAO_D3D11.win64.lib;mono-2.0-sgen.lib;fmod_vc.lib;fmodL_vc.lib;fmodstudio_vc.lib;OptickCore.lib;mono-profiler-log.lib;eglib.lib;libgcmonosgen.lib;libmini-sgen.lib;libmonoruntime-sgen.lib;libmono-static-sgen.lib;libmonoutils.lib;MonoPosixHelper.lib;fmodstudioL_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>
@@ -156,12 +157,14 @@
     <ClCompile Include="Engine\Features\Physics\Components\ColliderComponent.cpp" />
     <ClCompile Include="Engine\Features\Physics\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorGridRenderSystem.cpp" />
-    <ClCompile Include="Engine\Mono\Components\MonoSyncComp.h" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncMesh.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncTransform.cpp" />
     <ClCompile Include="Engine\Mono\SyMono.cpp" />
-    <ClCompile Include="Engine\Mono\SyMonoProxyDatas.h" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoProxyDatas.h" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoGame.cpp" />
-    <ClCompile Include="Engine\Mono\SyMonoObj.cpp" />
+    <ClCompile Include="Engine\Mono\Api\SyMonoObj.cpp" />
     <ClCompile Include="Engine\Mono\SyMonoRuntime.cpp" />
+    <ClCompile Include="Engine\Mono\Api\SyMonoStr.cpp" />
     <ClCompile Include="Engine\Scene\CameraHelper.cpp" />
     <ClCompile Include="Engine\Scene\GameObjectHelper.cpp" />
     <ClCompile Include="Engine\Serialization\SerializableOuters.h" />
@@ -650,7 +653,7 @@
     <ClCompile Include="Engine\Core\ECS\SystemsGroup.cpp" />
     <ClCompile Include="Engine\Features\Rendering\HUD\HudConsoleSystem.cpp" />
     <ClCompile Include="Engine\Features\ErrorLogging\Systems\ErrorLoggingSystem.cpp" />
-    <ClCompile Include="Engine\Mono\Systems\MonoSyncSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Systems\MonoGameLoopSystem.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoLogger.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoEcs.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoGameConfig.cpp" />
@@ -659,6 +662,20 @@
     <ClCompile Include="Engine\Systems\SkyboxSystem.cpp" />
     <ClCompile Include="Engine\Features\Particles\Systems\ParticlesSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Systems\MonoSyncEgSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Systems\MonoHotReloadSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncSceneObject.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncCollider.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncLight.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncParticles.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncRigid.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncSkybox.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncSound.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncFixedJoint.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncHingeJoint.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncCamera.cpp" />
+    <ClCompile Include="Engine\Features\Animations\Systems\SkeletalAnimationSystem.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncAnimator.cpp" />
     <ClCompile Include="vendor\Delegates.cpp" />
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
@@ -672,6 +689,18 @@
     <ClCompile Include="vendor\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_tables.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="vendor\skeletalAnim\AssimpConverter\AssimpConverter.cpp" />
+    <ClCompile Include="vendor\skeletalAnim\SkeletalAnimation\SkeletalModel.cpp" />
+    <ClCompile Include="vendor\skeletalAnim\SkeletalAnimation\SkeletalModelSerializer.cpp" />
+    <ClCompile Include="vendor\StateMachine\imgui_node_graph_test.cpp" />
+    <ClCompile Include="vendor\StateMachine\pugixml.cpp" />
+    <ClCompile Include="vendor\StateMachine\State.cpp" />
+    <ClCompile Include="vendor\StateMachine\StateMachine.cpp" />
+    <ClCompile Include="vendor\StateMachine\StateMachineInteraction.cpp" />
+    <ClCompile Include="vendor\StateMachine\StateMachineLayer.cpp" />
+    <ClCompile Include="vendor\StateMachine\StateMachinePainter.cpp" />
+    <ClCompile Include="vendor\StateMachine\state_machine_graph.cpp" />
+    <ClCompile Include="vendor\StateMachine\Transition.cpp" />
     <ClCompile Include="vendor\recastnavigation\Detour\Source\DetourAlloc.cpp" />
     <ClCompile Include="vendor\recastnavigation\Detour\Source\DetourAssert.cpp" />
     <ClCompile Include="vendor\recastnavigation\Detour\Source\DetourCommon.cpp" />
@@ -699,12 +728,17 @@
     <ClInclude Include="Engine\Features\AI\Systems\NavMeshSystem.h" />
     <ClInclude Include="Engine\Features\Sounds\Components\FSoundComponent.h" />
     <ClInclude Include="Engine\Components\Components.h" />
+    <ClInclude Include="Engine\Events\SyAnimatorComponentAdded.h" />
     <ClInclude Include="Engine\Events\SyEditorCameraMoveToTarget.h" />
     <ClInclude Include="Engine\Contexts\PhysicsContext.h" />
     <ClInclude Include="Engine\Core\Tools\Macro.h" />
-    <ClInclude Include="Engine\Features\Common\EComponentTypes.h" />
-    <ClInclude Include="Engine\Features\Common\Events\OnAddComponentEvent.h" />
-    <ClInclude Include="Engine\Features\Common\Events\OnRemoveComponentEvent.h" />
+    <ClInclude Include="Engine\Features\Common\ECompId.h" />
+    <ClInclude Include="Engine\Features\Common\Events\CompAddedEv.h" />
+    <ClInclude Include="Engine\Features\Common\Events\CompRemovedEv.h" />
+    <ClInclude Include="Engine\Features\Animations\AnimationDataTypes.h" />
+    <ClInclude Include="Engine\Features\Animations\Bone.h" />
+    <ClInclude Include="Engine\Features\Animations\Components\AnimatorComponent.h" />
+    <ClInclude Include="Engine\Features\Animations\SkeletalAnimation.h" />
     <ClInclude Include="Engine\Features\Events\Tags\SyEventTag.h" />
     <ClInclude Include="Engine\Features\Physics\Components\JointComponent.h" />
     <ClInclude Include="Engine\Features\Physics\Systems\JointSystem.h" />
@@ -713,6 +747,11 @@
     <ClInclude Include="Engine\Components\SkyboxResource.h" />
     <ClInclude Include="Engine\Features\Physics\Components\ColliderComponent.h" />
     <ClInclude Include="Engine\Core\ResourcePath.h" />
+    <ClInclude Include="Engine\Mono\Ecs\ISyMonoEcsSync.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncBase.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncMesh.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncTransform.h" />
+    <ClInclude Include="Engine\Mono\Api\SyMonoStr.h" />
     <ClInclude Include="Engine\Events\SyHotReloadEvent.h" />
     <ClInclude Include="Engine\Events\SyImageBasedLightingUpdateEvent.h" />
     <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateCollider.h" />
@@ -724,11 +763,10 @@
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\EditorGridRenderSystem.h" />
     <ClInclude Include="Engine\Components\Material.h" />
     <ClInclude Include="Engine\Components\Model.h" />
-    <ClInclude Include="Engine\Mono\ISyMonoGameCallbackReceiver.h" />
     <ClInclude Include="Engine\Mono\SyMono.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoGame.h" />
-    <ClInclude Include="Engine\Mono\SyMonoMethod.h" />
-    <ClInclude Include="Engine\Mono\SyMonoObj.h" />
+    <ClInclude Include="Engine\Mono\Api\SyMonoMethod.h" />
+    <ClInclude Include="Engine\Mono\Api\SyMonoObj.h" />
     <ClInclude Include="Engine\Mono\SyMonoRuntime.h" />
     <ClInclude Include="Engine\Scene\CameraHelper.h" />
     <ClInclude Include="Engine\Components\SkyboxComponent.h" />
@@ -819,7 +857,7 @@
     <ClInclude Include="Engine\Core\ECS\SystemsGroup.h" />
     <ClInclude Include="Engine\Features\Rendering\HUD\HudConsoleSystem.h" />
     <ClInclude Include="Engine\Features\ErrorLogging\Systems\ErrorLoggingSystem.h" />
-    <ClInclude Include="Engine\Mono\Systems\MonoSyncSystem.h" />
+    <ClInclude Include="Engine\Mono\Systems\MonoGameLoopSystem.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoLogger.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoEcs.h" />
     <ClInclude Include="Engine\Mono\Objects\SyMonoGameConfig.h" />
@@ -827,6 +865,20 @@
     <ClInclude Include="Engine\Features\Particles\Systems\ParticlesSystem.h" />
     <ClInclude Include="Engine\Systems\SkyboxSystem.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\ParticleRenderSystem.h" />
+    <ClInclude Include="Engine\Mono\Systems\MonoSyncEgSystem.h" />
+    <ClInclude Include="Engine\Mono\Systems\MonoHotReloadSystem.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncSceneObject.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncCollider.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncLight.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncParticles.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncRigid.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncSkybox.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncSound.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncFixedJoint.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncHingeJoint.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncCamera.h" />
+    <ClInclude Include="Engine\Features\Animations\Systems\SkeletalAnimationSystem.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncAnimator.h" />
     <ClInclude Include="vendor\Delegates.h" />
     <ClInclude Include="vendor\entt\core\algorithm.hpp" />
     <ClInclude Include="vendor\entt\core\any.hpp" />
@@ -904,6 +956,20 @@
     <ClInclude Include="vendor\ImGui\imstb_truetype.h" />
     <ClInclude Include="vendor\DirectXTK\Inc\SimpleMath.h" />
     <ClInclude Include="vendor\nlohmann_json\json.hpp" />
+    <ClInclude Include="vendor\skeletalAnim\AssimpConverter\AssimpConverter.h" />
+    <ClInclude Include="vendor\skeletalAnim\SkeletalAnimation\SkeletalModel.h" />
+    <ClInclude Include="vendor\skeletalAnim\SkeletalAnimation\SkeletalModelSerializer.h" />
+    <ClInclude Include="vendor\skeletalAnim\SkeletalAnimation\Types.h" />
+    <ClInclude Include="vendor\StateMachine\imgui_node_graph_test.h" />
+    <ClInclude Include="vendor\StateMachine\pugiconfig.hpp" />
+    <ClInclude Include="vendor\StateMachine\pugixml.hpp" />
+    <ClInclude Include="vendor\StateMachine\State.h" />
+    <ClInclude Include="vendor\StateMachine\StateMachine.h" />
+    <ClInclude Include="vendor\StateMachine\StateMachineInteraction.h" />
+    <ClInclude Include="vendor\StateMachine\StateMachineLayer.h" />
+    <ClInclude Include="vendor\StateMachine\StateMachinePainter.h" />
+    <ClInclude Include="vendor\StateMachine\state_machine_graph.h" />
+    <ClInclude Include="vendor\StateMachine\Transition.h" />
     <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourAlloc.h" />
     <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourAssert.h" />
     <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourCommon.h" />

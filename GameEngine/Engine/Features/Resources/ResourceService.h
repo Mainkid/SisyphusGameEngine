@@ -28,6 +28,8 @@
 #include "../../Contexts/EngineContext.h"
 #include "../../Components/GameObjectComp.h"
 
+class SkeletalAnimation;
+
 struct BaseResourceInfo
 {
 	using uuid_hash = boost::hash<boost::uuids::uuid>;
@@ -57,10 +59,13 @@ public:
 	std::vector<boost::uuids::uuid> GetAllResourcesOfType(EAssetType assetType);
 	std::vector<std::string> GetAllResourcesFilePaths(EAssetType assetType, bool findFullPath = false);
 	SyDelegates::MulticastDelegate<bool> updateContentBrowser;
+	SyDelegates::MulticastDelegate<bool> updateFolderHierarchy;
 	
 	void LoadSceneFromFile(std::filesystem::path file, entt::registry* ecs);
 	void SaveSceneToFile(std::filesystem::path file, entt::registry* ecs);
 	void SaveStringToFile(std::filesystem::path file, std::string data);
+	void SaveAnimationToFile(std::filesystem::path file, SkeletalAnimation* animation);
+	std::shared_ptr<SkeletalAnimation> LoadAnimationFromFile(std::filesystem::path file);
 
 private:
 	const std::string baseTexture = ".\\Engine\\Assets\\Resources\\Textures\\spotlight_1.png";

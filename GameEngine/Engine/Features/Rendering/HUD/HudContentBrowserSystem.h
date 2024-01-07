@@ -20,6 +20,17 @@ struct HardwareContext;
 struct RenderContext;
 class ResourceService;
 
+struct FileViews
+{
+    std::filesystem::directory_entry fileView;
+    std::filesystem::path relativePath;
+};
+
+struct DirectoryTree
+{
+    std::filesystem::path path;
+    std::vector<DirectoryTree> subDirs;
+};
 
 class HudContentBrowserSystem : public SystemBase
 {
@@ -35,10 +46,12 @@ private:
     void InitImagesSRV();
     void ProcessPopUp();
     void DrawTreeFolderWindow(float windowLeftSizeX);
-    void RenderTree(std::filesystem::path path);
+    void RenderTree(DirectoryTree& dirTr);
+    void InitializeDirectoryTree(std::filesystem::path path, DirectoryTree& dirTree);
     bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f);
     void InitializePathFileViews(const std::filesystem::path& path);
     void UpdatePathFileViewsEvent(bool);
+    void UpdateFolderHierarchyEvent(bool);
     bool CheckRemovingResourceReferences(const std::filesystem::path& path);
 
     ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);             // Black background
@@ -68,6 +81,7 @@ private:
     std::set<std::filesystem::path> selectedFiles;
     std::filesystem::path selectedFile;
 
-    std::vector<std::filesystem::directory_entry> fileViewsVec;
+    std::vector<FileViews> fileViewsVec;
     std::vector<EAssetType> fileAssetTypeVec;
+    DirectoryTree dirTree;
 };

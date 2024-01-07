@@ -5,8 +5,8 @@
 #include "../../../Core/Tools/ErrorLogger.h"
 #include "../../../Components/TransformComponent.h"
 #include "../../../Scene/GameObjectHelper.h"
-#include "../../Common/Events/OnAddComponentEvent.h"
-#include "../../Common/Events/OnRemoveComponentEvent.h"
+#include "..\..\Common\Events\CompAddedEv.h"
+#include "..\..\Common\Events\CompRemovedEv.h"
 #include "../../../Core/Tools/Macro.h"
 #include "../Components/JointComponent.h"
 
@@ -42,6 +42,7 @@ SyResult SyRigidBodySystem::Init()
 
 SyResult SyRigidBodySystem::Run()
 {
+	OPTICK_EVENT();
 	SyResult result;
 	auto deltaTime = ServiceLocator::instance()->Get<EngineContext>()->deltaTime;
 	if (deltaTime == 0)
@@ -56,7 +57,7 @@ SyResult SyRigidBodySystem::Run()
 		if (transformC == nullptr)
 		{
 			_ecs->emplace<TransformComponent>(entity);
-			CallEvent<SyOnAddComponentEvent>("AddTransform", ESyComponentType::Transform, entity);
+			CallEvent<CompAddedEv>("AddTransform", ECompId::Transform, entity);
 			SY_LOG_PHYS(SY_LOGLEVEL_WARNING,
 				"Transform Component required for RigidBody Component is missing on entity (%s). The Transform Component has been added in the next frame.",
 				SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
@@ -67,7 +68,7 @@ SyResult SyRigidBodySystem::Run()
 			if (InitComponent(entity, rigidBodyC, *transformC).code == SY_RESCODE_ERROR)
 			{
 				_ecs->remove<SyRigidBodyComponent>(entity);
-				CallEvent<SyOnRemoveComponentEvent>("RemoveRigidBody", ESyComponentType::RigidBody, entity);
+				CallEvent<CompRemovedEv>("RemoveRigidBody", ECompId::Rigid, entity);
 				SY_LOG_PHYS(SY_LOGLEVEL_ERROR,
 					"Failed to initialize RigidBody Component on entity (%s). The component has been removed.",
 					SY_GET_ENTITY_NAME_CHAR(_ecs, entity));
