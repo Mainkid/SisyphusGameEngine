@@ -10,7 +10,7 @@ public class SyGameConfig : SyGameConfigBase
 	{
 		return new List<SyEcsSystemBase>()
 		{
-			new TestSystem()
+			new PlayerMoveSystem()
 		};
 	}
 }

@@ -7,18 +7,14 @@ namespace SyEngine.Ecs.Comps
 {
 public struct TransformComp : SyEcs.IInternalComp
 {
-	[Hide]
 	public SyVector3 Position;
-	[Hide]
     public SyVector3 Rotation;
-    [Hide]
     public SyVector3 Scale;
 
     public SyVector3 LocalPosition;
     public SyVector3 LocalRotation;
     public SyVector3 LocalScale;
 
-	[Hide]
     public SySceneEnt? Parent;
 
 

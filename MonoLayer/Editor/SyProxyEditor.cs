@@ -152,6 +152,7 @@ public class SyProxyEditor
 			{ typeof(SyCurve), new EditorDrawerCurve(this, _ecs) },
 			{ typeof(SySceneEnt?), new EditorDrawerSceneEntNull(this, _ecs) },
 			
+			{ typeof(TransformComp), new EditorDrawerCompTransform(this, _ecs) },
 			{ typeof(ParticlesComp), new EditorDrawerCompParticles(this, _ecs)}
 		};
 

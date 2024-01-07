@@ -90,6 +90,7 @@
         <Compile Include="Editor\Attributes\ShowIfBoolAttribute.cs" />
         <Compile Include="Editor\Attributes\ShowIfEnumAttribute.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerCompParticles.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerCompTransform.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerCurve.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerList.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerBase.cs" />

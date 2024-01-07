@@ -19,6 +19,22 @@ public struct SyVector3 : IEquatable<SyVector3>
 	public override string ToString() => $"({X}, {Y}, {Z})";
     
 	public static SyVector3 One { get; } = new SyVector3 { X = 1, Y = 1, Z = 1 };
+
+
+	public static SyVector3 operator +(SyVector3 a, SyVector3 b)
+		=> new SyVector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+
+	public static SyVector3 operator -(SyVector3 a, SyVector3 b)
+		=> new SyVector3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+
+	public static SyVector3 operator *(SyVector3 a, SyVector3 b)
+		=> new SyVector3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+
+	public static SyVector3 operator *(SyVector3 a, float b)
+		=> new SyVector3(a.X * b, a.Y * b, a.Z * b);
+
+	public static SyVector3 operator /(SyVector3 a, float b)
+		=> new SyVector3(a.X / b, a.Y / b, a.Z / b);
 	
 	
 	public static bool operator==(SyVector3 a, SyVector3 b)

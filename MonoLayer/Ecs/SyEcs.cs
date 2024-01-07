@@ -172,7 +172,14 @@ public class SyEcs
         }
         else
         {
-            World.GetPoolByType(compType).AddRaw(ent, Activator.CreateInstance(compType));
+            var method = World.GetType().GetMethod(nameof(World.GetPool))
+                              ?.MakeGenericMethod(compType);
+            if (method != null)
+            {
+                method.Invoke(World, null);
+                
+                World.GetPoolByType(compType).AddRaw(ent, Activator.CreateInstance(compType));
+            }
         }
     }
 

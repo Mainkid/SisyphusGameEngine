@@ -43,13 +43,7 @@ public class SyProxyGame
     private void EgLoopRun(TimeData timeData)
     {
         try
-        {   
-            if (_proxyInput.IsPressed(EKey.MouseLeft))
-            {
-                Console.WriteLine($"left click: {_proxyInput.MousePos}");
-            }
-            
-            return;
+        {
             if (!_isGameSystemsInited)
             {
                 SyLog.Info(ELogTag.ProxyGame, "game loop init starts..");

@@ -9,7 +9,8 @@ namespace SyEngine.Ecs
 
         public void Attach(SyEcs ecs, SyProxyInput input)
         {
-            Ecs = ecs;
+            Ecs   = ecs;
+            Input = input;
         }
 
         public abstract void Init();
