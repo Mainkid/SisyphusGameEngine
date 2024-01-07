@@ -62,8 +62,9 @@ struct SyPrimitiveColliderComponent
 
     size_t MonoHash = 0; // read/write only by mono sync system
 private:
+    bool                    _wasInit = false;
     physx::PxShape*			_shape = nullptr;
-    SyGeometry      _colliderGeometry;
+    SyGeometry              _colliderGeometry;
     
     friend class SyCollisionPreSystem;
     friend class SyCollisionSystem;

@@ -17,8 +17,8 @@ public:
 
 private:
     SyResult InitComponentP(const entt::entity& entity,
-                            SyRigidBodyComponent& rbComponent,
-                            SyPrimitiveColliderComponent& cComponent);
+                            SyRigidBodyComponent& rigidBC,
+                            SyPrimitiveColliderComponent& pColC);
     
     SyResult InitComponentTm(const entt::entity& entity,
                              SyRigidBodyComponent& rbComponent,

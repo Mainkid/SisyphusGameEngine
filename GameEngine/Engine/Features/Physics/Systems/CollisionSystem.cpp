@@ -3,9 +3,9 @@
 #include "../../../Components/TransformComponent.h"
 #include "../Components/RBodyComponent.h"
 #include "../../Mesh/Components/MeshComponent.h"
-#include "..\Events\SyOnCreateCollider.h"
 #include "PxPhysicsAPI.h"
 #include "RBSystem.h"
+#include "../../../Core/Tools/Macro.h"
 
 using namespace physx;
 
@@ -25,10 +25,27 @@ SyResult SyCollisionSystem::Run()
 		result.message = "EngineContext.deltaTime == 0";
 		return result;
 	}
-	auto eventView = SY_GET_THIS_FRAME_EVENT_VIEW(SyOnCreateColliderEvent);
-	for (auto& eventEntity : eventView)
+	#pragma region Primitive Colliders
 	{
-		auto& entity = _ecs->get<SyOnCreateColliderEvent>(eventEntity).Entity;
+		auto view = _ecs->view<SyPrimitiveColliderComponent>();
+		for (auto& entity : view)
+		{
+			auto* entityName = SY_GET_ENTITY_NAME_CHAR(_ecs, entity);
+			auto* rigidBCPtr = _ecs->try_get<SyRigidBodyComponent>(entity);
+			if (rigidBCPtr == nullptr)
+			{
+				SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity (%s) is missing the RigidBody Component. RigidBody Component has been added. ", entityName);
+				_ecs->emplace<SyRigidBodyComponent>(entity);
+				continue;
+			}
+			auto& pColC = _ecs->get<SyPrimitiveColliderComponent>(entity);
+			if (pColC._wasInit == false)
+				InitComponentP(entity, *rigidBCPtr, pColC);
+		}
+	}
+	auto view = _ecs->view<SyPrimitiveColliderComponent>();
+	for (auto& entity : view)
+	{
 		auto* rbComponent = _ecs->try_get<SyRigidBodyComponent>(entity);
 		if (rbComponent == nullptr)
 		{
@@ -84,48 +101,66 @@ SyResult SyCollisionSystem::Destroy()
 	return SyResult();
 }
 
-SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRigidBodyComponent& rbComponent,
-                                           SyPrimitiveColliderComponent& cComponent)
+SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRigidBodyComponent& rigidBC,
+                                           SyPrimitiveColliderComponent& pColC)
 {
 	SyResult result;
-	auto& pxMaterial = *GET_PHYSICS_CONTEXT->Physics->createMaterial(	cComponent.Material.staticFriction,
-																	cComponent.Material.dynamicFriction,
-																	cComponent.Material.restitution);
-	switch (cComponent.ColliderType)
+	auto* entityName = SY_GET_ENTITY_NAME_CHAR(_ecs, entity);
+	auto& pxMaterial = *GET_PHYSICS_CONTEXT->Physics->createMaterial(	pColC.Material.staticFriction,
+																	pColC.Material.dynamicFriction,
+																	pColC.Material.restitution);
+	switch (pColC.ColliderType)
     {
     case BOX:
 		
-    	cComponent._shape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
-																		PxBoxGeometry(cComponent.Extent),
+    	pColC._shape = PxRigidActorExt::createExclusiveShape(	*(rigidBC._rbActor),
+																		PxBoxGeometry(pColC.Extent),
 																		pxMaterial);
-		cComponent._colliderGeometry.MakeBox(cComponent.Extent);
+		pColC._colliderGeometry.MakeBox(pColC.Extent);
 		break;
     case SPHERE:
-    	cComponent._shape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
-																		PxSphereGeometry(cComponent.Radius),
+    	pColC._shape = PxRigidActorExt::createExclusiveShape(	*(rigidBC._rbActor),
+																		PxSphereGeometry(pColC.Radius),
 																		pxMaterial);
-		cComponent._colliderGeometry.MakeSphere(cComponent.Radius, 16 * SyMathHelper::Max(1.0f, cComponent.Radius));
+		pColC._colliderGeometry.MakeSphere(pColC.Radius, 16 * SyMathHelper::Max(1.0f, pColC.Radius));
 		break;
     case CAPSULE:
-    	cComponent._shape = PxRigidActorExt::createExclusiveShape(	*(rbComponent._rbActor),
-																		PxCapsuleGeometry(cComponent.Radius, cComponent.HalfHeight),
+    	pColC._shape = PxRigidActorExt::createExclusiveShape(	*(rigidBC._rbActor),
+																		PxCapsuleGeometry(pColC.Radius, pColC.HalfHeight),
 																		pxMaterial);
-		cComponent._colliderGeometry.MakeCapsule(cComponent.Radius, cComponent.HalfHeight, 16 * SyMathHelper::Max(1.0f, cComponent.Radius));
+		pColC._colliderGeometry.MakeCapsule(pColC.Radius, pColC.HalfHeight, 16 * SyMathHelper::Max(1.0f, pColC.Radius));
 		break;
     default:
-    		result.code = SY_RESCODE_ERROR;
-    		result.message = xstring("Unknown shape type detected in Collider Component on entity %d", (int)entity);
-    		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Unknown shape type detected in Collider Component on entity %d", (int)entity);
+    		result.code = SY_RESCODE_UNEXPECTED;
+    		result.message = xstring("Something was wrong during Collider Component initialization on entity (%s)", entityName);
+    		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Unknown shape type detected in Collider Component on entity (%s)", entityName);
     	break;
     }
+	if (pColC._shape == nullptr)
+	{
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to create shape on entity (%s). Used default shape instead.", entityName);
+		result.code = SY_RESCODE_UNEXPECTED;
+		result.message = xstring("Something was wrong during Collider Component initialization on entity (%s)", entityName);
+		auto& defaultPxMaterial = *GET_PHYSICS_CONTEXT->Physics->createMaterial(	SyColliderMaterial().staticFriction,
+																					SyColliderMaterial().dynamicFriction,
+																					SyColliderMaterial().restitution);
+		pColC._shape = pColC._shape = PxRigidActorExt::createExclusiveShape(	*(rigidBC._rbActor),
+																				PxBoxGeometry(SyVector3::ONE),
+																				defaultPxMaterial);
+		pColC._colliderGeometry.MakeBox(SyVector3::ONE);
+	}
 	bool updateMassResult = true;
-	if (rbComponent.Flags & SyERBodyFlags::USE_DENSITY && rbComponent.RbType == DYNAMIC)
-		updateMassResult = PxRigidBodyExt::updateMassAndInertia(	*static_cast<PxRigidBody*>(rbComponent._rbActor),
-																	cComponent.Material.density);
+	if (rigidBC.Flags & SyERBodyFlags::USE_DENSITY && rigidBC.RbType == DYNAMIC)
+		updateMassResult = PxRigidBodyExt::updateMassAndInertia(	*static_cast<PxRigidBody*>(rigidBC._rbActor),
+																	pColC.Material.density);
 	if (updateMassResult == false)
 	{
-		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::updateMassAndInertia returned false");
-		return result;
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "PxRigidBodyExt::updateMassAndInertia returned false for PrimitiveCollider Component on entity (%s). Perhaps, you used invalid density value. Default density value was used instead.",
+			entityName);
+		result.code = SY_RESCODE_UNEXPECTED;
+		result.message = xstring("Something was wrong during Collider Component initialization on entity (%s)", entityName);
+		PxRigidBodyExt::updateMassAndInertia(	*static_cast<PxRigidBody*>(rigidBC._rbActor),
+																	SyColliderMaterial().density);
 	}
 	return result;
 }

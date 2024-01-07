@@ -2,7 +2,6 @@
 
 #include "../../../vendor/entt/entt.hpp"
 #include "../Features/Physics/Components/RBodyComponent.h"
-#include "../Features/Physics/Events/SyOnCreateRBodyEvent.h"
 #include "..\Features\Physics\Events\SyOnCreateCollider.h"
 #include "../Features/Mesh/Components/MeshComponent.h"
 #include "../Features/Lighting/Components/LightComponent.h"

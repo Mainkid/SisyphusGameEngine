@@ -174,7 +174,6 @@
     <ClInclude Include="Engine\Core\ResourcePath.h" />
     <ClInclude Include="Engine\Events\SyHotReloadEvent.h" />
     <ClInclude Include="Engine\Events\SyImageBasedLightingUpdateEvent.h" />
-    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateRBodyEvent.h" />
     <ClInclude Include="Engine\Events\SyPlayModeEndedEvent.h" />
     <ClInclude Include="Engine\Events\SyPlayModeStartedEvent.h" />
     <ClInclude Include="Engine\Events\SySceneLoadEvent.h" />
@@ -442,7 +441,6 @@
     <ClInclude Include="Engine\Features\Common\Events\CompRemovedEv.h" />
     <ClInclude Include="Engine\Features\Physics\Components\JointComponent.h" />
     <ClInclude Include="Engine\Features\Physics\Systems\JointSystem.h" />
-    <ClInclude Include="Engine\Features\Physics\Events\SyOnCreateCollider.h" />
     <ClInclude Include="Engine\Contexts\PhysicsContext.h" />
     <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncFixedJoint.h" />
     <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncHingeJoint.h" />
