@@ -82,12 +82,12 @@ SyResult SyNavMeshSystem::PrepareData(const entt::entity& entity)
         if (meshC.flags & SyEMeshComponentFlags::AFFECTS_NAVMESH)
             for (auto& mesh : meshC.model->meshes)
             {
-                for (unsigned i = 0; i < mesh->vertices.size(); i++)
+                for (unsigned i = 0; i < mesh->vertices.size(); i+=7)
                 {
                     auto transformedVertex = DirectX::SimpleMath::Vector4::Transform(mesh->vertices[i], transformC.transformMatrix);
-                    navMeshC.vertices[(navMeshVertexIndex + i) * 3    ] = transformedVertex.x;
-                    navMeshC.vertices[(navMeshVertexIndex + i) * 3 + 1] = transformedVertex.y;
-                    navMeshC.vertices[(navMeshVertexIndex + i) * 3 + 2] = transformedVertex.z;
+                    navMeshC.vertices[(navMeshVertexIndex + i/7) * 3    ] = transformedVertex.x;
+                    navMeshC.vertices[(navMeshVertexIndex + i/7) * 3 + 1] = transformedVertex.y;
+                    navMeshC.vertices[(navMeshVertexIndex + i/7) * 3 + 2] = transformedVertex.z;
                 }
                 for (unsigned i = 0; i < mesh->indices.size(); i++)
                     navMeshC.triangles[navMeshTriangleIndex + i] = mesh->indices[i] + navMeshVertexIndex;
