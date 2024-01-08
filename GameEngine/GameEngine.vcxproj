@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)GameEngine\vendor\optick\src;$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\entt;$(SolutionDir)GameEngine\vendor\skeletalAnim;$(SolutionDir)GameEngine\vendor\FMod\api\core\inc;$(SolutionDir)GameEngine\vendor\FMod\api\studio\inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)GameEngine\vendor\optick\src;$(SolutionDir)GameEngine\vendor\nlohmann;$(SolutionDir)GameEngine\vendor\boost;$(SolutionDir)GameEngine\Engine\Assets\Shaders;$(SolutionDir)GameEngine\vendor\DirectXTK\Inc;$(SolutionDir)GameEngine\vendor\assimp\include;$(SolutionDir)GameEngine\Engine\DirectXSDK\assimp;$(SolutionDir)GameEngine\vendor\ImGui;$(SolutionDir)GameEngine\vendor\mono\include;$(SolutionDir)GameEngine\vendor\PhysX\physx\include;$(SolutionDir)GameEngine\vendor\entt;$(SolutionDir)GameEngine\vendor\skeletalAnim;$(SolutionDir)GameEngine\vendor\FMod\api\core\inc;$(SolutionDir)GameEngine\vendor\FMod\api\studio\inc;$(SolutionDir)GameEngine\vendor\recastnavigation\Recast\Include;$(SolutionDir)GameEngine\vendor\recastnavigation\Detour\Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEngine\Engine\Libs\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GameEngine\</OutDir>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
@@ -150,6 +150,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Features\Rendering\RenderPipeline\NavMeshDrawSystem.cpp" />
+    <ClCompile Include="Engine\Features\AI\Systems\NavMeshSystem.cpp" />
     <ClCompile Include="Engine\Features\Physics\Systems\JointSystem.cpp" />
     <ClCompile Include="Engine\Features\Rendering\RenderPipeline\EditorColliderRenderSystem.cpp" />
     <ClCompile Include="Engine\Features\Physics\Components\ColliderComponent.cpp" />
@@ -699,10 +701,31 @@
     <ClCompile Include="vendor\StateMachine\StateMachinePainter.cpp" />
     <ClCompile Include="vendor\StateMachine\state_machine_graph.cpp" />
     <ClCompile Include="vendor\StateMachine\Transition.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Detour\Source\DetourAlloc.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Detour\Source\DetourAssert.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Detour\Source\DetourCommon.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Detour\Source\DetourNavMesh.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Detour\Source\DetourNavMeshBuilder.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Detour\Source\DetourNavMeshQuery.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Detour\Source\DetourNode.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Recast\Source\Recast.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Recast\Source\RecastAlloc.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Recast\Source\RecastArea.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Recast\Source\RecastAssert.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Recast\Source\RecastContour.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Recast\Source\RecastFilter.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Recast\Source\RecastLayers.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Recast\Source\RecastMesh.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Recast\Source\RecastMeshDetail.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Recast\Source\RecastRasterization.cpp" />
+    <ClCompile Include="vendor\recastnavigation\Recast\Source\RecastRegion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="Engine\Events\SySoundDeletedEvent.h" />
+    <ClInclude Include="Engine\Features\AI\Components\NavMeshComponent.h" />
+    <ClInclude Include="Engine\Features\Rendering\RenderPipeline\NavMeshDrawSystem.h" />
+    <ClInclude Include="Engine\Features\AI\Systems\NavMeshSystem.h" />
     <ClInclude Include="Engine\Features\Sounds\Components\FSoundComponent.h" />
     <ClInclude Include="Engine\Components\Components.h" />
     <ClInclude Include="Engine\Events\SyAnimatorComponentAdded.h" />
@@ -947,6 +970,20 @@
     <ClInclude Include="vendor\StateMachine\StateMachinePainter.h" />
     <ClInclude Include="vendor\StateMachine\state_machine_graph.h" />
     <ClInclude Include="vendor\StateMachine\Transition.h" />
+    <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourAlloc.h" />
+    <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourAssert.h" />
+    <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourCommon.h" />
+    <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourConfig.h" />
+    <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourMath.h" />
+    <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourNavMesh.h" />
+    <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourNavMeshBuilder.h" />
+    <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourNavMeshQuery.h" />
+    <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourNode.h" />
+    <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourStatus.h" />
+    <ClInclude Include="vendor\recastnavigation\Recast\Include\Recast.h" />
+    <ClInclude Include="vendor\recastnavigation\Recast\Include\RecastAlloc.h" />
+    <ClInclude Include="vendor\recastnavigation\Recast\Include\RecastAssert.h" />
+    <ClInclude Include="vendor\recastnavigation\Recast\Include\RecastConfig.h" />
     <ClInclude Include="vendor\stb_image.h" />
     <ClInclude Include="vendor\WICTextureLoader.h" />
   </ItemGroup>
@@ -978,6 +1015,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Engine\Assets\Shaders\IrradianceMapGenerator.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Engine\Assets\Shaders\LineShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Engine\Assets\Shaders\NavMesh.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Engine\Assets\Shaders\OpaqueShader.hlsl">
@@ -1047,9 +1090,6 @@
     <Image Include="Engine\Assets\SkyBox\skybox_4.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_5.png" />
     <Image Include="Engine\Assets\SkyBox\skybox_6.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Engine\Features\Common\Events\OnRemoveComponentEvent" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

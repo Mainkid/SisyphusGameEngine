@@ -38,7 +38,7 @@ SyResult SyHudConsoleSystem::Run()
 		auto search = filters.find(levelFirstChar);
 		if (search == filters.end())
 		{
-			SY_LOG_HUD(SY_LOGLEVEL_ERROR, "Failed tp find %s in filters. ", &levelFirstChar);
+			SY_LOG_HUD(SY_LOGLEVEL_ERROR, "Failed to find %s in filters. ", &levelFirstChar);
 			continue;
 		}
 		if (filters.find(levelFirstChar)->second == false)

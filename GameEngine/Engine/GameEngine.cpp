@@ -1,4 +1,4 @@
-﻿#include <iostream>
+﻿    #include <iostream>
 #include <uuid.hpp>
 
 #include "Core/EngineCore.h"
@@ -12,6 +12,8 @@
 #include "SimpleMath.h"
 #include "Features/Physics/Components/JointComponent.h"
 #include "Serialization/Serializable.h"
+
+#include "Features/AI/Components/NavMeshComponent.h"
 
 
 #define SY_PI 3.14f
@@ -43,44 +45,45 @@ int main()
 
 
 #pragma region Test Base
-    auto base = GameObjectHelper::Create(ecs, "Base", { 0.0f, -5.0f, 13.0f });
-    ecs->get<TransformComponent>(base).scale = {10.0f, 1.0f, 10.0f};
-    auto result1 = GameObjectHelper::AddRigidBodyComponent(ecs, base, STATIC);
-    auto result2 = GameObjectHelper::AddCubeMeshComponent(ecs, base);
-    SyPrimitiveColliderShapeDesc baseColDesc;
-    baseColDesc.Extent = { 10.0f, 1.0f, 10.0f };
-    auto result3 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, base,
-                                                            BOX,
-                                                            baseColDesc,
-                                                            SyColliderMaterial());
+     //auto base = GameObjectHelper::Create(ecs, "Base", { 0.0f, -5.0f, 13.0f });
+     //ecs->get<TransformComponent>(base).scale = {10.0f, 1.0f, 10.0f};
+     //auto result1 = GameObjectHelper::AddRigidBodyComponent(ecs, base, STATIC);
+     //auto result2 = GameObjectHelper::AddCubeMeshComponent(ecs, base);
+     //ecs->get<MeshComponent>(base).flags |= AFFECTS_NAVMESH;
+     //SyPrimitiveColliderShapeDesc baseColDesc;
+     //baseColDesc.Extent = { 10.0f, 1.0f, 10.0f };
+     //auto result3 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, base,
+     //                                                        BOX,
+     //                                                        baseColDesc,
+     //                                                        SyColliderMaterial());
 #pragma endregion 
 
 #pragma region Test Mesh
-    // auto meshUuid = ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Game\\Assets\\fbx\\barrel.fbx");
-    // auto staticMesh = GameObjectHelper::Create(ecs, "Static Mesh", {0.0f, -2.5f, 8.0f});
-    // ecs->get<TransformComponent>(staticMesh).scale = { 3.0f, 3.0f, 3.0f };
-    // auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid, SyEMeshComponentFlags::MESH_COLLIDER | SyEMeshComponentFlags::MESH_RENDER);
-    // auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
-    // auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
+     auto meshUuid = ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Game\\Assets\\dungeon.fbx");
+     auto staticMesh = GameObjectHelper::Create(ecs, "Static Mesh", SyVector3::ZERO);
+     //ecs->get<TransformComponent>(staticMesh).scale = { 3.0f, 3.0f, 3.0f };
+     auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid, SyEMeshComponentFlags::MESH_RENDER | SyEMeshComponentFlags::AFFECTS_NAVMESH);
+     //auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
+     //auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
 #pragma endregion
 #pragma region Test Cube 1
-    auto cube1 = GameObjectHelper::Create(ecs, "Cube1", { 0.0f, 5.0f, 8.0f });
-    auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
-    auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube1);
-    SyPrimitiveColliderShapeDesc cubeColDesc;
-    cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
-    auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube1,
-        BOX,
-        cubeColDesc,
-        SyColliderMaterial());
-
-    auto cube2 = GameObjectHelper::Create(ecs, "Cube1", { 1.0f, 0.0f, 8.0f });
-    auto result13 = GameObjectHelper::AddRigidBodyComponent(ecs, cube2, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
-    auto result14 = GameObjectHelper::AddCubeMeshComponent(ecs, cube2);
-    auto result15 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube2,
-        BOX,
-        cubeColDesc,
-        SyColliderMaterial());
+    // auto cube1 = GameObjectHelper::Create(ecs, "Cube1", { 0.0f, 5.0f, 8.0f });
+    // auto result7 = GameObjectHelper::AddRigidBodyComponent(ecs, cube1, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
+    // auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube1);
+    // SyPrimitiveColliderShapeDesc cubeColDesc;
+    // cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
+    // auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube1,
+    //     BOX,
+    //     cubeColDesc,
+    //     SyColliderMaterial());
+    //
+    // auto cube2 = GameObjectHelper::Create(ecs, "Cube1", { 1.0f, 0.0f, 8.0f });
+    // auto result13 = GameObjectHelper::AddRigidBodyComponent(ecs, cube2, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
+    // auto result14 = GameObjectHelper::AddCubeMeshComponent(ecs, cube2);
+    // auto result15 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube2,
+    //     BOX,
+    //     cubeColDesc,
+    //     SyColliderMaterial());
     
 #pragma endregion
 #pragma region Test Sphere 1
@@ -95,7 +98,7 @@ int main()
     //     SyColliderMaterial());
     // ecs->emplace<SyHingeJointComponent>(cube1, SyVector3(1.0f, 1.0f, 0.0f),
     //     SyVector3(0.0f, SyMathHelper::PI / 2, 0.0f));
-    ecs->emplace<SyFixedJointComponent>(cube2, cube1);
+    //ecs->emplace<SyFixedJointComponent>(cube2, cube1);
 
 #pragma endregion
     
@@ -126,6 +129,15 @@ int main()
     //
     // ser.Deserialize(json, *ecs);
     //---------------------------------------------
+   
+   
+#pragma region NavMesh
+    auto navMeshEntity = GameObjectHelper::Create(ecs, "NavMesh", { 0.0f, -5.0f, 13.0f });
+    auto result01 = ecs->emplace<SyNavMeshComponent>(navMeshEntity);
+    auto& nmc = ecs->get<SyNavMeshComponent>(navMeshEntity);
+    nmc.origin = { 0.0f, -5.0f, 13.0f };
+    nmc.extent = SyVector3::ONE * 100.0f;
+#pragma endregion
 
     //sound
     GameObjectHelper::CreateSoundComponent(ecs);

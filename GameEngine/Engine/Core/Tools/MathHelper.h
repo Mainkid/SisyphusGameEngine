@@ -60,6 +60,10 @@ struct SyMathHelper
     {
         return CalculateSphereVolume(radius) + PI * radius * radius * 2 * halfHeight;
     }
-    
 
+    //Get a bit value of an integer number
+    static int Bit(int number, int bitNum)
+    {
+        return (number & (1 << bitNum)) >> bitNum;
+    }
 };

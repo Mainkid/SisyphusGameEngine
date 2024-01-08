@@ -272,7 +272,11 @@ std::shared_ptr<Mesh> MeshLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene
 			color.x = (float)mesh->mTextureCoords[0][i].x;
 			color.y = (float)mesh->mTextureCoords[0][i].y;
 		}
-
+		else
+		{
+			color.x = 0.0f;
+			color.y = 0.0f;
+		}
 		if (mesh->mNormals)
 		{
 			normals.x = mesh->mNormals[i].x;
