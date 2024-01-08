@@ -30,7 +30,6 @@ SyResult ParticleRenderSystem::Run()
     
 
     auto [camera, cameraTransform] = CameraHelper::Find(_ecs,_ec->playModeState);
-
     auto func = [&cameraTransform](const TransformComponent& lhs, const TransformComponent& rhs) {
         float distance1 = (cameraTransform._position - lhs._position).Length();
         float distance2 = (cameraTransform._position - rhs._position).Length();
@@ -216,7 +215,7 @@ SyResult ParticleRenderSystem::Run()
 
         auto view = _ecs->view<LightComponent,TransformComponent>();
         int ctr = 0;
-        ID3D11ShaderResourceView* shadowSrv;
+        ID3D11ShaderResourceView* shadowSrv = nullptr;
         for (auto ent : view)
         {
             auto [lightComponent,transform] = view.get<LightComponent,TransformComponent>(ent);
@@ -253,11 +252,15 @@ SyResult ParticleRenderSystem::Run()
 
         _hc->context->VSSetShader(_rc->SimpleParticle->vertexShader.Get(), nullptr, 0);
         _hc->context->PSSetShader(_rc->SimpleParticle->pixelShader.Get(), nullptr, 0);
-        _hc->context->VSSetShaderResources(0, 1, &shadowSrv);
+
+        if (shadowSrv)
+            _hc->context->VSSetShaderResources(0, 1, &shadowSrv);
         _hc->context->VSSetShaderResources(1, 1, pc.PoolBufferSrv.GetAddressOf());
         _hc->context->VSSetShaderResources(2, 1, pc.SortBufferSrv.GetAddressOf());
         //_hc->context->VSSetShaderResources(3, 1, pc.TextureSrv.GetAddressOf());
-        _hc->context->PSSetShaderResources(0, 1, &shadowSrv);
+
+        if (shadowSrv)
+            _hc->context->PSSetShaderResources(0, 1, &shadowSrv);
         _hc->context->PSSetShaderResources(1, 1, pc.PoolBufferSrv.GetAddressOf());
         _hc->context->PSSetShaderResources(2, 1, pc.SortBufferSrv.GetAddressOf());
         _hc->context->PSSetShaderResources(3, 1, pc.ParticleTexture->textureSRV.GetAddressOf());
