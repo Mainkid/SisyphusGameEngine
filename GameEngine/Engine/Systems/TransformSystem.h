@@ -14,5 +14,6 @@ public:
 	SyResult Destroy() override;
 
 private:
+	void CheckTransform(TransformComponent& tc);
 	EngineContext* ec;
 };
