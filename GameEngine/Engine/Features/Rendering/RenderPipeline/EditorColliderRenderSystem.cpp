@@ -29,6 +29,7 @@ SyResult EditorColliderRenderSystem::Run()
 	auto [camera, cameraTransform] = CameraHelper::Find(_ecs,_ec->playModeState);
 
 	dataOpaque.baseData.worldViewProj = camera.view * camera.projection;
+	dataOpaque.eyePos.x = 2;
 	_hc->context->OMSetDepthStencilState(_rc->OffStencilState.Get(), 0);
 
 
@@ -59,7 +60,7 @@ SyResult EditorColliderRenderSystem::Run()
 		_hc->context->PSSetConstantBuffers(0, 1, _rc->ShadowConstBuffer->buffer.GetAddressOf());
 		_hc->renderTarget->SetRenderTarget(_hc->depthStencilView.Get());
 		_hc->context->IASetInputLayout(_rc->EditorColliderRenderer->layout.Get());
-		_hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+		_hc->context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
 		_hc->context->IASetIndexBuffer(collider._colliderGeometry.GetIndexBuffer()->buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 		_hc->context->IASetVertexBuffers(0, 1, collider._colliderGeometry.GetVertexBuffer()->buffer.GetAddressOf(),
 			_rc->RhData.strides16, _rc->RhData.offsets0);

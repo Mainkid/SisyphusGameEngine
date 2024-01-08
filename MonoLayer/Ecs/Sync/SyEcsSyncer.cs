@@ -26,6 +26,7 @@ internal class SyEcsSyncer
         Add(new SyEcsSyncHingeJoint(ecs));
         Add(new SyEcsSyncCamera(ecs));
         Add(new SyEcsSyncAnimator(ecs));
+        Add(new SyEcsSyncNavMesh(ecs));
     }
 
     //-----------------------------------------------------------

@@ -306,6 +306,15 @@ void RenderInitSystem::CompileShaders() const
 	_rc->MultiplyBy6Shader->Initialize(L"./Engine/Assets/Shaders/ParticleSystem/Multiply6Shader.hlsl",
 		COMPILE_COMPUTE, USE_NONE);
 
+	_rc->NavMeshShader = std::make_unique<Shader>();
+	_rc->NavMeshShader->Initialize(L"./Engine/Assets/Shaders/NavMesh.hlsl",
+		COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VSMain", "PSMain");
+
+	_rc->LineShader = std::make_unique<Shader>();
+	_rc->LineShader->Initialize(L"./Engine/Assets/Shaders/LineShader.hlsl",
+		COMPILE_VERTEX | COMPILE_PIXEL, USE_POSITION | USE_COLOR, "VSMain", "PSMain");
+
+
 }
 
 void RenderInitSystem::CreateBlendStates() const

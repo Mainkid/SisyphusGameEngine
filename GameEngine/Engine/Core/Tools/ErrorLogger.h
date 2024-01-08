@@ -28,6 +28,8 @@ else																					\
 #define SY_LOG_EVSY(logLevel_, ...) SY_LOG("EVSY",	logLevel_, __VA_ARGS__)
 #define SY_LOG_MONO(logLevel, ...)  SY_LOG("MONO",  logLevel, __VA_ARGS__)
 #define SY_LOG_GAME(logLevel, ...)	SY_LOG("GAME",	logLevel, __VA_ARGS__)
+#define SY_LOG_AI(logLevel, ...)  SY_LOG("AI  ",	logLevel, __VA_ARGS__)
+
 
 #define SY_RESCODE_OK 0
 #define SY_RESCODE_UNEXPECTED 1

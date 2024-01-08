@@ -9,6 +9,7 @@
 #include "../Ecs/SyMonoEcsSyncHingeJoint.h"
 #include "../Ecs/SyMonoEcsSyncLight.h"
 #include "../Ecs/SyMonoEcsSyncMesh.h"
+#include "../Ecs/SyMonoEcsSyncNavMesh.h"
 #include "../Ecs/SyMonoEcsSyncParticles.h"
 #include "../Ecs/SyMonoEcsSyncRigid.h"
 #include "../Ecs/SyMonoEcsSyncSceneObject.h"
@@ -131,6 +132,7 @@ SyResult SyMonoEcs::OnAfterCreate()
 	AddSync<SyMonoEcsSyncHingeJoint>();
 	AddSync<SyMonoEcsSyncCamera>();
 	AddSync<SyMonoEcsSyncAnimator>();
+	AddSync<SyMonoEcsSyncNavMesh>();
 
 	return {};
 }

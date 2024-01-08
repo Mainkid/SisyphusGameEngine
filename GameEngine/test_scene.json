@@ -4,7 +4,8 @@
         2,
         3,
         4,
-        5
+        5,
+        6
     ],
     "EntitiesDtos" : [
         {
@@ -305,7 +306,7 @@
                             "Position" : {
                                 "X" : 0,
                                 "Y" : 2,
-                                "Z" : -2.69572925567627
+                                "Z" : 0
                             },
                             "Rotation" : {
                                 "X" : 0,
@@ -320,7 +321,7 @@
                             "LocalPosition" : {
                                 "X" : 0,
                                 "Y" : 0,
-                                "Z" : -2.69572925567627
+                                "Z" : 0
                             },
                             "LocalRotation" : {
                                 "X" : 0,
@@ -344,6 +345,72 @@
                             "NearPlane" : 0.00999999977648258,
                             "FarPlane" : 100,
                             "FovDegrees" : 60
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "Entity" : 6,
+            "Comps" : [
+                {
+                    "TypeFullName" : "SyEngine.Ecs.Comps.SceneObjectComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                    "Comp" : {
+                        "type" : "SyEngine.Ecs.Comps.SceneObjectComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Name" : "wall",
+                            "IsActive" : true
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Ecs.Comps.TransformComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                    "Comp" : {
+                        "type" : "SyEngine.Ecs.Comps.TransformComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Position" : {
+                                "X" : 0,
+                                "Y" : 1.60260725021362,
+                                "Z" : 10
+                            },
+                            "Rotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "Scale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            },
+                            "LocalPosition" : {
+                                "X" : 0,
+                                "Y" : 1.60260725021362,
+                                "Z" : 10
+                            },
+                            "LocalRotation" : {
+                                "X" : 0,
+                                "Y" : 0,
+                                "Z" : 0
+                            },
+                            "LocalScale" : {
+                                "X" : 1,
+                                "Y" : 1,
+                                "Z" : 1
+                            },
+                            "Parent" : null
+                        }
+                    }
+                },
+                {
+                    "TypeFullName" : "SyEngine.Ecs.Comps.MeshComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                    "Comp" : {
+                        "type" : "SyEngine.Ecs.Comps.MeshComp, MonoLayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                        "value" : {
+                            "Materials" : [
+                                "b3fd1e64-1496-4157-8f44-973fa3e5d211"
+                            ],
+                            "Model" : "068ac97a-9d70-41c4-a145-81e0fa7033b0"
                         }
                     }
                 }

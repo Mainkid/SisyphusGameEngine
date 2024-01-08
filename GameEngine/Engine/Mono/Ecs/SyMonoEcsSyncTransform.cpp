@@ -30,14 +30,6 @@ void SyMonoEcsSyncTransform::FillProxyByComp(const TransformComponent& comp)
 
 void SyMonoEcsSyncTransform::FillCompByProxy(const ProxyTransformComp& proxy, entt::entity ent, TransformComponent& comp)
 {
-
-	comp._position = proxy.Position;
-	comp._rotation = TransformHelper::DegreesToRad(proxy.Rotation);
-	comp.scale = proxy.Scale;
-	comp.localPosition = proxy.LocalPosition;
-	comp.localRotation = TransformHelper::DegreesToRad(proxy.LocalRotation);
-	comp.localScale = proxy.LocalScale;
-
 	if (proxy.HasParent)
 	{
 		if (comp.parent != proxy.ParentEngineEnt)
@@ -48,6 +40,13 @@ void SyMonoEcsSyncTransform::FillCompByProxy(const ProxyTransformComp& proxy, en
 		if (comp.parent != entt::null)
 			GameObjectHelper::SetParent(_ecs, ent, entt::null);
 	}
+
+	comp._position = proxy.Position;
+	comp._rotation = TransformHelper::DegreesToRad(proxy.Rotation);
+	comp.scale = proxy.Scale;
+	comp.localPosition = proxy.LocalPosition;
+	comp.localRotation = TransformHelper::DegreesToRad(proxy.LocalRotation);
+	comp.localScale = proxy.LocalScale;
 }
 
 
