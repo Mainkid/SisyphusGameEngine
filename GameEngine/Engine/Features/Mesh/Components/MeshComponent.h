@@ -25,7 +25,8 @@ class EngineCore;
 enum SyEMeshComponentFlags
 {
 	MESH_RENDER		= 1,		//check if you want this mesh to be rendered
-	MESH_COLLIDER	= 1 << 1	//check if you want this mesh to be used in the TrimeshColliderComponent
+	MESH_COLLIDER	= 1 << 1,	//check if you want this mesh to be used in the TrimeshColliderComponent
+	AFFECTS_NAVMESH = 1 << 2	//check if you want this mesh influence navmesh
 };
 
 DEFINE_BITWISE_OPERATORS(SyEMeshComponentFlags);

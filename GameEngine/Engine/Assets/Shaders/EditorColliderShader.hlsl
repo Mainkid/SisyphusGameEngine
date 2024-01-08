@@ -30,6 +30,9 @@ PS_IN VSMain(VS_IN input)
 
 float4 PSMain(PS_IN input) : SV_Target
 {
-    return float4(0, 1, 0, 1);
+    if (eyePos.x > 1)
+        return float4(0, 1, 0, 1);
+    else
+        return float4(0,1,1,1);
 
 }
