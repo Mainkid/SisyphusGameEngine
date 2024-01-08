@@ -89,7 +89,7 @@ void TransformHelper::UpdateWorldTransformMatrix(TransformComponent& tc, Matrix 
 		localTransforms.Decompose(tc.localScale, rotation, tc.localPosition);
 
 		//tc.localPosition = tc._position;
-		tc.localRotation = rotation.ToEuler();
+		//tc.localRotation = rotation.ToEuler();
 		//tc.localScale = tc.scale;
 
 		boost::hash_combine(seed, tc.localPosition);
