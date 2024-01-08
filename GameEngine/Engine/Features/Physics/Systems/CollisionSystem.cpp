@@ -25,9 +25,28 @@ SyResult SyCollisionSystem::Run()
 		result.message = "EngineContext.deltaTime == 0";
 		return result;
 	}
+#pragma region Primitive Colliders -- Update Geometry
+	{
+		auto view = _ecs->view<SyPrimitiveColliderComponent>();
+		for (auto& entity : view)
+		{
+			auto* entityName = SY_GET_ENTITY_NAME_CHAR(_ecs, entity);
+			auto& pColC = _ecs->get<SyPrimitiveColliderComponent>(entity);
+			size_t hash = 0;
+			boost::hash_combine(hash, pColC);
+			if (pColC._hash != hash)
+			{
+				if (UpdatePrimitiveColliderGeometry(entity, pColC).code == SY_RESCODE_ERROR)
+					SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "An error occured during PrimitiveCollider Component update on entity (%s). ", entityName);
+				if (ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
+					pColC._hash = hash;
+			}
+		}
+	}
+#pragma endregion
 	if (ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
 		return SyResult();
-	#pragma region Primitive Colliders
+#pragma region Primitive Colliders -- Update Collider
 	{
 		auto view = _ecs->view<SyPrimitiveColliderComponent>();
 		for (auto& entity : view)
@@ -41,13 +60,19 @@ SyResult SyCollisionSystem::Run()
 				continue;
 			}
 			auto& pColC = _ecs->get<SyPrimitiveColliderComponent>(entity);
-			if (pColC._wasInit == false)
-				if (InitComponentP(entity, *rigidBCPtr, pColC).code == SY_RESCODE_ERROR)
-					SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "An error occured during PrimitiveCollider Component initialization on entity (%s). ", entityName);
+			size_t hash = 0;
+			boost::hash_combine(hash, pColC);
+			if (pColC._hash != hash || pColC._wasInit == false)
+			{
+				pColC._hash = hash;
+				pColC._wasInit = true;
+				if (UpdatePrimitiveCollider(entity, *rigidBCPtr, pColC).code == SY_RESCODE_ERROR)
+					SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "An error occured during PrimitiveCollider Component update on entity (%s). ", entityName);
+			}
 		}
 	}
 	#pragma endregion
-#pragma region Trimesh Colliders
+#pragma region Trimesh Colliders -- Update Collider
 	{
 		auto view = _ecs->view<SyTrimeshColliderComponent>();
 		for (auto& entity : view)
@@ -70,13 +95,19 @@ SyResult SyCollisionSystem::Run()
 			}
 			auto& tmColC = _ecs->get<SyTrimeshColliderComponent>(entity);
 			auto& transformC = _ecs->get<TransformComponent>(entity);
-			if (tmColC._wasInit == false)
-				if (InitComponentTm(entity, *rigidBCPtr, tmColC, *meshCPtr, transformC).code == SY_RESCODE_ERROR)
-					SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "An error occured during TrimeshCollider Component initialization on entity (%s). ", entityName);
+			size_t hash = 0;
+			boost::hash_combine(hash, tmColC);
+			if (tmColC._hash != hash)
+			{
+				tmColC._hash = hash;
+				if (UpdateTrimeshCollider(entity, *rigidBCPtr, tmColC, *meshCPtr, transformC).code == SY_RESCODE_ERROR)
+					SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "An error occured during TrimeshCollider Component update on entity (%s). ", entityName);
+			}
+				
 		}
 		
 	}
-
+#pragma endregion 
 	return result;
 }
 
@@ -85,11 +116,37 @@ SyResult SyCollisionSystem::Destroy()
 	return SyResult();
 }
 
-SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRigidBodyComponent& rigidBC,
-                                           SyPrimitiveColliderComponent& pColC)
+SyResult SyCollisionSystem::UpdatePrimitiveColliderGeometry(const entt::entity& entity, SyPrimitiveColliderComponent& pColC)
 {
 	SyResult result;
-	pColC._wasInit = true;
+	auto* entityName = SY_GET_ENTITY_NAME_CHAR(_ecs, entity);
+	switch (pColC.ColliderType)
+	{
+	case BOX:
+		pColC._colliderGeometry.MakeBox(pColC.Extent);
+		break;
+	case SPHERE:
+		pColC._colliderGeometry.MakeSphere(pColC.Radius, 16 * SyMathHelper::Max(1.0f, pColC.Radius));
+		break;
+	case CAPSULE:
+		pColC._colliderGeometry.MakeCapsule(pColC.Radius, pColC.HalfHeight, 16 * SyMathHelper::Max(1.0f, pColC.Radius));
+		break;
+	default:
+		result.code = SY_RESCODE_UNEXPECTED;
+		result.message = xstring("Something was wrong during Collider Component initialization on entity (%s)", entityName);
+		SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Unknown shape type detected in Collider Component on entity (%s)", entityName);
+		break;
+	}
+	pColC._colliderGeometry.ResetBuffers();
+	return result;
+}
+
+SyResult SyCollisionSystem::UpdatePrimitiveCollider(const entt::entity& entity, SyRigidBodyComponent& rigidBC,
+                                                    SyPrimitiveColliderComponent& pColC)
+{
+	SyResult result;
+	if (pColC._shape != nullptr)
+		pColC._shape->release();
 	auto* entityName = SY_GET_ENTITY_NAME_CHAR(_ecs, entity);
 	auto& pxMaterial = *GET_PHYSICS_CONTEXT->Physics->createMaterial(	pColC.Material.staticFriction,
 																	pColC.Material.dynamicFriction,
@@ -101,20 +158,23 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRigidBo
     	pColC._shape = PxRigidActorExt::createExclusiveShape(	*(rigidBC._rbActor),
 																		PxBoxGeometry(pColC.Extent),
 																		pxMaterial);
-		pColC._colliderGeometry.MakeBox(pColC.Extent);
 		break;
     case SPHERE:
     	pColC._shape = PxRigidActorExt::createExclusiveShape(	*(rigidBC._rbActor),
 																		PxSphereGeometry(pColC.Radius),
 																		pxMaterial);
-		pColC._colliderGeometry.MakeSphere(pColC.Radius, 16 * SyMathHelper::Max(1.0f, pColC.Radius));
 		break;
     case CAPSULE:
-    	pColC._shape = PxRigidActorExt::createExclusiveShape(	*(rigidBC._rbActor),
-																		PxCapsuleGeometry(pColC.Radius, pColC.HalfHeight),
-																		pxMaterial);
-		pColC._colliderGeometry.MakeCapsule(pColC.Radius, pColC.HalfHeight, 16 * SyMathHelper::Max(1.0f, pColC.Radius));
-		break;
+	    {
+		    pColC._shape = PxRigidActorExt::createExclusiveShape(	*(rigidBC._rbActor),
+																			PxCapsuleGeometry(pColC.Radius, pColC.HalfHeight),
+																			pxMaterial);
+    		PxTransform rot;
+			rot.p = { 0.0f, 0.0f, 0.0f };
+    		rot.q = SyVector3::EulerToPxQuat({0.0f, 0.0f, SyMathHelper::PI / 2});
+    		pColC._shape->setLocalPose(rot);
+    		break;
+	    }
     default:
     		result.code = SY_RESCODE_UNEXPECTED;
     		result.message = xstring("Something was wrong during Collider Component initialization on entity (%s)", entityName);
@@ -150,11 +210,10 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRigidBo
 	return result;
 }
 
-SyResult SyCollisionSystem::InitComponentTm(const entt::entity& entity, SyRigidBodyComponent& rigidBC,
+SyResult SyCollisionSystem::UpdateTrimeshCollider(const entt::entity& entity, SyRigidBodyComponent& rigidBC,
                                             SyTrimeshColliderComponent& tmColC, const MeshComponent& meshC, const TransformComponent& transformC)
 {
 	SyResult result;
-	tmColC._wasInit = true;
 	auto* entityName = SY_GET_ENTITY_NAME_CHAR(_ecs, entity);
 	if (!(meshC.flags & SyEMeshComponentFlags::MESH_COLLIDER))
 	{

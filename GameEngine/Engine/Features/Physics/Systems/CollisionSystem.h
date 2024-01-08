@@ -16,11 +16,12 @@ public:
     SyResult Destroy() override;
 
 private:
-    SyResult InitComponentP(const entt::entity& entity,
+    SyResult UpdatePrimitiveColliderGeometry(const entt::entity& entity, SyPrimitiveColliderComponent& pColC);
+    SyResult UpdatePrimitiveCollider(const entt::entity& entity,
                             SyRigidBodyComponent& rigidBC,
                             SyPrimitiveColliderComponent& pColC);
     
-    SyResult InitComponentTm(const entt::entity& entity,
+    SyResult UpdateTrimeshCollider(const entt::entity& entity,
                              SyRigidBodyComponent& rigidBC,
                              SyTrimeshColliderComponent& tmColC,
                              const MeshComponent& meshC,

@@ -62,6 +62,7 @@ struct SyPrimitiveColliderComponent
 
     size_t MonoHash = 0; // read/write only by mono sync system
 private:
+    size_t                  _hash = 0;
     bool                    _wasInit = false;
     physx::PxShape*			_shape = nullptr;
     SyGeometry              _colliderGeometry;
@@ -69,7 +70,22 @@ private:
     friend class SyCollisionPreSystem;
     friend class SyCollisionSystem;
     friend class EditorColliderRenderSystem;
+    friend std::size_t hash_value(const SyPrimitiveColliderComponent& pColC);
 };
+
+inline std::size_t hash_value(const SyPrimitiveColliderComponent& pColC)
+{
+    size_t hash = 0;
+    boost::hash_combine(hash,pColC.ColliderType);
+    boost::hash_combine(hash,pColC.Extent);
+    boost::hash_combine(hash,pColC.Radius);
+    boost::hash_combine(hash,pColC.HalfHeight);
+    boost::hash_combine(hash,pColC.Material.density);
+    boost::hash_combine(hash,pColC.Material.restitution);
+    boost::hash_combine(hash,pColC.Material.dynamicFriction);
+    boost::hash_combine(hash,pColC.Material.staticFriction);
+    return hash;
+}
 
 struct SyTrimeshColliderComponent
 {
@@ -86,8 +102,19 @@ struct SyTrimeshColliderComponent
     //members initialized in CollisionSystem::InitComponentTm
 
 private:
-    bool _wasInit = false;
+    size_t _hash = 0;
     physx::PxShape* _shape;
     
     friend class SyCollisionSystem;
+    friend std::size_t hash_value(const SyTrimeshColliderComponent& tmColC);
 };
+
+inline std::size_t hash_value(const SyTrimeshColliderComponent& tmColC)
+{
+    size_t hash = 0;
+    boost::hash_combine(hash,tmColC.Material.density);
+    boost::hash_combine(hash,tmColC.Material.restitution);
+    boost::hash_combine(hash,tmColC.Material.dynamicFriction);
+    boost::hash_combine(hash,tmColC.Material.staticFriction);
+    return hash;
+}

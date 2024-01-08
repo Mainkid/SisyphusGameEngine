@@ -23,7 +23,15 @@ struct SyGeometry
     {
         return _indices;
     };
-
+    void ResetBuffers()
+    {
+        //_vertexBuffer->buffer.Reset();
+        _vertexBuffer.reset();
+        _vertexBuffer = nullptr;
+        //_indexBuffer->buffer.Reset();
+        _indexBuffer.reset();
+        _indexBuffer = nullptr;
+    }
     Buffer* GetIndexBuffer()
     {
         if (_indexBuffer == nullptr)
@@ -71,6 +79,8 @@ struct SyGeometry
     //Construct 0-origin axis-aligned rectangle in xy-plane. Extent.z is ignored
     void MakeRectangle(const SyVector3& extent)
     {
+        _vertices.clear();
+        _indices.clear();
         _vertices.resize(4);
         _vertices[0] = DirectX::SimpleMath::Vector4(extent.x, extent.y, 0.0f, 1.0f);
         _vertices[1] = DirectX::SimpleMath::Vector4(-extent.x, extent.y, 0.0f, 1.0f);
@@ -84,12 +94,14 @@ struct SyGeometry
     //Construct 0-origin axis-aligned box.
     void MakeBox(const SyVector3& extent)
     {
-       MakeRectangle(extent);
-       for (unsigned i = 0; i < 4; i++)
+        _vertices.clear();
+        _indices.clear();
+        MakeRectangle(extent);
+        for (unsigned i = 0; i < 4; i++)
            _vertices[i].z = extent.z;
-       SyGeometry other;
-       other.MakeRectangle(extent);
-       for (unsigned i = 0; i < 4; i++)
+        SyGeometry other;
+        other.MakeRectangle(extent);
+        for (unsigned i = 0; i < 4; i++)
            other._vertices[i].z = -extent.z;
        Merge(other);
        for (unsigned i = 0; i < 4; i++)
@@ -98,6 +110,8 @@ struct SyGeometry
     //Construct a 0-origin round sector in xy-plane
     void MakeRingSector(float radius, unsigned densityFactor = 1.0f, float startAngle  = 0.0f, float endAngle = 2.0f * SyMathHelper::PI)
     {
+        _vertices.clear();
+        _indices.clear();
         if (densityFactor < 1)
         {
             SY_LOG_CORE(SY_LOGLEVEL_ERROR, "Density factor for a ring sector can't be less than 1.");
@@ -121,6 +135,8 @@ struct SyGeometry
     //Construct a 0-origin sphere wireframe
     void MakeSphere(float radius, unsigned densityFactor = 1.0f)
     {
+        _vertices.clear();
+        _indices.clear();
         if (densityFactor < 1)
         {
             SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Density factor for a sphere can't be less than 1.");
@@ -140,6 +156,8 @@ struct SyGeometry
     //Construct a 0-origin capsule wireframe
     void MakeCapsule(float radius, float halfHeight, unsigned densityFactor)
     {
+        _vertices.clear();
+        _indices.clear();
         if (densityFactor < 1)
         {
             SY_LOG_CORE(SY_LOGLEVEL_ERROR, "Density factor for a half ring can't be less than 1.");
