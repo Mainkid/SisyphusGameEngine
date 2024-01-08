@@ -31,6 +31,7 @@ public:
 	std::shared_ptr<Buffer> indexBuffer;
 	std::shared_ptr<Buffer> vertexBuffer;
 
+	static const unsigned VECTORS4_PER_VERTEX = 7;
 };
 
 

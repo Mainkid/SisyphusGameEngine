@@ -56,12 +56,12 @@ int main()
 #pragma endregion 
 
 #pragma region Test Mesh
-    // auto meshUuid = ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Game\\Assets\\fbx\\barrel.fbx");
-    // auto staticMesh = GameObjectHelper::Create(ecs, "Static Mesh", {0.0f, -2.5f, 8.0f});
-    // ecs->get<TransformComponent>(staticMesh).scale = { 3.0f, 3.0f, 3.0f };
-    // auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid, SyEMeshComponentFlags::MESH_COLLIDER | SyEMeshComponentFlags::MESH_RENDER);
-    // auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
-    // auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
+    auto meshUuid = ServiceLocator::instance()->Get<ResourceService>()->GetUUIDFromPath(".\\Game\\Assets\\fbx\\barrel.fbx");
+    auto staticMesh = GameObjectHelper::Create(ecs, "Static Mesh", {0.0f, -2.5f, 8.0f});
+    ecs->get<TransformComponent>(staticMesh).scale = { 3.0f, 3.0f, 3.0f };
+    auto result4 = GameObjectHelper::AddMeshComponent(ecs, staticMesh, meshUuid, SyEMeshComponentFlags::MESH_COLLIDER | SyEMeshComponentFlags::MESH_RENDER);
+    auto result5 = GameObjectHelper::AddRigidBodyComponent(ecs, staticMesh, DYNAMIC, 1, SyERBodyFlags::KINEMATIC | SyERBodyFlags::USE_DENSITY);
+    auto result6 = GameObjectHelper::AddTrimeshColliderComponent(ecs, staticMesh, SyColliderMaterial());
 #pragma endregion
 #pragma region Test Cube 1
     auto cube1 = GameObjectHelper::Create(ecs, "Cube1", { 0.0f, 5.0f, 8.0f });
@@ -69,14 +69,14 @@ int main()
     auto result8 = GameObjectHelper::AddCubeMeshComponent(ecs, cube1);
     SyPrimitiveColliderShapeDesc cubeColDesc;
     cubeColDesc.Extent = { 1.0f, 1.0f, 1.0f };
-    //auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube1,
-    //    BOX,
-    //    cubeColDesc,
-    //    SyColliderMaterial());
+    auto result9 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube1,
+        BOX,
+        cubeColDesc,
+        SyColliderMaterial());
 
-    auto cube2 = GameObjectHelper::Create(ecs, "Cube1", { 1.0f, 0.0f, 8.0f });
-    auto result13 = GameObjectHelper::AddRigidBodyComponent(ecs, cube2, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
-    auto result14 = GameObjectHelper::AddCubeMeshComponent(ecs, cube2);
+    //auto cube2 = GameObjectHelper::Create(ecs, "Cube1", { 1.0f, 0.0f, 8.0f });
+    //auto result13 = GameObjectHelper::AddRigidBodyComponent(ecs, cube2, DYNAMIC, 10/*, SyERBodyFlags::DISABLE_GRAVITY*/);
+    //auto result14 = GameObjectHelper::AddCubeMeshComponent(ecs, cube2);
     /*auto result15 = GameObjectHelper::AddPrimitiveColliderComponent(ecs, cube2,
         BOX,
         cubeColDesc,

@@ -111,8 +111,9 @@ SyResult SyRigidBodySystem::Run()
 		if (rigidBodyC._rbActor == nullptr)
 		{
 			result.code = SY_RESCODE_ERROR;
-			result.message = "rbComponent.rbActor is nullptr.";
+			result.message = "rbComponent.rbActor is nullptr on entity (%s).", SY_GET_ENTITY_NAME_CHAR(_ecs, entity);
 			_ecs->remove<SyRigidBodyComponent>(entity);
+			CallEvent<CompRemovedEv>(ECompId::Rigid, entity, false);
 			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, result.message.ToString());
 			continue;
 		}

@@ -25,6 +25,8 @@ SyResult SyCollisionSystem::Run()
 		result.message = "EngineContext.deltaTime == 0";
 		return result;
 	}
+	if (ServiceLocator::instance()->Get<EngineContext>()->playModeState != EngineContext::EPlayModeState::PlayMode)
+		return SyResult();
 	#pragma region Primitive Colliders
 	{
 		auto view = _ecs->view<SyPrimitiveColliderComponent>();
@@ -40,7 +42,8 @@ SyResult SyCollisionSystem::Run()
 			}
 			auto& pColC = _ecs->get<SyPrimitiveColliderComponent>(entity);
 			if (pColC._wasInit == false)
-				InitComponentP(entity, *rigidBCPtr, pColC);
+				if (InitComponentP(entity, *rigidBCPtr, pColC).code == SY_RESCODE_ERROR)
+					SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "An error occured during PrimitiveCollider Component initialization on entity (%s). ", entityName);
 		}
 	}
 	#pragma endregion
@@ -68,60 +71,12 @@ SyResult SyCollisionSystem::Run()
 			auto& tmColC = _ecs->get<SyTrimeshColliderComponent>(entity);
 			auto& transformC = _ecs->get<TransformComponent>(entity);
 			if (tmColC._wasInit == false)
-				InitComponentTm(entity, *rigidBCPtr, tmColC, *meshCPtr, transformC);
+				if (InitComponentTm(entity, *rigidBCPtr, tmColC, *meshCPtr, transformC).code == SY_RESCODE_ERROR)
+					SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "An error occured during TrimeshCollider Component initialization on entity (%s). ", entityName);
 		}
 		
 	}
-	auto view = _ecs->view<SyPrimitiveColliderComponent>();
-	for (auto& entity : view)
-	{
-		auto* rbComponent = _ecs->try_get<SyRigidBodyComponent>(entity);
-		if (rbComponent == nullptr)
-		{
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity (%d) is missing the RigidBody Component. Hence, you can't attach a collider component to it. The collider component has been removed. ", (int)entity);
-			_ecs->remove<SyTrimeshColliderComponent>(entity);
-		}
-		auto* pComponent = _ecs->try_get<SyPrimitiveColliderComponent>(entity);
-		auto* tmComponent = _ecs->try_get<SyTrimeshColliderComponent>(entity);
-		if (pComponent != nullptr)
-		{
-			if (tmComponent != nullptr)
-			{
-				SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "A collider component is already attached to the entity (%d). You can't attach more than one collider to an entity. ", (int)entity);
-				_ecs->remove<SyTrimeshColliderComponent>(entity);
-				continue;
-			}
-			if (InitComponentP(entity, *rbComponent, *pComponent).code != SY_RESCODE_OK)
-			{
-				SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to initialize PrimitiveCollider Component on entity (%d). The PrimitiveCollider Component has been removed.", (int)entity);
-				_ecs->remove<SyPrimitiveColliderComponent>(entity);
-			}
-		}
-		else if (tmComponent != nullptr)
-		{
-			auto* mComponent = _ecs->try_get<MeshComponent>(entity);
-			if (mComponent == nullptr)
-			{
-				SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity (%d) is missing the Mesh Component. Hence, you can't attach a collider component to it. The collider component has been removed. ", (int)entity);
-				_ecs->remove<SyTrimeshColliderComponent>(entity);
-				continue;
-			}
-			auto* tComponent = _ecs->try_get<TransformComponent>(entity);
-			if (tComponent == nullptr)
-			{
-				SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Entity (%d) is missing the Transform Component. Hence, you can't attach a collider component to it. The collider component has been removed. ", (int)entity);
-				_ecs->remove<SyTrimeshColliderComponent>(entity);
-				continue;
-			}
-			if (InitComponentTm(entity, *rbComponent, *tmComponent, *mComponent, *tComponent).code != SY_RESCODE_OK)
-			{
-				SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "Failed to initialize TrimeshComponent Component on entity (%d). The TrimeshComponent Component has been removed.", (int)entity);
-				_ecs->remove<SyTrimeshColliderComponent>(entity);
-			}
-		}
-		else
-			SY_LOG_PHYS(SY_LOGLEVEL_ERROR, "No collider components have been detected on entity (%d). Something went wrong. ", (int)entity);
-	}
+
 	return result;
 }
 
@@ -134,6 +89,7 @@ SyResult SyCollisionSystem::InitComponentP(const entt::entity& entity, SyRigidBo
                                            SyPrimitiveColliderComponent& pColC)
 {
 	SyResult result;
+	pColC._wasInit = true;
 	auto* entityName = SY_GET_ENTITY_NAME_CHAR(_ecs, entity);
 	auto& pxMaterial = *GET_PHYSICS_CONTEXT->Physics->createMaterial(	pColC.Material.staticFriction,
 																	pColC.Material.dynamicFriction,
@@ -198,6 +154,7 @@ SyResult SyCollisionSystem::InitComponentTm(const entt::entity& entity, SyRigidB
                                             SyTrimeshColliderComponent& tmColC, const MeshComponent& meshC, const TransformComponent& transformC)
 {
 	SyResult result;
+	tmColC._wasInit = true;
 	auto* entityName = SY_GET_ENTITY_NAME_CHAR(_ecs, entity);
 	if (!(meshC.flags & SyEMeshComponentFlags::MESH_COLLIDER))
 	{
@@ -217,10 +174,9 @@ SyResult SyCollisionSystem::InitComponentTm(const entt::entity& entity, SyRigidB
 																	tmColC.Material.dynamicFriction,
 																	tmColC.Material.restitution);
 	auto meshPtr = meshC.model->meshes[0];
-	const unsigned NUM_VECTORS_PER_VERTEX = 5;
-X:	PxTriangleMeshDesc meshDesc;
-	meshDesc.points.count           = meshPtr->vertices.size() / NUM_VECTORS_PER_VERTEX;
-	meshDesc.points.stride          = NUM_VECTORS_PER_VERTEX * 4 * sizeof(float);
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count           = meshPtr->vertices.size() / Mesh::VECTORS4_PER_VERTEX;
+	meshDesc.points.stride          = Mesh::VECTORS4_PER_VERTEX * 4 * sizeof(float);
 	meshDesc.points.data            = (void*)(std::addressof(*meshPtr->vertices.begin()));
 	 	
 	meshDesc.triangles.count        = meshPtr->indices.size() / 3;
