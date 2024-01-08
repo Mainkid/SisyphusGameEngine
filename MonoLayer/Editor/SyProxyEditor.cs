@@ -151,8 +151,10 @@ public class SyProxyEditor
 			{ typeof(SyColor), new EditorDrawerColor(this, _ecs) },
 			{ typeof(SyCurve), new EditorDrawerCurve(this, _ecs) },
 			{ typeof(SySceneEnt?), new EditorDrawerSceneEntNull(this, _ecs) },
-			
-			{ typeof(ParticlesComp), new EditorDrawerCompParticles(this, _ecs)}
+
+			{ typeof(TransformComp), new EditorDrawerCompTransform(this, _ecs) },
+			{ typeof(ParticlesComp), new EditorDrawerCompParticles(this, _ecs) },
+			{ typeof(NavMeshComp), new EditorDrawerCompNavMesh(this, _ecs) }
 		};
 
 		var compInterfaceType = typeof(SyEcs.IComp);

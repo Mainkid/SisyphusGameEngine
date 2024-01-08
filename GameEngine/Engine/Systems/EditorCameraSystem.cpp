@@ -20,8 +20,8 @@ SyResult EditorCameraSystem::Init()
 	auto& tc = _ecs->emplace<TransformComponent>(id);
 	tc.localPosition = Vector3(-3, 3, -3);
 	tc._position = Vector3(-3, 3, -3);
-	CameraComponent& cc = _ecs->emplace<CameraComponent>(id,ECameraType::EditorCamera);
-	SetLookAtPos(Vector3(0,0,0), tc);
+	CameraComponent& cc = _ecs->emplace<CameraComponent>(id, ECameraType::EditorCamera);
+	SetLookAtPos(Vector3(0, 0, 0), tc);
 	return SyResult();
 }
 
@@ -38,7 +38,7 @@ SyResult EditorCameraSystem::Run()
 			auto& tc = _ecs->get<TransformComponent>(ent.targetEntity);
 
 			targetPosition = Vector4(tc._position.x, tc._position.y, tc._position.z, 1);
-			startPosition = Vector4(cameraTc.localPosition.x, cameraTc.localPosition.y, cameraTc.localPosition.z, 1);
+			startPosition = Vector4(cameraTc._position.x, cameraTc._position.y, cameraTc._position.z, 1);
 
 			_isFlying = true;
 		}
@@ -64,7 +64,7 @@ SyResult EditorCameraSystem::Run()
 			_flyingTime += _ec->deltaTime;
 
 
-			cameraTc.localPosition = Vector3(Vector4::Lerp(startPosition, targetPosition - cameraComp.forward * _cameraArm, _flyingTime / _flyingTimeMax));
+			cameraTc._position = Vector3(Vector4::Lerp(startPosition, targetPosition - cameraComp.forward * _cameraArm, _flyingTime / _flyingTimeMax));
 			if (_flyingTime > _flyingTimeMax)
 			{
 				_isFlying = false;
@@ -100,15 +100,15 @@ SyResult EditorCameraSystem::Destroy()
 void EditorCameraSystem::UpdateViewMatrix(CameraComponent& cc, TransformComponent& tc)
 {
 	Matrix camRotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(
-		tc.localRotation.x, tc.localRotation.y, tc.localRotation.z);
+		tc._rotation.x, tc._rotation.y, tc._rotation.z);
 
 	Vector3 camTarget = DirectX::XMVector3TransformCoord(
 		cc.FORWARD_VECTOR, camRotationMatrix);
 
-	camTarget += tc.localPosition;
+	camTarget += tc._position;
 
 	DirectX::XMVECTOR upDir = DirectX::XMVector3TransformCoord(cc.UP_VECTOR, camRotationMatrix);
-	cc.view = DirectX::XMMatrixLookAtLH(tc.localPosition, camTarget, upDir);
+	cc.view = DirectX::XMMatrixLookAtLH(tc._position, camTarget, upDir);
 	cc.forward = Vector4::Transform(cc.FORWARD_VECTOR, camRotationMatrix);
 	cc.up = Vector4::Transform(cc.UP_VECTOR, camRotationMatrix);
 	cc.back = Vector4::Transform(cc.BACKWARD_VECTOR, camRotationMatrix);

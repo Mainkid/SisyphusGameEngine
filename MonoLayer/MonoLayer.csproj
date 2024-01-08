@@ -46,6 +46,7 @@
         <Compile Include="Ecs\Comps\ColliderComp.cs" />
         <Compile Include="Ecs\Comps\FixedJointComp.cs" />
         <Compile Include="Ecs\Comps\HingeJointComp.cs" />
+        <Compile Include="Ecs\Comps\NavMeshComp.cs" />
         <Compile Include="Ecs\Comps\ParticlesComp.cs" />
         <Compile Include="Ecs\Comps\SceneObjectComp.cs" />
         <Compile Include="Ecs\Comps\SkyboxComp.cs" />
@@ -68,6 +69,7 @@
         <Compile Include="Ecs\Sync\SyEcsSyncHingeJoint.cs" />
         <Compile Include="Ecs\Sync\SyEcsSyncLight.cs" />
         <Compile Include="Ecs\Sync\SyEcsSyncMesh.cs" />
+        <Compile Include="Ecs\Sync\SyEcsSyncNavMesh.cs" />
         <Compile Include="Ecs\Sync\SyEcsSyncParticles.cs" />
         <Compile Include="Ecs\Sync\SyEcsSyncRigid.cs" />
         <Compile Include="Ecs\Sync\SyEcsSyncSceneObject.cs" />
@@ -89,7 +91,9 @@
         <Compile Include="Editor\Attributes\ShowIfBaseAttribute.cs" />
         <Compile Include="Editor\Attributes\ShowIfBoolAttribute.cs" />
         <Compile Include="Editor\Attributes\ShowIfEnumAttribute.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerCompNavMesh.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerCompParticles.cs" />
+        <Compile Include="Editor\Drawers\EditorDrawerCompTransform.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerCurve.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerList.cs" />
         <Compile Include="Editor\Drawers\EditorDrawerBase.cs" />
@@ -114,6 +118,8 @@
         <Compile Include="Helpers\HashHelper.cs" />
         <Compile Include="Helpers\MathExt.cs" />
         <Compile Include="Helpers\TypesExt.cs" />
+        <Compile Include="Input\EKey.cs" />
+        <Compile Include="Input\SyProxyInput.cs" />
         <Compile Include="LeoEcs\components.cs" />
         <Compile Include="LeoEcs\entities.cs" />
         <Compile Include="LeoEcs\filters.cs" />

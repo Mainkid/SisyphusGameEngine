@@ -16,7 +16,9 @@ enum class ECompId
 	Particles,
 	Sound,
 	Camera,
-	Animator
+	Animator,
+
+	NavMesh,
 };
 
 inline std::ostream& operator<<(std::ostream& os, ECompId id)
@@ -55,6 +57,15 @@ inline std::ostream& operator<<(std::ostream& os, ECompId id)
 		break;
 	case ECompId::Sound:
 		os << "Sound";
+		break;
+	case ECompId::Camera:
+		os << "Camera";
+		break;
+	case ECompId::Animator:
+		os << "Animator";
+		break;
+	case ECompId::NavMesh:
+		os << "NavMesh";
 		break;
 	default: 
 		os << "Missing";

@@ -1,6 +1,7 @@
 #include "MonoGameLoopSystem.h"
 
 #include "../SyMono.h"
+#include "../../Contexts/EngineContext.h"
 #include "../../Core/ServiceLocator.h"
 
 
@@ -10,6 +11,8 @@ SyResult MonoGameLoopSystem::Init()
 	_monoEcs = mono->GetEcs();
 	_monoGame = mono->GetGame();
 
+	_engineContext = ServiceLocator::instance()->Get<EngineContext>();
+
 	_testTimeOnPrevFrame = std::chrono::steady_clock::now();
 
 	return {};
@@ -17,10 +20,12 @@ SyResult MonoGameLoopSystem::Init()
 
 SyResult MonoGameLoopSystem::Run()
 {
+	OPTICK_EVENT()
+
 	if (!_monoEcs->IsValid() || !_monoGame->IsValid())
 		return {};
 
-	if (false)
+	if (_engineContext->playModeState == EngineContext::EPlayModeState::PlayMode)
 	{
 		//TODO: rewrite when engine-context-time will be fixed.
 		auto time = std::chrono::steady_clock::now();

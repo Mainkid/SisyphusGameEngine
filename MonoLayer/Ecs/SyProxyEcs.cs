@@ -35,7 +35,7 @@ internal class SyProxyEcs
 	{
 		try
 		{
-			Ecs.RemoveCompFromEngine(engineEnt, id);
+			Ecs.RemoveCompByEngine(engineEnt, id);
 		}
 		catch (Exception e)
 		{
@@ -281,6 +281,23 @@ internal class SyProxyEcs
 	internal static extern void GeUpdateAnimatorComp(uint engineEnt, ProxyAnimatorComp proxy);
 
 	private void EgUpdateAnimatorComp(uint engineEnt, ProxyAnimatorComp proxy)
+	{
+		try
+		{
+			Syncer.Receive(engineEnt, ref proxy);
+		}
+		catch (Exception e)
+		{
+			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
+		}
+	}
+	
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern void GeUpdateNavMeshComp(uint engineEnt, ProxyNavMeshComp proxy);
+
+	private void EgUpdateNavMeshComp(uint engineEnt, ProxyNavMeshComp proxy)
 	{
 		try
 		{

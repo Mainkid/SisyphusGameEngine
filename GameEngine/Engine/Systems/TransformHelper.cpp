@@ -52,6 +52,21 @@ void TransformHelper::UpdateTransformMatrix(TransformComponent& tc)
 	tc.scale = scaleNew;
 	tc._rotation = q.ToEuler();
 
+	//if (curID == entt::null)
+	//{
+	//	tc.localPosition = tc._position;
+	//	tc.localScale = tc.scale;
+	//	tc.localRotation = tc._rotation;
+
+	//	size_t seed = 0;
+	//	boost::hash_combine(seed, tc.localPosition);
+	//	boost::hash_combine(seed, tc.localRotation);
+	//	boost::hash_combine(seed, tc.scale);
+
+	//	tc.localHash = seed;
+
+	//}
+
 	size_t seed = 0;
 	boost::hash_combine(seed, tc._position);
 	boost::hash_combine(seed, tc._rotation);
@@ -69,18 +84,19 @@ void TransformHelper::UpdateWorldTransformMatrix(TransformComponent& tc, Matrix 
 	//{
 		Quaternion rotation;
 		tc.transformMatrix = Matrix::CreateScale(tc.scale) * Matrix::CreateFromYawPitchRoll(tc._rotation) * Matrix::CreateTranslation(tc._position);
-		tc.transformMatrix = tc.transformMatrix * parentTransform;
-		tc.transformMatrix.Decompose(tc.localScale, rotation, tc.localPosition);
+		//tc.transformMatrix = tc.transformMatrix * parentTransform;
+		auto localTransforms = tc.transformMatrix * parentTransform.Invert();
+		localTransforms.Decompose(tc.localScale, rotation, tc.localPosition);
 
-		tc.localPosition = tc._position;
+		//tc.localPosition = tc._position;
 		tc.localRotation = rotation.ToEuler();
-		tc.localScale = tc.scale;
+		//tc.localScale = tc.scale;
 
-		//boost::hash_combine(seed, tc.localPosition);
-		//boost::hash_combine(seed, tc.localRotation);
-		//boost::hash_combine(seed, tc.localScale);
+		boost::hash_combine(seed, tc.localPosition);
+		boost::hash_combine(seed, tc.localRotation);
+		boost::hash_combine(seed, tc.localScale);
 
-		//tc.localHash = seed;
+		tc.localHash = seed;
 	//}
 
 }
@@ -164,6 +180,26 @@ void TransformHelper::RadToDegrees(Vector3& vec)
 	vec.x *= 180.0f / M_PI;
 	vec.y *= 180.0f / M_PI;
 	vec.z *= 180.0f / M_PI;
+}
+
+SyVector3 TransformHelper::DegreesToRad(const SyVector3& vec)
+{
+	return
+	{
+		static_cast<float>(vec.x * (M_PI / 180.0)),
+		static_cast<float>(vec.y * (M_PI / 180.0)),
+		static_cast<float>(vec.z * (M_PI / 180.0))
+	};
+}
+
+SyVector3 TransformHelper::RadToDegrees(const SyVector3& vec)
+{
+	return
+	{
+		static_cast<float>(vec.x * (180.0 / M_PI)),
+		static_cast<float>(vec.y * (180.0 / M_PI)),
+		static_cast<float>(vec.z * (180.0 / M_PI))
+	};
 }
 
 void TransformHelper::SetDefaultHash()

@@ -94,11 +94,12 @@ SyResult SyMono::CreateObjects()
 	SY_RESULT_CHECK_EXT(_logger.Create(_runtime), "logger create");
 	SY_RESULT_CHECK_EXT(_ecs.Create(_runtime), "ecs create");
 	SY_RESULT_CHECK_EXT(_editor.Create(_runtime), "editor create");
+	SY_RESULT_CHECK_EXT(_input.Create(_runtime), "input create");
 	SY_RESULT_CHECK_EXT(_game.Create(_runtime), "game create");
 	SY_RESULT_CHECK_EXT(_gameConfig.Create(_runtime), "game config create");
 
 	_editor.EgInit.Invoke(_ecs.GetInstance());
-	_game.EgInit.Invoke(_ecs.GetInstance(), _gameConfig.GetInstance());
+	_game.EgInit.Invoke(_ecs.GetInstance(), _input.GetInstance(), _gameConfig.GetInstance());
 
 	return {};
 }
@@ -107,6 +108,7 @@ SyResult SyMono::DestroyObjects()
 {
 	SY_RESULT_CHECK_EXT(_gameConfig.Destroy(), "game config destroy");
 	SY_RESULT_CHECK_EXT(_game.Destroy(), "game destroy");
+	SY_RESULT_CHECK_EXT(_input.Destroy(), "input destroy");
 	SY_RESULT_CHECK_EXT(_editor.Destroy(), "editor destroy");
 	SY_RESULT_CHECK_EXT(_ecs.Destroy(), "ecs destroy");
 	SY_RESULT_CHECK_EXT(_logger.Destroy(), "logger destroy");
@@ -120,6 +122,7 @@ void SyMono::ForceDestroy()
 
 	_gameConfig = {};
 	_game = {};
+	_input = {};
 	_editor = {};
 	_ecs = {};
 	_logger = {};

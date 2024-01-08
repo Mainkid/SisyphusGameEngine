@@ -5,6 +5,7 @@
 #include "Objects/SyMonoEditor.h"
 #include "Objects/SyMonoGame.h"
 #include "Objects/SyMonoGameConfig.h"
+#include "Objects/SyMonoInput.h"
 #include "Objects/SyMonoLogger.h"
 
 namespace mono
@@ -29,6 +30,7 @@ namespace mono
 		SyMonoLogger _logger;
 		SyMonoEcs _ecs;
 		SyMonoEditor _editor;
+		SyMonoInput _input;
 		SyMonoGame _game;
 		SyMonoGameConfig _gameConfig;
 

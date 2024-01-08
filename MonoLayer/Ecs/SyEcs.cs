@@ -4,6 +4,7 @@ using System.Reflection;
 using SyEngine.Datas;
 using SyEngine.Ecs.Comps;
 using LeoEcs;
+using SyEngine.Input;
 using SyEngine.Logger;
 
 namespace SyEngine.Ecs
@@ -37,10 +38,10 @@ public class SyEcs
     private EcsPool<TransformComp>   _transformsPool;
 
 
-    internal void SetSystems(List<SyEcsSystemBase> systems)
+    internal void Init(List<SyEcsSystemBase> systems, SyProxyInput input)
     {
         foreach (var system in systems)
-            system.Attach(this);
+            system.Attach(this, input);
 
         _systems = systems;
     }
@@ -171,7 +172,14 @@ public class SyEcs
         }
         else
         {
-            World.GetPoolByType(compType).AddRaw(ent, Activator.CreateInstance(compType));
+            var method = World.GetType().GetMethod(nameof(World.GetPool))
+                              ?.MakeGenericMethod(compType);
+            if (method != null)
+            {
+                method.Invoke(World, null);
+                
+                World.GetPoolByType(compType).AddRaw(ent, Activator.CreateInstance(compType));
+            }
         }
     }
 
@@ -193,7 +201,7 @@ public class SyEcs
         }
     }
 
-    internal void RemoveCompFromEngine(uint engineEnt, EEngineCompId id)
+    internal void RemoveCompByEngine(uint engineEnt, EEngineCompId id)
     {
         if (!ToGameEnt(engineEnt, out int gameEnt))
             return;

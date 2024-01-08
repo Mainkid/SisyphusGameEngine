@@ -1,12 +1,16 @@
-﻿namespace SyEngine.Ecs
+﻿using SyEngine.Input;
+
+namespace SyEngine.Ecs
 {
     public abstract class SyEcsSystemBase
     {
-        protected SyEcs Ecs { get; private set; }
+        protected SyEcs   Ecs   { get; private set; }
+        protected SyProxyInput Input { get; private set; }
 
-        public void Attach(SyEcs ecs)
+        public void Attach(SyEcs ecs, SyProxyInput input)
         {
-            Ecs = ecs;
+            Ecs   = ecs;
+            Input = input;
         }
 
         public abstract void Init();

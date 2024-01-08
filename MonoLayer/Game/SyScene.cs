@@ -48,7 +48,7 @@ public class SyScene
 				{
 					var compDto = new CompDto
 					{
-						TypeFullName = pool.GetComponentType().FullName,
+						TypeFullName = pool.GetComponentType().AssemblyQualifiedName,
 						Comp         = pool.GetRaw(ent)
 					};
 					entDto.Comps.Add(compDto);

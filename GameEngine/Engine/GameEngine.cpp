@@ -23,6 +23,10 @@
 int main()
 {
     EngineCore::instance()->StartUp();
+    EngineCore::instance()->Update();
+    EngineCore::instance()->ShutDown();
+
+    return 0;
     
     entt::registry* ecs = &ServiceLocator::instance()->Get<EngineContext>()->ecs;
     EngineContext* ec = EngineCore::instance()->ec;

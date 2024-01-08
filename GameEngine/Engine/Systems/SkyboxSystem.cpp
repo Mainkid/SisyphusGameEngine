@@ -13,7 +13,7 @@ SyResult SkyboxSystem::Init()
 	_hc = ServiceLocator::instance()->Get<HardwareContext>();
 	_ec = ServiceLocator::instance()->Get<EngineContext>();
 	_rs = ServiceLocator::instance()->Get<ResourceService>();
-	GameObjectHelper::CreateSkybox(_ecs);
+	//GameObjectHelper::CreateSkybox(_ecs);
 	return SyResult();
 }
 
