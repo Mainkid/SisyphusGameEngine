@@ -291,5 +291,22 @@ internal class SyProxyEcs
 			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
 		}
 	}
+	
+	//-----------------------------------------------------------
+	//-----------------------------------------------------------
+	[MethodImpl(MethodImplOptions.InternalCall)]
+	internal static extern void GeUpdateNavMeshComp(uint engineEnt, ProxyNavMeshComp proxy);
+
+	private void EgUpdateNavMeshComp(uint engineEnt, ProxyNavMeshComp proxy)
+	{
+		try
+		{
+			Syncer.Receive(engineEnt, ref proxy);
+		}
+		catch (Exception e)
+		{
+			SyLog.Err(ELogTag.ProxyEcs, e.ToString());
+		}
+	}
 }
 }

@@ -21,6 +21,8 @@ public enum EEngineCompId
 	Sound,
 	Camera,
 	Animator,
+	
+	NavMesh
 }
 
 public static class EngineCompIdHelper
@@ -38,7 +40,8 @@ public static class EngineCompIdHelper
 		{ typeof(SoundComp), EEngineCompId.Sound },
 		{ typeof(FixedJointComp), EEngineCompId.FixedJoint },
 		{ typeof(HingeJointComp), EEngineCompId.HingeJoint },
-		{ typeof(CameraComp), EEngineCompId.Camera }
+		{ typeof(CameraComp), EEngineCompId.Camera },
+		{ typeof(NavMeshComp), EEngineCompId.NavMesh },
 	};
 
 	private static Dictionary<EEngineCompId, Type> _idToType;

@@ -186,6 +186,7 @@
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncCamera.cpp" />
     <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncAnimator.cpp" />
     <ClCompile Include="Engine\Mono\Objects\SyMonoInput.cpp" />
+    <ClCompile Include="Engine\Mono\Ecs\SyMonoEcsSyncNavMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -537,6 +538,7 @@
     <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourNode.h" />
     <ClInclude Include="vendor\recastnavigation\Detour\Include\DetourStatus.h" />
     <ClInclude Include="Engine\Features\Rendering\RenderPipeline\NavMeshDrawSystem.h" />
+    <ClInclude Include="Engine\Mono\Ecs\SyMonoEcsSyncNavMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Downloads\skybox.jpg" />

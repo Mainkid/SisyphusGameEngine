@@ -49,6 +49,11 @@ public:
     float detailSampleMaxError = 1.0f;
     
     ESyNavMeshPartitionType partitioningType;
+
+
+    bool IsMonoDirty = true; // read/write only by mono
+    size_t MonoHash = 0; // read/write only by mono
+
 private:
     //---- Engine vars ----
     //---- Scene Mesh vars
