@@ -28,11 +28,7 @@ SyResult TransformSystem::Run()
 		
 		CheckTransform(tc);
 
-		for (auto& ent : tc.children)
-		{
-			TransformComponent& tc = view.get<TransformComponent>(ent);
-			CheckTransform(tc);
-		}
+		
 	}
 	return result;
 }
@@ -69,6 +65,12 @@ void TransformSystem::CheckTransform(TransformComponent& tc)
 	{
 		tc.localHash = lHash;
 		TransformHelper::UpdateTransformMatrix(tc);
+	}
+
+	for (auto& ent : tc.children)
+	{
+		TransformComponent& tc = _ecs->get<TransformComponent>(ent);
+		CheckTransform(tc);
 	}
 }
 
